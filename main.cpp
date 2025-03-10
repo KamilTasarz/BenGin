@@ -1,16 +1,14 @@
 ﻿#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <iostream>
-#include "stb_image/stb_image.h"
-
+#include <stb_image/stb_image.h>
 
 #include "Shader.h"
 #include "Camera.h"
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
-
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 bool init();
