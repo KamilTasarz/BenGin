@@ -9,16 +9,20 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 bool init();
 
-//float vertices[] = {
-//    0.5f, 0.5f, 0.5f,
-//    0.5f, -0.5f, 0.5f,
-//    -0.5f, -0.5f, 0.5f,
-//    -0.5f, 0.5f, 0.5f,
-//    0.5f, 0.5f, -0.5f,
-//    0.5f, -0.5f, -0.5f,
-//    -0.5f, -0.5f, -0.5f,
-//    -0.5f, 0.5f, -0.5f
-//};
+struct PointLight {
+
+    glm::vec3 position;
+
+    // Colors
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+
+    float quadratic;
+    float linear;
+    float constant;
+
+};
 
 float vertices[] = {
 
@@ -112,6 +116,14 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glEnable(GL_DEPTH_TEST);
+
+    PointLight light = {
+        glm::vec3(0.0f, 5.0f, 10.0f), // position
+        glm::vec3(0.1f, 0.1f, 0.1f), // ambient
+        glm::vec3(0.7f, 0.7f, 0.7f), // diffuse
+        glm::vec3(0.7f, 0.7f, 0.7f), // specular
+        1.0f, 0.2f, 0.1f // quadratic, linear, constant
+    };
 
     Shader *shader = new Shader(vertexPath, fragmentPath);
     Camera* camera = new Camera(0.f, 0.f, -3.f);
