@@ -1,8 +1,4 @@
-﻿#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <iostream>
-#include <stb_image/stb_image.h>
+﻿#include "config.h"
 
 #include "Shader.h"
 #include "Camera.h"
@@ -25,6 +21,7 @@ bool init();
 //};
 
 float vertices[] = {
+
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
          0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
          0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -66,6 +63,7 @@ float vertices[] = {
          0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
         -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+
 };
 
 float normals[] = {
@@ -77,26 +75,6 @@ float normals[] = {
     0.f, 0.f, -1.f //tyl
 
 };
-
-//int indices[]{
-//    0, 1, 2, //front
-//    0, 2, 3, 
-//
-//    4, 5, 1, //prawy
-//    4, 1, 0,
-//
-//    4, 0, 3, //gora
-//    4, 3, 7,
-//
-//    3, 2, 6, //lewy
-//    3, 6, 7,
-//
-//    5, 1, 2, //dol
-//    5, 2, 6,
-//
-//    4, 5, 7, //tyl
-//    7, 5, 6
-//};
     
 const char* vertexPath = "res/basic.vert";
 const char* fragmentPath = "res/basic.frag";
@@ -104,18 +82,19 @@ const char* fragmentPath = "res/basic.frag";
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
-
+// -- MAIN --
 
 int main() {
-    
     
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
         return -1;
     }
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    
     GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL Window", NULL, NULL);
     if (!window) {
         std::cerr << "Failed to create window\n";
@@ -137,17 +116,12 @@ int main() {
     Shader *shader = new Shader(vertexPath, fragmentPath);
     Camera* camera = new Camera(0.f, 0.f, -3.f);
     
-
-    unsigned int VAO, VBO, EBO;
+    unsigned int VAO, VBO;
     glGenBuffers(1, &VBO);
-    //glGenBuffers(1, &EBO);
     glGenVertexArrays(1, &VAO);
 
     glBindVertexArray(VAO);
     
-
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -179,8 +153,6 @@ int main() {
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferData(GL_ARRAY_BUFFER, num * sizeof(glm::mat4), &matrices[0], GL_DYNAMIC_DRAW);
-
-    
     
     glBindVertexArray(VAO);
     // Atrybuty wierzchołków
@@ -201,8 +173,6 @@ int main() {
 
     glBindVertexArray(0);
     
-    
-
     //glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(model));
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
@@ -234,7 +204,6 @@ int main() {
 
         camera->checkInput(deltaTime, direction, 20.f);
         
-
         glm::mat4 view = camera->GetView();
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, false, glm::value_ptr(view));
 
@@ -242,9 +211,6 @@ int main() {
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-
-
-
         glBindVertexArray(VAO);
         
         glDrawArraysInstanced(GL_TRIANGLES, 0, 36, num);
@@ -252,13 +218,13 @@ int main() {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
     delete shader;
     delete camera;
     delete[] matrices;
     glfwTerminate();
     return 0;
 }
-
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);

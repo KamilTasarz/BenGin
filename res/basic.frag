@@ -6,9 +6,9 @@ out vec4 FragColor;
 
 struct PointLight {
 
-	vec3 pos, col;
+	vec3 position, ambient, diffuse, specular;
+	float constant, linear, quadratic;
 
-	float a, b, c;
 };
 
 uniform PointLight light;
