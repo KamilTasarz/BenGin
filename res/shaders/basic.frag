@@ -14,17 +14,33 @@ struct PointLight {
 };
 
 uniform PointLight light;
-uniform sampler2D ourTexture;
+uniform sampler2D myTexture;
 uniform vec3 cameraPosition;
+uniform int isLight;
 
 void main() {
+
+	if (isLight != 1) {
+    
 	
-	//swiatlo
-	vec3 ambient = light.ambient;
+	    
 
-	vec3 lightDir = normalize(light.position - Pos);
+	    vec3 lightDir = normalize(light.position - Pos);
+        vec3 viewDir = normalize(cameraPosition - Pos);
+        float diff = max(dot(Normal, lightDir), 0.0);
 
-	
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+        float spec = pow(max(dot(Normal, halfwayDir), 0.0), 64);
 
-	FragColor = texture(ourTexture, Cords);//vec4(0.2f, 0.2f, 0.8f, 1.0f);
+        float distance = distance(light.position, Pos);
+        float attenuation = 1.0f;// / (light.quadratic * distance * distance + light.linear * distance + light.constant);
+
+        vec3 ambient = light.ambient * vec3(texture(myTexture, Cords));
+        vec3 diffuse = light.diffuse * diff * vec3(texture(myTexture, Cords));
+        vec3 specular = light.specular * spec * vec3(texture(myTexture, Cords));
+        FragColor = vec4((ambient + diffuse + specular) * attenuation, 1.f);
+    } else {
+        FragColor = vec4(1.f);
+    }
+
 }

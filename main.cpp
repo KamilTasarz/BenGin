@@ -126,11 +126,11 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     PointLight light = {
-        glm::vec3(0.0f, 5.0f, 10.0f), // position
+        glm::vec3(0.0f, 2.0f, -3.0f), // position
         glm::vec3(0.1f, 0.1f, 0.1f), // ambient
         glm::vec3(0.7f, 0.7f, 0.7f), // diffuse
         glm::vec3(0.7f, 0.7f, 0.7f), // specular
-        1.0f, 0.2f, 0.1f // quadratic, linear, constant
+        0.016f, 0.004f, 1.0f // quadratic, linear, constant
     };
 
     Shader *shader = new Shader(vertexPath, fragmentPath);
@@ -184,22 +184,19 @@ int main() {
 
     shader->use();
 
-    int num = 3;
+    int num = 2;
     int lightNum = 1;
-    glm::mat4 *matrices = new glm::mat4[num];
+    glm::mat4 *matrices = new glm::mat4[num + lightNum];
     int* textureIDs = new int[num];
 
-    for (int i = 0; i < num - lightNum; i++) {
+    for (int i = 0; i < num; i++) {
         glm::mat4 model = glm::mat4(1.f);
         model = glm::translate(model, glm::vec3(4 * i, 0.f, 0.f));
         matrices[i] = model;
     }
 
-    for (int i = num - lightNum; i < num; i++) {
-        glm::mat4 model = glm::mat4(1.f);
-        model = glm::translate(model, glm::vec3(0.f, 0.f, 0.f));
-        matrices[i] = model;
-    }
+    matrices[num] = glm::translate(glm::mat4(1), light.position);
+    light.position = glm::vec3(matrices[num] * glm::vec4(0, 0, 0, 1));
     
     //unsigned int buffer;
 
@@ -260,7 +257,18 @@ int main() {
         glm::mat4 view = camera.GetView();
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, false, glm::value_ptr(view));
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        shader->setFloat("light.constant", light.constant);
+        shader->setFloat("light.linear", light.linear);
+        shader->setFloat("light.quadratic", light.quadratic);
+        shader->setVec3("light.position", light.position);
+        shader->setVec3("light.ambient", light.ambient);
+        shader->setVec3("light.diffuse", light.diffuse);
+        shader->setVec3("light.specular", light.specular);
+        shader->setVec3("cameraPosition", camera.cameraPos);
+
+
+
+        glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -268,7 +276,7 @@ int main() {
         
         glBindVertexArray(VAO);
         
-        
+        glUniform1i(glGetUniformLocation(shader->ID, "isLight"), 0);
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[0]));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -277,6 +285,7 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         //model swiatla
+        glUniform1i(glGetUniformLocation(shader->ID, "isLight"), 1);
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[2]));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
