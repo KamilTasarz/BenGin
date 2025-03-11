@@ -112,7 +112,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
-    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL Window", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version", NULL, NULL);
     if (!window) {
         std::cerr << "Failed to create window\n";
         glfwTerminate();
@@ -271,10 +271,10 @@ int main() {
             light.position.z -= speed * deltaTime;
         }
         if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-            light.position.y -= speed * deltaTime;
+            light.position.y += speed * deltaTime;
         }
         if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-            light.position.y += speed * deltaTime;
+            light.position.y -= speed * deltaTime;
         }
         matrices[num] = glm::translate(glm::mat4(1), light.position);
         //light.position = glm::vec3(matrices[num] * glm::vec4(0, 0, 0, 1.f));
@@ -334,13 +334,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 void mouseCallback(GLFWwindow* window, double posX, double posY) {
-    
-    /*if (lastX <= xCursorMargin) {
-        glfwSetCursorPos(window, WINDOW_WIDTH - 30.0f, posY);
-    }
-    if (lastX >= WINDOW_WIDTH - xCursorMargin) {
-        glfwSetCursorPos(window, 30.0f, posY);
-    }*/
 
     float x = static_cast<float>(posX);
     float y = static_cast<float>(posY);
