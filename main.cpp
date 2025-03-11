@@ -94,6 +94,10 @@ GLfloat lastFrame = 0.0f;
 
 Camera camera(0.f, 0.f, -3.f);
 
+// Cursor teleport to the other side of the screen
+float xCursorMargin = 20.0f;
+float yCursorMargin = 13.0f;
+
 // -- MAIN --
 
 int main() {
@@ -122,6 +126,7 @@ int main() {
 
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, mouseCallback);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -254,6 +259,9 @@ int main() {
 
         camera.ProcessKeyboard(deltaTime, direction);
 		
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, true);
+
         glm::mat4 view = camera.GetView();
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, false, glm::value_ptr(view));
 
@@ -304,6 +312,14 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 void mouseCallback(GLFWwindow* window, double posX, double posY) {
+    
+    /*if (lastX <= xCursorMargin) {
+        glfwSetCursorPos(window, WINDOW_WIDTH - 30.0f, posY);
+    }
+    if (lastX >= WINDOW_WIDTH - xCursorMargin) {
+        glfwSetCursorPos(window, 30.0f, posY);
+    }*/
+
     float x = static_cast<float>(posX);
     float y = static_cast<float>(posY);
 
