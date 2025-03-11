@@ -96,8 +96,8 @@ GLfloat lastFrame = 0.0f;
 Camera camera(0.f, 0.f, -3.f);
 
 // Cursor teleport to the other side of the screen
-float xCursorMargin = 20.0f;
-float yCursorMargin = 13.0f;
+float xCursorMargin = 30.0f;
+float yCursorMargin = 30.0f;
 
 // -- MAIN --
 
@@ -362,23 +362,23 @@ void changeMouse(GLFWwindow* window) {
     int windowWidth, windowHeight;
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-    if (mouseX <= 30) {
-        glfwSetCursorPos(window, windowWidth - 31, mouseY);
-        lastX = windowWidth - 31;
+    if (mouseX <= xCursorMargin) {
+        glfwSetCursorPos(window, windowWidth - xCursorMargin - 1, mouseY);
+        lastX = windowWidth - xCursorMargin - 1;
     }
-    else if (mouseX >= windowWidth - 30) {
-        glfwSetCursorPos(window, 31, mouseY);
-        lastX = 31;
+    else if (mouseX >= windowWidth - xCursorMargin) {
+        glfwSetCursorPos(window, xCursorMargin + 1, mouseY);
+        lastX = xCursorMargin + 1;
     }
 
-    if (mouseY <= 30) {
-        glfwSetCursorPos(window, mouseX, windowHeight - 31);
-        lastY = windowHeight - 31;
+    if (mouseY <= yCursorMargin) {
+        glfwSetCursorPos(window, mouseX, windowHeight - yCursorMargin - 1);
+        lastY = windowHeight - yCursorMargin - 1;
 
     }
-    else if (mouseY >= windowHeight - 30) {
-        glfwSetCursorPos(window, mouseX, 31);
-        lastY = 31;
+    else if (mouseY >= windowHeight - yCursorMargin) {
+        glfwSetCursorPos(window, mouseX, yCursorMargin + 1);
+        lastY = yCursorMargin + 1;
     }
 }
 
