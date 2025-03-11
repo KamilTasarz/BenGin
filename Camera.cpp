@@ -5,9 +5,8 @@ glm::mat4 Camera::GetView()
 	return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 }
 
-void Camera::checkInput(GLfloat deltaTime, int dir, float speed)
-{
-	GLfloat cameraSpeed = speed * deltaTime;
+void Camera::ProcessKeyboard(GLfloat deltaTime, int dir) {
+	GLfloat cameraSpeed = MovementSpeed * deltaTime;
     if (1 & dir)
         cameraPos += cameraSpeed * cameraFront;
     if (2 & dir)
@@ -22,10 +21,9 @@ void Camera::checkInput(GLfloat deltaTime, int dir, float speed)
         cameraPos -= cameraUp * cameraSpeed;
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset)
-{
-    Yaw += xoffset * 0.1;
-    Pitch += yoffset * 0.1;
+void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
+    Yaw += xoffset * MouseSensitivity;
+    Pitch += yoffset * MouseSensitivity;
 
     if (Pitch > 89.0f)
         Pitch = 89.0f;
@@ -33,6 +31,19 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset)
         Pitch = -89.0f;
 
     updateCameraVectors();
+}
+
+void Camera::setPosition(glm::vec3 position) {
+    cameraPos = position;
+    updateCameraVectors();
+}
+
+void Camera::setMovementSpeed(float speed) {
+    MovementSpeed = speed;
+}
+
+void Camera::setMouseSensitivity(float sensitivity) {
+    MouseSensitivity = sensitivity;
 }
 
 

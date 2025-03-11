@@ -248,7 +248,7 @@ int main() {
             
         }
 
-        camera->checkInput(deltaTime, direction, 20.f);
+        camera->ProcessKeyboard(deltaTime, direction, 20.f);
         
         glm::mat4 view = camera->GetView();
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, false, glm::value_ptr(view));
