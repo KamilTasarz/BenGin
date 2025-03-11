@@ -7,6 +7,7 @@
 #define WINDOW_HEIGHT 1080
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouseCallback(GLFWwindow* window, double posX, double posY);
 bool init();
 
 struct PointLight {
@@ -83,8 +84,15 @@ float normals[] = {
 const char* vertexPath = "res/basic.vert";
 const char* fragmentPath = "res/basic.frag";
 
+bool firstMouseMovement = true;
+
+float lastX = (float)WINDOW_WIDTH / 2.0;
+float lastY = (float)WINDOW_HEIGHT / 2.0;
+
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
+
+Camera camera(0.f, 0.f, -3.f);
 
 // -- MAIN --
 
@@ -126,7 +134,6 @@ int main() {
     };
 
     Shader *shader = new Shader(vertexPath, fragmentPath);
-    Camera* camera = new Camera(0.f, 0.f, -3.f);
     
     unsigned int VAO, VBO;
     glGenBuffers(1, &VBO);
@@ -214,9 +221,10 @@ int main() {
             
         }
 
-        camera->ProcessKeyboard(deltaTime, direction, 20.f);
+        camera.ProcessKeyboard(deltaTime, direction);
+
         
-        glm::mat4 view = camera->GetView();
+        glm::mat4 view = camera.GetView();
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, false, glm::value_ptr(view));
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -232,7 +240,6 @@ int main() {
     }
 
     delete shader;
-    delete camera;
     delete[] matrices;
     glfwTerminate();
     return 0;
@@ -240,6 +247,26 @@ int main() {
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+}
+
+void mouseCallback(GLFWwindow* window, double posX, double posY) {
+    float x = static_cast<float>(posX);
+    float y = static_cast<float>(posY);
+
+    if (firstMouseMovement) {
+        lastX = x;
+        lastY = y;
+        firstMouseMovement = false;
+    }
+
+    float offsetX = x - lastX;
+    float offsetY = lastY - y; // reversed
+
+    lastX = x;
+    lastY = y;
+
+    camera.ProcessMouseMovement(offsetX, offsetY);
+    
 }
 
 bool init() {
