@@ -33,7 +33,7 @@ void main() {
         float spec = pow(max(dot(Normal, halfwayDir), 0.0), 64);
 
         float distance = distance(light.position, Pos);
-        float attenuation = 1.0f;// / (light.quadratic * distance * distance + light.linear * distance + light.constant);
+        float attenuation = 1.0f / (light.quadratic * distance * distance + light.linear * distance + light.constant);
 
         vec3 ambient = light.ambient * vec3(texture(myTexture, Cords));
         vec3 diffuse = light.diffuse * diff * vec3(texture(myTexture, Cords));

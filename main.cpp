@@ -8,6 +8,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double posX, double posY);
+void changeMouse(GLFWwindow* window);
 bool init();
 
 struct PointLight {
@@ -131,7 +132,7 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     PointLight light = {
-        glm::vec3(0.0f, 2.0f, -3.0f), // position
+        glm::vec3(0.0f, 2.0f, 0.0f), // position
         glm::vec3(0.1f, 0.1f, 0.1f), // ambient
         glm::vec3(0.7f, 0.7f, 0.7f), // diffuse
         glm::vec3(0.7f, 0.7f, 0.7f), // specular
@@ -152,8 +153,8 @@ int main() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     int width, height, nrChannels;
@@ -199,10 +200,8 @@ int main() {
         model = glm::translate(model, glm::vec3(4 * i, 0.f, 0.f));
         matrices[i] = model;
     }
-
     matrices[num] = glm::translate(glm::mat4(1), light.position);
-    light.position = glm::vec3(matrices[num] * glm::vec4(0, 0, 0, 1));
-    
+    //light.position = glm::vec3(matrices[num] * glm::vec4(0, 0, 0, 1.f));
     //unsigned int buffer;
 
     //glGenBuffers(1, &buffer);
@@ -239,6 +238,8 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         
+        changeMouse(window);
+
         int direction = 0;
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
             direction += 1;
@@ -254,8 +255,23 @@ int main() {
         }
         if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
             direction += 32;
-            
+           
         }
+        float speed = 20.f;
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+            light.position.x -= speed * deltaTime;
+        }
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+            light.position.x += speed * deltaTime;
+        }
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+            light.position.z += speed * deltaTime;
+        }
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+            light.position.z -= speed * deltaTime;
+        }
+        matrices[num] = glm::translate(glm::mat4(1), light.position);
+        //light.position = glm::vec3(matrices[num] * glm::vec4(0, 0, 0, 1.f));
 
         camera.ProcessKeyboard(deltaTime, direction);
 		
@@ -337,6 +353,33 @@ void mouseCallback(GLFWwindow* window, double posX, double posY) {
 
     camera.ProcessMouseMovement(offsetX, offsetY);
     
+}
+
+void changeMouse(GLFWwindow* window) {
+    double mouseX, mouseY;
+    glfwGetCursorPos(window, &mouseX, &mouseY);
+
+    int windowWidth, windowHeight;
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+    if (mouseX <= 30) {
+        glfwSetCursorPos(window, windowWidth - 31, mouseY);
+        lastX = windowWidth - 31;
+    }
+    else if (mouseX >= windowWidth - 30) {
+        glfwSetCursorPos(window, 31, mouseY);
+        lastX = 31;
+    }
+
+    if (mouseY <= 30) {
+        glfwSetCursorPos(window, mouseX, windowHeight - 31);
+        lastY = windowHeight - 31;
+
+    }
+    else if (mouseY >= windowHeight - 30) {
+        glfwSetCursorPos(window, mouseX, 31);
+        lastY = 31;
+    }
 }
 
 bool init() {
