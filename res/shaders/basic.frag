@@ -22,9 +22,6 @@ void main() {
 
 	if (isLight != 1) {
     
-	
-	    
-
 	    vec3 lightDir = normalize(light.position - Pos);
         vec3 viewDir = normalize(cameraPosition - Pos);
         float diff = max(dot(Normal, lightDir), 0.0);
@@ -39,6 +36,7 @@ void main() {
         vec3 diffuse = light.diffuse * diff * vec3(texture(myTexture, Cords));
         vec3 specular = light.specular * spec * vec3(texture(myTexture, Cords));
         FragColor = vec4((ambient + diffuse + specular) * attenuation, 1.f);
+
     } else {
         FragColor = vec4(1.f);
     }

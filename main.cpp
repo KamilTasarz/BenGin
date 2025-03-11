@@ -270,6 +270,12 @@ int main() {
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
             light.position.z -= speed * deltaTime;
         }
+        if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+            light.position.y -= speed * deltaTime;
+        }
+        if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+            light.position.y += speed * deltaTime;
+        }
         matrices[num] = glm::translate(glm::mat4(1), light.position);
         //light.position = glm::vec3(matrices[num] * glm::vec4(0, 0, 0, 1.f));
 
