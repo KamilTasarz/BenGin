@@ -50,7 +50,8 @@ public:
 
     float Yaw, Pitch;
 
-    float MovementSpeed = 15.0f; // Only temporary value, will be flexible later
+
+    float MovementSpeed = 20.0f; // Only temporary value, will be flexible later
     float MouseSensitivity = 0.1f; // Only temporary value, will be flexible later
 
     Camera(float x = 0.f, float y = 0.f, float z = 0.f) {
