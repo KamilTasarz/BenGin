@@ -7,8 +7,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     std::ifstream vShaderFile;
     std::ifstream fShaderFile;
 
-    try
-    {
+    try {
+
         // otwieranie plików z podanych ścieżek
         vShaderFile.open(vertexPath);
         fShaderFile.open(fragmentPath);
@@ -22,9 +22,9 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
         // zmiana strumieni na string
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
+
     }
-    catch (std::ifstream::failure e)
-    {
+    catch (std::ifstream::failure e) {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
     }
 
@@ -42,8 +42,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     glCompileShader(vertex);
     // wypisanie błędów kompilacji
     glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     };
@@ -83,4 +82,20 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 void Shader::use()
 {
     glUseProgram(ID);
+}
+
+void Shader::setFloat(const std::string& name, float value) const {
+    glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+}
+
+void Shader::setVec4(const std::string& name, const glm::vec4& value) const {
+    glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
+}
+
+void Shader::setVec4(const std::string& name, float x, float y, float z, float w) const {
+    glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w);
+}
+
+void Shader::setMat4(const std::string& name, const glm::mat4& mat) const {
+    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
