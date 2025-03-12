@@ -26,6 +26,8 @@ struct PointLight {
 
 };
 
+
+
 float vertices[] = {
 
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
@@ -160,9 +162,11 @@ int main() {
     int width, height, nrChannels;
     unsigned char* data = stbi_load("res/textures/stone.jpg", &width, &height, &nrChannels, 0);
 
-    unsigned int texture1, texture2;
+    unsigned int texture1, texture2, texture3_diff, texture3_spec;
     glGenTextures(1, &texture1);
     glGenTextures(1, &texture2);
+    glGenTextures(1, &texture3_diff);
+    glGenTextures(1, &texture3_spec);
 
     glBindTexture(GL_TEXTURE_2D, texture1);
 
@@ -185,12 +189,34 @@ int main() {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
+    data = stbi_load("res/textures/box_diffuse.png", &width, &height, &nrChannels, 0);
+
+    glBindTexture(GL_TEXTURE_2D, texture3_diff);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    data = stbi_load("res/textures/box_specular.png", &width, &height, &nrChannels, 0);
+
+    glBindTexture(GL_TEXTURE_2D, texture3_spec);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
     stbi_image_free(data);
 
 
     shader->use();
 
-    int num = 2;
+    int num = 3;
     int lightNum = 1;
     glm::mat4 *matrices = new glm::mat4[num + lightNum];
     int* textureIDs = new int[num];
@@ -301,11 +327,16 @@ int main() {
         glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glActiveTexture(GL_TEXTURE0);
+        
         glBindTexture(GL_TEXTURE_2D, texture1);
         
         
         glBindVertexArray(VAO);
-        
+        glUniform1f(glGetUniformLocation(shader->ID, "material.shininess"), 64.f);
+        glUniform1i(glGetUniformLocation(shader->ID, "material.diffuse_map"), 0);
+        glUniform1i(glGetUniformLocation(shader->ID, "material.specular_map"), 0);
+
         glUniform1i(glGetUniformLocation(shader->ID, "isLight"), 0);
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[0]));
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -314,9 +345,17 @@ int main() {
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[1]));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
+        glBindTexture(GL_TEXTURE_2D, texture3_diff);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture3_spec);
+        glUniform1i(glGetUniformLocation(shader->ID, "material.specular_map"), 1);
+        glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[2]));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
         //model swiatla
         glUniform1i(glGetUniformLocation(shader->ID, "isLight"), 1);
-        glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[2]));
+        glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[num]));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
