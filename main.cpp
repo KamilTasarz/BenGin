@@ -101,6 +101,8 @@ Camera camera(0.f, 0.f, -3.f);
 float xCursorMargin = 30.0f;
 float yCursorMargin = 30.0f;
 
+const aiScene* dragon = aiImportFile("res/models/dragonModel.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
+
 // -- MAIN --
 
 int main() {
@@ -258,6 +260,8 @@ int main() {
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, false, glm::value_ptr(projection));
 
+    std::cout << sizeof(dragon->mMeshes) / sizeof(dragon->mMeshes[0]) << std::endl;
+
     while (!glfwWindowShouldClose(window)) {
         
         GLfloat currentFrame = glfwGetTime();
@@ -283,7 +287,7 @@ int main() {
             direction += 32;
            
         }
-        float speed = 20.f;
+        float speed = 6.f;
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
             light.position.x -= speed * deltaTime;
         }
