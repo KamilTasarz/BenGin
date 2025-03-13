@@ -1,7 +1,8 @@
 ﻿#include "config.h"
-
+#include "SimpleObject.h"
 #include "Shader.h"
 #include "Camera.h"
+
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
@@ -9,6 +10,9 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double posX, double posY);
 void changeMouse(GLFWwindow* window);
+void transformAABB(const glm::mat4& model, glm::vec3& minLocal, glm::vec3& maxLocal);
+int findObjectToMark(GLFWwindow* window);
+bool rayIntersectsAABB(glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3 minAABB, glm::vec3 maxAABB, float& t);
 bool init();
 
 struct PointLight {
@@ -25,6 +29,23 @@ struct PointLight {
     float constant;
 
 };
+
+//struct simpleObject {
+//    glm::mat4 model;
+//    glm::vec3 pos;
+//    int numberOfTextures;
+//    unsigned int* textures;
+//
+//    simpleObject(int _numberOfTextures) {
+//        numberOfTextures = _numberOfTextures;
+//        textures = new unsigned int[numberOfTextures];
+//
+//    }
+//    ~simpleObject() {
+//
+//        delete[] textures;
+//    }
+//};
 
 
 
@@ -88,6 +109,14 @@ float planeVertices[] = {
 const char* vertexPath = "res/shaders/basic.vert";
 const char* fragmentPath = "res/shaders/basic.frag";
 const char* fragmentPath_outline = "res/shaders/outline.frag";
+
+glm::mat4* matrices;
+glm::vec3* minPoints;
+glm::vec3* maxPoints;
+glm::mat4 view;
+glm::mat4 projection;
+
+
 
 bool firstMouseMovement = true;
 
@@ -245,17 +274,20 @@ int main() {
     stbi_image_free(data);
 
 
-
+    
 
     int num = 4;
     int lightNum = 1;
-    glm::mat4 *matrices = new glm::mat4[num + lightNum];
-    int* textureIDs = new int[num];
+    matrices = new glm::mat4[num + lightNum];
+    minPoints = new glm::vec3[num];
+    maxPoints = new glm::vec3[num];
+   
 
     glm::mat4 model = glm::mat4(1.f);
-    model = glm::translate(model, glm::vec3(4.f, 0.f, 0.f));
+    model = glm::translate(model, glm::vec3(4.f, -0.0001f, 0.f));
     model = glm::scale(model, glm::vec3(15, 1, 15));
     matrices[0] = model;
+    
 
     for (int i = 0; i < num; i++) {
         model = glm::mat4(1.f);
@@ -266,6 +298,12 @@ int main() {
     
     matrices[num] = glm::translate(glm::mat4(1.f), light.position);
     matrices[num] = glm::scale(matrices[num], glm::vec3(scaleFactor));
+
+    for (int i = 0; i < num; i++) {
+        minPoints[i] = glm::vec3(-0.5f);
+        maxPoints[i] = glm::vec3(0.5f);
+        transformAABB(matrices[i], minPoints[i], maxPoints[i]);
+    }
     
     //light.position = glm::vec3(matrices[num] * glm::vec4(0, 0, 0, 1.f));
     //unsigned int buffer;
@@ -296,7 +334,7 @@ int main() {
     //glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(model));
 
     
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+    projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.5f, 100.0f);
     shader_outline->use();
     glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "projection"), 1, false, glm::value_ptr(projection));
 
@@ -365,7 +403,7 @@ int main() {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
 
-        glm::mat4 view = camera.GetView();
+        view = camera.GetView();
 
         // unforms for ouline
 
@@ -394,19 +432,22 @@ int main() {
         shader->setVec3("light.specular", light.specular);
         shader->setVec3("cameraPosition", camera.cameraPos);
 
+        int index = findObjectToMark(window);
+        
         glClearColor(.01f, .01f, .01f, 1.0f);
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         // == stencil buffer ==
 
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-        glStencilFunc(GL_ALWAYS, 1, 0xFF); 
-        glStencilMask(0xFF);
+        glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0x00);
 
         // == standard drawing ==
 
         shader->use();
+
 
         glActiveTexture(GL_TEXTURE0);
 
@@ -421,72 +462,66 @@ int main() {
 
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[0]));
         glDrawArrays(GL_TRIANGLES, 0, 6);
-
+        
         glBindVertexArray(VAO);
         glBindTexture(GL_TEXTURE_2D, woodTexture);
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[1]));
+        if (index == 1) glStencilMask(0xFF);
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glStencilMask(0x00);
 
         glBindTexture(GL_TEXTURE_2D, stoneTexture);
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[2]));
+        if (index == 2) glStencilMask(0xFF);
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glStencilMask(0x00);
 
         glBindTexture(GL_TEXTURE_2D, boxTexture_diff);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, boxTexture_spec);
         glUniform1i(glGetUniformLocation(shader->ID, "material.specular_map"), 1);
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[3]));
+        if (index == 3) glStencilMask(0xFF);
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        // == stencil buffer ==
+        glStencilMask(0x00);
+        glStencilMask(0x00);
+        //model swiatla
+        glUniform1i(glGetUniformLocation(shader->ID, "isLight"), 1);
+        glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[num]));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glStencilMask(0xFF);
+        
+
+        
 
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glStencilMask(0x00); 
         glDisable(GL_DEPTH_TEST);
 
-        // == drawing ouline ==
-        shader_outline->use();
+        
 
-        glActiveTexture(GL_TEXTURE0);
+        if (index != -1) {
+            // == drawing ouline ==
+            shader_outline->use();
 
-        glBindVertexArray(VAO_plane);
-        glBindTexture(GL_TEXTURE_2D, grassTexture);
+            glBindVertexArray(VAO);
+            glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[index], glm::vec3(1.05f))));
+            glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glUniform1f(glGetUniformLocation(shader_outline->ID, "material.shininess"), 64.f);
-        glUniform1i(glGetUniformLocation(shader_outline->ID, "material.diffuse_map"), 0);
-        glUniform1i(glGetUniformLocation(shader_outline->ID, "material.specular_map"), 0);
-        glUniform1i(glGetUniformLocation(shader_outline->ID, "isLight"), 0);
-
-
-        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[0], glm::vec3(1.05f))));
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        glBindVertexArray(VAO);
-        glBindTexture(GL_TEXTURE_2D, woodTexture);
-        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[1], glm::vec3(1.05f))));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindTexture(GL_TEXTURE_2D, stoneTexture);
-        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[2], glm::vec3(1.05f))));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindTexture(GL_TEXTURE_2D, boxTexture_diff);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, boxTexture_spec);
-        glUniform1i(glGetUniformLocation(shader_outline->ID, "material.specular_map"), 1);
-        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[3], glm::vec3(1.05f))));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+            // == end drawing outline ==
+        }
 
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glEnable(GL_DEPTH_TEST);
 
-        // == end drawing outline ==
 
-        //model swiatla
-        glUniform1i(glGetUniformLocation(shader_outline->ID, "isLight"), 1);
-        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(matrices[num]));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -555,5 +590,79 @@ bool init() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    return true;
+}
+
+int findObjectToMark(GLFWwindow* window) {
+    double mouseX, mouseY;
+    glfwGetCursorPos(window, &mouseX, &mouseY);
+
+    glm::vec2 normalizedMouse;
+    normalizedMouse.x = (2.0f * mouseX) / WINDOW_WIDTH - 1.0f;
+    normalizedMouse.y = 1.0f - (2.0f * mouseY) / WINDOW_HEIGHT;
+
+    glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, -1.0f, 1.0f);
+    glm::vec4 rayEye = glm::inverse(projection) * rayClip;
+    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+    glm::vec4 rayWorld = glm::normalize(glm::inverse(view) * rayEye);
+
+    int closestIndex = -1;
+    float minT = FLT_MAX;
+
+    for (int i = 1; i < 4; i++) {
+        float t;
+        if (rayIntersectsAABB(camera.cameraPos, rayWorld, minPoints[i], maxPoints[i], t)) {
+            
+            if (t < minT) {
+                closestIndex = i;
+                minT = t;
+            }
+        }
+    }
+    return closestIndex;
+}
+
+void transformAABB(const glm::mat4& model, glm::vec3& minLocal, glm::vec3& maxLocal) {
+    glm::vec3 corners[8] = {
+        {minLocal.x, minLocal.y, minLocal.z},
+        {minLocal.x, minLocal.y, maxLocal.z},
+        {minLocal.x, maxLocal.y, minLocal.z},
+        {minLocal.x, maxLocal.y, maxLocal.z},
+        {maxLocal.x, minLocal.y, minLocal.z},
+        {maxLocal.x, minLocal.y, maxLocal.z},
+        {maxLocal.x, maxLocal.y, minLocal.z},
+        {maxLocal.x, maxLocal.y, maxLocal.z}
+    };
+
+    minLocal = glm::vec3(FLT_MAX);
+    maxLocal = glm::vec3(-FLT_MAX);
+
+    for (int i = 0; i < 8; i++) {
+        glm::vec4 transformed = model * glm::vec4(corners[i], 1.0f);
+        glm::vec3 worldPos = glm::vec3(transformed);
+
+        minLocal = glm::min(minLocal, worldPos);
+        maxLocal = glm::max(maxLocal, worldPos);
+    }
+}
+
+bool rayIntersectsAABB(glm::vec3 rayOrigin, glm::vec3 rayDir,
+    glm::vec3 minAABB, glm::vec3 maxAABB, float& t) {
+
+    //ze wzoru p(t) = p0 + dir * t
+
+    glm::vec3 invDir = 1.0f / rayDir;
+    glm::vec3 t1 = (minAABB - rayOrigin) * invDir;
+    glm::vec3 t2 = (maxAABB - rayOrigin) * invDir;
+
+    glm::vec3 tMin = glm::min(t1, t2);
+    glm::vec3 tMax = glm::max(t1, t2);
+
+    float tNear = glm::max(glm::max(tMin.x, tMin.y), tMin.z);
+    float tFar = glm::min(glm::min(tMax.x, tMax.y), tMax.z);
+
+    if (tNear > tFar || tFar < 0) return false;
+
+    t = tNear;
     return true;
 }
