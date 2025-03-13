@@ -28,7 +28,7 @@ struct PointLight {
 
 
 
-float vertices[] = {
+float boxVertices[] = {
 
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
          0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
@@ -74,18 +74,20 @@ float vertices[] = {
 
 };
 
-float normals[] = {
-    0.f, 0.f, 1.f, //front
-    1.f, 0.f, 0.f, //prawa
-    0.f, 1.f, 0.f, //gora
-    -1.f, 0.f, 0.f, //lewa
-    0.f, -1.f, 0.f, //dol
-    0.f, 0.f, -1.f //tyl
-
+float planeVertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 0.0f
 };
+
+
     
 const char* vertexPath = "res/shaders/basic.vert";
 const char* fragmentPath = "res/shaders/basic.frag";
+const char* fragmentPath_outline = "res/shaders/outline.frag";
 
 bool firstMouseMovement = true;
 
@@ -144,15 +146,30 @@ int main() {
     };
 
     Shader *shader = new Shader(vertexPath, fragmentPath);
+    Shader *shader_outline = new Shader(vertexPath, fragmentPath_outline);
     
-    unsigned int VAO, VBO;
+    unsigned int VAO, VAO_plane, VBO, VBO_plane;
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &VBO_plane);
     glGenVertexArrays(1, &VAO);
+    glGenVertexArrays(1, &VAO_plane);
 
     glBindVertexArray(VAO);
     
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(VAO_plane);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_plane);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -164,13 +181,14 @@ int main() {
     int width, height, nrChannels;
     unsigned char* data = stbi_load("res/textures/stone.jpg", &width, &height, &nrChannels, 0);
 
-    unsigned int texture1, texture2, texture3_diff, texture3_spec;
-    glGenTextures(1, &texture1);
-    glGenTextures(1, &texture2);
-    glGenTextures(1, &texture3_diff);
-    glGenTextures(1, &texture3_spec);
+    unsigned int woodTexture, stoneTexture, boxTexture_diff, boxTexture_spec, grassTexture;
+    glGenTextures(1, &woodTexture);
+    glGenTextures(1, &stoneTexture);
+    glGenTextures(1, &boxTexture_diff);
+    glGenTextures(1, &boxTexture_spec);
+    glGenTextures(1, &grassTexture);
 
-    glBindTexture(GL_TEXTURE_2D, texture1);
+    glBindTexture(GL_TEXTURE_2D, woodTexture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -182,7 +200,7 @@ int main() {
 
     data = stbi_load("res/textures/wood.jpg", &width, &height, &nrChannels, 0);
 
-    glBindTexture(GL_TEXTURE_2D, texture2);
+    glBindTexture(GL_TEXTURE_2D, stoneTexture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -193,42 +211,62 @@ int main() {
 
     data = stbi_load("res/textures/box_diffuse.png", &width, &height, &nrChannels, 0);
 
-    glBindTexture(GL_TEXTURE_2D, texture3_diff);
+    glBindTexture(GL_TEXTURE_2D, boxTexture_diff);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     data = stbi_load("res/textures/box_specular.png", &width, &height, &nrChannels, 0);
 
-    glBindTexture(GL_TEXTURE_2D, texture3_spec);
+    glBindTexture(GL_TEXTURE_2D, boxTexture_spec);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    data = stbi_load("res/textures/grass.jpg", &width, &height, &nrChannels, 0);
+
+    glBindTexture(GL_TEXTURE_2D, grassTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(data);
 
 
-    shader->use();
 
-    int num = 3;
+
+    int num = 4;
     int lightNum = 1;
     glm::mat4 *matrices = new glm::mat4[num + lightNum];
     int* textureIDs = new int[num];
 
+    glm::mat4 model = glm::mat4(1.f);
+    model = glm::translate(model, glm::vec3(4.f, 0.f, 0.f));
+    model = glm::scale(model, glm::vec3(15, 1, 15));
+    matrices[0] = model;
+
     for (int i = 0; i < num; i++) {
-        glm::mat4 model = glm::mat4(1.f);
+        model = glm::mat4(1.f);
         model = glm::translate(model, glm::vec3(4 * i, 0.f, 0.f));
-        matrices[i] = model;
+        matrices[i + 1] = model;
     }
-    matrices[num] = glm::translate(glm::mat4(1), light.position);
+    float scaleFactor = 0.2f;
+    
+    matrices[num] = glm::translate(glm::mat4(1.f), light.position);
+    matrices[num] = glm::scale(matrices[num], glm::vec3(scaleFactor));
+    
     //light.position = glm::vec3(matrices[num] * glm::vec4(0, 0, 0, 1.f));
     //unsigned int buffer;
 
@@ -257,13 +295,22 @@ int main() {
     
     //glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(model));
 
+    
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+    shader_outline->use();
+    glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "projection"), 1, false, glm::value_ptr(projection));
+
+    shader->use();
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, false, glm::value_ptr(projection));
 
     std::cout << sizeof(dragon->mMeshes) / sizeof(dragon->mMeshes[0]) << std::endl;
 
     while (!glfwWindowShouldClose(window)) {
         
+
+        glEnable(GL_STENCIL_TEST);
+        glEnable(GL_DEPTH_TEST);
+
         GLfloat currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -306,7 +353,11 @@ int main() {
         if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
             light.position.y -= speed * deltaTime;
         }
-        matrices[num] = glm::translate(glm::mat4(1), light.position);
+
+        matrices[num] = glm::translate(glm::mat4(1.f), light.position);
+        matrices[num] = glm::scale(matrices[num], glm::vec3(scaleFactor));
+        //matrices[num] = glm::scale(glm::mat4(1), glm::vec3(scaleFactor));
+        //matrices[num] = glm::translate(matrices[num], light.position);
         //light.position = glm::vec3(matrices[num] * glm::vec4(0, 0, 0, 1.f));
 
         camera.ProcessKeyboard(deltaTime, direction);
@@ -315,7 +366,24 @@ int main() {
             glfwSetWindowShouldClose(window, true);
 
         glm::mat4 view = camera.GetView();
+
+        // unforms for ouline
+
+        shader_outline->use();
+        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "view"), 1, false, glm::value_ptr(view));
+
+        shader_outline->setFloat("light.constant", light.constant);
+        shader_outline->setFloat("light.linear", light.linear);
+        shader_outline->setFloat("light.quadratic", light.quadratic);
+        shader_outline->setVec3("light.position", light.position);
+        shader_outline->setVec3("light.ambient", light.ambient);
+        shader_outline->setVec3("light.diffuse", light.diffuse);
+        shader_outline->setVec3("light.specular", light.specular);
+        shader_outline->setVec3("cameraPosition", camera.cameraPos);
+
+        shader->use();
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, false, glm::value_ptr(view));
+        
 
         shader->setFloat("light.constant", light.constant);
         shader->setFloat("light.linear", light.linear);
@@ -326,47 +394,105 @@ int main() {
         shader->setVec3("light.specular", light.specular);
         shader->setVec3("cameraPosition", camera.cameraPos);
 
-
-
-        glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
+        glClearColor(.01f, .01f, .01f, 1.0f);
         
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        // == stencil buffer ==
+
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF); 
+        glStencilMask(0xFF);
+
+        // == standard drawing ==
+
+        shader->use();
+
         glActiveTexture(GL_TEXTURE0);
-        
-        glBindTexture(GL_TEXTURE_2D, texture1);
-        
-        
-        glBindVertexArray(VAO);
+
+        glBindVertexArray(VAO_plane);
+        glBindTexture(GL_TEXTURE_2D, grassTexture);
+
         glUniform1f(glGetUniformLocation(shader->ID, "material.shininess"), 64.f);
         glUniform1i(glGetUniformLocation(shader->ID, "material.diffuse_map"), 0);
         glUniform1i(glGetUniformLocation(shader->ID, "material.specular_map"), 0);
-
         glUniform1i(glGetUniformLocation(shader->ID, "isLight"), 0);
-        glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[0]));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glBindTexture(GL_TEXTURE_2D, texture2);
+
+        glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[0]));
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glBindVertexArray(VAO);
+        glBindTexture(GL_TEXTURE_2D, woodTexture);
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[1]));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glBindTexture(GL_TEXTURE_2D, texture3_diff);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture3_spec);
-        glUniform1i(glGetUniformLocation(shader->ID, "material.specular_map"), 1);
+        glBindTexture(GL_TEXTURE_2D, stoneTexture);
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[2]));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
+        glBindTexture(GL_TEXTURE_2D, boxTexture_diff);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, boxTexture_spec);
+        glUniform1i(glGetUniformLocation(shader->ID, "material.specular_map"), 1);
+        glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[3]));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        // == stencil buffer ==
+
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00); 
+        glDisable(GL_DEPTH_TEST);
+
+        // == drawing ouline ==
+        shader_outline->use();
+
+        glActiveTexture(GL_TEXTURE0);
+
+        glBindVertexArray(VAO_plane);
+        glBindTexture(GL_TEXTURE_2D, grassTexture);
+
+        glUniform1f(glGetUniformLocation(shader_outline->ID, "material.shininess"), 64.f);
+        glUniform1i(glGetUniformLocation(shader_outline->ID, "material.diffuse_map"), 0);
+        glUniform1i(glGetUniformLocation(shader_outline->ID, "material.specular_map"), 0);
+        glUniform1i(glGetUniformLocation(shader_outline->ID, "isLight"), 0);
+
+
+        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[0], glm::vec3(1.05f))));
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glBindVertexArray(VAO);
+        glBindTexture(GL_TEXTURE_2D, woodTexture);
+        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[1], glm::vec3(1.05f))));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, stoneTexture);
+        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[2], glm::vec3(1.05f))));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, boxTexture_diff);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, boxTexture_spec);
+        glUniform1i(glGetUniformLocation(shader_outline->ID, "material.specular_map"), 1);
+        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[3], glm::vec3(1.05f))));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glEnable(GL_DEPTH_TEST);
+
+        // == end drawing outline ==
 
         //model swiatla
-        glUniform1i(glGetUniformLocation(shader->ID, "isLight"), 1);
-        glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[num]));
+        glUniform1i(glGetUniformLocation(shader_outline->ID, "isLight"), 1);
+        glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(matrices[num]));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    delete shader;
+    delete shader, shader_outline;
     delete[] matrices;
     glfwTerminate();
     return 0;
