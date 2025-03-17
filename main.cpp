@@ -161,7 +161,7 @@ int main() {
     rootNode.transform.setLocalPosition({0.0f, 0.0f, 0.0f});
     rootNode.transform.setLocalScale({1.0f, 1.0f, 1.0f});
 
-    Model Tmodel("res/models/dragon/dragon.fbx");
+    Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
 
     Node* Tsoldier = new Node(Tmodel, "t");
     rootNode.addChild(Tsoldier);
