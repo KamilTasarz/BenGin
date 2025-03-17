@@ -1,7 +1,19 @@
-﻿#include "config.h"
+﻿/*
+* 
+*  KAMIL PILNUJ TEGO
+* 
+snake_case - zmienne
+camelCase - metody
+PascalCase - klasy/struktury
+
+*/
+
+#include "config.h"
 
 #include "Shader.h"
 #include "Camera.h"
+#include "src/Basic/Model.h"
+#include "src/Basic/Node.h"
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
@@ -97,13 +109,14 @@ float lastY = (float)WINDOW_HEIGHT / 2.0;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
+Node rootNode("rootNode");
 Camera camera(0.f, 0.f, -3.f);
 
 // Cursor teleport to the other side of the screen
 float xCursorMargin = 30.0f;
 float yCursorMargin = 30.0f;
 
-const aiScene* dragon = aiImportFile("res/models/dragonModel.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
+//const aiScene* dragon = aiImportFile("res/models/dragon1/Dragon_2.5_For_Animations.obj", aiProcessPreset_TargetRealtime_MaxQuality);
 
 // -- MAIN --
 
@@ -144,6 +157,16 @@ int main() {
         glm::vec3(0.7f, 0.7f, 0.7f), // specular
         0.016f, 0.004f, 1.0f // quadratic, linear, constant
     };
+
+    rootNode.transform.setLocalPosition({0.0f, 0.0f, 0.0f});
+    rootNode.transform.setLocalScale({1.0f, 1.0f, 1.0f});
+
+    Model Tmodel("res/models/dragon/dragon.fbx");
+
+    Node* Tsoldier = new Node(Tmodel, "t");
+    rootNode.addChild(Tsoldier);
+    Tsoldier->transform.setLocalPosition({0.0f, 0.0f, 10.0f});
+    Tsoldier->transform.setLocalScale({ 1.0f, 1.0f, 1.0f });
 
     Shader *shader = new Shader(vertexPath, fragmentPath);
     Shader *shader_outline = new Shader(vertexPath, fragmentPath_outline);
@@ -303,7 +326,7 @@ int main() {
     shader->use();
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, false, glm::value_ptr(projection));
 
-    std::cout << sizeof(dragon->mMeshes) / sizeof(dragon->mMeshes[0]) << std::endl;
+    //std::cout << sizeof(dragon->mMeshes) / sizeof(dragon->mMeshes[0]) << std::endl;
 
     while (!glfwWindowShouldClose(window)) {
         
@@ -398,6 +421,8 @@ int main() {
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+        rootNode.updateSelfAndChild(false);
+
         // == stencil buffer ==
 
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -438,6 +463,24 @@ int main() {
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[3]));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
+        ///
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, Tmodel.textures_loaded[0].id);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, Tmodel.textures_loaded[1].id);
+        shader->setMat4("model", Tsoldier->transform.getModelMatrix());
+
+        // Render enemy
+        for (unsigned int i = 0; i < Tmodel.meshes.size(); i++) {
+            unsigned int VAO = Tmodel.meshes[i].VAO;
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(Tmodel.meshes[i].indices.size()), GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
+        }
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
         // == stencil buffer ==
 
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
@@ -476,6 +519,26 @@ int main() {
         glUniform1i(glGetUniformLocation(shader_outline->ID, "material.specular_map"), 1);
         glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[3], glm::vec3(1.05f))));
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        ///
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, Tmodel.textures_loaded[0].id);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, Tmodel.textures_loaded[1].id);
+        shader_outline->setMat4("model", glm::scale(Tsoldier->transform.getModelMatrix(), glm::vec3(1.05f)));
+
+        // Render enemy
+        for (unsigned int i = 0; i < Tmodel.meshes.size(); i++) {
+            unsigned int VAO = Tmodel.meshes[i].VAO;
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(Tmodel.meshes[i].indices.size()), GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
+        }
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        ///
 
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
