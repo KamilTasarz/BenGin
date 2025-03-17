@@ -514,14 +514,9 @@ int main() {
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-
-        
         glStencilMask(0x00);
-        //model swiatla
-        glUniform1i(glGetUniformLocation(shader->ID, "isLight"), 1);
-        glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[num]));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glStencilMask(0xFF);
+        
+
         
 
         ///
@@ -539,6 +534,16 @@ int main() {
             glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(Tmodel.meshes[i].indices.size()), GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
         }
+
+        glStencilMask(0x00);
+        //model swiatla
+        glUniform1i(glGetUniformLocation(shader->ID, "isLight"), 1);
+        glBindVertexArray(VAO);
+        glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[num]));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+        glStencilMask(0xFF);
+
 
         glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -559,28 +564,13 @@ int main() {
             glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "model"), 1, false, glm::value_ptr(glm::scale(matrices[index], glm::vec3(1.05f))));
             glDrawArrays(GL_TRIANGLES, 0, 36);
 
+
             // == end drawing outline ==
+
+
         }
 
-        ///
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, Tmodel.textures_loaded[0].id);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, Tmodel.textures_loaded[1].id);
-        shader_outline->setMat4("model", glm::scale(Tsoldier->transform.getModelMatrix(), glm::vec3(1.05f)));
-
-        // Render enemy
-        for (unsigned int i = 0; i < Tmodel.meshes.size(); i++) {
-            unsigned int VAO = Tmodel.meshes[i].VAO;
-            glBindVertexArray(VAO);
-            glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(Tmodel.meshes[i].indices.size()), GL_UNSIGNED_INT, 0);
-            glBindVertexArray(0);
-        }
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        ///
+        
 
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
