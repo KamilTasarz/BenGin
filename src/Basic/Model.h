@@ -24,6 +24,7 @@
 using namespace std;
 
 unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
+unsigned int TextureFromFile(const char* full_path, bool gamma = false);
 
 class Model
 {
@@ -184,6 +185,100 @@ private:
         return textures;
     }
 
+    void loadCube(const char** texture_names, short texture_number) {
+    
+        float boxVertices[] = {
+
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f
+
+        };
+
+
+        // data to fill
+        vector<Vertex> vertices;
+        vector<Texture> textures;
+
+        // walk through each of the mesh's vertices
+        for (unsigned int i = 0; i < 36; i++)
+        {
+            Vertex vertex;
+            glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+            // positions
+            vector.x = boxVertices[i * 8];
+            vector.y = boxVertices[i * 8 + 1];
+            vector.z = boxVertices[i * 8 + 2];
+            vertex.Position = vector;
+            // normals
+            
+            vector.x = boxVertices[i * 8 + 3];
+            vector.y = boxVertices[i * 8 + 4];
+            vector.z = boxVertices[i * 8 + 5];
+            vertex.Normal = vector;
+            
+            
+            glm::vec2 vec;
+            vec.x = boxVertices[i * 8 + 6];
+            vec.y = boxVertices[i * 8 + 7];
+            vertex.TexCoords = vec;
+                
+            
+
+            vertices.push_back(vertex);
+        }
+        
+        for (short i = 0; i < texture_number; i++) {
+            Texture texture;
+            texture.id = TextureFromFile(texture_names[i]);
+            texture.path = string(texture_names[i]);
+            const string specular_name = "spec";
+            if (texture.path.find(specular_name, 0) != string::npos) texture.type = "texture_specular";
+            else texture.type = "texture_diffuse";
+            textures.push_back(texture);
+        }
+        
+        meshes.push_back(Mesh(vertices, textures));
+    }
+
 public:
     // model data 
     vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
@@ -197,6 +292,10 @@ public:
         loadModel(path);
     }
 
+    Model(const char** texture_names, short texture_number) {
+        loadCube(texture_names, texture_number);
+    }
+
     // draws the model, and thus all its meshes
     void Draw(Shader& shader)
     {
@@ -206,11 +305,9 @@ public:
 
 };
 
+unsigned int TextureFromFile(const char* full_path, bool gamma) {
 
-unsigned int TextureFromFile(const char* path, const string& directory, bool gamma)
-{
-    string filename = string(path);
-    filename = directory + '/' + filename;
+    string filename = string(full_path);
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
@@ -240,10 +337,18 @@ unsigned int TextureFromFile(const char* path, const string& directory, bool gam
     }
     else
     {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
+        std::cout << "Texture failed to load at path: " << full_path << std::endl;
         stbi_image_free(data);
     }
 
     return textureID;
+}
+
+unsigned int TextureFromFile(const char* path, const string& directory, bool gamma)
+{
+    string filename = string(path);
+    filename = directory + '/' + filename;
+
+    return TextureFromFile(filename.c_str(), gamma);
 }
 #endif

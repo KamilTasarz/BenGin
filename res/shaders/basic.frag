@@ -20,7 +20,9 @@ struct Material {
 };
 
 uniform PointLight light;
-uniform Material material;
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_specular1;
+uniform float shininess;
 uniform vec3 cameraPosition;
 uniform int isLight;
 
@@ -33,14 +35,14 @@ void main() {
         float diff = max(dot(Normal, lightDir), 0.0);
 
         vec3 halfwayDir = normalize(lightDir + viewDir);
-        float spec = pow(max(dot(Normal, halfwayDir), 0.0), material.shininess);
+        float spec = pow(max(dot(Normal, halfwayDir), 0.0), shininess);
 
         float distance = distance(light.position, Pos);
         float attenuation = 1.0f / (light.quadratic * distance * distance + light.linear * distance + light.constant);
 
-        vec3 ambient = light.ambient * vec3(texture(material.diffuse_map, Cords));
-        vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse_map, Cords));
-        vec3 specular = light.specular * spec * vec3(texture(material.specular_map, Cords));
+        vec3 ambient = light.ambient * vec3(texture(texture_diffuse1, Cords));
+        vec3 diffuse = light.diffuse * diff * vec3(texture(texture_diffuse1, Cords));
+        vec3 specular = light.specular * spec * vec3(texture(texture_specular1, Cords));
         FragColor = vec4((ambient + diffuse + specular) * attenuation, 1.f);
 
     } else {

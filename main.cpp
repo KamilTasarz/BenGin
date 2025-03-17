@@ -42,24 +42,6 @@ struct PointLight {
 
 };
 
-//struct simpleObject {
-//    glm::mat4 model;
-//    glm::vec3 pos;
-//    int numberOfTextures;
-//    unsigned int* textures;
-//
-//    simpleObject(int _numberOfTextures) {
-//        numberOfTextures = _numberOfTextures;
-//        textures = new unsigned int[numberOfTextures];
-//
-//    }
-//    ~simpleObject() {
-//
-//        delete[] textures;
-//    }
-//};
-
-
 
 float boxVertices[] = {
 
@@ -190,11 +172,19 @@ int main() {
     rootNode.transform.setLocalPosition({0.0f, 0.0f, 0.0f});
     rootNode.transform.setLocalScale({1.0f, 1.0f, 1.0f});
 
-    Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
+    //Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
+
+    const char* a = "res/textures/box_specular.png", *b = "res/textures/box_diffuse.png";
+
+    const char* texture_names[] = {a, b};
+    Model Tmodel(texture_names, 2);
+    
 
     Node* Tsoldier = new Node(Tmodel, "t");
+    //Node* box1 = new Node(Tmodel, "box1");
     rootNode.addChild(Tsoldier);
-    Tsoldier->transform.setLocalPosition({0.0f, 0.0f, 10.0f});
+    //rootNode.addChild(box1);
+    Tsoldier->transform.setLocalPosition({0.0f, 1.0f, 0.0f});
     Tsoldier->transform.setLocalScale({ 1.0f, 1.0f, 1.0f });
 
     Shader *shader = new Shader(vertexPath, fragmentPath);
@@ -479,9 +469,9 @@ int main() {
         glBindVertexArray(VAO_plane);
         glBindTexture(GL_TEXTURE_2D, grassTexture);
 
-        glUniform1f(glGetUniformLocation(shader->ID, "material.shininess"), 64.f);
-        glUniform1i(glGetUniformLocation(shader->ID, "material.diffuse_map"), 0);
-        glUniform1i(glGetUniformLocation(shader->ID, "material.specular_map"), 0);
+        glUniform1f(glGetUniformLocation(shader->ID, "shininess"), 64.f);
+        glUniform1i(glGetUniformLocation(shader->ID, "texture_diffuse1"), 0);
+        glUniform1i(glGetUniformLocation(shader->ID, "texture_specular1"), 0);
         glUniform1i(glGetUniformLocation(shader->ID, "isLight"), 0);
 
 
@@ -508,11 +498,14 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, boxTexture_diff);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, boxTexture_spec);
-        glUniform1i(glGetUniformLocation(shader->ID, "material.specular_map"), 1);
+        glUniform1i(glGetUniformLocation(shader->ID, "texture_specular1"), 1);
         glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, false, glm::value_ptr(matrices[3]));
         if (index == 3) glStencilMask(0xFF);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        unsigned int dis, tot;
+        rootNode.drawSelfAndChild(*shader, dis, tot);
 
         glStencilMask(0x00);
         
@@ -521,10 +514,10 @@ int main() {
 
         ///
 
-        glActiveTexture(GL_TEXTURE0);
+        /*glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Tmodel.textures_loaded[0].id);
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, Tmodel.textures_loaded[1].id);
+        glBindTexture(GL_TEXTURE_2D, Tmodel.textures_loaded[1].id);*/
         shader->setMat4("model", Tsoldier->transform.getModelMatrix());
 
         // Render enemy

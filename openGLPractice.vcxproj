@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="dependencies\stb_image\stb_image.cpp" />
     <ClCompile Include="glad.c" />
@@ -149,17 +150,15 @@
     <ClCompile Include="SimpleObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
     <ClInclude Include="Shader.h" />
-
     <ClInclude Include="SimpleObject.h" />
-
     <ClInclude Include="src\Basic\Mesh.h" />
     <ClInclude Include="src\Basic\Model.h" />
     <ClInclude Include="src\Basic\Node.h" />
-
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
