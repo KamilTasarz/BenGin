@@ -24,11 +24,11 @@ uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 uniform float shininess;
 uniform vec3 cameraPosition;
-uniform int isLight;
+uniform int is_light;
 
 void main() {
 
-	if (isLight != 1) {
+	if (is_light != 1) {
     
 	    vec3 lightDir = normalize(light.position - Pos);
         vec3 viewDir = normalize(cameraPosition - Pos);
