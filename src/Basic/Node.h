@@ -13,6 +13,7 @@
 #include <memory>
 
 #include <../Camera.h>
+#include <../BoundingBox.h>
 #include <../src/Basic/Model.h>
 
 class Transform {
@@ -165,19 +166,38 @@ public:
     // Pointer to a parent object
     Node* parent = nullptr;
 
+    // Children size
+    int size = 0;
+
+    // Root has ptr on marked object
+    Node* marked_object;
+    bool is_marked = false;
+
+    // No textures parameter
+    bool no_textures;
+
+    //Hitbox
+    BoundingBox *AABB;
+
     // ----------- CONSTRUCTORS -----------
 
     // No model
-    Node(std::string nameOfNode, int _id = 0) {
+    Node(std::string nameOfNode, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) {
         pModel = nullptr;
         name = nameOfNode;
         id = _id;
+        AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+        marked_object = nullptr;
+        no_textures = true;
     }
 
     // Model
-    Node(Model& model, std::string nameOfNode, int _id = 0) : pModel{ &model } {
+    Node(Model& model, std::string nameOfNode, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
         name = nameOfNode;
         id = _id;
+        AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+        marked_object = nullptr;
+        this->no_textures = no_textures;
     }
 
     // DESTRUCTOR
@@ -186,6 +206,7 @@ public:
         for (auto& child : children) {
             delete child;
         }
+        delete AABB;
     }
 
     // Change color
@@ -198,6 +219,12 @@ public:
     void addChild(Node* p) {
         children.emplace_back(p);
         children.back()->parent = this; // Set this as the created child's parent
+        increaseCount();
+    }
+
+    void increaseCount() {
+        if (parent != nullptr) parent->increaseCount();
+        else size++;
     }
 
     // Get child by its name
@@ -216,14 +243,40 @@ public:
         return nullptr;
     }
 
+    void unmark() {
+        marked_object->is_marked = false;
+        marked_object = nullptr; //marked object returns as nullptr after draw
+    }
+
+    void mark(glm::vec4 rayWorld, Node* &marked_object, float& marked_depth, glm::vec3& cameraPos) {
+        
+        for (auto&& child : children) {
+            float t;
+            
+            if (child->AABB->isRayIntersects(rayWorld, cameraPos, t)) {
+               
+                if (t < marked_depth) {
+                    marked_object = child;
+                    marked_depth = t;
+                }
+            }
+
+            child->mark(rayWorld, marked_object, marked_depth, cameraPos);
+        }
+        if (marked_object != nullptr) {
+            marked_object->is_marked = true;
+        }
+    }
+
     // Forcing an update of self and children even if there were no changes
     void forceUpdateSelfAndChild() {
         if (parent) {
-            transform.computeModelMatrix(parent->transform.getModelMatrix());
+            transform.computeModelMatrix(parent->transform.getModelMatrix());        
         }
         else {
             transform.computeModelMatrix();
         }
+        AABB->transformAABB(transform.getModelMatrix());
     }
 
     // This will update if there were changes only (checks the dirty flag)
@@ -250,7 +303,17 @@ public:
         if (pModel) {
             //_shader.setVec4("dynamicColor", color);
             _shader.setMat4("model", transform.getModelMatrix());
+            if (is_marked) {
+                glStencilMask(0xFF);
+            }
+            if (no_textures) {
+                _shader.setInt("is_light", 1);
+            }
             pModel->Draw(_shader);
+            glStencilMask(0x00);
+            
+            _shader.setInt("is_light", 0);
+            
             display++;
         }
 
@@ -262,6 +325,14 @@ public:
 
         //_shader.setVec4("dynamicColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
+    }
+
+    void drawMarkedObject(Shader& _shader_outline) {
+        if (marked_object != nullptr) {
+            _shader_outline.setMat4("model", glm::scale(marked_object->transform.getModelMatrix(), glm::vec3(1.05f)));
+            marked_object->pModel->Draw(_shader_outline);
+            unmark();
+        }
     }
 
 };
