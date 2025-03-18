@@ -170,7 +170,7 @@ public:
     int size = 0;
 
     // Root has ptr on marked object
-    Node* marked_object;
+    Node* marked_object, *new_marked_object;
     bool is_marked = false;
 
     // No textures parameter
@@ -188,6 +188,7 @@ public:
         id = _id;
         AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
         marked_object = nullptr;
+        new_marked_object = nullptr;
         no_textures = true;
     }
 
@@ -197,6 +198,7 @@ public:
         id = _id;
         AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
         marked_object = nullptr;
+        new_marked_object = nullptr;
         this->no_textures = no_textures;
     }
 
@@ -250,12 +252,15 @@ public:
 
     void mark(glm::vec4 rayWorld, Node* &marked_object, float& marked_depth, glm::vec3& cameraPos) {
         
+
+
         for (auto&& child : children) {
             float t;
             
             if (child->AABB->isRayIntersects(rayWorld, cameraPos, t)) {
                
                 if (t < marked_depth) {
+                    
                     marked_object = child;
                     marked_depth = t;
                 }
@@ -263,9 +268,9 @@ public:
 
             child->mark(rayWorld, marked_object, marked_depth, cameraPos);
         }
-        if (marked_object != nullptr) {
-            marked_object->is_marked = true;
-        }
+        /*if (marked_object != nullptr) {
+            marked_object->is_marked = false;
+        }*/
     }
 
     // Forcing an update of self and children even if there were no changes
@@ -329,9 +334,24 @@ public:
 
     void drawMarkedObject(Shader& _shader_outline) {
         if (marked_object != nullptr) {
-            _shader_outline.setMat4("model", glm::scale(marked_object->transform.getModelMatrix(), glm::vec3(1.05f)));
+
+            glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+            glStencilMask(0x00);
+            glDisable(GL_DEPTH_TEST);
+            glm::vec3 scale_matrix = marked_object->transform.getLocalScale();
+            scale_matrix += glm::vec3(0.05f);
+            Transform transform = marked_object->transform;
+            transform.setLocalScale(scale_matrix);
+            transform.computeModelMatrix();
+            _shader_outline.setMat4("model", transform.getModelMatrix());
+            //if (marked_object->is_marked) {
             marked_object->pModel->Draw(_shader_outline);
-            unmark();
+            //}
+            
+            //unmark();
+            glStencilMask(0xFF);
+            glStencilFunc(GL_ALWAYS, 1, 0xFF);
+            glEnable(GL_DEPTH_TEST);
         }
     }
 

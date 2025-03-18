@@ -2,6 +2,7 @@
 
 bool BoundingBox::isRayIntersects(glm::vec3 direction, glm::vec3 origin, float& t) const
 {
+    // p(t) = p0 + v * t  -->  t = (p(t) - p0) / v
     glm::vec3 dividor = 1.0f / direction;
     glm::vec3 parameters_max = (max_point_world - origin) * dividor;
     glm::vec3 parameters_min = (min_point_world - origin) * dividor;
