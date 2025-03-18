@@ -109,9 +109,9 @@ int main() {
 
     // -- CULLING -- //
 
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
-    //glFrontFace(GL_CCW);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 
     glEnable(GL_MULTISAMPLE);
 
@@ -126,7 +126,7 @@ int main() {
     rootNode.transform.setLocalPosition({0.0f, 0.0f, 0.0f});
     rootNode.transform.setLocalScale({1.0f, 1.0f, 1.0f});
 
-    //Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
+    Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
 
     const char *box_spec = "res/textures/box_specular.png", *box_diff = "res/textures/box_diffuse.png",
     *stone_name = "res/textures/stone.jpg", *wood_name = "res/textures/wood.jpg", *grass_name = "res/textures/grass.jpg";
