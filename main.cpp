@@ -160,6 +160,8 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    
     GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version", NULL, NULL);
     if (!window) {
         std::cerr << "Failed to create window\n";
@@ -178,6 +180,14 @@ int main() {
     glfwSetCursorPosCallback(window, mouseCallback);
 
     glEnable(GL_DEPTH_TEST);
+
+    // -- CULLING -- //
+
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
+    //glFrontFace(GL_CCW);
+
+    glEnable(GL_MULTISAMPLE);
 
     PointLight light = {
         glm::vec3(0.0f, 2.0f, 0.0f), // position
