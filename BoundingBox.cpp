@@ -19,6 +19,13 @@ bool BoundingBox::isRayIntersects(glm::vec3 direction, glm::vec3 origin, float& 
     return true;
 }
 
+bool BoundingBox::isBoundingBoxIntersects(const BoundingBox& other_bounding_box) const
+{
+    return other_bounding_box.min_point_world.x < max_point_world.x && other_bounding_box.max_point_world.x > min_point_world.x &&
+         other_bounding_box.min_point_world.y < max_point_world.y && other_bounding_box.max_point_world.y > min_point_world.y &&
+         other_bounding_box.min_point_world.z < max_point_world.z && other_bounding_box.max_point_world.z > min_point_world.z;
+}
+
 void BoundingBox::transformAABB(const glm::mat4& model) {
     glm::vec3 corners[8] = {
         {min_point_local.x, min_point_local.y, min_point_local.z},
@@ -42,3 +49,5 @@ void BoundingBox::transformAABB(const glm::mat4& model) {
         max_point_world = glm::max(max_point_world, worldPos);
     }
 }
+
+

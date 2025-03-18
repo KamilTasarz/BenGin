@@ -22,10 +22,7 @@ PascalCase - klasy/struktury
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double posX, double posY);
 void changeMouse(GLFWwindow* window);
-void transformAABB(const glm::mat4& model, glm::vec3& minLocal, glm::vec3& maxLocal);
 glm::vec4 getRayWorld(GLFWwindow* window);
-bool rayIntersectsAABB(glm::vec3 rayOrigin, glm::vec3 rayDir, glm::vec3 minAABB, glm::vec3 maxAABB, float& t);
-bool init();
 
 struct PointLight {
 
@@ -53,6 +50,8 @@ glm::vec3* maxPoints;
 glm::mat4 view;
 glm::mat4 projection;
 
+std::vector<BoundingBox*> colliders;
+
 bool is_camera = true, is_camera_prev = false;
 bool mouse_pressed = false;
 
@@ -64,7 +63,7 @@ float lastY = (float)WINDOW_HEIGHT / 2.0;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
-Node rootNode("rootNode");
+Node rootNode("rootNode", colliders);
 Camera camera(0.f, 0.f, -3.f);
 
 // Cursor teleport to the other side of the screen
@@ -126,7 +125,7 @@ int main() {
     rootNode.transform.setLocalPosition({0.0f, 0.0f, 0.0f});
     rootNode.transform.setLocalScale({1.0f, 1.0f, 1.0f});
 
-    //Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
+    Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
 
     const char *box_spec = "res/textures/box_specular.png", *box_diff = "res/textures/box_diffuse.png",
     *stone_name = "res/textures/stone.jpg", *wood_name = "res/textures/wood.jpg", *grass_name = "res/textures/grass.jpg";
@@ -145,18 +144,22 @@ int main() {
     *texture_names = { grass_name };
     Model Tmodel_plane(texture_names, 1, "plane");
     
-
-    Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1");
-    Node* box_wood = new Node(Tmodel_box_wood, "box2");
-    Node* box_stone = new Node(Tmodel_box_stone, "box3");
+    Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, false, 0, glm::vec3( - 2.f, -3.f, -2.f ), glm::vec3(2.f, 3.f, 2.f));
+    Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1", colliders);
+    Node* box_wood = new Node(Tmodel_box_wood, "box2", colliders);
+    Node* box_stone = new Node(Tmodel_box_stone, "box3", colliders);
     Node* box_light = new Node(Tmodel_light, "light", true);
-    Node* plane = new Node(Tmodel_plane, "plane1", false, 0, glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, -0.5f, 0.5f));
+    Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, -0.5f, 0.5f));
 
     rootNode.addChild(box_diff_spec);
     rootNode.addChild(box_wood);
     rootNode.addChild(box_stone);
     rootNode.addChild(box_light);
+    rootNode.addChild(kutasiarz);
     rootNode.addChild(plane);
+
+    kutasiarz->transform.setLocalPosition({ 3.f, 1.f, 3.f });
+    kutasiarz->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
     box_diff_spec->transform.setLocalPosition({0.0f, 0.0f, 0.0f});
     box_diff_spec->transform.setLocalScale({ 1.0f, 1.0f, 1.0f });
@@ -245,6 +248,12 @@ int main() {
         }
 
         box_light->transform.setLocalPosition(light.position);
+
+        for (auto&& collider : colliders) {
+            if (box_light->AABB->isBoundingBoxIntersects(*collider)) {
+                cout << "Kolizja" << endl;
+            }
+        }
 
         if (is_camera) {
             camera.ProcessKeyboard(deltaTime, direction);
