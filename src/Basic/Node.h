@@ -170,7 +170,7 @@ public:
     int size = 0;
 
     // Root has ptr on marked object
-    Node* marked_object, *new_marked_object;
+    Node *marked_object, *new_marked_object;
     bool is_marked = false;
 
     // No textures parameter
@@ -182,7 +182,7 @@ public:
     // ----------- CONSTRUCTORS -----------
 
     // No model
-    Node(std::string nameOfNode, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) {
+    Node(std::string nameOfNode, std::vector<BoundingBox*> &vector_of_colliders, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) {
         pModel = nullptr;
         name = nameOfNode;
         id = _id;
@@ -190,9 +190,20 @@ public:
         marked_object = nullptr;
         new_marked_object = nullptr;
         no_textures = true;
+        vector_of_colliders.push_back(AABB);
     }
 
     // Model
+    Node(Model& model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
+        name = nameOfNode;
+        id = _id;
+        AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+        marked_object = nullptr;
+        new_marked_object = nullptr;
+        this->no_textures = no_textures;
+        vector_of_colliders.push_back(AABB);
+    }
+
     Node(Model& model, std::string nameOfNode, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
         name = nameOfNode;
         id = _id;
@@ -339,7 +350,7 @@ public:
             glStencilMask(0x00);
             glDisable(GL_DEPTH_TEST);
             glm::vec3 scale_matrix = marked_object->transform.getLocalScale();
-            scale_matrix += glm::vec3(0.05f);
+            scale_matrix += glm::vec3(0.01f);
             Transform transform = marked_object->transform;
             transform.setLocalScale(scale_matrix);
             transform.computeModelMatrix();
