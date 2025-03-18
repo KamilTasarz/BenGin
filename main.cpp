@@ -54,6 +54,7 @@ glm::mat4 view;
 glm::mat4 projection;
 
 bool is_camera = true, is_camera_prev = false;
+bool mouse_pressed = false;
 
 bool firstMouseMovement = true;
 
@@ -254,6 +255,13 @@ int main() {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
 
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
+            mouse_pressed = true;
+        } else {
+            mouse_pressed = false;
+        }
+
+
         view = camera.GetView();
 
         // unforms for ouline
@@ -284,7 +292,17 @@ int main() {
 
         rootNode.updateSelfAndChild(false);
         float t = FLT_MAX;
-        rootNode.mark(getRayWorld(window), rootNode.marked_object, t, camera.cameraPos);
+        rootNode.new_marked_object = nullptr;
+        rootNode.mark(getRayWorld(window), rootNode.new_marked_object, t, camera.cameraPos);
+
+        if (mouse_pressed) {
+            if (rootNode.marked_object != nullptr) rootNode.marked_object->is_marked = false;
+
+            rootNode.marked_object = rootNode.new_marked_object;
+
+            if (rootNode.marked_object != nullptr) rootNode.marked_object->is_marked = true;
+        }
+
         // == stencil buffer ==
 
         glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
@@ -296,20 +314,10 @@ int main() {
         unsigned int dis, tot;
         rootNode.drawSelfAndChild(*shader, dis, tot);
 
-        // == stencil buffer ==
-
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilMask(0x00); 
-        glDisable(GL_DEPTH_TEST);
+        // == outline ==
 
         shader_outline->use();
         rootNode.drawMarkedObject(*shader_outline);
-
-        glStencilMask(0xFF);
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glEnable(GL_DEPTH_TEST);
-
-
 
         glfwSwapBuffers(window);
         glfwPollEvents();
