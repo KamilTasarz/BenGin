@@ -72,10 +72,41 @@ float yCursorMargin = 30.0f;
 
 //const aiScene* dragon = aiImportFile("res/models/dragon1/Dragon_2.5_For_Animations.obj", aiProcessPreset_TargetRealtime_MaxQuality);
 
+void checkFMODResult(FMOD_RESULT result) {
+    if (result != FMOD_OK) {
+        std::cerr << "FMOD error! Code: " << result << std::endl;
+        exit(-1);  // Zakończ program w przypadku błędu
+    }
+}
+
 // -- MAIN --
 
 int main() {
     
+    FMOD::System* system;
+    FMOD_RESULT TWOJA_STARUCHA;
+
+    // Tworzenie systemu FMOD
+    TWOJA_STARUCHA = FMOD::System_Create(&system);
+    checkFMODResult(TWOJA_STARUCHA);
+
+    // Inicjalizacja systemu
+    TWOJA_STARUCHA = system->init(512, FMOD_INIT_NORMAL, nullptr);
+    checkFMODResult(TWOJA_STARUCHA);
+
+    // Pobranie wersji FMOD
+    unsigned int version;
+    TWOJA_STARUCHA = system->getVersion(&version);
+    checkFMODResult(TWOJA_STARUCHA);
+
+    std::cout << "FMOD działa! Wersja: "
+        << (version >> 16) << "."
+        << ((version >> 8) & 0xFF) << "."
+        << (version & 0xFF) << std::endl;
+
+    // Zwolnienie zasobów
+    system->release();
+
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
         return -1;
@@ -87,7 +118,7 @@ int main() {
     
     glfwWindowHint(GLFW_SAMPLES, 4);
     
-    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.01", NULL, NULL);
     if (!window) {
         std::cerr << "Failed to create window\n";
         glfwTerminate();
@@ -126,7 +157,8 @@ int main() {
     rootNode.transform.setLocalScale({1.0f, 1.0f, 1.0f});
 
     Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
-
+    Model Kmodel("res/models/kutasiarz/The_Thing.obj");
+        
     const char *box_spec = "res/textures/box_specular.png", *box_diff = "res/textures/box_diffuse.png",
     *stone_name = "res/textures/stone.jpg", *wood_name = "res/textures/wood.jpg", *grass_name = "res/textures/grass.jpg";
 
@@ -145,6 +177,7 @@ int main() {
     Model Tmodel_plane(texture_names, 1, "plane");
     
     Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, false, 0, glm::vec3( - 2.f, -3.f, -2.f ), glm::vec3(2.f, 3.f, 2.f));
+    Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1", colliders);
     Node* box_wood = new Node(Tmodel_box_wood, "box2", colliders);
     Node* box_stone = new Node(Tmodel_box_stone, "box3", colliders);
@@ -156,10 +189,14 @@ int main() {
     rootNode.addChild(box_stone);
     rootNode.addChild(box_light);
     rootNode.addChild(kutasiarz);
+    rootNode.addChild(cos);
     rootNode.addChild(plane);
 
     kutasiarz->transform.setLocalPosition({ 3.f, 1.f, 3.f });
     kutasiarz->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
+
+    cos->transform.setLocalPosition({-5.0, 0.0f, -5.0f});
+    cos->transform.setLocalScale({2.0, 2.0f, 2.0f});
 
     box_diff_spec->transform.setLocalPosition({0.0f, 0.0f, 0.0f});
     box_diff_spec->transform.setLocalScale({ 1.0f, 1.0f, 1.0f });
@@ -174,13 +211,10 @@ int main() {
     plane->transform.setLocalPosition({ 4.0f, -0.001f, 0.0f }); // z - fighting
     plane->transform.setLocalScale({ 15.f, 1.0f, 15.f });
 
-
     Shader *shader = new Shader(vertexPath, fragmentPath);
     Shader *shader_outline = new Shader(vertexPath, fragmentPath_outline);
-
     
     projection = glm::perspective(glm::radians(30.f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.5f, 100.0f);
-    
 
     shader_outline->use();
     glUniformMatrix4fv(glGetUniformLocation(shader_outline->ID, "projection"), 1, false, glm::value_ptr(projection));

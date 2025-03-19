@@ -7,4 +7,6 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+#include <fmod/fmod.hpp>
+
 #include <iostream>
