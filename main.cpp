@@ -15,6 +15,7 @@ PascalCase - klasy/struktury
 #include "src/Basic/Model.h"
 #include "src/Basic/Node.h"
 
+#include "src/AudioEngine.h"
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
