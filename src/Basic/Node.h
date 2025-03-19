@@ -176,6 +176,7 @@ public:
     // No textures parameter
     bool no_textures;
 
+
     //Hitbox
     BoundingBox *AABB;
 
@@ -197,7 +198,10 @@ public:
     Node(Model& model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
         name = nameOfNode;
         id = _id;
-        AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+
+        if (model.min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model.min_points, model.max_points);
+        else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+
         marked_object = nullptr;
         new_marked_object = nullptr;
         this->no_textures = no_textures;
@@ -207,7 +211,10 @@ public:
     Node(Model& model, std::string nameOfNode, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
         name = nameOfNode;
         id = _id;
-        AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+
+        if (model.min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model.min_points, model.max_points);
+        else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+
         marked_object = nullptr;
         new_marked_object = nullptr;
         this->no_textures = no_textures;
@@ -314,10 +321,11 @@ public:
     }
 
     // Draw self and children
-    void drawSelfAndChild(Shader& _shader, unsigned int& display, unsigned int& total) {
+    void drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) {
 
         if (pModel) {
             //_shader.setVec4("dynamicColor", color);
+            _shader.use();
             _shader.setMat4("model", transform.getModelMatrix());
             if (is_marked) {
                 glStencilMask(0xFF);
@@ -330,13 +338,20 @@ public:
             
             _shader.setInt("is_light", 0);
             
+            _shader_outline.use();
+
+            glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
+            _shader_outline.setVec3("color", dynamic_color);
+
+            AABB->draw(_shader_outline);
+
             display++;
         }
 
         total++;
 
         for (auto&& child : children) {
-            child->drawSelfAndChild(_shader, display, total);
+            child->drawSelfAndChild(_shader, _shader_outline, display, total);
         }
 
         //_shader.setVec4("dynamicColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -355,15 +370,43 @@ public:
             transform.setLocalScale(scale_matrix);
             transform.computeModelMatrix();
             _shader_outline.setMat4("model", transform.getModelMatrix());
-            //if (marked_object->is_marked) {
+            
+            glm::vec3 dynamic_color = glm::vec3(0.4f, 0.f, 0.f);
+
+            _shader_outline.setVec3("color", dynamic_color);
             marked_object->pModel->Draw(_shader_outline);
-            //}
+
             
             //unmark();
             glStencilMask(0xFF);
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
             glEnable(GL_DEPTH_TEST);
         }
+    }
+
+    void separate(const BoundingBox* other_AABB) {
+        float left = (other_AABB->min_point_world.x - AABB->max_point_world.x);
+        float right = (other_AABB->max_point_world.x - AABB->min_point_world.x);
+        float up = (other_AABB->min_point_world.y - AABB->max_point_world.y);
+        float down = (other_AABB->max_point_world.y - AABB->min_point_world.y);
+        float front = (other_AABB->min_point_world.z - AABB->max_point_world.z);
+        float back = (other_AABB->max_point_world.z - AABB->min_point_world.z);
+        glm::vec3 v = glm::vec3(abs(left) < abs(right) ? left : right, abs(up) < abs(down) ? up : down, abs(front) < abs(back) ? front : back);
+
+        if (abs(v.x) <= abs(v.y) && abs(v.x) <= abs(v.z)) {
+            v.y = 0.f;
+            v.z = 0.f;
+        }
+        else if (abs(v.y) <= abs(v.x) && abs(v.y) <= abs(v.z)) {
+            v.x = 0.f;
+            v.z = 0.f;
+        }
+        else {
+            v.x = 0.f;
+            v.y = 0.f;
+        }
+
+        transform.setLocalPosition(transform.getLocalPosition() + v);
     }
 
 };

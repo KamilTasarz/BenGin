@@ -1,16 +1,13 @@
 #version 460 core
 
-in vec3 Normal;
-in vec3 Pos;
-in vec2 Cords;
-
 out vec4 FragColor;
 
+uniform vec3 color;
 
 void main() {
 
 	
-    FragColor = vec4(0.f, 0.f, 0.8f, 1.f);
+    FragColor = vec4(color, 0.1f);
     
 
 }

@@ -12,9 +12,9 @@ void Camera::ProcessKeyboard(GLfloat deltaTime, int dir) {
     if (2 & dir)
         cameraPos -= cameraSpeed * cameraFront;
     if (4 & dir)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        cameraPos -= cameraRight * cameraSpeed;
     if (8 & dir)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        cameraPos += cameraRight * cameraSpeed;
     if (16 & dir)
         cameraPos += cameraUp * cameraSpeed;
     if (32 & dir)

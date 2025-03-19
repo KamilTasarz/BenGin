@@ -85,6 +85,15 @@ private:
             vector.y = mesh->mVertices[i].y;
             vector.z = mesh->mVertices[i].z;
             vertex.Position = vector;
+
+            min_points.x = min(min_points.x, vector.x);
+            min_points.y = min(min_points.y, vector.y);
+            min_points.z = min(min_points.z, vector.z);
+
+            max_points.x = max(max_points.x, vector.x);
+            max_points.y = max(max_points.y, vector.y);
+            max_points.z = max(max_points.z, vector.z);
+
             // normals
             if (mesh->HasNormals())
             {
@@ -282,12 +291,12 @@ private:
     void loadPlane(const char** texture_names, short texture_number) {
 
         float planeVertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 0.0f
+        -0.5f, 0.0f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
+         0.5f, 0.0f, -0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
+         0.5f, 0.0f,  0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
+         0.5f, 0.0f,  0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
+        -0.5f, 0.0f,  0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+        -0.5f, 0.0f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 0.0f
         };
 
 
@@ -343,6 +352,9 @@ public:
     string directory;
     bool gammaCorrection;
 
+    glm::vec3 min_points = glm::vec3(FLT_MAX);
+    glm::vec3 max_points = glm::vec3(-FLT_MAX);
+
     // constructor, expects a filepath to a 3D model.
     Model(string const& path, bool gamma = false) : gammaCorrection(gamma)
     {
@@ -368,7 +380,7 @@ public:
 
 };
 
-unsigned int TextureFromFile(const char* full_path, bool gamma) {
+inline unsigned int TextureFromFile(const char* full_path, bool gamma) {
 
     string filename = string(full_path);
 
@@ -407,7 +419,7 @@ unsigned int TextureFromFile(const char* full_path, bool gamma) {
     return textureID;
 }
 
-unsigned int TextureFromFile(const char* path, const string& directory, bool gamma)
+inline unsigned int TextureFromFile(const char* path, const string& directory, bool gamma)
 {
     string filename = string(path);
     filename = directory + '/' + filename;
