@@ -77,18 +77,18 @@ Player *player;
 
 //const aiScene* dragon = aiImportFile("res/models/dragon1/Dragon_2.5_For_Animations.obj", aiProcessPreset_TargetRealtime_MaxQuality);
 
-void checkFMODResult(FMOD_RESULT result) {
+/*void checkFMODResult(FMOD_RESULT result) {
     if (result != FMOD_OK) {
         std::cerr << "FMOD error! Code: " << result << std::endl;
         exit(-1);  // Zakończ program w przypadku błędu
     }
-}
+}*/
 
 // -- MAIN --
 
 int main() {
     
-    FMOD::System* system;
+    /*FMOD::System* system;
     FMOD_RESULT TWOJA_STARUCHA;
 
     // Tworzenie systemu FMOD
@@ -110,7 +110,7 @@ int main() {
         << (version & 0xFF) << std::endl;
 
     // Zwolnienie zasobów
-    system->release();
+    system->release();*/
 
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
@@ -182,7 +182,7 @@ int main() {
     *texture_names = { grass_name };
     Model Tmodel_plane(texture_names, 1, "plane");
     
-    Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, false, 0, glm::vec3( - 2.f, -3.f, -2.f ), glm::vec3(2.f, 3.f, 2.f));
+    Node* kutasiarz = new Node(Tmodel, "kutasiarz", false, 0, glm::vec3( - 2.f, -3.f, -2.f ), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 
