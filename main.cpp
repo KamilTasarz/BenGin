@@ -14,6 +14,7 @@ PascalCase - klasy/struktury
 #include "Camera.h"
 #include "src/Basic/Model.h"
 #include "src/Basic/Node.h"
+#include "src/Gameplay/Player.h"
 
 
 #define WINDOW_WIDTH 1920
@@ -23,6 +24,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double posX, double posY);
 void changeMouse(GLFWwindow* window);
 glm::vec4 getRayWorld(GLFWwindow* window);
+
+string print(glm::vec3 v);
 
 struct PointLight {
 
@@ -69,6 +72,8 @@ Camera camera(0.f, 0.f, -3.f);
 // Cursor teleport to the other side of the screen
 float xCursorMargin = 30.0f;
 float yCursorMargin = 30.0f;
+
+Player *player;
 
 //const aiScene* dragon = aiImportFile("res/models/dragon1/Dragon_2.5_For_Animations.obj", aiProcessPreset_TargetRealtime_MaxQuality);
 
@@ -136,6 +141,7 @@ int main() {
     glfwSetCursorPosCallback(window, mouseCallback);
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
 
     // -- CULLING -- //
 
@@ -178,13 +184,19 @@ int main() {
     
     Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, false, 0, glm::vec3( - 2.f, -3.f, -2.f ), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+
     Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1", colliders);
+    Node* box_diff_spec2 = new Node(Tmodel_box_diff_spec, "box1", colliders);
     Node* box_wood = new Node(Tmodel_box_wood, "box2", colliders);
     Node* box_stone = new Node(Tmodel_box_stone, "box3", colliders);
     Node* box_light = new Node(Tmodel_light, "light", true);
-    Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, -0.5f, 0.5f));
+    Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f));
+
+    player = new Player(kutasiarz, 3.f, 3.f, 10.f);
 
     rootNode.addChild(box_diff_spec);
+    rootNode.addChild(box_diff_spec2);
     rootNode.addChild(box_wood);
     rootNode.addChild(box_stone);
     rootNode.addChild(box_light);
@@ -198,18 +210,24 @@ int main() {
     cos->transform.setLocalPosition({-5.0, 0.0f, -5.0f});
     cos->transform.setLocalScale({2.0, 2.0f, 2.0f});
 
-    box_diff_spec->transform.setLocalPosition({0.0f, 0.0f, 0.0f});
-    box_diff_spec->transform.setLocalScale({ 1.0f, 1.0f, 1.0f });
+    box_diff_spec->transform.setLocalPosition({7.5f, 0.0f, 0.0f});
+    box_diff_spec->transform.setLocalScale({ 1.0f, 1.0f, 14.0f });
 
-    box_wood->transform.setLocalPosition({ 4.0f, 0.0f, 0.0f });
 
-    box_stone->transform.setLocalPosition({ 8.0f, 0.0f, 0.0f });
+    box_diff_spec2->transform.setLocalPosition({ 0.0f, 0.0f, -7.5f });
+    box_diff_spec2->transform.setLocalScale({ 16.0f, 1.0f, 1.0f });
+
+    box_wood->transform.setLocalPosition({ -7.5f, 0.0f, 0.0f });
+    box_wood->transform.setLocalScale({ 1.0f, 1.0f, 14.0f });
+
+    box_stone->transform.setLocalPosition({ 0.0f, 0.0f, 7.5f });
+    box_stone->transform.setLocalScale({ 16.0f, 1.0f, 1.0f });
 
     box_light->transform.setLocalPosition( light.position );
     box_light->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
-    plane->transform.setLocalPosition({ 4.0f, -0.001f, 0.0f }); // z - fighting
-    plane->transform.setLocalScale({ 15.f, 1.0f, 15.f });
+    plane->transform.setLocalPosition({ 0.0f, -0.501f, 0.0f }); // z - fighting
+    plane->transform.setLocalScale({ 15.f, 15.0f, 15.f });
 
     Shader *shader = new Shader(vertexPath, fragmentPath);
     Shader *shader_outline = new Shader(vertexPath, fragmentPath_outline);
@@ -261,33 +279,55 @@ int main() {
             direction += 32;
         }
 
+        light.position = box_light->transform.getLocalPosition();
+
+        
+
         float speed = 6.f;
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-            light.position.x -= speed * deltaTime;
+            light.position += camera.cameraRight * speed * deltaTime;
         }
         if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-            light.position.x += speed * deltaTime;
+            light.position -= camera.cameraRight * speed * deltaTime;
         }
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-            light.position.z += speed * deltaTime;
+            light.position += camera.cameraFront * speed * deltaTime;
         }
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-            light.position.z -= speed * deltaTime;
+            light.position -= camera.cameraFront * speed * deltaTime;
         }
         if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-            light.position.y += speed * deltaTime;
+            light.position += camera.cameraUp * speed * deltaTime;
         }
         if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-            light.position.y -= speed * deltaTime;
+            light.position -= camera.cameraUp * speed * deltaTime;
         }
+        //cout << "=======================================" << endl;
+        //cout << "Light position 1 : " << print(box_light->transform.getLocalPosition()) << endl;
 
         box_light->transform.setLocalPosition(light.position);
+        rootNode.updateSelfAndChild(false);
+
+        //cout << "Light position 2 : " << print(box_light->transform.getLocalPosition()) << endl;
+
+        if (!is_camera) {
+            player->update(deltaTime, direction, camera.Yaw);
+        }
 
         for (auto&& collider : colliders) {
-            if (box_light->AABB->isBoundingBoxIntersects(*collider)) {
-                cout << "Kolizja" << endl;
+            
+            if (kutasiarz->AABB->isBoundingBoxIntersects(*collider)) {
+
+                kutasiarz->AABB->collison = true;
+
+                kutasiarz->separate(collider);
+                
             }
         }
+        
+        
+
+        //cout << "Light position 3: " << print(box_light->transform.getLocalPosition()) << endl;
 
         if (is_camera) {
             camera.ProcessKeyboard(deltaTime, direction);
@@ -338,6 +378,10 @@ int main() {
         rootNode.new_marked_object = nullptr;
         rootNode.mark(getRayWorld(window), rootNode.new_marked_object, t, camera.cameraPos);
 
+        //cout << "Light position 4: " << print(box_light->transform.getLocalPosition()) << endl;
+
+        //cout << "=======================================" << endl;
+
         if (mouse_pressed) {
             if (rootNode.marked_object != nullptr) rootNode.marked_object->is_marked = false;
 
@@ -355,7 +399,8 @@ int main() {
         // == standard drawing ==
 
         unsigned int dis, tot;
-        rootNode.drawSelfAndChild(*shader, dis, tot);
+        rootNode.drawSelfAndChild(*shader, *shader_outline, dis, tot);
+
 
         // == outline ==
 
@@ -436,11 +481,15 @@ glm::vec4 getRayWorld(GLFWwindow* window) {
     normalizedMouse.x = (2.0f * mouseX) / WINDOW_WIDTH - 1.0f;
     normalizedMouse.y = 1.0f - (2.0f * mouseY) / WINDOW_HEIGHT;
 
-    glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, 0.0f, 1.0f);
+    glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, -1.0f, 1.0f);
     glm::vec4 rayEye = glm::inverse(projection) * rayClip;
     rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
     glm::vec4 rayWorld = glm::normalize(glm::inverse(view) * rayEye);
 
     
     return rayWorld;
+}
+
+string print(glm::vec3 v) {
+    return std::to_string(v.x) + " " + std::to_string(v.y) + " " + std::to_string(v.z);
 }
