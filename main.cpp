@@ -138,9 +138,9 @@ int main() {
     // Load two music tracks and one sound effect
     audioEngine.LoadSound(track1, true, true, true);
     audioEngine.LoadSound(track2, true, true, true);
-    audioEngine.LoadSound(sound_effect, true, true, true);
+    audioEngine.LoadSound(sound_effect, false, false, true);
 
-    int current_track_id = audioEngine.PlaySounds(track1);
+    int current_track_id = audioEngine.PlaySounds(track1, Vector3{ 0.0f }, -10.0);
     bool paused = false;
 
     // When we want to call PlaySounds and don't care about the channel number
@@ -231,11 +231,11 @@ int main() {
 
         if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
             audioEngine.stopSound(current_track_id);
-            current_track_id = audioEngine.PlaySounds(track1);
+            current_track_id = audioEngine.PlaySounds(track1, Vector3{0.0f}, -10.0);
         }
         if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
             audioEngine.stopSound(current_track_id);
-            current_track_id = audioEngine.PlaySounds(track2);
+            current_track_id = audioEngine.PlaySounds(track2, Vector3{ 0.0f }, -10.0);
         }
 
         // Pausing/resuming
