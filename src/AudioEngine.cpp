@@ -199,6 +199,11 @@ void CAudioEngine::PlayEvent(const string& strEventName)
     tFoundit->second->start();
 }
 
+void CAudioEngine::StopChannel(int nChannelId)
+{
+
+}
+
 void CAudioEngine::StopEvent(const string& strEventName, bool bImmediate)
 {
     // Find event by name
@@ -266,6 +271,48 @@ FMOD_VECTOR CAudioEngine::VectorToFmod(const Vector3& vPosition)
     fVec.y = vPosition.y;
     fVec.z = vPosition.z;
     return fVec;
+}
+
+/*
+//  This should be done when we don't want to play the sound anytime soon as it deletes it from the map.
+//  I believe finding something in a map is faster than deleting it and then adding once more. And so on...
+*/
+
+void CAudioEngine::stopSound(int nChannelId)
+{
+    // Find the channel by id
+    auto tFoundIt = sgpImplementation->mChannels.find(nChannelId);
+    if (tFoundIt == sgpImplementation->mChannels.end()) { return; }
+
+    // Stop the sound immediately
+    CAudioEngine::ErrorCheck(tFoundIt->second->stop());
+
+    // Remove the channel from the map
+    sgpImplementation->mChannels.erase(tFoundIt);
+}
+
+/*
+//  This may be useful for music or longer sounds
+*/
+
+void CAudioEngine::pauseSound(int nChannelId)
+{
+    // Find the channel by id
+    auto tFoundIt = sgpImplementation->mChannels.find(nChannelId);
+    if (tFoundIt == sgpImplementation->mChannels.end()) { return; }
+
+    // Pauses the sound, keeping it in the map
+    CAudioEngine::ErrorCheck(tFoundIt->second->setPaused(true));
+}
+
+void CAudioEngine::resumeSound(int nChannelId)
+{
+    // Find the channel by id
+    auto tFoundIt = sgpImplementation->mChannels.find(nChannelId);
+    if (tFoundIt == sgpImplementation->mChannels.end()) { return; }
+
+    // Unpauses the sound
+    CAudioEngine::ErrorCheck(tFoundIt->second->setPaused(false));
 }
 
 float CAudioEngine::dbToVolume(float dB)

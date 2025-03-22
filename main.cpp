@@ -45,6 +45,12 @@ const char* vertexPath = "res/shaders/basic.vert";
 const char* fragmentPath = "res/shaders/basic.frag";
 const char* fragmentPath_outline = "res/shaders/outline.frag";
 
+// Audio paths
+string track1 = "res/audios/music/kill-v-maim.ogg";
+string track2 = "res/audios/music/burning-bright.ogg";
+
+string sound_effect = "res/audios/sounds/bonk.ogg";
+
 glm::mat4* matrices;
 glm::vec3* minPoints;
 glm::vec3* maxPoints;
@@ -71,42 +77,9 @@ Camera camera(0.f, 0.f, -3.f);
 float xCursorMargin = 30.0f;
 float yCursorMargin = 30.0f;
 
-//const aiScene* dragon = aiImportFile("res/models/dragon1/Dragon_2.5_For_Animations.obj", aiProcessPreset_TargetRealtime_MaxQuality);
-
-void checkFMODResult(FMOD_RESULT result) {
-    if (result != FMOD_OK) {
-        std::cerr << "FMOD error! Code: " << result << std::endl;
-        exit(-1);  // Zakończ program w przypadku błędu
-    }
-}
-
 // -- MAIN --
 
 int main() {
-    
-    FMOD::System* system;
-    FMOD_RESULT TWOJA_STARUCHA;
-
-    // Tworzenie systemu FMOD
-    TWOJA_STARUCHA = FMOD::System_Create(&system);
-    checkFMODResult(TWOJA_STARUCHA);
-
-    // Inicjalizacja systemu
-    TWOJA_STARUCHA = system->init(512, FMOD_INIT_NORMAL, nullptr);
-    checkFMODResult(TWOJA_STARUCHA);
-
-    // Pobranie wersji FMOD
-    unsigned int version;
-    TWOJA_STARUCHA = system->getVersion(&version);
-    checkFMODResult(TWOJA_STARUCHA);
-
-    std::cout << "FMOD działa! Wersja: "
-        << (version >> 16) << "."
-        << ((version >> 8) & 0xFF) << "."
-        << (version & 0xFF) << std::endl;
-
-    // Zwolnienie zasobów
-    system->release();
 
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
@@ -156,6 +129,24 @@ int main() {
 
     rootNode.transform.setLocalPosition({0.0f, 0.0f, 0.0f});
     rootNode.transform.setLocalScale({1.0f, 1.0f, 1.0f});
+
+    // --- AUDIO INIT --- //
+    // Initialize our audio engine
+    CAudioEngine audioEngine;
+    audioEngine.Init();
+
+    // Load two music tracks and one sound effect
+    audioEngine.LoadSound(track1, true, true, true);
+    audioEngine.LoadSound(track2, true, true, true);
+    audioEngine.LoadSound(sound_effect, true, true, true);
+
+    int current_track_id = audioEngine.PlaySounds(track1);
+    bool paused = false;
+
+    // When we want to call PlaySounds and don't care about the channel number
+    int useless_garbage;
+
+    // --- //
 
     Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
     Model Kmodel("res/models/kutasiarz/The_Thing.obj");
@@ -235,7 +226,34 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         
-        
+        // Audio control section (just temporarily hardcoded)
+        audioEngine.Update();
+
+        if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+            audioEngine.stopSound(current_track_id);
+            current_track_id = audioEngine.PlaySounds(track1);
+        }
+        if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+            audioEngine.stopSound(current_track_id);
+            current_track_id = audioEngine.PlaySounds(track2);
+        }
+
+        // Pausing/resuming
+        if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
+            if (paused) {
+                audioEngine.resumeSound(current_track_id);
+                paused = false;
+            } else {
+                audioEngine.pauseSound(current_track_id);
+                paused = true;
+            }
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) {
+            useless_garbage = audioEngine.PlaySounds(sound_effect);
+        }
+
+        // --- //
 
         if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
             if (is_camera == is_camera_prev) {
@@ -367,6 +385,7 @@ int main() {
         glfwPollEvents();
     }
 
+    audioEngine.Shutdown();
     delete shader, shader_outline;
     delete[] matrices;
     glfwTerminate();

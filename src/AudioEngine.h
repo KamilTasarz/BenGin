@@ -73,6 +73,11 @@ public:
     float VolumeTodB(float volume);
     FMOD_VECTOR VectorToFmod(const Vector3& vPosition);
 
+    // Not from tutorial so potentially some real garbage code
+    void stopSound(int nChannelId);
+    void pauseSound(int nChannelId);
+    void resumeSound(int nChannelId);
+
 };
 
 #endif // !AUDIO_ENGINE_H
