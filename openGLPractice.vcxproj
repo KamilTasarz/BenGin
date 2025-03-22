@@ -177,7 +177,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\DevTools\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmodL_vc.lib;assimp.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmodstudioL_vc.lib;fmodL_vc.lib;assimp.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -196,7 +196,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\DevTools\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmodL_vc.lib;assimp.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmodstudioL_vc.lib;fmodL_vc.lib;assimp.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -208,6 +208,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SimpleObject.cpp" />
     <ClCompile Include="src\Gameplay\Player.cpp" />
+    <ClCompile Include="src\AudioEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundingBox.h" />
@@ -216,6 +217,7 @@
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SimpleObject.h" />
+    <ClInclude Include="src\AudioEngine.h" />
     <ClInclude Include="src\Basic\Mesh.h" />
     <ClInclude Include="src\Basic\Model.h" />
     <ClInclude Include="src\Basic\Node.h" />
