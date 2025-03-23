@@ -16,21 +16,21 @@ void Player::update(float delta_time, short inputs, float camera_yaw) {
 
     
     if (1 & inputs) {
-        vel.x = speed * front.x;
-        vel.z = speed * front.z;
+        vel.x += speed * front.x;
+        vel.z += speed * front.z;
     }
 
     if (2 & inputs) {
-        vel.x = -speed * front.x;
-        vel.z = -speed * front.z;
+        vel.x += -speed * front.x;
+        vel.z += -speed * front.z;
     }
     if (4 & inputs) {
-        vel.x = -right.x * speed;
-        vel.z = -right.z * speed;
+        vel.x += -right.x * speed;
+        vel.z += -right.z * speed;
     }
     if (8 & inputs) {
-        vel.x = right.x * speed;
-        vel.z = right.z * speed;
+        vel.x += right.x * speed;
+        vel.z += right.z * speed;
     }
     
 
