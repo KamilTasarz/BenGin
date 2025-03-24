@@ -23,10 +23,31 @@
     <ClInclude Include="src\Basic\Node.h" />
     <ClInclude Include="src\Gameplay\Player.h" />
     <ClInclude Include="src\AudioEngine.h" />
+    <ClInclude Include="dependencies\fmod\fmod.h" />
+    <ClInclude Include="dependencies\fmod\fmod.hpp" />
+    <ClInclude Include="dependencies\fmod\fmod_codec.h" />
+    <ClInclude Include="dependencies\fmod\fmod_common.h" />
+    <ClInclude Include="dependencies\fmod\fmod_dsp.h" />
+    <ClInclude Include="dependencies\fmod\fmod_dsp_effects.h" />
+    <ClInclude Include="dependencies\fmod\fmod_errors.h" />
+    <ClInclude Include="dependencies\fmod\fmod_output.h" />
+    <ClInclude Include="dependencies\fmod_studio\fmod_studio.h" />
+    <ClInclude Include="dependencies\fmod_studio\fmod_studio.hpp" />
+    <ClInclude Include="dependencies\fmod_studio\fmod_studio_common.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
     <None Include="res\shaders\basic.vert" />
     <None Include="res\shaders\outline.frag" />
+    <None Include="dependencies\fmod\fmod_dsp.cs" />
+    <None Include="dependencies\fmod\fmod_errors.cs" />
+    <None Include="dependencies\fmod\fmod.cs" />
+    <None Include="dependencies\fmod_studio\fmod_studio.cs" />
+    <None Include="fmodstudioL.dll" />
+    <None Include="fmodL.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="dependencies\lib\fmodL_vc.lib" />
+    <Library Include="dependencies\lib\fmodstudioL_vc.lib" />
   </ItemGroup>
 </Project>

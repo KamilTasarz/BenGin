@@ -214,6 +214,17 @@
     <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="dependencies\fmod\fmod.h" />
+    <ClInclude Include="dependencies\fmod\fmod.hpp" />
+    <ClInclude Include="dependencies\fmod\fmod_codec.h" />
+    <ClInclude Include="dependencies\fmod\fmod_common.h" />
+    <ClInclude Include="dependencies\fmod\fmod_dsp.h" />
+    <ClInclude Include="dependencies\fmod\fmod_dsp_effects.h" />
+    <ClInclude Include="dependencies\fmod\fmod_errors.h" />
+    <ClInclude Include="dependencies\fmod\fmod_output.h" />
+    <ClInclude Include="dependencies\fmod_studio\fmod_studio.h" />
+    <ClInclude Include="dependencies\fmod_studio\fmod_studio.hpp" />
+    <ClInclude Include="dependencies\fmod_studio\fmod_studio_common.h" />
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SimpleObject.h" />
@@ -224,9 +235,19 @@
     <ClInclude Include="src\Gameplay\Player.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="dependencies\fmod\fmod.cs" />
+    <None Include="dependencies\fmod\fmod_dsp.cs" />
+    <None Include="dependencies\fmod\fmod_errors.cs" />
+    <None Include="dependencies\fmod_studio\fmod_studio.cs" />
+    <None Include="fmodL.dll" />
+    <None Include="fmodstudioL.dll" />
     <None Include="res\shaders\basic.frag" />
     <None Include="res\shaders\basic.vert" />
     <None Include="res\shaders\outline.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="dependencies\lib\fmodL_vc.lib" />
+    <Library Include="dependencies\lib\fmodstudioL_vc.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
