@@ -53,6 +53,11 @@ string track2 = "res/audios/music/burning-bright.ogg";
 
 string sound_effect = "res/audios/sounds/bonk.ogg";
 
+float pauseTimer = 0.0f;
+float pauseCooldown = 0.5f; // Half second cooldown
+
+//
+
 glm::mat4* matrices;
 glm::vec3* minPoints;
 glm::vec3* maxPoints;
@@ -114,6 +119,9 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
 
+    // Gamma correction???
+    glEnable(GL_FRAMEBUFFER_SRGB);
+
     // -- CULLING -- //
 
     glEnable(GL_CULL_FACE);
@@ -148,6 +156,17 @@ int main() {
 
     // When we want to call PlaySounds and don't care about the channel number
     int useless_garbage;
+
+    // --- //
+
+    // --- IMGUI INIT --- //
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     // --- //
 
@@ -254,18 +273,22 @@ int main() {
         }
 
         // Pausing/resuming
-        if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && pauseTimer <= 0.0f) {
             if (paused) {
                 audioEngine.resumeSound(current_track_id);
-                paused = false;
             } else {
                 audioEngine.pauseSound(current_track_id);
-                paused = true;
             }
+            paused = !paused;
+            pauseTimer = pauseCooldown;
         }
 
         if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) {
             useless_garbage = audioEngine.PlaySounds(sound_effect);
+        }
+
+        if (pauseTimer > 0.0f) {
+            pauseTimer -= deltaTime;
         }
 
         // --- //
@@ -296,8 +319,6 @@ int main() {
         }
 
         light.position = box_light->transform.getLocalPosition();
-
-        
 
         float speed = 6.f;
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
@@ -340,16 +361,13 @@ int main() {
                 
             }
         }
-        
-        
 
         //cout << "Light position 3: " << print(box_light->transform.getLocalPosition()) << endl;
 
         if (is_camera) {
             camera.ProcessKeyboard(deltaTime, direction);
             changeMouse(window);
-        }
-        
+        }  
 		
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
@@ -359,7 +377,6 @@ int main() {
         } else {
             mouse_pressed = false;
         }
-
 
         view = camera.GetView();
 
@@ -423,11 +440,36 @@ int main() {
         shader_outline->use();
         rootNode.drawMarkedObject(*shader_outline);
 
+        // ---------------------
+
+        // ImGui Quick Test
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // Window content
+        ImGui::Begin("Test Window");
+        ImGui::Text("Test test test test 123 123");
+        ImGui::End();
+
+        // Window render
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        // ---------------------
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    // Audio engine cleanup
     audioEngine.Shutdown();
+
+    //ImGui cleanup
+    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui::DestroyContext();
+
     delete shader, shader_outline;
     delete[] matrices;
     glfwTerminate();

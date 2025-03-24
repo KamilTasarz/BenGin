@@ -2,11 +2,15 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCord;
-//layout (location = 3) in mat4 model;
+//layout (location = 3) in vec2 aTangent;
+//layout (location = 4) in vec2 aBitangent;
 
-out vec3 Normal;
-out vec2 Cords;
-out vec3 Pos;
+out VS_OUT {
+	vec3 Pos;
+	vec2 Cords;
+	vec3 Normal;
+	//mat3 TBN;
+} vs_out;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -15,12 +19,18 @@ uniform mat4 model;
 
 void main()
 {
+
+	//vec3 T = normalize(vec3(model * vec4(aTangent,   0.0)));
+    //vec3 B = normalize(vec3(model * vec4(aBitangent, 0.0)));
+    //vec3 N = normalize(vec3(model * vec4(aNormal,    0.0)));
+    //vs_out.TBN = mat3(T, B, N);
+
 	gl_Position = projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);
-	Pos = vec3(model * vec4(aPos, 1.0));
-	Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
+	vs_out.Pos = vec3(model * vec4(aPos, 1.0));
+	vs_out.Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
 	
 	vec3 scale = vec3(length(model[0].xyz), length(model[1].xyz), length(model[2].xyz));
 	if (scale.x == scale.y && scale.x == scale.z) scale = vec3(1.f);
 
-	Cords = aTexCord * scale.xz;
+	vs_out.Cords = aTexCord * scale.xz;
 }
