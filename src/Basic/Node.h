@@ -176,7 +176,6 @@ public:
     // No textures parameter
     bool no_textures;
 
-
     //Hitbox
     BoundingBox *AABB;
 
@@ -270,8 +269,6 @@ public:
 
     void mark(glm::vec4 rayWorld, Node* &marked_object, float& marked_depth, glm::vec3& cameraPos) {
         
-
-
         for (auto&& child : children) {
             float t;
             
@@ -376,7 +373,6 @@ public:
             _shader_outline.setVec3("color", dynamic_color);
             marked_object->pModel->Draw(_shader_outline);
 
-            
             //unmark();
             glStencilMask(0xFF);
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -385,6 +381,7 @@ public:
     }
 
     void separate(const BoundingBox* other_AABB) {
+
         float left = (other_AABB->min_point_world.x - AABB->max_point_world.x);
         float right = (other_AABB->max_point_world.x - AABB->min_point_world.x);
         float up = (other_AABB->min_point_world.y - AABB->max_point_world.y);
@@ -407,6 +404,7 @@ public:
         }
 
         transform.setLocalPosition(transform.getLocalPosition() + v);
+    
     }
 
 };

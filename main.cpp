@@ -42,7 +42,6 @@ struct PointLight {
     float constant;
 
 };
-
    
 const char* vertexPath = "res/shaders/basic.vert";
 const char* fragmentPath = "res/shaders/basic.frag";
@@ -95,7 +94,7 @@ int main() {
     
     glfwWindowHint(GLFW_SAMPLES, 4);
     
-    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.01", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.02", NULL, NULL);
     if (!window) {
         std::cerr << "Failed to create window\n";
         glfwTerminate();

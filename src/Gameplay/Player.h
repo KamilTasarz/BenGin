@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -13,7 +15,9 @@
 #include "../Basic/Node.h"
 
 class Player {
+
 public:
+
 	Node* player_node;
 	glm::vec3 vel;
 	float h_0;
@@ -23,10 +27,10 @@ public:
 
 	bool on_ground = false;
 
-	float yaw = 90.f;
+	float yaw = 90.0f;
 	glm::vec3 front;
 	glm::vec3 right;
-	glm::vec3 up = glm::vec3(0.f, 1.f, 0.f);
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	Player(Node* _player_node, float _h_0, float _range, float _speed) {
 		player_node = _player_node;

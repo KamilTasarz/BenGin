@@ -21,10 +21,11 @@
 #include <iostream>
 #include <map>
 #include <vector>
+
 using namespace std;
 
-unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
-unsigned int TextureFromFile(const char* full_path, bool gamma = false);
+unsigned int textureFromFile(const char* path, const string& directory, bool gamma = false);
+unsigned int textureFromFile(const char* full_path, bool gamma = false);
 
 class Model
 {
@@ -184,7 +185,7 @@ private:
             if (!skip)
             {   // if texture hasn't been loaded already, load it
                 Texture texture;
-                texture.id = TextureFromFile(str.C_Str(), this->directory);
+                texture.id = textureFromFile(str.C_Str(), this->directory);
                 texture.type = typeName;
                 texture.path = str.C_Str();
                 textures.push_back(texture);
@@ -275,31 +276,33 @@ private:
             vector.y = boxVertices[i * 8 + 1];
             vector.z = boxVertices[i * 8 + 2];
             vertex.Position = vector;
-            // normals
             
+            // normals
             vector.x = boxVertices[i * 8 + 3];
             vector.y = boxVertices[i * 8 + 4];
             vector.z = boxVertices[i * 8 + 5];
             vertex.Normal = vector;
             
-            
+            // texture coordinates
             glm::vec2 vec;
             vec.x = boxVertices[i * 8 + 6];
             vec.y = boxVertices[i * 8 + 7];
             vertex.TexCoords = vec;
                 
-            
-
             vertices.push_back(vertex);
         }
         
         for (short i = 0; i < texture_number; i++) {
             Texture texture;
-            texture.id = TextureFromFile(texture_names[i]);
+            texture.id = textureFromFile(texture_names[i]);
             texture.path = string(texture_names[i]);
             const string specular_name = "spec";
-            if (texture.path.find(specular_name, 0) != string::npos) texture.type = "texture_specular";
-            else texture.type = "texture_diffuse";
+            if (texture.path.find(specular_name, 0) != string::npos) {
+                texture.type = "texture_specular";
+            }
+            else {
+                texture.type = "texture_diffuse";
+            }
             textures.push_back(texture);
         }
         
@@ -318,16 +321,16 @@ private:
              0.5f, -0.0f,  0.5f,  0.0f, 1.0f,  0.0f, 1.0f, 1.0f,
             -0.5f, -0.0f, -0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 0.0f,
             -0.5f, -0.0f,  0.5f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f
+        
         };
-
 
         // data to fill
         vector<Vertex> vertices;
         vector<Texture> textures;
 
         // walk through each of the mesh's vertices
-        for (unsigned int i = 0; i < 6; i++)
-        {
+        for (unsigned int i = 0; i < 6; i++) {
+
             Vertex vertex;
             glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
             // positions
@@ -335,41 +338,40 @@ private:
             vector.y = planeVertices[i * 8 + 1];
             vector.z = planeVertices[i * 8 + 2];
             vertex.Position = vector;
+            
             // normals
-
             vector.x = planeVertices[i * 8 + 3];
             vector.y = planeVertices[i * 8 + 4];
             vector.z = planeVertices[i * 8 + 5];
             vertex.Normal = vector;
 
-
+            // texture coordinates
             glm::vec2 vec;
             vec.x = planeVertices[i * 8 + 6];
             vec.y = planeVertices[i * 8 + 7];
             vertex.TexCoords = vec;
 
-
-
             vertices.push_back(vertex);
+
         }
 
         for (short i = 0; i < texture_number; i++) {
             Texture texture;
-            texture.id = TextureFromFile(texture_names[i]);
+            texture.id = textureFromFile(texture_names[i]);
             texture.path = string(texture_names[i]);
             const string specular_name = "spec";
             if (texture.path.find(specular_name, 0) != string::npos) texture.type = "texture_specular";
             else texture.type = "texture_diffuse";
             textures.push_back(texture);
         }
-
+        
         meshes.push_back(Mesh(vertices, textures));
     }
 
 public:
     // model data 
-    vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-    vector<Mesh>    meshes;
+    vector<Texture> textures_loaded; // stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+    vector<Mesh> meshes;
     string directory;
     bool gammaCorrection;
 
@@ -401,7 +403,7 @@ public:
 
 };
 
-inline unsigned int TextureFromFile(const char* full_path, bool gamma) {
+inline unsigned int textureFromFile(const char* full_path, bool gamma) {
 
     string filename = string(full_path);
 
@@ -440,11 +442,12 @@ inline unsigned int TextureFromFile(const char* full_path, bool gamma) {
     return textureID;
 }
 
-inline unsigned int TextureFromFile(const char* path, const string& directory, bool gamma)
+inline unsigned int textureFromFile(const char* path, const string& directory, bool gamma)
 {
     string filename = string(path);
     filename = directory + '/' + filename;
 
-    return TextureFromFile(filename.c_str(), gamma);
+    return textureFromFile(filename.c_str(), gamma);
 }
+
 #endif

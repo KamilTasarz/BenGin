@@ -89,12 +89,12 @@ void BoundingBox::draw(Shader& shader) {
 
         glBindVertexArray(0);
     }
+
     shader.use();
     shader.setMat4("model", model);
     glBindVertexArray(VAO);
     glDrawArrays(GL_LINE_STRIP, 0, 10);
     glDrawArrays(GL_LINES, 10, 6);
     glBindVertexArray(0);
+
 }
-
-
