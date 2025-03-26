@@ -72,11 +72,11 @@ void main() {
             res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
 
-        float shadow1 = min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
-
+        
         float shadow2 = calulateShadow(fs_in.Light_Perspective_Pos3, shadow_map3);
-
-        float shadow = max(shadow1, shadow2) * 0.5f;
+        float shadow1 = 0.f;//min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
+        
+        float shadow = clamp(shadow1+shadow2, 0.f, 1.f);
 
         FragColor = vec4((res[0] + (res[1] + res[2]) * (1.f - shadow)), 1.f);
 

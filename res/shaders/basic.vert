@@ -35,18 +35,18 @@ void main()
 	vs_out.Pos = vec3(model * vec4(aPos, 1.0));
 	vs_out.Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
 
-	vs_out.Light_Perspective_Pos = light_view_projection * vec4(Pos, 1.0f);
-	vs_out.Light_Perspective_Pos2 = light_view_projection_back * vec4(Pos, 1.0f);
-	vs_out.Light_Perspective_Pos3 = light_view_projection3 * vec4(Pos, 1.0f);
+	vs_out.Light_Perspective_Pos = light_view_projection * vec4(vs_out.Pos, 1.0f);
+	vs_out.Light_Perspective_Pos2 = light_view_projection_back * vec4(vs_out.Pos, 1.0f);
+	vs_out.Light_Perspective_Pos3 = light_view_projection3 * vec4(vs_out.Pos, 1.0f);
 
 	
 	vec3 scale = vec3(length(model[0].xyz), length(model[1].xyz), length(model[2].xyz));
 	if (scale.x == scale.y && scale.x == scale.z) scale = vec3(1.f);
 
 
-	if (Normal.y != 0.f) 
+	if (vs_out.Normal.y != 0.f) 
 		vs_out.Cords = aTexCord * scale.xz;
-	else if (Normal.x != 0.f)
+	else if (vs_out.Normal.x != 0.f)
 		vs_out.Cords = aTexCord * scale.yz;
 	else 
 		vs_out.Cords = aTexCord * scale.xy;
