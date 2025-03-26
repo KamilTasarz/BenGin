@@ -46,6 +46,8 @@ struct PointLight {
 const char* vertexPath = "res/shaders/basic.vert";
 const char* fragmentPath = "res/shaders/basic.frag";
 const char* fragmentPath_outline = "res/shaders/outline.frag";
+const char* triangleVertexPath = "res/shaders/triangle.vert";
+const char* triangleFragmentPath = "res/shaders/triangle.frag";
 
 // Audio paths
 string track1 = "res/audios/music/kill-v-maim.ogg";
@@ -239,6 +241,9 @@ int main() {
 
     Shader *shader = new Shader(vertexPath, fragmentPath);
     Shader *shader_outline = new Shader(vertexPath, fragmentPath_outline);
+    // Load and compile the 2D shaders
+    Shader *shader2D = new Shader(triangleVertexPath, triangleFragmentPath);
+
     
     projection = glm::perspective(glm::radians(30.f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.5f, 100.0f);
 
@@ -249,6 +254,36 @@ int main() {
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, false, glm::value_ptr(projection));
 
     rootNode.updateSelfAndChild(true);
+
+    // 2d zadanie
+
+    float rectangleVertices[] = {
+        // positions
+        -0.8f, -0.6f,
+         -0.8f, -0.8f,
+         -0.6f,  -0.6f,
+
+         -0.8f, -0.8f,
+         -0.6f, -0.8f,
+         - 0.6f, -0.6f
+    };
+
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), rectangleVertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    ///
 
     while (!glfwWindowShouldClose(window)) {
         
@@ -265,11 +300,11 @@ int main() {
 
         if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
             audioEngine.stopSound(current_track_id);
-            current_track_id = audioEngine.PlaySounds(track1, Vector3{0.0f}, -10.0);
+            current_track_id = audioEngine.PlaySounds(track1, Vector3{0.0f}, -11.0);
         }
         if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
             audioEngine.stopSound(current_track_id);
-            current_track_id = audioEngine.PlaySounds(track2, Vector3{ 0.0f }, -10.0);
+            current_track_id = audioEngine.PlaySounds(track2, Vector3{ 0.0f }, -11.0);
         }
 
         // Pausing/resuming
@@ -440,6 +475,14 @@ int main() {
         shader_outline->use();
         rootNode.drawMarkedObject(*shader_outline);
 
+        // Render the 2D triangle
+        glDisable(GL_DEPTH_TEST); // Disable depth test to render on top
+        shader2D->use();
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+        glEnable(GL_DEPTH_TEST);
+
         // ---------------------
 
         // ImGui Quick Test
@@ -470,7 +513,7 @@ int main() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui::DestroyContext();
 
-    delete shader, shader_outline;
+    delete shader, shader_outline, shader2D;
     delete[] matrices;
     glfwTerminate();
     return 0;
@@ -530,8 +573,6 @@ void changeMouse(GLFWwindow* window) {
     }
 }
 
-
-
 glm::vec4 getRayWorld(GLFWwindow* window) {
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);
@@ -545,7 +586,6 @@ glm::vec4 getRayWorld(GLFWwindow* window) {
     rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
     glm::vec4 rayWorld = glm::normalize(glm::inverse(view) * rayEye);
 
-    
     return rayWorld;
 }
 

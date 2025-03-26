@@ -369,6 +369,7 @@ private:
     }
 
 public:
+
     // model data 
     vector<Texture> textures_loaded; // stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh> meshes;
@@ -379,8 +380,7 @@ public:
     glm::vec3 max_points = glm::vec3(-FLT_MAX);
 
     // constructor, expects a filepath to a 3D model.
-    Model(string const& path, bool gamma = false) : gammaCorrection(gamma)
-    {
+    Model(string const& path, bool gamma = false) : gammaCorrection(gamma) {
         loadModel(path);
     }
 

@@ -31,8 +31,8 @@ public:
 		this->model = glm::mat4(model);
 	}
 
-	bool isRayIntersects(glm::vec3 direction, glm::vec3 origin, float &t) const; //t - parameter
-	bool isBoundingBoxIntersects(const BoundingBox& other_bounding_box) const; //t - parameter
+	bool isRayIntersects(glm::vec3 direction, glm::vec3 origin, float &t) const; // t - parameter
+	bool isBoundingBoxIntersects(const BoundingBox& other_bounding_box) const; // t - parameter
 	void transformAABB(const glm::mat4& model);
 	void draw(Shader& shader);
 	

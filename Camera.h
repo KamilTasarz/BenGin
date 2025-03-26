@@ -50,7 +50,6 @@ public:
 
     float Yaw, Pitch;
 
-
     float MovementSpeed = 20.0f; // Only temporary value, will be flexible later
     float MouseSensitivity = 0.1f; // Only temporary value, will be flexible later
 
