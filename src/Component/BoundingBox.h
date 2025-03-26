@@ -3,8 +3,7 @@
 #ifndef BOUNDING_BOX_H
 #define BOUNDING_BOX_H
 
-#include "config.h"
-#include "Shader.h"
+#include "../Basic/Shader.h"
 
 
 class BoundingBox {

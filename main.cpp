@@ -10,8 +10,8 @@ PascalCase - klasy/struktury
 
 
 
-#include "Shader.h"
-#include "Camera.h"
+#include "src/Basic/Shader.h"
+#include "src/Component/Camera.h"
 #include "src/Basic/Model.h"
 #include "src/Gameplay/Player.h"
 
@@ -160,8 +160,6 @@ int main() {
     glFrontFace(GL_CCW);
 
     glEnable(GL_MULTISAMPLE);
-
-
 
     rootNode.transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
     rootNode.transform.setLocalScale({ 1.0f, 1.0f, 1.0f });

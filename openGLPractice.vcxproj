@@ -200,8 +200,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BoundingBox.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="dependencies\imgui\imgui.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_demo.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
@@ -212,14 +210,14 @@
     <ClCompile Include="dependencies\stb_image\stb_image.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SimpleObject.cpp" />
+    <ClCompile Include="src\Basic\Shader.cpp" />
+    <ClCompile Include="src\Component\BoundingBox.cpp" />
+    <ClCompile Include="src\Component\Camera.cpp" />
     <ClCompile Include="src\Gameplay\Player.cpp" />
     <ClCompile Include="src\AudioEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BoundingBox.h" />
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="dependencies\fmod\fmod.h" />
     <ClInclude Include="dependencies\fmod\fmod.hpp" />
@@ -243,12 +241,14 @@
     <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
     <ClInclude Include="Light.h" />
-    <ClInclude Include="Shader.h" />
     <ClInclude Include="SimpleObject.h" />
     <ClInclude Include="src\AudioEngine.h" />
     <ClInclude Include="src\Basic\Mesh.h" />
     <ClInclude Include="src\Basic\Model.h" />
     <ClInclude Include="src\Basic\Node.h" />
+    <ClInclude Include="src\Basic\Shader.h" />
+    <ClInclude Include="src\Component\BoundingBox.h" />
+    <ClInclude Include="src\Component\Camera.h" />
     <ClInclude Include="src\Gameplay\Player.h" />
   </ItemGroup>
   <ItemGroup>
@@ -268,10 +268,8 @@
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />
     <Library Include="dependencies\lib\fmodstudioL_vc.lib" />
-
     <None Include="res\shaders\shadow.frag" />
     <None Include="res\shaders\shadow.vert" />
-
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -12,9 +12,9 @@
 #include <array>
 #include <memory>
 
-#include <../Camera.h>
-#include <../BoundingBox.h>
-#include <../src/Basic/Model.h>
+#include "../Component/Camera.h"
+#include "../Component/BoundingBox.h"
+#include "Model.h"
 
 class Transform {
 
