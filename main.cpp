@@ -69,6 +69,10 @@ float lastY = (float)WINDOW_HEIGHT / 2.0;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
+float fps = 0.0f; // Current FPS
+float fps_timer = 0.0f;
+int frames = 0;
+
 Node rootNode("rootNode");
 Camera camera(0.f, 0.f, -3.f);
 
@@ -327,18 +331,31 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    ///
+    // --- GAME LOOP --- //
 
     while (!glfwWindowShouldClose(window)) {
+        
         unsigned int dis, tot;
 
         glEnable(GL_STENCIL_TEST);
         glEnable(GL_DEPTH_TEST);
 
+        // Delta time and fps calculation
+
         GLfloat currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+
+        frames++;
+        fps_timer += deltaTime;
+        if (fps_timer >= 1.0f) {
+            fps = frames / fps_timer;
+            fps_timer = 0.0f;
+            frames = 0;
+        }
         
+        // --- //
+
         // Audio control section (just temporarily hardcoded)
         audioEngine.Update();
 
@@ -546,6 +563,7 @@ int main() {
         // Window content
         ImGui::Begin("Test Window");
         ImGui::Text("Test test test test 123 123");
+        ImGui::Text("Current FPS: %.1f", fps); // Dipslay current fps
         ImGui::End();
 
         // Window render
