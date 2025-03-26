@@ -428,4 +428,21 @@ public:
 
 };
 
+class InstanceManager : public Node {
+public:
+    int size = 0;
+
+    InstanceManager(Model& model, std::string nameOfNode, int id = 0) : Node(nameOfNode, id) {
+        pModel = &model;
+    }
+
+    void drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) {
+        //pModel->Draw(_shader, size);
+    }
+};
+
+class Instance : public Node {
+
+};
+
 #endif // !NODE_H

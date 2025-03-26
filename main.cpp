@@ -65,7 +65,7 @@ float yCursorMargin = 30.0f;
 
 Player *player;
 
-const int point_light_number = 2;
+const int point_light_number = 1;
 const int directional_light_number = 1;
 
 DirectionalLight *directional_lights;
@@ -257,6 +257,9 @@ int main() {
 
     rootNode.updateSelfAndChild(true);
 
+
+
+
     while (!glfwWindowShouldClose(window)) {
         unsigned int dis, tot;
 
@@ -267,7 +270,7 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         
-        
+        cout << deltaTime << endl;
 
         if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
             if (is_camera == is_camera_prev) {
@@ -374,6 +377,13 @@ int main() {
         rootNode.updateSelfAndChild(false);
 
         //renderowanie pod cienie
+        point_lights[0].render(depthMapFBO, *shader_shadow);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        rootNode.drawShadows(*shader_shadow);
+        point_lights[0].renderBack(depthMapFBO, *shader_shadow);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        rootNode.drawShadows(*shader_shadow);
+
         directional_lights[0].render(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
         rootNode.drawShadows(*shader_shadow);
@@ -385,9 +395,17 @@ int main() {
         shader->use();
         shader->setMat4("view", view);
         shader->setMat4("projection", projection);
-        shader->setMat4("light_view_projection", directional_lights[0].getMatrix());
+        shader->setMat4("light_view_projection", point_lights[0].getMatrix());
+        shader->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
+        shader->setMat4("light_view_projection3", directional_lights[0].getMatrix());
         shader->setInt("shadow_map", 3);
+        shader->setInt("shadow_map3", 5);
+        shader->setInt("shadow_map_back", 4);
         glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMap);
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMapBack);
+        glActiveTexture(GL_TEXTURE5);
         glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);
 
         float t = FLT_MAX;
@@ -412,7 +430,6 @@ int main() {
 
 
         rootNode.drawSelfAndChild(*shader, *shader_outline, dis, tot);
-
         // == outline ==
 
         shader_outline->use();
@@ -431,6 +448,7 @@ int main() {
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    lastFrame = glfwGetTime();
 }
 
 void mouseCallback(GLFWwindow* window, double posX, double posY) {

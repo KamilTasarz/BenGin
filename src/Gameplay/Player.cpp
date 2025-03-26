@@ -9,7 +9,7 @@ void Player::update(float delta_time, short inputs, float camera_yaw) {
 
     right = glm::normalize(glm::cross(front, up));
 
-    glm::vec3 pos = player_node->transform.getLocalPosition();
+    glm::vec3 pos = player_node->transform.getGlobalPosition();
 
     vel.x = 0;
     vel.z = 0;
@@ -39,8 +39,12 @@ void Player::update(float delta_time, short inputs, float camera_yaw) {
     if (16 & inputs && on_ground) //jump
         vel.y = up.y * v_0;
 
-    pos += (vel * delta_time) + 0.5f * grav * delta_time * delta_time;
-    vel += grav * delta_time;
+    if (delta_time < 0.01f) {
+        pos += (vel * delta_time) + 0.5f * grav * delta_time * delta_time;
+        vel += grav * delta_time;
+    }
+
+
 
     
 

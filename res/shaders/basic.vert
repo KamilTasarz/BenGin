@@ -8,11 +8,15 @@ out vec3 Normal;
 out vec2 Cords;
 out vec3 Pos;
 out vec4 Light_Perspective_Pos;
+out vec4 Light_Perspective_Pos2;
+out vec4 Light_Perspective_Pos3;
 
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 uniform mat4 light_view_projection;
+uniform mat4 light_view_projection3;
+uniform mat4 light_view_projection_back;
 
 
 
@@ -23,6 +27,8 @@ void main()
 	gl_Position = projection * view * vec4(Pos, 1.0f);
 
 	Light_Perspective_Pos = light_view_projection * vec4(Pos, 1.0f);
+	Light_Perspective_Pos2 = light_view_projection_back * vec4(Pos, 1.0f);
+	Light_Perspective_Pos3 = light_view_projection3 * vec4(Pos, 1.0f);
 
 	Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
 	

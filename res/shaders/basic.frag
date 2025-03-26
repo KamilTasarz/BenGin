@@ -4,6 +4,8 @@ in vec3 Normal;
 in vec3 Pos;
 in vec2 Cords;
 in vec4 Light_Perspective_Pos;
+in vec4 Light_Perspective_Pos2;
+in vec4 Light_Perspective_Pos3;
 
 out vec4 FragColor;
 
@@ -26,7 +28,7 @@ struct DirectionLight {
 
 mat3 calculatePointLight(vec3 viewDir, PointLight light);
 mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light);
-float calulateShadow(vec4 position_from_light_perpective);
+float calulateShadow(vec4 position_from_light_perpective, sampler2D map);
 
 // uniformy
 
@@ -40,6 +42,8 @@ uniform DirectionLight directional_lights[10];
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 uniform sampler2D shadow_map;
+uniform sampler2D shadow_map3;
+uniform sampler2D shadow_map_back;
 
 uniform vec3 cameraPosition;
 
@@ -58,9 +62,12 @@ void main() {
         for (int i = 0; i < directional_light_number; i++) {
             res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
-        //mat3 res = calculatePointLight(viewDir, point_lights[0]);
 
-        float shadow = calulateShadow(Light_Perspective_Pos);
+        float shadow1 = min(calulateShadow(Light_Perspective_Pos, shadow_map), calulateShadow(Light_Perspective_Pos2, shadow_map_back));
+
+        float shadow2 = calulateShadow(Light_Perspective_Pos3, shadow_map3);
+
+        float shadow = max(shadow1, shadow2) * 0.5f;
 
         FragColor = vec4((res[0] + (res[1] + res[2]) * (1.f - shadow)), 1.f);
 
@@ -101,29 +108,24 @@ mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light) {
     return mat3(ambient, diffuse, specular);
 }
 
-float calulateShadow(vec4 position_from_light_perpective) {
+float calulateShadow(vec4 position_from_light_perpective, sampler2D map) {
     vec3 position = position_from_light_perpective.xyz / position_from_light_perpective.w;
     position = position * 0.5f + 0.5f;
     
-    //float closest_depth = texture(shadow_map, position.xy).r; //glebokosc jest zapisana w jednym ze strumieni pozostale sa 0
     float current_depth = position.z;
-
     float bias = 0.005f;
 
     float shadow = 0.f;
+    vec2 pixel_size = 1.f / textureSize(map, 0);
 
-    //ladne cienie mozna uzyskac przez wielokrotne samplowanie i zmniejszejeni pixel_size, ale spada wydajnosc
-
-    vec2 pixel_size = 1.f / (textureSize(shadow_map, 0));
-
-    for (int x = -1; x <= 1; x++) {
-        for (int y = -1; y <= 1; y++) {
-            float closest_depth = texture(shadow_map, position.xy + vec2(x, y) * pixel_size).r;
+    for (int x = -2; x <= 2; x++) {
+        for (int y = -2; y <= 2; y++) {
+            vec2 offset = vec2(x, y) * pixel_size;
+            float closest_depth = texture(map, position.xy + offset).r;
             if (current_depth - bias > closest_depth) shadow += 1.0f;
         }
     }
-    shadow /= 9.0f;
+    shadow /= 25.0f; // Dla 5x5 kernelu
 
     return shadow;
-    
 }
