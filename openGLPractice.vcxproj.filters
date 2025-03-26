@@ -29,6 +29,7 @@
     <ClInclude Include="src\Basic\Model.h" />
     <ClInclude Include="src\Basic\Node.h" />
     <ClInclude Include="src\Gameplay\Player.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="src\AudioEngine.h" />
     <ClInclude Include="dependencies\fmod\fmod.h" />
     <ClInclude Include="dependencies\fmod\fmod.hpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="dependencies\imgui\imstb_rectpack.h" />
     <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
+
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
@@ -68,5 +70,7 @@
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />
     <Library Include="dependencies\lib\fmodstudioL_vc.lib" />
+    <None Include="res\shaders\shadow.frag" />
+    <None Include="res\shaders\shadow.vert" />
   </ItemGroup>
 </Project>

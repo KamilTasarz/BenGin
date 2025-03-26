@@ -242,6 +242,7 @@
     <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SimpleObject.h" />
     <ClInclude Include="src\AudioEngine.h" />
@@ -267,6 +268,10 @@
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />
     <Library Include="dependencies\lib\fmodstudioL_vc.lib" />
+
+    <None Include="res\shaders\shadow.frag" />
+    <None Include="res\shaders\shadow.vert" />
+
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

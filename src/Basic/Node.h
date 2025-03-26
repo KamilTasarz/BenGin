@@ -182,15 +182,14 @@ public:
     // ----------- CONSTRUCTORS -----------
 
     // No model
-    Node(std::string nameOfNode, std::vector<BoundingBox*> &vector_of_colliders, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) {
+    Node(std::string nameOfNode, int _id = 0) {
         pModel = nullptr;
         name = nameOfNode;
         id = _id;
-        AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+        AABB = nullptr;
         marked_object = nullptr;
         new_marked_object = nullptr;
         no_textures = true;
-        vector_of_colliders.push_back(AABB);
     }
 
     // Model
@@ -296,7 +295,10 @@ public:
         else {
             transform.computeModelMatrix();
         }
-        AABB->transformAABB(transform.getModelMatrix());
+        if (AABB != nullptr) {
+            AABB->transformAABB(transform.getModelMatrix());
+        }
+
     }
 
     // This will update if there were changes only (checks the dirty flag)
@@ -355,6 +357,21 @@ public:
 
     }
 
+    void drawShadows(Shader& shader) {
+        if (pModel) {
+            
+            shader.use();
+            shader.setMat4("model", transform.getModelMatrix());
+            if (!no_textures) {
+                pModel->Draw(shader); //jak nie ma tekstury to najpewniej swiatlo -> przyjmuje takie zalozenie
+            } 
+        }
+
+        for (auto&& child : children) {
+            child->drawShadows(shader);
+        }
+    }
+
     void drawMarkedObject(Shader& _shader_outline) {
         if (marked_object != nullptr) {
 
@@ -406,6 +423,23 @@ public:
         transform.setLocalPosition(transform.getLocalPosition() + v);
     
     }
+
+};
+
+class InstanceManager : public Node {
+public:
+    int size = 0;
+
+    InstanceManager(Model& model, std::string nameOfNode, int id = 0) : Node(nameOfNode, id) {
+        pModel = &model;
+    }
+
+    void drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) {
+        //pModel->Draw(_shader, size);
+    }
+};
+
+class Instance : public Node {
 
 };
 

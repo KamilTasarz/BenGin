@@ -9,12 +9,18 @@ out VS_OUT {
 	vec3 Pos;
 	vec2 Cords;
 	vec3 Normal;
+	vec4 Light_Perspective_Pos;
+	vec4 Light_Perspective_Pos2;
+	vec4 Light_Perspective_Pos3;
 	//mat3 TBN;
 } vs_out;
 
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
+uniform mat4 light_view_projection;
+uniform mat4 light_view_projection3;
+uniform mat4 light_view_projection_back;
 
 
 void main()
@@ -28,9 +34,22 @@ void main()
 	gl_Position = projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);
 	vs_out.Pos = vec3(model * vec4(aPos, 1.0));
 	vs_out.Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
+
+	vs_out.Light_Perspective_Pos = light_view_projection * vec4(Pos, 1.0f);
+	vs_out.Light_Perspective_Pos2 = light_view_projection_back * vec4(Pos, 1.0f);
+	vs_out.Light_Perspective_Pos3 = light_view_projection3 * vec4(Pos, 1.0f);
+
 	
 	vec3 scale = vec3(length(model[0].xyz), length(model[1].xyz), length(model[2].xyz));
 	if (scale.x == scale.y && scale.x == scale.z) scale = vec3(1.f);
 
-	vs_out.Cords = aTexCord * scale.xz;
+
+	if (Normal.y != 0.f) 
+		vs_out.Cords = aTexCord * scale.xz;
+	else if (Normal.x != 0.f)
+		vs_out.Cords = aTexCord * scale.yz;
+	else 
+		vs_out.Cords = aTexCord * scale.xy;
+
+	
 }
