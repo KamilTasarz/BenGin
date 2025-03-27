@@ -32,6 +32,7 @@ string print(glm::vec3 v);
 
   
 const char* vertexPath = "res/shaders/basic.vert";
+const char* vertexPath_instanced = "res/shaders/instanced.vert";
 const char* fragmentPath = "res/shaders/basic.frag";
 const char* vertexPath_shadow = "res/shaders/shadow.vert";
 const char* fragmentPath_shadow = "res/shaders/shadow.frag";
@@ -191,6 +192,14 @@ int main() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
+    Shader* shader = new Shader(vertexPath, fragmentPath);
+    Shader* shader_instanced = new Shader(vertexPath_instanced, fragmentPath);
+    Shader* shader_instanced_outline = new Shader(vertexPath_instanced, fragmentPath_outline);
+    Shader* shader_outline = new Shader(vertexPath, fragmentPath_outline);
+    Shader* shader2D = new Shader(triangleVertexPath, triangleFragmentPath);
+    Shader* shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
+
+
     // --- //
 
     Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
@@ -216,20 +225,20 @@ int main() {
     Node* kutasiarz = new Node(Tmodel, "kutasiarz", false, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-
+    Node* box_light = new Node(Tmodel_light, "light", true);
+    Node* box_light2 = new Node(Tmodel_light, "light2", true);
+    Node* box_light_directional = new Node(Tmodel_light, "light_directional", true);
     Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1", colliders);
     Node* box_diff_spec2 = new Node(Tmodel_box_diff_spec, "box1", colliders);
     Node* box_wood = new Node(Tmodel_box_wood, "box2", colliders);
     Node* box_stone = new Node(Tmodel_box_stone, "box3", colliders);
-    Node* box_light = new Node(Tmodel_light, "light", true);
-    Node* box_light2 = new Node(Tmodel_light, "light2", true);
-    Node* box_light_directional = new Node(Tmodel_light, "light_directional", true);
+
     Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f));
+
+    InstanceManager* walls = new InstanceManager(Tmodel_box_diff_spec, "instance_manager_wall", shader_instanced, 40000);
 
     player = new Player(kutasiarz, 3.f, 3.f, 10.f);
 
-    rootNode.addChild(box_diff_spec);
-    rootNode.addChild(box_diff_spec2);
     rootNode.addChild(box_wood);
     rootNode.addChild(box_stone);
     rootNode.addChild(box_light);
@@ -238,8 +247,9 @@ int main() {
     rootNode.addChild(kutasiarz);
     rootNode.addChild(cos);
     rootNode.addChild(plane);
+    rootNode.addChild(walls);
 
-    kutasiarz->transform.setLocalPosition({ 3.f, 2.f, 3.f });
+    kutasiarz->transform.setLocalPosition({3.f, 2.f, 3.f});
     kutasiarz->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
     cos->transform.setLocalPosition({ -5.0, -0.5f, -5.0f });
@@ -247,7 +257,6 @@ int main() {
 
     box_diff_spec->transform.setLocalPosition({ 7.5f, 0.0f, 0.0f });
     box_diff_spec->transform.setLocalScale({ 1.0f, 3.0f, 14.0f });
-
 
     box_diff_spec2->transform.setLocalPosition({ 0.0f, 0.0f, -7.5f });
     box_diff_spec2->transform.setLocalScale({ 16.0f, 3.0f, 1.0f });
@@ -270,6 +279,18 @@ int main() {
     plane->transform.setLocalPosition({ 0.0f, -0.501f, 0.0f }); // z - fighting
     plane->transform.setLocalScale({ 15.f, 15.0f, 15.f });
 
+    walls->addChild(box_diff_spec);
+    walls->addChild(box_diff_spec2);
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            Node* temp = new Node(Tmodel_box_diff_spec, "inst" + to_string(i), colliders);
+            temp->transform.setLocalPosition({ i + 4.f, 2.f, 4.f * j + 4.f });
+            temp->transform.computeModelMatrix();
+            walls->addChild(temp);
+        }
+    }
+
     point_lights = new PointLight[10];
     directional_lights = new DirectionalLight[10];
 
@@ -277,12 +298,7 @@ int main() {
     point_lights[1] = PointLight(box_light2, 0.032f, 0.09f);
     directional_lights[0] = DirectionalLight(box_light_directional, glm::vec3(1.f, -1.f, 1.f));
 
-    Shader *shader = new Shader(vertexPath, fragmentPath);
-    Shader *shader_outline = new Shader(vertexPath, fragmentPath_outline);
-    // Load and compile the 2D shaders
-    Shader *shader2D = new Shader(triangleVertexPath, triangleFragmentPath);
 
-    Shader *shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
 
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
@@ -291,6 +307,11 @@ int main() {
 
     shader_outline->use();
     shader_outline->setMat4("projection", projection);
+
+    shader_instanced->use();
+    shader_instanced->setMat4("projection", projection);
+    shader_instanced->setInt("point_light_number", point_light_number);
+    shader_instanced->setInt("directional_light_number", directional_light_number);
 
     shader->use();
     shader->setMat4("projection", projection);
@@ -437,7 +458,7 @@ int main() {
         point_lights[0].setModelPosition();
         rootNode.updateSelfAndChild(false);
 
-
+        
         if (!is_camera) {
             player->update(deltaTime, direction, camera.Yaw);
         }
@@ -473,8 +494,10 @@ int main() {
         // unforms for ouline
 
         shader_outline->use();
-        shader_outline->setMat4("view", view);
-
+        shader_outline->setMat4("view", view);   
+        shader_instanced->use();
+        shader_instanced->setMat4("view", view);
+        setLights(shader_instanced);
 
         shader->use();
         shader->setMat4("view", view);
@@ -485,7 +508,7 @@ int main() {
         rootNode.updateSelfAndChild(false);
 
         //renderowanie pod cienie
-        point_lights[0].render(depthMapFBO, *shader_shadow);
+        /*point_lights[0].render(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
         rootNode.drawShadows(*shader_shadow);
         point_lights[0].renderBack(depthMapFBO, *shader_shadow);
@@ -495,15 +518,25 @@ int main() {
         directional_lights[0].render(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
         rootNode.drawShadows(*shader_shadow);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
         glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         glClearColor(.01f, .01f, .01f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+        shader_instanced->use();
+        shader_instanced->setMat4("view", view);
+        shader_instanced->setMat4("projection", projection);
+        /*shader_instanced->setMat4("light_view_projection", point_lights[0].getMatrix());
+        shader_instanced->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
+        shader_instanced->setMat4("light_view_projection3", directional_lights[0].getMatrix());
+        shader_instanced->setInt("shadow_map", 3);
+        shader_instanced->setInt("shadow_map3", 5);
+        shader_instanced->setInt("shadow_map_back", 4);*/
+
         shader->use();
         shader->setMat4("view", view);
         shader->setMat4("projection", projection);
-        shader->setMat4("light_view_projection", point_lights[0].getMatrix());
+        /*shader->setMat4("light_view_projection", point_lights[0].getMatrix());
         shader->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
         shader->setMat4("light_view_projection3", directional_lights[0].getMatrix());
         shader->setInt("shadow_map", 3);
@@ -514,7 +547,7 @@ int main() {
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMapBack);
         glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);
+        glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);*/
 
         float t = FLT_MAX;
         rootNode.new_marked_object = nullptr;

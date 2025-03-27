@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef NODE_H
 #define NODE_H
@@ -234,7 +234,7 @@ public:
 
     // Add child
     //template<typename... TArgs>
-    void addChild(Node* p) {
+    void virtual addChild(Node* p) {
         children.emplace_back(p);
         children.back()->parent = this; // Set this as the created child's parent
         increaseCount();
@@ -271,7 +271,7 @@ public:
         for (auto&& child : children) {
             float t;
             
-            if (child->AABB->isRayIntersects(rayWorld, cameraPos, t)) {
+            if (child->AABB != nullptr && child->AABB->isRayIntersects(rayWorld, cameraPos, t)) {
                
                 if (t < marked_depth) {
                     
@@ -302,7 +302,7 @@ public:
     }
 
     // This will update if there were changes only (checks the dirty flag)
-    void updateSelfAndChild(bool controlDirty) {
+    void virtual updateSelfAndChild(bool controlDirty) {
 
         controlDirty |= transform.isDirty();
 
@@ -320,7 +320,7 @@ public:
     }
 
     // Draw self and children
-    void drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) {
+    void virtual drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) {
 
         if (pModel) {
             //_shader.setVec4("dynamicColor", color);
@@ -379,7 +379,7 @@ public:
             glStencilMask(0x00);
             glDisable(GL_DEPTH_TEST);
             glm::vec3 scale_matrix = marked_object->transform.getLocalScale();
-            scale_matrix += glm::vec3(0.01f);
+            scale_matrix += glm::vec3(0.05f);
             Transform transform = marked_object->transform;
             transform.setLocalScale(scale_matrix);
             transform.computeModelMatrix();
@@ -428,14 +428,113 @@ public:
 
 class InstanceManager : public Node {
 public:
-    int size = 0;
+    int size = 0, current_min_id = 0;
+    int max_size = 1000;
+    unsigned int buffer;
+    Shader *shader_instanced;
 
-    InstanceManager(Model& model, std::string nameOfNode, int id = 0) : Node(nameOfNode, id) {
+    InstanceManager(Model& model, std::string nameOfNode, Shader *_shader_instanced, int id = 0, int max_size = 1000) : Node(nameOfNode, id), max_size(max_size) {
         pModel = &model;
+        AABB = nullptr;
+        shader_instanced = _shader_instanced;
+        prepareBuffer();
     }
 
-    void drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) {
-        //pModel->Draw(_shader, size);
+    void drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) override {
+        shader_instanced->use();
+        glStencilMask(0xFF);
+        pModel->DrawInstanced(*shader_instanced, size);
+        glStencilMask(0x00);
+        
+    }
+
+    void updateSelfAndChild(bool controlDirty) override {
+
+        controlDirty |= transform.isDirty();
+
+        if (controlDirty) {
+            forceUpdateSelfAndChild();
+        }
+
+        for (auto&& child : children)
+        {
+            bool is_dirty = child->transform.isDirty();
+            child->updateSelfAndChild(controlDirty);
+            if (is_dirty) {
+                updateBuffer(child);
+            }
+        }
+    }
+
+    void addChild(Node* p) override {
+        children.push_back(p);
+        children.back()->parent = this; // Set this as the created child's parent
+        size++;
+        p->id = current_min_id;
+        current_min_id++;
+        updateBuffer(p);
+    }
+
+    Node* find(int id) {
+        for (auto&& child : children) {
+            if (child->id == id) {
+                return child;
+            }
+        }
+        return nullptr;
+    }
+
+    
+    void removeChild(int id) {
+        //usuniecie ze sceny tworzylo by dziury w tablicy
+        //wiec znajdujemy to co usuwamy po indexach
+        Node* temp = find(id);
+        //zapisujemy index
+        int new_id = temp->id;
+        //usuwamy
+        children.remove(temp);
+        //i ostatni element dajemy w miejsce dziury
+        temp = children.back();
+        temp->id = new_id;
+        updateBuffer(temp);
+        current_min_id--;
+        size--;
+    }
+private:
+    void prepareBuffer()
+    {
+        glGenBuffers(1, &buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferData(GL_ARRAY_BUFFER, max_size * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
+
+        for (unsigned int i = 0; i < pModel->meshes.size(); i++)
+        {
+            unsigned int VAO = pModel->meshes[i].VAO;
+            glBindVertexArray(VAO);
+            // Atrybuty wierzchołków
+            GLsizei vec4_size = sizeof(glm::vec4);
+            glEnableVertexAttribArray(3);
+            glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)0);
+            glEnableVertexAttribArray(4);
+            glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(vec4_size));
+            glEnableVertexAttribArray(5);
+            glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(2 * vec4_size));
+            glEnableVertexAttribArray(6);
+            glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(3 * vec4_size));
+
+            glVertexAttribDivisor(3, 1);
+            glVertexAttribDivisor(4, 1);
+            glVertexAttribDivisor(5, 1);
+            glVertexAttribDivisor(6, 1);
+
+            glBindVertexArray(0);
+        }
+    }
+
+    void updateBuffer(Node *p) {
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferSubData(GL_ARRAY_BUFFER, p->id * sizeof(glm::mat4), sizeof(glm::mat4), &p->transform.getModelMatrix());
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 };
 

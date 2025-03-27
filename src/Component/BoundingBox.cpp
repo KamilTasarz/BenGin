@@ -51,10 +51,8 @@ void BoundingBox::transformAABB(const glm::mat4& model) {
     }
 }
 
-void BoundingBox::draw(Shader& shader) {
-    if (VAO == 0) {
-
-        float vertices[] = {
+void BoundingBox::setBuffers() {
+    float vertices[] = {
             min_point_local.x, min_point_local.y, min_point_local.z, //dolny kwadrat
             min_point_local.x, min_point_local.y, max_point_local.z,
             max_point_local.x, min_point_local.y, max_point_local.z,
@@ -75,19 +73,24 @@ void BoundingBox::draw(Shader& shader) {
 
             max_point_local.x, min_point_local.y, min_point_local.z,
             max_point_local.x, max_point_local.y, min_point_local.z
-        };
+    };
 
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
 
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
 
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-        glBindVertexArray(0);
+    glBindVertexArray(0);
+}
+
+void BoundingBox::draw(Shader& shader) {
+    if (VAO == 0) {
+        setBuffers();
     }
 
     shader.use();

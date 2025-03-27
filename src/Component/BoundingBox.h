@@ -8,11 +8,9 @@
 
 class BoundingBox {
 
-private:
+public:
 
 	unsigned int VAO = 0, VBO;
-
-public:
 
 	glm::vec3 min_point_local; 
 	glm::vec3 max_point_local;
@@ -28,12 +26,14 @@ public:
 		max_point_local = max_point;
 		transformAABB(model);
 		this->model = glm::mat4(model);
+		setBuffers();
 	}
 
 	bool isRayIntersects(glm::vec3 direction, glm::vec3 origin, float &t) const; // t - parameter
 	bool isBoundingBoxIntersects(const BoundingBox& other_bounding_box) const; // t - parameter
 	void transformAABB(const glm::mat4& model);
 	void draw(Shader& shader);
+	void setBuffers();
 	
 };
 

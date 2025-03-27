@@ -394,6 +394,11 @@ public:
         
     }
 
+    void DrawInstanced(Shader& shader, int num) {
+        for (unsigned int i = 0; i < meshes.size(); i++)
+            meshes[i].DrawInstanced(shader, num);
+    }
+
     // draws the model, and thus all its meshes
     void Draw(Shader& shader)
     {
