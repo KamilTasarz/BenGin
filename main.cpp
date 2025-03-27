@@ -8,14 +8,16 @@ PascalCase - klasy/struktury
 
 */
 
-
-
 #include "src/Basic/Shader.h"
-#include "src/Component/Camera.h"
 #include "src/Basic/Model.h"
+
+#include "src/Component/Camera.h"
 #include "src/Gameplay/Player.h"
 
 #include "src/AudioEngine.h"
+
+#include "src/Input/InputManager.h"
+
 #include "Light.h"
 #include "config.h"
 
@@ -129,7 +131,7 @@ int main() {
 
     glfwWindowHint(GLFW_SAMPLES, 4);
     
-    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.03", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.04", NULL, NULL);
 
     if (!window) {
         std::cerr << "Failed to create window\n";
