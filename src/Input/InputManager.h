@@ -10,9 +10,10 @@
 #include <iostream>
 
 #include <algorithm>
-#include <functional>;
+#include <functional>
 
 #include "InputKey.h"
+#include "InputDevice.h"
 
 class InputManager {
 
@@ -44,6 +45,23 @@ public:
 
 private:
 
+	struct ActionEvent {
+
+		InputSource source;
+		int source_index;
+		float value;
+		std::string action_name;
+	
+	};
+
+	// This function will compare the new state of the device with the old one and evaluate action events
+	// This is our main input loop
+	void processInput();
+
+	ActionEvent generateActionEvent(int device_index, InputKey key, float old_value, float new_value);
+
+	void propagateActionEvent(ActionEvent event);
+
 	bool is_active { false };
 
 	// By default both are initialized to empty ({} does that)
@@ -56,6 +74,9 @@ private:
 	// This maps actions (defined by a string) to a vector of "ActionCallback". Holds action callbacks
 	// Holds what should happen when an action is triggered
 	std::unordered_map<std::string, std::vector<ActionCallback>> _action_callback_mapping {};
+
+	// List of registered devices
+	std::vector<InputDevice> _devices {};
 
 };
 
