@@ -1,5 +1,16 @@
 #include "InputManager.h"
 
+// --- CONSTRUCTOR AND DESTRUCTOR --- //
+
+InputManager::InputManager() {
+	is_active = true;
+	std::cout << "Input Manager provided\n";
+}
+
+InputManager::~InputManager() {
+	is_active = false;
+}
+
 // --- REGISTER AND REMOVE ACTION CALLBACKS --- //
 
 void InputManager::registerActionCallback(const std::string& action_name, const ActionCallback& callback) {

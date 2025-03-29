@@ -16,6 +16,7 @@ PascalCase - klasy/struktury
 
 #include "src/AudioEngine.h"
 
+#include "src/System/ServiceLocator.h"
 #include "src/Input/InputManager.h"
 
 #include "Light.h"
@@ -29,10 +30,11 @@ void mouseCallback(GLFWwindow* window, double posX, double posY);
 void changeMouse(GLFWwindow* window);
 glm::vec4 getRayWorld(GLFWwindow* window);
 void setLights(Shader* shader);
+// Very questionable for now
+void initializeServices();
 
 string print(glm::vec3 v);
 
-  
 const char* vertexPath = "res/shaders/basic.vert";
 const char* fragmentPath = "res/shaders/basic.frag";
 const char* vertexPath_shadow = "res/shaders/shadow.vert";
@@ -183,6 +185,9 @@ int main() {
     int useless_garbage;
 
     // --- //
+
+    // Kind of a test for now - create services (InputManager only for now)
+    initializeServices();
 
     // --- IMGUI INIT --- //
 
@@ -687,5 +692,12 @@ void setLights(Shader* shader) {
         shader->setVec3("directional_lights[" + index + "].diffuse", directional_lights[i].diffuse);
         shader->setVec3("directional_lights[" + index + "].specular", directional_lights[i].specular);
     }
+
+}
+
+void initializeServices() {
+
+    // Provide an Input Manager
+    ServiceLocator::provide(new InputManager());
 
 }

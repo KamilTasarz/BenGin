@@ -1,9 +1,13 @@
 #pragma once
 
+#ifndef INPUT_MANAGER_H
+#define INPUT_MANAGER_H
+
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include <algorithm>
 #include <functional>;
@@ -24,6 +28,10 @@ public:
 
 	};
 
+	// Constructor and destructor
+	InputManager();
+	~InputManager();
+
 	// We connect a specific action to its callback (which is a method along with a string to reference)
 	void registerActionCallback(const std::string& action_name, const ActionCallback& callback);
 	// If we want to remove the connection of an action with its callback from the map
@@ -35,6 +43,8 @@ public:
 	void unmapInputFromAction(InputKey key, const std::string& action);
 
 private:
+
+	bool is_active { false };
 
 	// By default both are initialized to empty ({} does that)
 
@@ -48,3 +58,5 @@ private:
 	std::unordered_map<std::string, std::vector<ActionCallback>> _action_callback_mapping {};
 
 };
+
+#endif // !INPUT_MANAGER_H
