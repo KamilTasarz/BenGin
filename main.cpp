@@ -141,6 +141,9 @@ int main() {
         return -1;
     }
 
+    // --- REGISTER INPUT DEVICES AND SOME CALLBACKS --- //
+
+
     glfwMakeContextCurrent(window);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to initialize GLAD\n";

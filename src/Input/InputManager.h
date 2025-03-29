@@ -58,9 +58,12 @@ private:
 	// This is our main input loop
 	void processInput();
 
-	ActionEvent generateActionEvent(int device_index, InputKey key, float old_value, float new_value);
+	std::vector<ActionEvent> generateActionEvent(int device_index, InputKey key, float new_value);
 
 	void propagateActionEvent(ActionEvent event);
+
+	void registerDevice(const InputDevice& device);
+	void removeDevice(InputDeviceType type, int input_index);
 
 	bool is_active { false };
 

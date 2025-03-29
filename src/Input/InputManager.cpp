@@ -66,8 +66,7 @@ void InputManager::processInput() {
 			if (device.current_state[key_state.first].value != key_state.second.value) {
 				
 				// Generate device action event if the values are different (state changed)
-				events.emplace_back(generateActionEvent(device.index, key_state.first,
-					device.current_state[key_state.first].value, key_state.second.value));
+				events.emplace_back(generateActionEvent(device.index, key_state.first, key_state.second.value));
 
 				// Override the value after generating the action event (save new state)
 				device.current_state[key_state.first].value = key_state.second.value;
@@ -87,9 +86,27 @@ void InputManager::processInput() {
 	
 }
 
-InputManager::ActionEvent InputManager::generateActionEvent(int device_index, InputKey key, float old_value, float new_value) {
+std::vector<InputManager::ActionEvent> InputManager::generateActionEvent(int device_index, InputKey key, float new_value) {
 
-	return ActionEvent();
+	std::vector<ActionEvent> action_events {};
+
+	auto& actions = _input_action_mapping[key];
+	InputSource source = getInputSourceFromKey(key);
+
+	for (auto& action : actions) {
+		
+		action_events.emplace_back(ActionEvent {
+
+			.source = source,
+			.source_index = device_index,
+			.value = new_value,
+			.action_name = action
+
+		});
+
+	}
+
+	return action_events;
 
 }
 
@@ -105,5 +122,21 @@ void InputManager::propagateActionEvent(ActionEvent event) {
 		if (action.function(event.source, event.source_index, event.value)) { break; }
 
 	}
+
+}
+
+void InputManager::registerDevice(const InputDevice& device) {
+	
+	// Add device to our list of devices
+	_devices.emplace_back(device);
+
+}
+
+void InputManager::removeDevice(InputDeviceType type, int input_index) {
+
+	// Removes any device with this type and index from the _devices list
+	std::erase_if(_devices, [type, input_index](const InputDevice& device) {
+		return device.type == type && device.index == input_index;
+		});
 
 }
