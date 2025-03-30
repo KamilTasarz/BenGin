@@ -66,7 +66,8 @@ void InputManager::processInput() {
 			if (device.current_state[key_state.first].value != key_state.second.value) {
 				
 				// Generate device action event if the values are different (state changed)
-				events.emplace_back(generateActionEvent(device.index, key_state.first, key_state.second.value));
+				auto generated_events = generateActionEvent(device.index, key_state.first, key_state.second.value);
+				events.insert(events.end(), generated_events.begin(), generated_events.end());
 
 				// Override the value after generating the action event (save new state)
 				device.current_state[key_state.first].value = key_state.second.value;
@@ -138,5 +139,45 @@ void InputManager::removeDevice(InputDeviceType type, int input_index) {
 	std::erase_if(_devices, [type, input_index](const InputDevice& device) {
 		return device.type == type && device.index == input_index;
 		});
+
+}
+
+InputSource getInputSourceFromKey(InputKey key) {
+
+	switch (key) {
+
+	case InputKey::W:
+	case InputKey::S:
+	case InputKey::A:
+	case InputKey::D:
+	case InputKey::UP:
+	case InputKey::DOWN:
+	case InputKey::LEFT:
+	case InputKey::RIGHT:
+		return InputSource::KEYBOARD;
+
+	case InputKey::MOUSE_LEFT:
+	case InputKey::MOUSE_RIGHT:
+	case InputKey::MOUSE_MIDDLE:
+	case InputKey::MOUSE_POSX:
+	case InputKey::MOUSE_POSY:
+	case InputKey::MOUSE_MOVE_X:
+	case InputKey::MOUSE_MOVE_Y:
+		return InputSource::MOUSE;
+
+	case InputKey::GAMEPAD_TRIANGLE:
+	case InputKey::GAMEPAD_SQUARE:
+	case InputKey::GAMEPAD_X:
+	case InputKey::GAMEPAD_CIRCLE:
+	case InputKey::GAMEPAD_LEFT_STICK_X:
+	case InputKey::GAMEPAD_LEFT_STICK_Y:
+	case InputKey::GAMEPAD_RIGHT_STICK_X:
+	case InputKey::GAMEPAD_RIGHT_STICK_Y:
+		return InputSource::GAMEPAD;
+
+	default:
+		return InputSource::UNKNOWN;
+
+	}
 
 }

@@ -43,6 +43,9 @@ public:
 	// We use it to make an input no longer be connected to an action
 	void unmapInputFromAction(InputKey key, const std::string& action);
 
+	void registerDevice(const InputDevice& device);
+	void removeDevice(InputDeviceType type, int input_index);
+
 private:
 
 	struct ActionEvent {
@@ -61,9 +64,6 @@ private:
 	std::vector<ActionEvent> generateActionEvent(int device_index, InputKey key, float new_value);
 
 	void propagateActionEvent(ActionEvent event);
-
-	void registerDevice(const InputDevice& device);
-	void removeDevice(InputDeviceType type, int input_index);
 
 	bool is_active { false };
 

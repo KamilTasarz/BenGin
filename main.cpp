@@ -18,6 +18,7 @@ PascalCase - klasy/struktury
 
 #include "src/System/ServiceLocator.h"
 #include "src/Input/InputManager.h"
+#include "src/Input/Input.h"
 
 #include "Light.h"
 #include "config.h"
@@ -142,7 +143,63 @@ int main() {
     }
 
     // --- REGISTER INPUT DEVICES AND SOME CALLBACKS --- //
+    // Kind of a test for now - create services (InputManager only for now)
+    initializeServices();
 
+    Input input {};
+
+    glfwSetWindowUserPointer(window, &input);
+
+    glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+
+        // Get the input
+        auto* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
+
+        if (input) {
+
+            // Set the new value for key
+            float value = 0.0f;
+
+            switch (action) {
+
+            case GLFW_PRESS:
+            case GLFW_REPEAT:
+                value = 1.0f;
+                break;
+
+            default:
+                value = 0.0f;
+
+            }
+
+            input->updateKeyboardState(key, value);
+
+        }
+
+    });
+
+    glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
+
+        // Get the input
+        auto* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
+
+        if (input) {
+            
+            input->updateMouseState(button, action == GLFW_PRESS? 1.0f : 0.0f);
+
+        }
+
+    });
+
+    auto* input_manager = ServiceLocator::getInputManager();
+
+    input_manager->registerDevice(InputDevice{
+            .type = InputDeviceType::KEYBOARD,
+            .index = 0,
+            .stateFunction = std::bind(&Input::getKeyboardState, &input, std::placeholders::_1)
+        });
+
+    // --- //
 
     glfwMakeContextCurrent(window);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -188,9 +245,6 @@ int main() {
     int useless_garbage;
 
     // --- //
-
-    // Kind of a test for now - create services (InputManager only for now)
-    initializeServices();
 
     // --- IMGUI INIT --- //
 
