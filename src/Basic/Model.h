@@ -22,10 +22,22 @@
 #include <map>
 #include <vector>
 
+#define MAX_BONE_WEIGHTS 100
+
 using namespace std;
 
 unsigned int textureFromFile(const char* path, const string& directory, bool gamma = false);
 unsigned int textureFromFile(const char* full_path, bool gamma = false);
+
+struct BoneInfo
+{
+    // id wykorzystywane w shaderze do okreslenia z macierzy kosci, ktora to jest macierz
+    int id;
+
+    // offset przenoszacy kosc z originu
+    glm::mat4 offset;
+
+};
 
 class Model
 {
@@ -160,6 +172,57 @@ private:
 
         // return a mesh object created from the extracted mesh data
         return Mesh(vertices, indices, textures);
+    }
+
+    void extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
+    {
+        for (int bone_id = 0; bone_id < mesh->mNumBones; bone_id++) {
+            std::string bone_name = mesh->mBones[bone_id]->mName.C_Str();
+            int ID = -1;
+            if (m_BoneInfoMap.find(bone_name) != m_BoneInfoMap.end()) {
+                BoneInfo bone_to_add;
+                bone_to_add.id = m_BoneCounter;
+                m_BoneCounter++;
+                //transformacja macierzy asimpa na glm
+                aiMatrix4x4 mat4 = mesh->mBones[bone_id]->mOffsetMatrix;
+                bone_to_add.offset = glm::transpose(glm::mat4(glm::vec4(mat4.a1, mat4.a2, mat4.a3, mat4.a4), glm::vec4(mat4.b1, mat4.b2, mat4.b3, mat4.b4), 
+                    glm::vec4(mat4.c1, mat4.c2, mat4.c3, mat4.c4), glm::vec4(mat4.d1, mat4.d2, mat4.d3, mat4.d4)));
+                m_BoneInfoMap[bone_name] = bone_to_add;
+                ID = m_BoneCounter;
+            }
+            else {
+                ID = m_BoneInfoMap[bone_name].id;
+            }
+
+            if (ID != -1) {
+
+                auto weights = mesh->mBones[ID]->mWeights;
+                int numWeights = mesh->mBones[ID]->mNumWeights;
+
+                for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+                {
+                    int vertexId = weights[weightIndex].mVertexId;
+                    float weight = weights[weightIndex].mWeight;
+                    if (vertexId <= vertices.size()) {
+                        setVertexBoneData(vertices[vertexId], ID, weight);
+                    }
+                    
+                }
+            }
+        }
+    }
+
+    void setVertexBoneData(Vertex& vertex, int id, float weight) {
+        for (int i = 0; i < MAX_BONE_WEIGHTS; i++)
+        {
+            if (vertex.m_BoneIDs[i] < 0)
+            {
+                vertex.m_Weights[i] = weight;
+                vertex.m_BoneIDs[i] = id;
+                break;
+            }
+        }
+
     }
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
@@ -375,6 +438,12 @@ public:
     vector<Mesh> meshes;
     string directory;
     bool gammaCorrection;
+
+    std::map<string, BoneInfo> m_BoneInfoMap;  // info o kosciach modelu
+    int m_BoneCounter = 0;
+
+    auto& GetBoneInfoMap() { return m_BoneInfoMap; }
+    int& GetBoneCount() { return m_BoneCounter; }
 
     glm::vec3 min_points = glm::vec3(FLT_MAX);
     glm::vec3 max_points = glm::vec3(-FLT_MAX);
