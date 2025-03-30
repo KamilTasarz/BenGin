@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef NODE_H
 #define NODE_H
@@ -30,6 +30,7 @@ protected:
 
     // Flag for optimization (transformation is only applied when something was changed)
     bool m_isDirty = true;
+    bool touched = false;
 
     // Local Matrix getter
     glm::mat4 getLocalModelMatrix()
@@ -51,15 +52,29 @@ public:
     // After applying changes set "isDirty" to false for optimization
     void computeModelMatrix()
     {
-        m_modelMatrix = getLocalModelMatrix();
+        if (!touched) {
+            m_modelMatrix = getLocalModelMatrix();
+        }
+        
         m_isDirty = false;
+        touched = false;
     }
 
     // Calculates global model matrix
     void computeModelMatrix(const glm::mat4& parentGlobalModelMatrix)
     {
-        m_modelMatrix = parentGlobalModelMatrix * getLocalModelMatrix();
+        if (!touched) {
+            m_modelMatrix = parentGlobalModelMatrix * getLocalModelMatrix();
+        }
+        else {
+            m_modelMatrix = parentGlobalModelMatrix * m_modelMatrix;
+        }
+        
         m_isDirty = false;
+        touched = false; 
+        // nie wykorzystuje isDirty poniewaz isDirty moze byc 
+        //ustawione przy podaniu pozycji po prostu, zaś touched tylko jak ustawiamy macierz przez setter
+
     }
 
     // Set position and set "isDirty" to true, for the program to know changes have been made
@@ -81,6 +96,11 @@ public:
     {
         m_scale = newScale;
         m_isDirty = true;
+    }
+
+    void setModelMatrix(glm::mat4& model) {
+        m_modelMatrix = model;
+        m_modelMatrix = true;
     }
 
     // -- GETTERS --
