@@ -22,7 +22,6 @@
 #include <map>
 #include <vector>
 
-#define MAX_BONE_WEIGHTS 100
 
 using namespace std;
 
@@ -92,6 +91,12 @@ private:
         for (unsigned int i = 0; i < mesh->mNumVertices; i++)
         {
             Vertex vertex;
+
+            for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+                vertex.m_BoneIDs[i] = -1;
+                vertex.m_Weights[i] = 0.0f;
+            }
+
             glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
             // positions
             vector.x = mesh->mVertices[i].x;
@@ -170,12 +175,15 @@ private:
         std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
+        extractBoneWeightForVertices(vertices, mesh, scene);
+
         // return a mesh object created from the extracted mesh data
         return Mesh(vertices, indices, textures);
     }
 
     void extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
     {
+        // przejscie po wszystkich kosciach danego meshu i zapisanie tych, ktorych nie ma w mapie informujacej o kosciach
         for (int bone_id = 0; bone_id < mesh->mNumBones; bone_id++) {
             std::string bone_name = mesh->mBones[bone_id]->mName.C_Str();
             int ID = -1;
@@ -191,16 +199,19 @@ private:
                 ID = m_BoneCounter;
             }
             else {
+                //jesli juz jest w mapie to znaczy, ze pobieramy ID kosci i przypiszemy do wierzcholka tylko wage
                 ID = m_BoneInfoMap[bone_name].id;
             }
 
             if (ID != -1) {
 
+                //pobranie wag i ich ilosci dla kosci z danego mesha
                 auto weights = mesh->mBones[ID]->mWeights;
                 int numWeights = mesh->mBones[ID]->mNumWeights;
 
-                for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+                for (int weightIndex = 0; weightIndex < numWeights; weightIndex++)
                 {
+
                     int vertexId = weights[weightIndex].mVertexId;
                     float weight = weights[weightIndex].mWeight;
                     if (vertexId <= vertices.size()) {
@@ -213,7 +224,7 @@ private:
     }
 
     void setVertexBoneData(Vertex& vertex, int id, float weight) {
-        for (int i = 0; i < MAX_BONE_WEIGHTS; i++)
+        for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
         {
             if (vertex.m_BoneIDs[i] < 0)
             {
