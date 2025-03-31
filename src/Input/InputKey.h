@@ -1,6 +1,10 @@
 #pragma once
 
+#include <string>
+
 enum class InputKey {
+
+	UNKNOWN,
 
 	// Keyboard
 	W, S, A, D, UP, DOWN, LEFT, RIGHT,
@@ -17,6 +21,14 @@ enum class InputKey {
 enum class InputSource {
 	
 	KEYBOARD, MOUSE, GAMEPAD, UNKNOWN
+
+};
+
+struct InputAction {
+
+	std::string action_name;
+
+	float scale;
 
 };
 

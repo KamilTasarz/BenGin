@@ -29,23 +29,25 @@ void InputManager::removeActionCallback(const std::string& action_name, const st
 	// string, the ActionCallback is removed from the map
 	// "Removes any instance of this callback reference from a vector of callbacks"
 	std::erase_if(_action_callback_mapping[action_name], [callback_reference](const ActionCallback& callback) {
-		return callback.callback_reference == callback_reference;
+			return callback.callback_reference == callback_reference;
 		});
 
 }
 
 // --- MAP AND UNMAP INPUT TO/FROM ACTIONS --- //
 
-void InputManager::mapInputToAction(InputKey key, const std::string& action) {
+void InputManager::mapInputToAction(InputKey key, const InputAction& action) {
 
-	_input_action_mapping[key].emplace(action);
+	// TODO: Check for duplicates
+	_input_action_mapping[key].emplace_back(action);
 
 }
 
 void InputManager::unmapInputFromAction(InputKey key, const std::string& action) {
 
-	// Because it's a set it will only be present once (no copies of the same action for one key)
-	_input_action_mapping[key].erase(action);
+	std::erase_if(_input_action_mapping[key], [action](const InputAction& input_action) {
+			return input_action.action_name == action;
+		});
 
 }
 
@@ -100,8 +102,8 @@ std::vector<InputManager::ActionEvent> InputManager::generateActionEvent(int dev
 
 			.source = source,
 			.source_index = device_index,
-			.value = new_value,
-			.action_name = action
+			.value = new_value * action.scale,
+			.action_name = action.action_name
 
 		});
 
@@ -137,7 +139,7 @@ void InputManager::removeDevice(InputDeviceType type, int input_index) {
 
 	// Removes any device with this type and index from the _devices list
 	std::erase_if(_devices, [type, input_index](const InputDevice& device) {
-		return device.type == type && device.index == input_index;
+			return device.type == type && device.index == input_index;
 		});
 
 }

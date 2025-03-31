@@ -142,6 +142,8 @@ int main() {
         return -1;
     }
 
+    // --- !!! THIS SHOULD ALL HAPPEN IN GAME/ENGINE CLASS (FRIEND TO INPUT MANAGER) - ESCPECIALLY PROCESS INPUT !!! --- //
+
     // --- REGISTER INPUT DEVICES AND SOME CALLBACKS --- //
     // Kind of a test for now - create services (InputManager only for now)
     initializeServices();
@@ -191,6 +193,8 @@ int main() {
 
     });
 
+    // Register our devices
+
     auto* input_manager = ServiceLocator::getInputManager();
 
     input_manager->registerDevice(InputDevice{
@@ -198,6 +202,38 @@ int main() {
             .index = 0,
             .stateFunction = std::bind(&Input::getKeyboardState, &input, std::placeholders::_1)
         });
+
+    input_manager->registerDevice(InputDevice{
+            .type = InputDeviceType::MOUSE,
+            .index = 0,
+            .stateFunction = std::bind(&Input::getMouseState, &input, std::placeholders::_1)
+        });
+
+    if (input_manager) {
+        
+        input_manager->mapInputToAction(InputKey::A, InputAction{
+                .action_name = "strafe",
+                .scale = -1.0f
+            });
+
+        input_manager->mapInputToAction(InputKey::D, InputAction{
+                .action_name = "strafe",
+                .scale = 1.0f
+            });
+
+        input_manager->registerActionCallback("strafe", InputManager::ActionCallback {
+            .callback_reference = "Testing if this callbacks work",
+            .function = [](InputSource source, int source_index, float value) {
+                std::cout << "Strafing " << (value == 1.0f ? "RIGHT" : "LEFT") << "\n";
+                return true;
+            }
+        });
+    }
+
+    // Move to main game loop
+    /*if (ServiceLocator::getInputManager()) {
+        ServiceLocator::getInputManager()->processInput();
+    }*/
 
     // --- //
 
@@ -416,6 +452,11 @@ int main() {
             frames = 0;
         }
         
+        // Move to main game loop
+        if (ServiceLocator::getInputManager()) {
+            ServiceLocator::getInputManager()->processInput();
+        }
+
         // --- //
 
         // Audio control section (just temporarily hardcoded)

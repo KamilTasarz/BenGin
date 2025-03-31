@@ -39,12 +39,16 @@ public:
 	void removeActionCallback(const std::string& action_name, const std::string& callback_reference);
 
 	// We associate performing an input (like pressing a certain key) with an action
-	void mapInputToAction(InputKey key, const std::string& action);
+	void mapInputToAction(InputKey key, const InputAction& action);
 	// We use it to make an input no longer be connected to an action
 	void unmapInputFromAction(InputKey key, const std::string& action);
 
 	void registerDevice(const InputDevice& device);
 	void removeDevice(InputDeviceType type, int input_index);
+
+	// This function will compare the new state of the device with the old one and evaluate action events
+	// This is our main input loop
+	void processInput();
 
 private:
 
@@ -57,10 +61,6 @@ private:
 	
 	};
 
-	// This function will compare the new state of the device with the old one and evaluate action events
-	// This is our main input loop
-	void processInput();
-
 	std::vector<ActionEvent> generateActionEvent(int device_index, InputKey key, float new_value);
 
 	void propagateActionEvent(ActionEvent event);
@@ -69,10 +69,10 @@ private:
 
 	// By default both are initialized to empty ({} does that)
 
-	// This maps the enum class "InputKey" to a specified actions defined by a set of strings
+	// This maps the enum class "InputKey" to a specified actions defined by a struct
 	// Which key press triggers which action
-	// Set allows us to map a single key to multiple actions (different in GUI, different in game)
-	std::unordered_map<InputKey, std::unordered_set<std::string>> _input_action_mapping {};
+	// Vector allows us to map a single key to multiple actions (different in GUI, different in game)
+	std::unordered_map<InputKey, std::vector<InputAction>> _input_action_mapping {};
 
 	// This maps actions (defined by a string) to a vector of "ActionCallback". Holds action callbacks
 	// Holds what should happen when an action is triggered

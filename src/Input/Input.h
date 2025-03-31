@@ -21,6 +21,9 @@ public:
 
 private:
 
+	static InputKey keyToInputKey(int key);
+	static InputKey mouseButtonToInputKey(int button);
+
 	std::unordered_map<InputKey, InputDeviceState> _keyboard_state {};
 	std::unordered_map<InputKey, InputDeviceState> _mouse_state {};
 
