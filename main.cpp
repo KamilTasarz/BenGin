@@ -211,6 +211,8 @@ int main() {
 
     if (input_manager) {
         
+        // Key-action mapping
+
         input_manager->mapInputToAction(InputKey::A, InputAction{
                 .action_name = "strafe",
                 .scale = -1.0f
@@ -221,13 +223,34 @@ int main() {
                 .scale = 1.0f
             });
 
+        input_manager->mapInputToAction(InputKey::S, InputAction{
+                .action_name = "walk",
+                .scale = -1.0f
+            });
+
+        input_manager->mapInputToAction(InputKey::W, InputAction{
+                .action_name = "walk",
+                .scale = 1.0f
+            });
+
+        // Action callbacks
+
         input_manager->registerActionCallback("strafe", InputManager::ActionCallback {
-            .callback_reference = "Testing if this callbacks work",
+            .callback_reference = "Strafing is left and right",
             .function = [](InputSource source, int source_index, float value) {
                 std::cout << "Strafing " << (value == 1.0f ? "RIGHT" : "LEFT") << "\n";
                 return true;
             }
         });
+
+        input_manager->registerActionCallback("walk", InputManager::ActionCallback{
+            .callback_reference = "Walking is front and back",
+            .function = [](InputSource source, int source_index, float value) {
+                std::cout << "Walking " << (value == 1.0f ? "FRONT" : "BACKWARDS") << "\n";
+                return true;
+            }
+        });
+
     }
 
     // Move to main game loop
