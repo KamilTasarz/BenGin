@@ -3,7 +3,26 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
+
 #include <GLFW/glfw3.h>
+
+extern bool is_camera = true, is_camera_prev = false;
+extern bool mouse_pressed = false;
+
+extern bool firstMouseMovement = true;
+
+extern float lastX = (float)WINDOW_WIDTH / 2.0;
+extern float lastY = (float)WINDOW_HEIGHT / 2.0;
+
+extern GLfloat deltaTime = 0.0f;
+extern GLfloat lastFrame = 0.0f;
+
+extern Camera* camera = new Camera(0.f, 0.f, -3.f);
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouseCallback(GLFWwindow* window, double posX, double posY);
 
 class Window {
 
@@ -67,5 +86,33 @@ public:
 	}
 
 };
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+	glViewport(0, 0, width, height);
+	lastFrame = glfwGetTime();
+}
+
+void mouseCallback(GLFWwindow* window, double posX, double posY) {
+
+	float x = static_cast<float>(posX);
+	float y = static_cast<float>(posY);
+
+	if (firstMouseMovement) {
+		lastX = x;
+		lastY = y;
+		firstMouseMovement = false;
+	}
+
+	float offsetX = x - lastX;
+	float offsetY = lastY - y; // reversed
+
+	lastX = x;
+	lastY = y;
+
+	if (is_camera) {
+		camera->ProcessMouseMovement(offsetX, offsetY);
+	}
+
+}
 
 #endif // !WINDOW_H

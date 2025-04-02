@@ -23,6 +23,8 @@ CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
 #include "src/AudioEngine.h"
 
 #include "src/System/ServiceLocator.h"
+#include "src/System/Window.h"
+
 #include "src/Input/InputManager.h"
 #include "src/Input/Input.h"
 
@@ -32,8 +34,6 @@ CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouseCallback(GLFWwindow* window, double posX, double posY);
 void changeMouse(GLFWwindow* window);
 glm::vec4 getRayWorld(GLFWwindow* window);
 void setLights(Shader* shader);
@@ -69,23 +69,11 @@ glm::mat4 projection;
 
 std::vector<BoundingBox*> colliders;
 
-bool is_camera = true, is_camera_prev = false;
-bool mouse_pressed = false;
-
-bool firstMouseMovement = true;
-
-float lastX = (float)WINDOW_WIDTH / 2.0;
-float lastY = (float)WINDOW_HEIGHT / 2.0;
-
-GLfloat deltaTime = 0.0f;
-GLfloat lastFrame = 0.0f;
-
 float fps = 0.0f; // Current FPS
 float fps_timer = 0.0f;
 int frames = 0;
 
 Node rootNode("rootNode");
-Camera camera(0.f, 0.f, -3.f);
 
 // Cursor teleport to the other side of the screen
 float xCursorMargin = 30.0f;
@@ -181,8 +169,8 @@ int main() {
 
                 input_manager->registerDevice(InputDevice{
                     .type = InputDeviceType::GAMEPAD,
-                    .index = joystick_id,
-                    .stateFunction = std::bind(&Input::getGamepadState, this, std::placeholders::_1)
+                    .index = joystick_id//,
+                    //.stateFunction = std::bind(&Input::getGamepadState, this, std::placeholders::_1)
                 });
 
             } else if (event == GLFW_DISCONNECTED) {
@@ -551,22 +539,22 @@ int main() {
 
         float speed = 6.f;
         if (glfwGetKey(window->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-            point_lights[0].position += camera.cameraRight * speed * deltaTime;
+            point_lights[0].position += camera->cameraRight * speed * deltaTime;
         }
         if (glfwGetKey(window->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-            point_lights[0].position -= camera.cameraRight * speed * deltaTime;
+            point_lights[0].position -= camera->cameraRight * speed * deltaTime;
         }
         if (glfwGetKey(window->window, GLFW_KEY_UP) == GLFW_PRESS) {
-            point_lights[0].position += camera.cameraFront * speed * deltaTime;
+            point_lights[0].position += camera->cameraFront * speed * deltaTime;
         }
         if (glfwGetKey(window->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-            point_lights[0].position -= camera.cameraFront * speed * deltaTime;
+            point_lights[0].position -= camera->cameraFront * speed * deltaTime;
         }
         if (glfwGetKey(window->window, GLFW_KEY_O) == GLFW_PRESS) {
-            point_lights[0].position += camera.cameraUp * speed * deltaTime;
+            point_lights[0].position += camera->cameraUp * speed * deltaTime;
         }
         if (glfwGetKey(window->window, GLFW_KEY_L) == GLFW_PRESS) {
-            point_lights[0].position -= camera.cameraUp * speed * deltaTime;
+            point_lights[0].position -= camera->cameraUp * speed * deltaTime;
         }
 
         point_lights[0].setModelPosition();
@@ -574,7 +562,7 @@ int main() {
 
 
         if (!is_camera) {
-            player->update(deltaTime, direction, camera.Yaw);
+            player->update(deltaTime, direction, camera->Yaw);
         }
 
         for (auto&& collider : colliders) {
@@ -590,7 +578,7 @@ int main() {
 
 
         if (is_camera) {
-            camera.ProcessKeyboard(deltaTime, direction);
+            camera->ProcessKeyboard(deltaTime, direction);
             changeMouse(window->window);
         }  
 		
@@ -603,7 +591,7 @@ int main() {
             mouse_pressed = false;
         }
 
-        view = camera.GetView();
+        view = camera->GetView();
 
         // unforms for ouline
 
@@ -653,7 +641,7 @@ int main() {
 
         float t = FLT_MAX;
         rootNode.new_marked_object = nullptr;
-        rootNode.mark(getRayWorld(window->window), rootNode.new_marked_object, t, camera.cameraPos);
+        rootNode.mark(getRayWorld(window->window), rootNode.new_marked_object, t, camera->cameraPos);
 
         if (mouse_pressed) {
             if (rootNode.marked_object != nullptr) rootNode.marked_object->is_marked = false;
@@ -726,34 +714,6 @@ int main() {
     return 0;
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-    lastFrame = glfwGetTime();
-}
-
-void mouseCallback(GLFWwindow* window, double posX, double posY) {
-
-    float x = static_cast<float>(posX);
-    float y = static_cast<float>(posY);
-
-    if (firstMouseMovement) {
-        lastX = x;
-        lastY = y;
-        firstMouseMovement = false;
-    }
-
-    float offsetX = x - lastX;
-    float offsetY = lastY - y; // reversed
-
-    lastX = x;
-    lastY = y;
-
-    if (is_camera) {
-        camera.ProcessMouseMovement(offsetX, offsetY);
-    }
-    
-}
-
 void changeMouse(GLFWwindow* window) {
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);
@@ -803,7 +763,7 @@ string print(glm::vec3 v) {
 
 void setLights(Shader* shader) {
 
-    shader->setVec3("cameraPosition", camera.cameraPos);
+    shader->setVec3("cameraPosition", camera->cameraPos);
     for (int i = 0; i < point_light_number; i++) {
         string index = to_string(i);
         point_lights[i].updatePosition();
