@@ -8,6 +8,12 @@ PascalCase - klasy/struktury
 
 */
 
+/*
+
+CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
+
+*/
+
 #include "src/Basic/Shader.h"
 #include "src/Basic/Model.h"
 
@@ -31,7 +37,6 @@ void mouseCallback(GLFWwindow* window, double posX, double posY);
 void changeMouse(GLFWwindow* window);
 glm::vec4 getRayWorld(GLFWwindow* window);
 void setLights(Shader* shader);
-// Very questionable for now
 void initializeServices();
 
 string print(glm::vec3 v);
@@ -99,60 +104,20 @@ PointLight *point_lights;
 
 int main() {
 
-    /*FMOD::System* system;
-    FMOD_RESULT TWOJA_STARUCHA;
-
-    // Tworzenie systemu FMOD
-    TWOJA_STARUCHA = FMOD::System_Create(&system);
-    checkFMODResult(TWOJA_STARUCHA);
-
-    // Inicjalizacja systemu
-    TWOJA_STARUCHA = system->init(512, FMOD_INIT_NORMAL, nullptr);
-    checkFMODResult(TWOJA_STARUCHA);
-
-    // Pobranie wersji FMOD
-    unsigned int version;
-    TWOJA_STARUCHA = system->getVersion(&version);
-    checkFMODResult(TWOJA_STARUCHA);
-
-    std::cout << "FMOD działa! Wersja: "
-        << (version >> 16) << "."
-        << ((version >> 8) & 0xFF) << "."
-        << (version & 0xFF) << std::endl;
-
-    // Zwolnienie zasobów
-    system->release();*/
-
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize GLFW\n";
-        return -1;
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    
-    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.04", NULL, NULL);
-
-    if (!window) {
-        std::cerr << "Failed to create window\n";
-        glfwTerminate();
-        return -1;
-    }
-
     // --- !!! THIS SHOULD ALL HAPPEN IN GAME/ENGINE CLASS (FRIEND TO INPUT MANAGER) - ESCPECIALLY PROCESS INPUT !!! --- //
 
     // --- REGISTER INPUT DEVICES AND SOME CALLBACKS --- //
     // Kind of a test for now - create services (InputManager only for now)
+    
+    Input input{};
+
     initializeServices();
 
-    Input input {};
+    auto* window = ServiceLocator::getWindow();
 
-    glfwSetWindowUserPointer(window, &input);
+    glfwSetWindowUserPointer(window->window, &input);
 
-    glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+    glfwSetKeyCallback(window->window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
 
         // Get the input
         auto* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
@@ -169,6 +134,7 @@ int main() {
                 value = 1.0f;
                 break;
 
+            // GLFW_RELEASE + GLFW_UNKNOWN
             default:
                 value = 0.0f;
 
@@ -180,7 +146,7 @@ int main() {
 
     });
 
-    glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
+    glfwSetMouseButtonCallback(window->window, [](GLFWwindow* window, int button, int action, int mods) {
 
         // Get the input
         auto* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
@@ -238,7 +204,7 @@ int main() {
         input_manager->registerActionCallback("strafe", InputManager::ActionCallback {
             .callback_reference = "Strafing is left and right",
             .function = [](InputSource source, int source_index, float value) {
-                std::cout << "Strafing " << (value == 1.0f ? "RIGHT" : "LEFT") << "\n";
+                std::cout << (value != 0.0f ? (value == 1.0f ? "Strafing RIGHT\n" : "Strafing LEFT\n") : "");
                 return true;
             }
         });
@@ -246,29 +212,14 @@ int main() {
         input_manager->registerActionCallback("walk", InputManager::ActionCallback{
             .callback_reference = "Walking is front and back",
             .function = [](InputSource source, int source_index, float value) {
-                std::cout << "Walking " << (value == 1.0f ? "FRONT" : "BACKWARDS") << "\n";
+                std::cout << (value != 0.0f ? (value == 1.0f ? "Walking FRONT\n" : "Walking BACKWARDS\n") : "");
                 return true;
             }
         });
 
     }
 
-    // Move to main game loop
-    /*if (ServiceLocator::getInputManager()) {
-        ServiceLocator::getInputManager()->processInput();
-    }*/
-
     // --- //
-
-    glfwMakeContextCurrent(window);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Failed to initialize GLAD\n";
-        return -1;
-    }
-
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouseCallback);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -311,7 +262,7 @@ int main() {
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(window->window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
     // --- //
@@ -454,7 +405,7 @@ int main() {
 
     // --- GAME LOOP --- //
 
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window->window)) {
         
         unsigned int dis, tot;
 
@@ -485,17 +436,17 @@ int main() {
         // Audio control section (just temporarily hardcoded)
         audioEngine.Update();
 
-        if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_1) == GLFW_PRESS) {
             audioEngine.stopSound(current_track_id);
             current_track_id = audioEngine.PlaySounds(track1, Vector3{0.0f}, -11.0);
         }
-        if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_2) == GLFW_PRESS) {
             audioEngine.stopSound(current_track_id);
             current_track_id = audioEngine.PlaySounds(track2, Vector3{ 0.0f }, -11.0);
         }
 
         // Pausing/resuming
-        if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && pauseTimer <= 0.0f) {
+        if (glfwGetKey(window->window, GLFW_KEY_3) == GLFW_PRESS && pauseTimer <= 0.0f) {
             if (paused) {
                 audioEngine.resumeSound(current_track_id);
             } else {
@@ -505,7 +456,7 @@ int main() {
             pauseTimer = pauseCooldown;
         }
 
-        if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_4) == GLFW_PRESS) {
             useless_garbage = audioEngine.PlaySounds(sound_effect);
         }
 
@@ -515,7 +466,7 @@ int main() {
 
         // --- //
 
-        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_C) == GLFW_PRESS) {
             if (is_camera == is_camera_prev) {
                 is_camera = !is_camera;
             }
@@ -524,41 +475,41 @@ int main() {
         }
 
         int direction = 0;
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        if (glfwGetKey(window->window, GLFW_KEY_W) == GLFW_PRESS)
             direction += 1;
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        if (glfwGetKey(window->window, GLFW_KEY_S) == GLFW_PRESS)
             direction += 2;
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        if (glfwGetKey(window->window, GLFW_KEY_A) == GLFW_PRESS)
             direction += 4;
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        if (glfwGetKey(window->window, GLFW_KEY_D) == GLFW_PRESS)
             direction += 8;
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             direction += 16;
 
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
             direction += 32;
         }
 
         point_lights[0].updatePosition();
 
         float speed = 6.f;
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
             point_lights[0].position += camera.cameraRight * speed * deltaTime;
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
             point_lights[0].position -= camera.cameraRight * speed * deltaTime;
         }
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_UP) == GLFW_PRESS) {
             point_lights[0].position += camera.cameraFront * speed * deltaTime;
         }
-        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
             point_lights[0].position -= camera.cameraFront * speed * deltaTime;
         }
-        if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_O) == GLFW_PRESS) {
             point_lights[0].position += camera.cameraUp * speed * deltaTime;
         }
-        if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_L) == GLFW_PRESS) {
             point_lights[0].position -= camera.cameraUp * speed * deltaTime;
         }
 
@@ -584,13 +535,13 @@ int main() {
 
         if (is_camera) {
             camera.ProcessKeyboard(deltaTime, direction);
-            changeMouse(window);
+            changeMouse(window->window);
         }  
 		
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(window, true);
+        if (glfwGetKey(window->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(window->window, true);
 
-        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
+        if (glfwGetMouseButton(window->window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
             mouse_pressed = true;
         } else {
             mouse_pressed = false;
@@ -646,7 +597,7 @@ int main() {
 
         float t = FLT_MAX;
         rootNode.new_marked_object = nullptr;
-        rootNode.mark(getRayWorld(window), rootNode.new_marked_object, t, camera.cameraPos);
+        rootNode.mark(getRayWorld(window->window), rootNode.new_marked_object, t, camera.cameraPos);
 
         if (mouse_pressed) {
             if (rootNode.marked_object != nullptr) rootNode.marked_object->is_marked = false;
@@ -697,13 +648,16 @@ int main() {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // ---------------------
+    
+        window->updateWindow();
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     // Audio engine cleanup
     audioEngine.Shutdown();
+
+    // Nullptr to the window and input manager
+    ServiceLocator::shutdownServices();
 
     //ImGui cleanup
     ImGui_ImplGlfw_Shutdown();
@@ -817,6 +771,9 @@ void setLights(Shader* shader) {
 }
 
 void initializeServices() {
+
+    // Provide a window
+    ServiceLocator::provide(new Window(1920, 1080, "Ben-Gin Alpha Version 1.1"));
 
     // Provide an Input Manager
     ServiceLocator::provide(new InputManager());
