@@ -67,6 +67,8 @@ void InputManager::processInput() {
 
 			if (device.current_state[key_state.first].value != key_state.second.value) {
 				
+				// TO-DO: Fix cases where conflicting buttons are pressed -> LEFT AND RIGHT
+
 				// Generate device action event if the values are different (state changed)
 				auto generated_events = generateActionEvent(device.index, key_state.first, key_state.second.value);
 				events.insert(events.end(), generated_events.begin(), generated_events.end());

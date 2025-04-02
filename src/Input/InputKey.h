@@ -26,9 +26,9 @@ enum class InputSource {
 
 struct InputAction {
 
-	std::string action_name;
+	std::string action_name {""};
 
-	float scale;
+	float scale {1.0f};
 
 };
 

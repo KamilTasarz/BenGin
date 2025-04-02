@@ -33,6 +33,7 @@ glm::vec4 getRayWorld(GLFWwindow* window);
 void setLights(Shader* shader);
 // Very questionable for now
 void initializeServices();
+void leftClick(float value);
 
 string print(glm::vec3 v);
 
@@ -151,7 +152,12 @@ int main() {
     Input input {};
 
     glfwSetWindowUserPointer(window, &input);
+    
+    for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++) {
+        glfwSetJoystickUserPointer(i, &input);
+    }
 
+    // KEYBOARD
     glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
 
         // Get the input
@@ -180,6 +186,7 @@ int main() {
 
     });
 
+    // MOUSE
     glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
 
         // Get the input
@@ -188,6 +195,35 @@ int main() {
         if (input) {
             
             input->updateMouseState(button, action == GLFW_PRESS? 1.0f : 0.0f);
+
+        }
+
+    });
+
+    // GAMEPAD
+    glfwSetJoystickCallback([](int joystick_id, int event) {
+    
+        // Get our input manager
+        auto* input_manager = ServiceLocator::getInputManager();
+
+        if (glfwJoystickIsGamepad(joystick_id) && input_manager) {
+
+            // Get the input
+            auto* input = static_cast<Input*>(glfwGetJoystickUserPointer(joystick_id));
+
+            if (event == GLFW_CONNECTED) {
+
+                input_manager->registerDevice(InputDevice{
+                    .type = InputDeviceType::GAMEPAD,
+                    .index = joystick_id,
+                    .stateFunction = std::bind(&Input::getGamepadState, this, std::placeholders::_1)
+                });
+
+            } else if (event == GLFW_DISCONNECTED) {
+
+                input_manager->removeDevice(InputDeviceType::GAMEPAD, joystick_id);
+
+            }
 
         }
 
@@ -233,12 +269,22 @@ int main() {
                 .scale = 1.0f
             });
 
+        // Mouse-action mapping
+
+        input_manager->mapInputToAction(InputKey::MOUSE_LEFT, InputAction{
+                .action_name = "left-click",
+                .scale = 1.0f
+            });
+
         // Action callbacks
 
         input_manager->registerActionCallback("strafe", InputManager::ActionCallback {
             .callback_reference = "Strafing is left and right",
             .function = [](InputSource source, int source_index, float value) {
-                std::cout << "Strafing " << (value == 1.0f ? "RIGHT" : "LEFT") << "\n";
+                std::string direction = "NONE";
+                if (value == 1.0f) direction = "RIGHT";
+                if (value == -1.0f) direction = "LEFT";
+                std::cout << "Strafing " << direction << "\n";
                 return true;
             }
         });
@@ -251,12 +297,17 @@ int main() {
             }
         });
 
-    }
+        input_manager->registerActionCallback("left-click", InputManager::ActionCallback{
+            .callback_reference = "Clicking left mouse button",
+            .function = [](InputSource source, int source_index, float value) {
+                leftClick(value);
+                return true;
+            }
+        });
 
-    // Move to main game loop
-    /*if (ServiceLocator::getInputManager()) {
-        ServiceLocator::getInputManager()->processInput();
-    }*/
+        
+
+    }
 
     // --- //
 
@@ -820,5 +871,11 @@ void initializeServices() {
 
     // Provide an Input Manager
     ServiceLocator::provide(new InputManager());
+
+}
+
+void leftClick(float value) {
+
+    std::cout << "Clicked " << value << "\n";
 
 }
