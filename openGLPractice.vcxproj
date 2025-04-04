@@ -161,7 +161,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\DevTools\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug half|x64'">
@@ -233,6 +233,7 @@
     <ClInclude Include="src\Basic\Model.h" />
     <ClInclude Include="src\Basic\Node.h" />
     <ClInclude Include="src\Gameplay\Player.h" />
+    <ClInclude Include="src\Text\Text.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dependencies\fmod\fmod.cs" />
@@ -244,6 +245,8 @@
     <None Include="res\shaders\basic.frag" />
     <None Include="res\shaders\basic.vert" />
     <None Include="res\shaders\outline.frag" />
+    <None Include="res\shaders\text.frag" />
+    <None Include="res\shaders\text.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />

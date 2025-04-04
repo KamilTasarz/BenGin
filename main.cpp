@@ -8,6 +8,7 @@ PascalCase - klasy/struktury
 
 */
 
+
 #include "config.h"
 
 #include "Shader.h"
@@ -15,7 +16,7 @@ PascalCase - klasy/struktury
 #include "src/Basic/Model.h"
 #include "src/Basic/Node.h"
 #include "src/Gameplay/Player.h"
-
+#include "src/Text/Text.h"
 #include "src/AudioEngine.h"
 
 #define WINDOW_WIDTH 1920
@@ -42,7 +43,8 @@ struct PointLight {
     float constant;
 
 };
-   
+const char* vertexPath_text = "res/shaders/text.vert";
+const char* fragmentPath_text = "res/shaders/text.frag";
 const char* vertexPath = "res/shaders/basic.vert";
 const char* fragmentPath = "res/shaders/basic.frag";
 const char* fragmentPath_outline = "res/shaders/outline.frag";
@@ -81,7 +83,11 @@ float yCursorMargin = 30.0f;
 
 Player *player;
 
+Text* text;
+
 int main() {
+
+
 
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
@@ -121,6 +127,8 @@ int main() {
     glFrontFace(GL_CCW);
 
     glEnable(GL_MULTISAMPLE);
+
+    text = new Text("res/fonts/arial.ttf");
 
     PointLight light = {
         glm::vec3(0.0f, 2.0f, 0.0f), // position
@@ -220,6 +228,7 @@ int main() {
 
     Shader *shader = new Shader(vertexPath, fragmentPath);
     Shader *shader_outline = new Shader(vertexPath, fragmentPath_outline);
+    Shader* shader_text = new Shader(vertexPath_text, fragmentPath_text);
     
     projection = glm::perspective(glm::radians(30.f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.5f, 100.0f);
 
@@ -230,6 +239,9 @@ int main() {
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, false, glm::value_ptr(projection));
 
     rootNode.updateSelfAndChild(true);
+
+    //glEnable(GL_BLEND);
+    
 
     while (!glfwWindowShouldClose(window)) {
         
@@ -422,7 +434,10 @@ int main() {
 
         shader_outline->use();
         rootNode.drawMarkedObject(*shader_outline);
-
+        float fps = 1.f / deltaTime;
+        
+        text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *shader_text, glm::vec3(1.f, 0.3f, 0.3f));
+        text->renderText("We have text render!", 200, 200, *shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
