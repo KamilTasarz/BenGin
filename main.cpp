@@ -17,6 +17,7 @@ PascalCase - klasy/struktury
 #include "src/Basic/Node.h"
 #include "src/Gameplay/Player.h"
 #include "src/Text/Text.h"
+#include "src/HUD/Background.h"
 #include "src/AudioEngine.h"
 
 #define WINDOW_WIDTH 1920
@@ -45,6 +46,7 @@ struct PointLight {
 };
 const char* vertexPath_text = "res/shaders/text.vert";
 const char* fragmentPath_text = "res/shaders/text.frag";
+const char* fragmentPath_background = "res/shaders/background.frag";
 const char* vertexPath = "res/shaders/basic.vert";
 const char* fragmentPath = "res/shaders/basic.frag";
 const char* fragmentPath_outline = "res/shaders/outline.frag";
@@ -84,6 +86,7 @@ float yCursorMargin = 30.0f;
 Player *player;
 
 Text* text;
+Background* background;
 
 int main() {
 
@@ -122,13 +125,14 @@ int main() {
 
     // -- CULLING -- //
 
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 
     glEnable(GL_MULTISAMPLE);
 
     text = new Text("res/fonts/arial.ttf");
+    background = new Background(1920.f, 1080.f, "res/textures/sky.png", 200.f);
 
     PointLight light = {
         glm::vec3(0.0f, 2.0f, 0.0f), // position
@@ -147,11 +151,11 @@ int main() {
     audioEngine.Init();
 
     // Load two music tracks and one sound effect
-    audioEngine.LoadSound(track1, true, true, true);
-    audioEngine.LoadSound(track2, true, true, true);
-    audioEngine.LoadSound(sound_effect, false, false, true);
+    //audioEngine.LoadSound(track1, true, true, true);
+    //audioEngine.LoadSound(track2, true, true, true);
+    //audioEngine.LoadSound(sound_effect, false, false, true);
 
-    int current_track_id = audioEngine.PlaySounds(track1, Vector3{ 0.0f }, -10.0);
+    int current_track_id = 0;//audioEngine.PlaySounds(track1, Vector3{ 0.0f }, -10.0);
     bool paused = false;
 
     // When we want to call PlaySounds and don't care about the channel number
@@ -229,6 +233,7 @@ int main() {
     Shader *shader = new Shader(vertexPath, fragmentPath);
     Shader *shader_outline = new Shader(vertexPath, fragmentPath_outline);
     Shader* shader_text = new Shader(vertexPath_text, fragmentPath_text);
+    Shader* shader_background = new Shader(vertexPath_text, fragmentPath_background);
     
     projection = glm::perspective(glm::radians(30.f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.5f, 100.0f);
 
@@ -253,8 +258,11 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         
+
+
+
         // Audio control section (just temporarily hardcoded)
-        audioEngine.Update();
+        //audioEngine.Update();
 
         if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
             audioEngine.stopSound(current_track_id);
@@ -401,6 +409,10 @@ int main() {
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+
+        background->update(deltaTime);
+        background->render(*shader_background);
+
         rootNode.updateSelfAndChild(false);
         float t = FLT_MAX;
         rootNode.new_marked_object = nullptr;
@@ -436,8 +448,16 @@ int main() {
         rootNode.drawMarkedObject(*shader_outline);
         float fps = 1.f / deltaTime;
         
+        //glClearColor(.01f, .01f, .01f, 1.0f);
+
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+
         text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *shader_text, glm::vec3(1.f, 0.3f, 0.3f));
         text->renderText("We have text render!", 200, 200, *shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
+
+
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
