@@ -18,6 +18,7 @@ PascalCase - klasy/struktury
 #include "src/Gameplay/Player.h"
 #include "src/Text/Text.h"
 #include "src/HUD/Background.h"
+#include "src/HUD/Sprite.h"
 #include "src/AudioEngine.h"
 
 #define WINDOW_WIDTH 1920
@@ -87,6 +88,7 @@ Player *player;
 
 Text* text;
 Background* background;
+Sprite* sprite;
 
 int main() {
 
@@ -133,6 +135,7 @@ int main() {
 
     text = new Text("res/fonts/arial.ttf");
     background = new Background(1920.f, 1080.f, "res/textures/sky.png", 200.f);
+    sprite = new Sprite(1920.f, 1080.f, "res/sprites/heart.png", 100.f, 100.f, 0.1f);
 
     PointLight light = {
         glm::vec3(0.0f, 2.0f, 0.0f), // position
@@ -456,7 +459,7 @@ int main() {
         text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *shader_text, glm::vec3(1.f, 0.3f, 0.3f));
         text->renderText("We have text render!", 200, 200, *shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
 
-
+        sprite->render(*shader_background);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
