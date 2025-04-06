@@ -170,7 +170,6 @@ public:
 
 					index = (j / sprite_h) * (atlas_w / sprite_w) + (i / sprite_w);
 
-					std::cout << "Wczytano: " << paths_to_sprites[index] << std::endl;
 
 					data = stbi_load(paths_to_sprites[index], &width, &height, &nrComponents, 0);
 					if (data) {
@@ -201,9 +200,45 @@ public:
 		setPosition(x, y);
 	}
 	
-	//konstruktor wykorzystujacy sciezke do atlasu - wymagane umieszczenie spritow w 1 lini
-	AnimatedSprite(float duration, const char* path_to_atlas, int sprite_number) : Sprite(), duration(duration) {
+	//konstruktor wykorzystujacy sciezke do sprite'u ze wszystkimi klatkami - wymagane ile rzedow, ile w rzedzie,
+	// ile lacznie i offset po y do poczatku nastepnych
+	AnimatedSprite(float window_width, float window_height, float duration, const char* path_to_atlas,
+		int row_number, int sprites_per_row, int sprite_number, float x, float y, float scale = 1.f) : Sprite(), duration(duration) {
+		
+		screen_projection = glm::ortho(0.0f, window_width, 0.0f, window_height);
+		this->scale = scale;
 
+		sprite_id = textureFromFile(path_to_atlas);
+		uvs = new UV[sprite_number];
+
+
+		glBindTexture(GL_TEXTURE_2D, sprite_id); 
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &sprite_w);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &sprite_h);
+
+		atlas_w = sprite_w;
+		atlas_h = sprite_h;
+
+		sprite_h = atlas_h / row_number;
+		sprite_w = atlas_w / sprites_per_row;
+
+		sprite_num = sprite_number;
+
+		unsigned int index = 0;
+
+		for (int j = atlas_h; j > 0 && index < sprite_num; j -= sprite_h) {
+			for (int i = 0; i < sprite_w * sprites_per_row && index < sprite_num; i += sprite_w) {
+					
+				UV uv;
+				uv.left_up = glm::vec2(i / (float)atlas_w, j / (float)atlas_h);
+				uv.right_down = glm::vec2((i + sprite_w) / (float)atlas_w, (j - sprite_h) / (float)atlas_h);
+				uvs[index] = uv;
+				
+				index++;
+			}
+		}
+		glBindTexture(GL_TEXTURE_2D, 0);
+		setPosition(x, y);
 	}
 
 	void update(float delta_time) override {
@@ -233,7 +268,7 @@ public:
 
 		};
 
-		cout << "uv.left_up.xy" << uv.left_up.x << " " << uv.left_up.y << "uv.right_down.xy" << uv.right_down.x << " " << uv.right_down.y << endl;
+		
 
 		glBindVertexArray(VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);

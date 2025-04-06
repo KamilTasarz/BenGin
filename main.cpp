@@ -88,7 +88,7 @@ Player *player;
 
 Text* text;
 Background* background;
-Sprite *sprite, *sprite2;
+Sprite *sprite, *sprite2, *sprite3;
 
 int main() {
 
@@ -142,6 +142,7 @@ int main() {
 
     
     sprite = new AnimatedSprite(1920.f, 1080.f, 2.f, sprites, 6, 100.f, 300.f);
+    sprite3 = new AnimatedSprite(1920.f, 1080.f, 2.f, "res/sprites/piratWalking.png", 1, 9, 9, 100.f, 400.f);
     sprite2 = new Sprite(1920.f, 1080.f, "res/sprites/heart.png", 700.f, 100.f, 0.1f);
 
     PointLight light = {
@@ -466,8 +467,11 @@ int main() {
         text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *shader_text, glm::vec3(1.f, 0.3f, 0.3f));
         text->renderText("We have text render!", 200, 200, *shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
         sprite->update(deltaTime);
-        sprite->render(*shader_background);
+        sprite3->update(deltaTime);
+        
         sprite2->render(*shader_background);
+        sprite3->render(*shader_background);
+        sprite->render(*shader_background);
         
 
         glfwSwapBuffers(window);
