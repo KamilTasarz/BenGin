@@ -88,7 +88,7 @@ Player *player;
 
 Text* text;
 Background* background;
-Sprite* sprite;
+Sprite *sprite, *sprite2;
 
 int main() {
 
@@ -135,7 +135,14 @@ int main() {
 
     text = new Text("res/fonts/arial.ttf");
     background = new Background(1920.f, 1080.f, "res/textures/sky.png", 200.f);
-    sprite = new Sprite(1920.f, 1080.f, "res/sprites/heart.png", 100.f, 100.f, 0.1f);
+
+    const char* sprites[] = {"res/sprites/ghostFlying1.png", "res/sprites/ghostFlying2.png",
+                             "res/sprites/ghostFlying3.png", "res/sprites/ghostFlying4.png",
+                             "res/sprites/ghostFlying5.png", "res/sprites/ghostFlying6.png" };
+
+    
+    sprite = new AnimatedSprite(1920.f, 1080.f, 2.f, sprites, 6, 100.f, 300.f);
+    sprite2 = new Sprite(1920.f, 1080.f, "res/sprites/heart.png", 700.f, 100.f, 0.1f);
 
     PointLight light = {
         glm::vec3(0.0f, 2.0f, 0.0f), // position
@@ -458,8 +465,10 @@ int main() {
 
         text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *shader_text, glm::vec3(1.f, 0.3f, 0.3f));
         text->renderText("We have text render!", 200, 200, *shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
-
+        sprite->update(deltaTime);
         sprite->render(*shader_background);
+        sprite2->render(*shader_background);
+        
 
         glfwSwapBuffers(window);
         glfwPollEvents();
