@@ -38,10 +38,10 @@ void Player::update(float delta_time, short inputs, float camera_yaw) {
         vel.y = up.y * v_0;
     }
 
-    if (delta_time < 0.01f) {
+    //if (delta_time < 0.01f) {
         pos += (vel * delta_time) + 0.5f * grav * delta_time * delta_time;
         vel += grav * delta_time;
-    }
+    //}
 
 
 
