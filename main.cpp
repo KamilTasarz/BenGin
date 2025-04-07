@@ -182,7 +182,7 @@ int main() {
 
     Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f));
 
-    InstanceManager* walls = new InstanceManager(Tmodel_box_diff_spec, "instance_manager_wall", shader_instanced, 40000);
+    InstanceManager* walls = new InstanceManager(Tmodel_box_diff_spec, "instance_manager_wall", shader_instanced, 20);
 
     player = new Player(kutasiarz, 3.f, 3.f, 10.f);
 
@@ -229,8 +229,8 @@ int main() {
     walls->addChild(box_diff_spec);
     walls->addChild(box_diff_spec2);
 
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 10; j++) {
+    for (int i = 0; i < 20; i++) {
+        for (int j = 0; j < 2; j++) {
             Node* temp = new Node(Tmodel_box_diff_spec, "inst" + to_string(i), colliders);
             temp->transform.setLocalPosition({ i + 4.f, 2.f, 4.f * j + 4.f });
             temp->transform.computeModelMatrix();
