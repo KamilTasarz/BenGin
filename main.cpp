@@ -105,7 +105,6 @@ int main() {
     ServiceLocator::provide(_window);
     
     auto* window = ServiceLocator::getWindow();
-    
 
     // --- //
 
