@@ -5,8 +5,8 @@ in VS_OUT {
 	vec2 Cords;
 	vec3 Normal;
 	vec4 Light_Perspective_Pos;
-	vec4 Light_Perspective_Pos2;
-	vec4 Light_Perspective_Pos3;
+	//vec4 Light_Perspective_Pos2;
+	//vec4 Light_Perspective_Pos3;
 	//mat3 TBN;
 } fs_in;
 
@@ -45,8 +45,8 @@ uniform DirectionLight directional_lights[10];
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 uniform sampler2D shadow_map;
-uniform sampler2D shadow_map3;
-uniform sampler2D shadow_map_back;
+//uniform sampler2D shadow_map3;
+//uniform sampler2D shadow_map_back;
 
 uniform vec3 cameraPosition;
 
@@ -73,10 +73,12 @@ void main() {
         }
 
         
-        float shadow2 = calulateShadow(fs_in.Light_Perspective_Pos3, shadow_map3);
-        float shadow1 = min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
+        //float shadow2 = calulateShadow(fs_in.Light_Perspective_Pos3, shadow_map3);
+        //float shadow1 = min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
         
-        float shadow = clamp(shadow1+shadow2, 0.f, 1.f);
+        //float shadow = clamp(shadow1+shadow2, 0.f, 1.f);
+
+        float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map);
 
         FragColor = vec4((res[0] + (res[1] + res[2]) * (1.f - shadow)), 1.f);
 

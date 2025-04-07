@@ -489,6 +489,7 @@ int main() {
         glClearColor(.01f, .01f, .01f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+
         background->update(deltaTime);
         background->render(*shader_background);
 
@@ -497,27 +498,27 @@ int main() {
         shader_instanced->setMat4("projection", projection);
         //shader_instanced->setMat4("light_view_projection", point_lights[0].getMatrix());
         //shader_instanced->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
-        shader_instanced->setMat4("light_view_projection3", directional_lights[0].getMatrix());
+        shader_instanced->setMat4("light_view_projection", directional_lights[0].getMatrix());
         shader_instanced->setInt("shadow_map", 3);
-        shader_instanced->setInt("shadow_map3", 5);
-        shader_instanced->setInt("shadow_map_back", 4);
+        //shader_instanced->setInt("shadow_map3", 5);
+        //shader_instanced->setInt("shadow_map_back", 4);
 
         shader->use();
         shader->setMat4("view", view);
         shader->setMat4("projection", projection);
         //shader->setMat4("light_view_projection", point_lights[0].getMatrix());
         //shader->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
-        shader->setMat4("light_view_projection3", directional_lights[0].getMatrix());
+        shader->setMat4("light_view_projection", directional_lights[0].getMatrix());
         shader->setInt("shadow_map", 3);
-        shader->setInt("shadow_map3", 5);
-        shader->setInt("shadow_map_back", 4);
+        //shader->setInt("shadow_map3", 5);
+        //shader->setInt("shadow_map_back", 4);
 
         glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMap);
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMapBack);
-        glActiveTexture(GL_TEXTURE5);
         glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);
+        //glActiveTexture(GL_TEXTURE4);
+        //glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMapBack);
+        //glActiveTexture(GL_TEXTURE5);
+        //glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);
 
         float t = FLT_MAX;
         rootNode.new_marked_object = nullptr;
@@ -539,7 +540,6 @@ int main() {
 
         // == standard drawing ==
 
-
         rootNode.drawSelfAndChild(*shader, *shader_outline, dis, tot);
         // == outline ==
 
@@ -547,9 +547,6 @@ int main() {
         rootNode.drawMarkedObject(*shader_outline);
         float fps = 1.f / deltaTime;
         
-        //glClearColor(.01f, .01f, .01f, 1.0f);
-
-        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
         text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *shader_text, glm::vec3(1.f, 0.3f, 0.3f));
@@ -561,6 +558,7 @@ int main() {
         sprite3->render(*shader_background);
         sprite->render(*shader_background);
         
+
 
         // Render the 2D triangle
         glDisable(GL_DEPTH_TEST); // Disable depth test to render on top
