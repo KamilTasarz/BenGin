@@ -1,59 +1,92 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Pliki źródłowe">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Pliki nagłówkowe">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Pliki zasobów">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="dependencies\stb_image\stb_image.cpp" />
+    <ClCompile Include="glad.c" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="SimpleObject.cpp" />
+    <ClCompile Include="src\Gameplay\Player.cpp" />
+    <ClCompile Include="src\AudioEngine.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Basic\Shader.cpp" />
+    <ClCompile Include="src\Component\BoundingBox.cpp" />
+    <ClCompile Include="src\Component\Camera.cpp" />
+    <ClCompile Include="src\Input\InputManager.cpp" />
+    <ClCompile Include="src\Input\Input.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="glad.c">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="dependencies\stb_image\stb_image.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Camera.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="config.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="dependencies\stb_image\stb_image.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Basic\Mesh.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Basic\Model.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
+    <ClInclude Include="config.h" />
+    <ClInclude Include="dependencies\stb_image\stb_image.h" />
+    <ClInclude Include="SimpleObject.h" />
+    <ClInclude Include="src\Basic\Mesh.h" />
+    <ClInclude Include="src\Basic\Model.h" />
+    <ClInclude Include="src\Basic\Node.h" />
+    <ClInclude Include="src\Gameplay\Player.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="src\AudioEngine.h" />
+    <ClInclude Include="dependencies\fmod\fmod.h" />
+    <ClInclude Include="dependencies\fmod\fmod.hpp" />
+    <ClInclude Include="dependencies\fmod\fmod_codec.h" />
+    <ClInclude Include="dependencies\fmod\fmod_common.h" />
+    <ClInclude Include="dependencies\fmod\fmod_dsp.h" />
+    <ClInclude Include="dependencies\fmod\fmod_dsp_effects.h" />
+    <ClInclude Include="dependencies\fmod\fmod_errors.h" />
+    <ClInclude Include="dependencies\fmod\fmod_output.h" />
+    <ClInclude Include="dependencies\fmod_studio\fmod_studio.h" />
+    <ClInclude Include="dependencies\fmod_studio\fmod_studio.hpp" />
+    <ClInclude Include="dependencies\fmod_studio\fmod_studio_common.h" />
+    <ClInclude Include="dependencies\imgui\imconfig.h" />
+    <ClInclude Include="dependencies\imgui\imgui.h" />
+    <ClInclude Include="dependencies\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="dependencies\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="dependencies\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="dependencies\imgui\imgui_internal.h" />
+    <ClInclude Include="dependencies\imgui\imstb_rectpack.h" />
+    <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
+    <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\Basic\Shader.h" />
+    <ClInclude Include="src\Component\BoundingBox.h" />
+    <ClInclude Include="src\Component\Camera.h" />
+    <ClInclude Include="src\Input\InputManager.h" />
+    <ClInclude Include="src\Input\InputKey.h" />
+    <ClInclude Include="src\System\ServiceLocator.h" />
+    <ClInclude Include="src\Input\InputDevice.h" />
+    <ClInclude Include="src\Input\Input.h" />
+    <ClInclude Include="src\System\Window.h" />
+    <ClInclude Include="src\Engine.h" />
+    <ClInclude Include="src\Text\Text.h" />
+    <ClInclude Include="src\HUD\Background.h" />
+    <ClInclude Include="src\HUD\Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
     <None Include="res\shaders\basic.vert" />
     <None Include="res\shaders\outline.frag" />
+    <None Include="dependencies\fmod\fmod_dsp.cs" />
+    <None Include="dependencies\fmod\fmod_errors.cs" />
+    <None Include="dependencies\fmod\fmod.cs" />
+    <None Include="dependencies\fmod_studio\fmod_studio.cs" />
+    <None Include="fmodstudioL.dll" />
+    <None Include="fmodL.dll" />
+	<None Include="assimp.dll" />
+    <None Include="res\shaders\triangle.vert" />
+    <None Include="res\shaders\triangle.frag" />
+    <None Include="res\shaders\instanced.vert" />
+    <None Include="res\shaders\text.frag" />
+    <None Include="res\shaders\text.vert" />
+    <None Include="res\shaders\background.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="dependencies\lib\fmodL_vc.lib" />
+    <Library Include="dependencies\lib\fmodstudioL_vc.lib" />
+    <None Include="res\shaders\shadow.frag" />
+    <None Include="res\shaders\shadow.vert" />
   </ItemGroup>
 </Project>
