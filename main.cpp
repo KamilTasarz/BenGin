@@ -106,7 +106,7 @@ int main() {
 
     ///
 
-    Window* _window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.1");
+    Window* _window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.1.1");
 
     ServiceLocator::provide(_window);
     
@@ -161,6 +161,8 @@ int main() {
     Shader* shader_outline = new Shader(vertexPath, fragmentPath_outline);
     Shader* shader2D = new Shader(triangleVertexPath, triangleFragmentPath);
     Shader* shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
+    Shader* shader_text = new Shader(vertexPath_text, fragmentPath_text);
+    Shader* shader_background = new Shader(vertexPath_text, fragmentPath_background);
 
     // --- //
 
@@ -262,11 +264,6 @@ int main() {
 
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
-
-    Shader *shader = new Shader(vertexPath, fragmentPath);
-    Shader *shader_outline = new Shader(vertexPath, fragmentPath_outline);
-    Shader* shader_text = new Shader(vertexPath_text, fragmentPath_text);
-    Shader* shader_background = new Shader(vertexPath_text, fragmentPath_background);
     
     projection = glm::perspective(glm::radians(30.f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.5f, 100.0f);
 
@@ -474,11 +471,6 @@ int main() {
         
         setLights(shader);
 
-
-
-        background->update(deltaTime);
-        background->render(*shader_background);
-
         rootNode.updateSelfAndChild(false);
 
         //renderowanie pod cienie
@@ -487,41 +479,45 @@ int main() {
         rootNode.drawShadows(*shader_shadow);
         point_lights[0].renderBack(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
-        rootNode.drawShadows(*shader_shadow);
+        rootNode.drawShadows(*shader_shadow);*/
 
         directional_lights[0].render(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
         rootNode.drawShadows(*shader_shadow);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         glClearColor(.01f, .01f, .01f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+        background->update(deltaTime);
+        background->render(*shader_background);
+
         shader_instanced->use();
         shader_instanced->setMat4("view", view);
         shader_instanced->setMat4("projection", projection);
-        /*shader_instanced->setMat4("light_view_projection", point_lights[0].getMatrix());
-        shader_instanced->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
+        //shader_instanced->setMat4("light_view_projection", point_lights[0].getMatrix());
+        //shader_instanced->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
         shader_instanced->setMat4("light_view_projection3", directional_lights[0].getMatrix());
         shader_instanced->setInt("shadow_map", 3);
         shader_instanced->setInt("shadow_map3", 5);
-        shader_instanced->setInt("shadow_map_back", 4);*/
+        shader_instanced->setInt("shadow_map_back", 4);
 
         shader->use();
         shader->setMat4("view", view);
         shader->setMat4("projection", projection);
-        /*shader->setMat4("light_view_projection", point_lights[0].getMatrix());
-        shader->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
+        //shader->setMat4("light_view_projection", point_lights[0].getMatrix());
+        //shader->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
         shader->setMat4("light_view_projection3", directional_lights[0].getMatrix());
         shader->setInt("shadow_map", 3);
         shader->setInt("shadow_map3", 5);
         shader->setInt("shadow_map_back", 4);
+
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMap);
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMapBack);
         glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);*/
+        glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);
 
         float t = FLT_MAX;
         rootNode.new_marked_object = nullptr;

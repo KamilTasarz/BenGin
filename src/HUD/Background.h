@@ -66,8 +66,8 @@ public:
         shader.setInt("background", 0);
         //glDepthFunc(GL_LESS);
         glDisable(GL_DEPTH_TEST);
-        //glEnable(GL_BLEND);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBindVertexArray(VAO);
         glActiveTexture(GL_TEXTURE0);
 
@@ -79,6 +79,7 @@ public:
         glBindVertexArray(0);
         glEnable(GL_DEPTH_TEST);
         
+        glDisable(GL_BLEND);
         //glDepthFunc(GL_LESS);
     }
 
