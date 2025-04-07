@@ -8,6 +8,9 @@
 
 #include <GLFW/glfw3.h>
 
+#include <iostream>
+#include <memory>
+
 #include "src/System/ServiceLocator.h"
 
 #include "src/Input/InputManager.h"
@@ -29,8 +32,19 @@ extern Camera* camera = new Camera(0.f, 0.f, -3.f);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double posX, double posY);
+void leftClick(float value);
 
 class Window {
+
+private:
+
+    std::unordered_map<InputKey, InputDeviceState> getGamepadState(int joystick_id) {
+    
+        return std::unordered_map<InputKey, InputDeviceState> {};
+
+    }
+
+    Input _input {};
 
 public:
 
@@ -81,16 +95,27 @@ public:
 		}
 
 		glViewport(0, 0, width, height);
+
 		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 		glfwSetCursorPosCallback(window, mouseCallback);
 
-        Input input{};
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
 
-        glfwSetWindowUserPointer(window, &input);
+        // Gamma correction???
+        glEnable(GL_FRAMEBUFFER_SRGB);
 
-        for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++) {
-            glfwSetJoystickUserPointer(i, &input);
-        }
+        // -- CULLING -- //
+
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
+
+        glEnable(GL_MULTISAMPLE);
+
+        auto input = std::make_shared<Input>();
+
+        glfwSetWindowUserPointer(window, input.get());
 
         // KEYBOARD
         glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -136,6 +161,13 @@ public:
 
             });
 
+        for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++) {
+            glfwSetJoystickUserPointer(i, this);
+            if (glfwJoystickPresent(i)) {
+                std::cout << "Joystick " << i << " is present" << std::endl;
+            }
+        }
+
         // GAMEPAD
         glfwSetJoystickCallback([](int joystick_id, int event) {
 
@@ -145,73 +177,81 @@ public:
             if (glfwJoystickIsGamepad(joystick_id) && input_manager) {
 
                 // Get the input
-                auto* input = static_cast<Input*>(glfwGetJoystickUserPointer(joystick_id));
+                auto* window = static_cast<Window*>(glfwGetJoystickUserPointer(joystick_id));
 
-                if (event == GLFW_CONNECTED) {
+                if (window) {
 
-                    input_manager->registerDevice(InputDevice{
-                        .type = InputDeviceType::GAMEPAD,
-                        .index = joystick_id//,
-                        //.stateFunction = std::bind(&Input::getGamepadState, this, std::placeholders::_1)
+                    if (event == GLFW_CONNECTED) {
+
+                        input_manager->registerDevice(InputDevice{
+                            .type = InputDeviceType::GAMEPAD,
+                            .index = joystick_id,
+                            .stateFunction = std::bind(&Window::getGamepadState, window, std::placeholders::_1)
                         });
 
-                }
-                else if (event == GLFW_DISCONNECTED) {
+                    }
+                    else if (event == GLFW_DISCONNECTED) {
 
-                    input_manager->removeDevice(InputDeviceType::GAMEPAD, joystick_id);
+                        input_manager->removeDevice(InputDeviceType::GAMEPAD, joystick_id);
+
+                    }
 
                 }
 
             }
 
-            });
+        });
 
         // Register our devices
+        InputManager* _input_manager = new InputManager();
+
+        ServiceLocator::provide(_input_manager);
 
         auto* input_manager = ServiceLocator::getInputManager();
-
-        input_manager->registerDevice(InputDevice{
-                .type = InputDeviceType::KEYBOARD,
-                .index = 0,
-                .stateFunction = std::bind(&Input::getKeyboardState, &input, std::placeholders::_1)
-            });
-
-        input_manager->registerDevice(InputDevice{
-                .type = InputDeviceType::MOUSE,
-                .index = 0,
-                .stateFunction = std::bind(&Input::getMouseState, &input, std::placeholders::_1)
-            });
+        //auto* input_manager = ServiceLocator::getInputManager();
 
         if (input_manager) {
+
+            input_manager->registerDevice(InputDevice{
+                .type = InputDeviceType::KEYBOARD,
+                .index = 0,
+                .stateFunction = std::bind(&Input::getKeyboardState, input, std::placeholders::_1)
+            });
+
+            input_manager->registerDevice(InputDevice{
+                .type = InputDeviceType::MOUSE,
+                .index = 0,
+                .stateFunction = std::bind(&Input::getMouseState, input, std::placeholders::_1)
+            });
 
             // Key-action mapping
 
             input_manager->mapInputToAction(InputKey::A, InputAction{
-                    .action_name = "strafe",
-                    .scale = -1.0f
-                });
+                .action_name = "strafe",
+                .scale = -1.0f
+            });
 
             input_manager->mapInputToAction(InputKey::D, InputAction{
-                    .action_name = "strafe",
-                    .scale = 1.0f
-                });
+                .action_name = "strafe",
+                .scale = 1.0f
+            });
 
             input_manager->mapInputToAction(InputKey::S, InputAction{
-                    .action_name = "walk",
-                    .scale = -1.0f
-                });
+                .action_name = "walk",
+                .scale = -1.0f
+            });
 
             input_manager->mapInputToAction(InputKey::W, InputAction{
-                    .action_name = "walk",
-                    .scale = 1.0f
-                });
+                .action_name = "walk",
+                .scale = 1.0f
+            });
 
             // Mouse-action mapping
 
             input_manager->mapInputToAction(InputKey::MOUSE_LEFT, InputAction{
-                    .action_name = "left-click",
-                    .scale = 1.0f
-                });
+                .action_name = "left-click",
+                .scale = 1.0f
+            });
 
             // Action callbacks
 
@@ -280,6 +320,12 @@ void mouseCallback(GLFWwindow* window, double posX, double posY) {
 	if (is_camera) {
 		camera->ProcessMouseMovement(offsetX, offsetY);
 	}
+
+}
+
+void leftClick(float value) {
+
+    std::cout << "Clicked " << value << "\n";
 
 }
 

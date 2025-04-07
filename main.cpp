@@ -37,7 +37,7 @@ CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
 void changeMouse(GLFWwindow* window);
 glm::vec4 getRayWorld(GLFWwindow* window);
 void setLights(Shader* shader);
-void initializeServices();
+// void initializeServices();
 void leftClick(float value);
 
 string print(glm::vec3 v);
@@ -97,24 +97,17 @@ int main() {
 
     // --- REGISTER INPUT DEVICES AND SOME CALLBACKS --- //
     // Kind of a test for now - create services (InputManager only for now)
+
+    ///
+
+    Window* _window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.1");
+
+    ServiceLocator::provide(_window);
     
     auto* window = ServiceLocator::getWindow();
+    
 
     // --- //
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-
-    // Gamma correction???
-    glEnable(GL_FRAMEBUFFER_SRGB);
-
-    // -- CULLING -- //
-
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-
-    glEnable(GL_MULTISAMPLE);
 
     rootNode.transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
     rootNode.transform.setLocalScale({ 1.0f, 1.0f, 1.0f });
@@ -623,18 +616,12 @@ void setLights(Shader* shader) {
 
 }
 
-void initializeServices() {
-
-    // Provide a window
-    ServiceLocator::provide(new Window(1920, 1080, "Ben-Gin Alpha Version 1.1"));
-
-    // Provide an Input Manager
-    ServiceLocator::provide(new InputManager());
-
-}
-
-void leftClick(float value) {
-
-    std::cout << "Clicked " << value << "\n";
-
-}
+//void initializeServices() {
+//
+//    // Provide a window
+//    ServiceLocator::provide(new Window(1920, 1080, "Ben-Gin Alpha Version 1.1"));
+//
+//    // Provide an Input Manager
+//    ServiceLocator::provide(new InputManager());
+//
+//}

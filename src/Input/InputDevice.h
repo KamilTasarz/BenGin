@@ -6,7 +6,7 @@
 
 enum class InputDeviceType {
 
-	KEYBOARD, MOUSE, GAMEPAD
+	KEYBOARD, MOUSE, GAMEPAD, UNKNOWN
 
 };
 

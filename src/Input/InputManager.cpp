@@ -132,6 +132,8 @@ void InputManager::propagateActionEvent(ActionEvent event) {
 
 void InputManager::registerDevice(const InputDevice& device) {
 	
+	std::cout << "Registered device of type: " << static_cast<int>(device.type) << std::endl;
+
 	// Add device to our list of devices
 	_devices.emplace_back(device);
 
