@@ -19,7 +19,9 @@ CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
 
 #include "src/Component/Camera.h"
 #include "src/Gameplay/Player.h"
-
+#include "src/Text/Text.h"
+#include "src/HUD/Background.h"
+#include "src/HUD/Sprite.h"
 #include "src/AudioEngine.h"
 
 #include "src/System/ServiceLocator.h"
@@ -50,6 +52,9 @@ const char* fragmentPath_shadow = "res/shaders/shadow.frag";
 const char* fragmentPath_outline = "res/shaders/outline.frag";
 const char* triangleVertexPath = "res/shaders/triangle.vert";
 const char* triangleFragmentPath = "res/shaders/triangle.frag";
+const char* vertexPath_text = "res/shaders/text.vert";
+const char* fragmentPath_text = "res/shaders/text.frag";
+const char* fragmentPath_background = "res/shaders/background.frag";
 
 // Audio paths
 string track1 = "res/audios/music/kill-v-maim.ogg";
@@ -82,19 +87,19 @@ float yCursorMargin = 30.0f;
 
 Player *player;
 
-
 const int point_light_number = 1;
 const int directional_light_number = 1;
 
 DirectionalLight *directional_lights;
 PointLight *point_lights;
 
-
-// -- MAIN --
+Text* text;
+Background* background;
+Sprite *sprite, *sprite2, *sprite3;
 
 int main() {
 
-    // --- !!! THIS SHOULD ALL HAPPEN IN GAME/ENGINE CLASS (FRIEND TO INPUT MANAGER) - ESCPECIALLY PROCESS INPUT !!! --- //
+	// --- !!! THIS SHOULD ALL HAPPEN IN GAME/ENGINE CLASS (FRIEND TO INPUT MANAGER) - ESCPECIALLY PROCESS INPUT !!! --- //
 
     // --- REGISTER INPUT DEVICES AND SOME CALLBACKS --- //
     // Kind of a test for now - create services (InputManager only for now)
@@ -109,8 +114,19 @@ int main() {
 
     // --- //
 
-    rootNode.transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
-    rootNode.transform.setLocalScale({ 1.0f, 1.0f, 1.0f });
+    text = new Text("res/fonts/arial.ttf");
+    background = new Background(1920.f, 1080.f, "res/textures/sky.png", 200.f);
+
+    const char* sprites[] = {"res/sprites/ghostFlying1.png", "res/sprites/ghostFlying2.png",
+                             "res/sprites/ghostFlying3.png", "res/sprites/ghostFlying4.png",
+                             "res/sprites/ghostFlying5.png", "res/sprites/ghostFlying6.png" };
+
+    
+    sprite = new AnimatedSprite(1920.f, 1080.f, 2.f, sprites, 6, 100.f, 300.f);
+    sprite3 = new AnimatedSprite(1920.f, 1080.f, 2.f, "res/sprites/piratWalking.png", 1, 9, 9, 100.f, 400.f);
+    sprite2 = new Sprite(1920.f, 1080.f, "res/sprites/heart.png", 700.f, 100.f, 0.1f);
+
+	rootNode.transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
 
     // --- AUDIO INIT --- //
     // Initialize our audio engine
@@ -145,7 +161,6 @@ int main() {
     Shader* shader_outline = new Shader(vertexPath, fragmentPath_outline);
     Shader* shader2D = new Shader(triangleVertexPath, triangleFragmentPath);
     Shader* shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
-
 
     // --- //
 
@@ -245,10 +260,13 @@ int main() {
     point_lights[1] = PointLight(box_light2, 0.032f, 0.09f);
     directional_lights[0] = DirectionalLight(box_light_directional, glm::vec3(1.f, -1.f, 1.f));
 
-
-
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
+
+    Shader *shader = new Shader(vertexPath, fragmentPath);
+    Shader *shader_outline = new Shader(vertexPath, fragmentPath_outline);
+    Shader* shader_text = new Shader(vertexPath_text, fragmentPath_text);
+    Shader* shader_background = new Shader(vertexPath_text, fragmentPath_background);
     
     projection = glm::perspective(glm::radians(30.f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.5f, 100.0f);
 
@@ -300,7 +318,7 @@ int main() {
     // --- GAME LOOP --- //
 
     while (!glfwWindowShouldClose(window->window)) {
-        
+
         unsigned int dis, tot;
 
         glEnable(GL_STENCIL_TEST);
@@ -457,6 +475,10 @@ int main() {
         setLights(shader);
 
 
+
+        background->update(deltaTime);
+        background->render(*shader_background);
+
         rootNode.updateSelfAndChild(false);
 
         //renderowanie pod cienie
@@ -527,6 +549,22 @@ int main() {
 
         shader_outline->use();
         rootNode.drawMarkedObject(*shader_outline);
+        float fps = 1.f / deltaTime;
+        
+        //glClearColor(.01f, .01f, .01f, 1.0f);
+
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+
+        text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *shader_text, glm::vec3(1.f, 0.3f, 0.3f));
+        text->renderText("We have text render!", 200, 200, *shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
+        sprite->update(deltaTime);
+        sprite3->update(deltaTime);
+        
+        sprite2->render(*shader_background);
+        sprite3->render(*shader_background);
+        sprite->render(*shader_background);
+        
 
         // Render the 2D triangle
         glDisable(GL_DEPTH_TEST); // Disable depth test to render on top
