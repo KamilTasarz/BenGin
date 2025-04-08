@@ -374,6 +374,7 @@ public:
     vector<Texture> textures_loaded; // stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh> meshes;
     string directory;
+    string mode;
     bool gammaCorrection;
 
     glm::vec3 min_points = glm::vec3(FLT_MAX);
@@ -385,6 +386,7 @@ public:
     }
 
     Model(const char** texture_names, short texture_number, string mode = "cube") {
+        this->mode = mode;
         if (mode._Equal("cube")) {
             loadCube(texture_names, texture_number);
         }

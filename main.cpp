@@ -30,6 +30,8 @@ CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
 #include "src/Input/InputManager.h"
 #include "src/Input/Input.h"
 
+#include "src/System/Serialization.h"
+
 #include "Light.h"
 #include "config.h"
 
@@ -595,6 +597,8 @@ int main() {
         window->updateWindow();
 
     }
+
+	saveScene("res/scene/scene.json", &rootNode);
 
     // Audio engine cleanup
     audioEngine.Shutdown();
