@@ -186,7 +186,7 @@ int main() {
     *texture_names = { grass_name };
     Model Tmodel_plane(texture_names, 1, "plane");
 
-    Node* kutasiarz = new Node(Tmodel, "kutasiarz", false, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
+    Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, false, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
     Node* box_light = new Node(Tmodel_light, "light", true);
@@ -201,7 +201,9 @@ int main() {
 
     InstanceManager* walls = new InstanceManager(Tmodel_box_diff_spec, "instance_manager_wall", shader_instanced, 20);
 
-    player = new Player(kutasiarz, 3.f, 3.f, 10.f);
+    player = new Player(cos, 3.f, 3.f, 10.f);
+
+	camera->setObjectToFollow(player->player_node, glm::vec3(0.f, 2.f, 0.f));
 
     rootNode.addChild(box_wood);
     rootNode.addChild(box_stone);
@@ -216,7 +218,7 @@ int main() {
     kutasiarz->transform.setLocalPosition({3.f, 2.f, 3.f});
     kutasiarz->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
-    cos->transform.setLocalPosition({ -5.0, -0.5f, -5.0f });
+    cos->transform.setLocalPosition({ -5.0, 0.5f, -5.0f });
     cos->transform.setLocalScale({ 2.0, 2.0f, 2.0f });
 
     box_diff_spec->transform.setLocalPosition({ 7.5f, 0.0f, 0.0f });
@@ -378,6 +380,7 @@ int main() {
         if (glfwGetKey(window->window, GLFW_KEY_C) == GLFW_PRESS) {
             if (is_camera == is_camera_prev) {
                 is_camera = !is_camera;
+                camera->changeMode(static_cast<CameraMode>((camera->mode + 1) % 3));
             }
         } else {
             is_camera_prev = is_camera;
@@ -425,27 +428,29 @@ int main() {
         point_lights[0].setModelPosition();
         rootNode.updateSelfAndChild(false);
 
-        
-        if (!is_camera) {
+        if (camera->mode != FREE) {
             player->update(deltaTime, direction, camera->Yaw);
         }
+        
+        
 
         for (auto&& collider : colliders) {
             
-            if (kutasiarz->AABB->isBoundingBoxIntersects(*collider)) {
+            if (player->player_node->AABB != collider && player->player_node->AABB->isBoundingBoxIntersects(*collider)) {
 
-                kutasiarz->AABB->collison = true;
-
-                kutasiarz->separate(collider);
+               
+                player->player_node->separate(collider);
                 
             }
         }
 
+        
+        
 
-        if (is_camera) {
+        //if (is_camera) {
             camera->ProcessKeyboard(deltaTime, direction);
             changeMouse(window->window);
-        }  
+        //}
 		
         if (glfwGetKey(window->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window->window, true);

@@ -12,7 +12,6 @@
 #include <array>
 #include <memory>
 
-#include "../Component/Camera.h"
 #include "../Component/BoundingBox.h"
 #include "Model.h"
 
@@ -432,18 +431,23 @@ public:
         if (abs(v.x) <= abs(v.y) && abs(v.x) <= abs(v.z)) {
             v.y = 0.f;
             v.z = 0.f;
+			AABB->collison = v.x > 0.f ? 1 : -1;
         }
         else if (abs(v.y) <= abs(v.x) && abs(v.y) <= abs(v.z)) {
             v.x = 0.f;
             v.z = 0.f;
+            AABB->collison = v.y > 0.f ? 2 : -2;
         }
         else {
             v.x = 0.f;
             v.y = 0.f;
+			AABB->collison = v.z > 0.f ? 3 : -3;
         }
 
+		cout << "collison: " << AABB->collison << endl;
+
         transform.setLocalPosition(transform.getLocalPosition() + v);
-    
+        forceUpdateSelfAndChild();
     }
 
 };

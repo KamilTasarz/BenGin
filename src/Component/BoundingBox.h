@@ -19,7 +19,7 @@ public:
 	//unsigned int VAO, VBO;
 	glm::mat4 model;
 
-	bool collison = false;
+	short collison = 0;
 
 	BoundingBox(const glm::mat4& model, glm::vec3 min_point = glm::vec3(-1.f), glm::vec3 max_point = glm::vec3(1.f)) {
 		min_point_local = min_point;
