@@ -317,9 +317,9 @@ void mouseCallback(GLFWwindow* window, double posX, double posY) {
 	lastX = x;
 	lastY = y;
 
-	if (is_camera) {
+	//if (is_camera) {
 		camera->ProcessMouseMovement(offsetX, offsetY);
-	}
+	//}
 
 }
 

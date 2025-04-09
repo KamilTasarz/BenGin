@@ -29,7 +29,7 @@ void Camera::ProcessKeyboard(GLfloat deltaTime, int dir) {
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
-    if (mode == FREE) {
+    if (mode != FOLLOWING) {
         Yaw += xoffset * MouseSensitivity;
         Pitch += yoffset * MouseSensitivity;
 
@@ -40,6 +40,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
 
         updateCameraVectors();
     }
+    
 }
 
 void Camera::setPosition(glm::vec3 position) {
@@ -65,6 +66,13 @@ void Camera::changeMode(CameraMode mode)
 {
     if (mode == FOLLOWING && object_to_follow == nullptr) this->mode = FREE;
     else this->mode = mode;
+
+	if (mode != FOLLOWING) {
+		cameraPos = oldCameraPos;
+    }
+    else {
+		oldCameraPos = cameraPos;
+    }
 
 }
 

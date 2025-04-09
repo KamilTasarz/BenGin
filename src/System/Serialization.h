@@ -17,8 +17,9 @@ int saveScene(const std::string& filename, Node* rootNode) {
 	
 	sceneData["scene"] = save_node(rootNode);
 
+	//sceneData["player"] = player->player_node->name;
 
-
+	//sceneData["camera"] = camera;
 
 	// Save the JSON to a file
 	std::ofstream file(filename);

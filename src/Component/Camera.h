@@ -31,7 +31,7 @@ class Camera {
 private:
 
     void updateCameraVectors() {
-        if (mode == FREE) {
+        if (mode != FOLLOWING) {
             glm::vec3 front;
             front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
             front.y = sin(glm::radians(Pitch));
@@ -41,7 +41,7 @@ private:
             cameraRight = glm::normalize(glm::cross(cameraFront, worldUp));
             cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
         }
-        else if (mode == FOLLOWING) {
+        else {
 			cameraFront = (object_to_follow->transform.getGlobalPosition() + origin_point) - cameraPos;
             cameraRight = glm::normalize(glm::cross(cameraFront, worldUp));
             cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
@@ -53,6 +53,7 @@ private:
 public:
 
     glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 oldCameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);

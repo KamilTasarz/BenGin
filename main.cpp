@@ -126,7 +126,7 @@ int main() {
     
     sprite = new AnimatedSprite(1920.f, 1080.f, 2.f, sprites, 6, 100.f, 300.f);
     sprite3 = new AnimatedSprite(1920.f, 1080.f, 2.f, "res/sprites/piratWalking.png", 1, 9, 9, 100.f, 400.f);
-    sprite2 = new Sprite(1920.f, 1080.f, "res/sprites/heart.png", 700.f, 100.f, 0.1f);
+    sprite2 = new Sprite(1920.f, 1080.f, "res/sprites/heart2.png", 700.f, 100.f, 0.1f);
 
 	rootNode.transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
 
@@ -568,12 +568,12 @@ int main() {
 
 
         // Render the 2D triangle
-        glDisable(GL_DEPTH_TEST); // Disable depth test to render on top
+        /*glDisable(GL_DEPTH_TEST); // Disable depth test to render on top
         shader2D->use();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
-        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);*/
 
         // ---------------------
 
@@ -598,7 +598,7 @@ int main() {
 
     }
 
-	saveScene("res/scene/scene.json", &rootNode);
+	saveScene("res/scene/scene.bngn", &rootNode);
 
     // Audio engine cleanup
     audioEngine.Shutdown();
