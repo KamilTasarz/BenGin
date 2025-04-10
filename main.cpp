@@ -89,8 +89,8 @@ float yCursorMargin = 30.0f;
 
 Player *player;
 
-const int point_light_number = 1;
-const int directional_light_number = 1;
+unsigned int point_light_number = 1;
+unsigned int directional_light_number = 1;
 
 DirectionalLight *directional_lights;
 PointLight *point_lights;
@@ -98,6 +98,8 @@ PointLight *point_lights;
 Text* text;
 Background* background;
 Sprite *sprite, *sprite2, *sprite3;
+
+std::vector<Model> models;
 
 int main() {
 
@@ -124,8 +126,8 @@ int main() {
                              "res/sprites/ghostFlying5.png", "res/sprites/ghostFlying6.png" };
 
     
-    sprite = new AnimatedSprite(1920.f, 1080.f, 2.f, sprites, 6, 100.f, 300.f);
-    sprite3 = new AnimatedSprite(1920.f, 1080.f, 2.f, "res/sprites/piratWalking.png", 1, 9, 9, 100.f, 400.f);
+    sprite = new AnimatedSprite(1920.f, 1080.f, 1.f, sprites, 6, 100.f, 300.f);
+    sprite3 = new AnimatedSprite(1920.f, 1080.f, 1.f, "res/sprites/piratWalking.png", 1, 9, 9, 300.f, 300.f);
     sprite2 = new Sprite(1920.f, 1080.f, "res/sprites/heart2.png", 700.f, 100.f, 0.1f);
 
 	rootNode.transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
@@ -168,25 +170,34 @@ int main() {
 
     // --- //
 
-    Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
-    Model Kmodel("res/models/kutasiarz/The_Thing.obj");
+    /*Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
+    Model Kmodel("res/models/kutasiarz/The_Thing.obj", 1);
 
     const char* box_spec = "res/textures/box_specular.png", * box_diff = "res/textures/box_diffuse.png",
         * stone_name = "res/textures/stone.jpg", * wood_name = "res/textures/wood.jpg", * grass_name = "res/textures/grass.jpg";
 
     const char* texture_names[] = { box_spec, box_diff };
-    Model Tmodel_box_diff_spec(texture_names, 2);
+    Model Tmodel_box_diff_spec(texture_names, 2, 2);
 
     *texture_names = { wood_name };
-    Model Tmodel_box_wood(texture_names, 1);
+    Model Tmodel_box_wood(texture_names, 1, 3);
 
     *texture_names = { stone_name };
-    Model Tmodel_box_stone(texture_names, 1);
+    Model Tmodel_box_stone(texture_names, 1, 4);
 
-    Model Tmodel_light(texture_names, 0);
+    Model Tmodel_light(texture_names, 0, 5);
 
     *texture_names = { grass_name };
-    Model Tmodel_plane(texture_names, 1, "plane");
+    Model Tmodel_plane(texture_names, 1, 6, "plane");
+
+	models.push_back(Kmodel);
+	models.push_back(Tmodel);
+	models.push_back(Tmodel_box_diff_spec);
+	models.push_back(Tmodel_box_wood);
+	models.push_back(Tmodel_box_stone);
+	models.push_back(Tmodel_light);
+	models.push_back(Tmodel_plane);
+
 
     Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, false, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -195,13 +206,13 @@ int main() {
     Node* box_light2 = new Node(Tmodel_light, "light2", true);
     Node* box_light_directional = new Node(Tmodel_light, "light_directional", true);
     Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1", colliders);
-    Node* box_diff_spec2 = new Node(Tmodel_box_diff_spec, "box1", colliders);
+    Node* box_diff_spec2 = new Node(Tmodel_box_diff_spec, "box1_2", colliders);
     Node* box_wood = new Node(Tmodel_box_wood, "box2", colliders);
     Node* box_stone = new Node(Tmodel_box_stone, "box3", colliders);
 
     Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f));
 
-    InstanceManager* walls = new InstanceManager(Tmodel_box_diff_spec, "instance_manager_wall", shader_instanced, 20);
+    //InstanceManager* walls = new InstanceManager(Tmodel_box_diff_spec, "instance_manager_wall", shader_instanced, 20);
 
     player = new Player(cos, 3.f, 3.f, 10.f);
 
@@ -215,7 +226,7 @@ int main() {
     rootNode.addChild(kutasiarz);
     rootNode.addChild(cos);
     rootNode.addChild(plane);
-    rootNode.addChild(walls);
+    //rootNode.addChild(walls);
 
     kutasiarz->transform.setLocalPosition({3.f, 2.f, 3.f});
     kutasiarz->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
@@ -247,7 +258,7 @@ int main() {
     plane->transform.setLocalPosition({ 0.0f, -0.501f, 0.0f }); // z - fighting
     plane->transform.setLocalScale({ 15.f, 15.0f, 15.f });
 
-    walls->addChild(box_diff_spec);
+   /* walls->addChild(box_diff_spec);
     walls->addChild(box_diff_spec2);
 
     for (int i = 0; i < 20; i++) {
@@ -257,14 +268,16 @@ int main() {
             temp->transform.computeModelMatrix();
             walls->addChild(temp);
         }
-    }
+    }*/
 
     point_lights = new PointLight[10];
     directional_lights = new DirectionalLight[10];
 
-    point_lights[0] = PointLight(box_light, 0.032f, 0.09f);
+    /*point_lights[0] = PointLight(box_light, 0.032f, 0.09f);
     point_lights[1] = PointLight(box_light2, 0.032f, 0.09f);
-    directional_lights[0] = DirectionalLight(box_light_directional, glm::vec3(1.f, -1.f, 1.f));
+    directional_lights[0] = DirectionalLight(box_light_directional, glm::vec3(1.f, -1.f, 1.f));*/
+
+	loadScene("res/scene/scene.json", &rootNode, player, camera, point_lights, point_light_number, directional_lights, directional_light_number, models, colliders);
 
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
@@ -598,7 +611,7 @@ int main() {
 
     }
 
-	saveScene("res/scene/scene.bngn", &rootNode);
+	saveScene("res/scene/scene.json", &rootNode, player, camera, point_lights, point_light_number, directional_lights, directional_light_number, models);
 
     // Audio engine cleanup
     audioEngine.Shutdown();

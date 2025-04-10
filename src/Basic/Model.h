@@ -369,7 +369,7 @@ private:
     }
 
 public:
-
+    int id = 0;
     // model data 
     vector<Texture> textures_loaded; // stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh> meshes;
@@ -381,11 +381,11 @@ public:
     glm::vec3 max_points = glm::vec3(-FLT_MAX);
 
     // constructor, expects a filepath to a 3D model.
-    Model(string const& path, bool gamma = false) : gammaCorrection(gamma) {
+    Model(string const& path, int id, bool gamma = false) : gammaCorrection(gamma), id(id) {
         loadModel(path);
     }
 
-    Model(const char** texture_names, short texture_number, string mode = "cube") {
+    Model(const char** texture_names, short texture_number, int id, string mode = "cube") : id(id) {
         this->mode = mode;
         if (mode._Equal("cube")) {
             loadCube(texture_names, texture_number);

@@ -24,6 +24,7 @@ public:
 	glm::vec3 grav;
 	float speed;
 	float v_0;
+	float range;
 
 	bool on_ground = false;
 
@@ -36,6 +37,7 @@ public:
 		player_node = _player_node;
 		h_0 = _h_0;
 		speed = _speed;
+		range = _range;
 		v_0 = 2 * h_0 * speed / _range;
 		grav = glm::vec3(0.f, -2 * h_0 * speed * speed / (_range * _range), 0.f);
 		vel = glm::vec3(0.f);

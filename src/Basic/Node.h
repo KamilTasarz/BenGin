@@ -195,6 +195,9 @@ public:
     // No textures parameter
     bool no_textures;
 
+    // Visibility
+	bool is_visible = true;
+
     //Hitbox
     BoundingBox *AABB;
 
@@ -341,7 +344,7 @@ public:
     // Draw self and children
     void virtual drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) {
 
-        if (pModel) {
+        if (pModel && is_visible) {
             //_shader.setVec4("dynamicColor", color);
             _shader.use();
             _shader.setMat4("model", transform.getModelMatrix());
