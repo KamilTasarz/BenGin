@@ -81,7 +81,7 @@ float fps = 0.0f; // Current FPS
 float fps_timer = 0.0f;
 int frames = 0;
 
-Node rootNode("rootNode");
+Node* rootNode;
 
 // Cursor teleport to the other side of the screen
 float xCursorMargin = 30.0f;
@@ -130,7 +130,9 @@ int main() {
     sprite3 = new AnimatedSprite(1920.f, 1080.f, 1.f, "res/sprites/piratWalking.png", 1, 9, 9, 300.f, 300.f);
     sprite2 = new Sprite(1920.f, 1080.f, "res/sprites/heart2.png", 700.f, 100.f, 0.1f);
 
-	rootNode.transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
+    //rootNode = new Node("root");
+
+	//rootNode->transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
 
     // --- AUDIO INIT --- //
     // Initialize our audio engine
@@ -168,6 +170,9 @@ int main() {
     Shader* shader_text = new Shader(vertexPath_text, fragmentPath_text);
     Shader* shader_background = new Shader(vertexPath_text, fragmentPath_background);
 
+    point_lights = new PointLight[10];
+    directional_lights = new DirectionalLight[10];
+
     // --- //
 
     /*Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
@@ -190,8 +195,8 @@ int main() {
     *texture_names = { grass_name };
     Model Tmodel_plane(texture_names, 1, 6, "plane");
 
+    models.push_back(Tmodel);
 	models.push_back(Kmodel);
-	models.push_back(Tmodel);
 	models.push_back(Tmodel_box_diff_spec);
 	models.push_back(Tmodel_box_wood);
 	models.push_back(Tmodel_box_stone);
@@ -218,15 +223,15 @@ int main() {
 
 	camera->setObjectToFollow(player->player_node, glm::vec3(0.f, 2.f, 0.f));
 
-    rootNode.addChild(box_wood);
-    rootNode.addChild(box_stone);
-    rootNode.addChild(box_light);
-    rootNode.addChild(box_light2);
-    rootNode.addChild(box_light_directional);
-    rootNode.addChild(kutasiarz);
-    rootNode.addChild(cos);
-    rootNode.addChild(plane);
-    //rootNode.addChild(walls);
+    rootNode->addChild(box_wood);
+    rootNode->addChild(box_stone);
+    rootNode->addChild(box_light);
+    rootNode->addChild(box_light2);
+    rootNode->addChild(box_light_directional);
+    rootNode->addChild(kutasiarz);
+    rootNode->addChild(cos);
+    rootNode->addChild(plane);
+    //rootNode->addChild(walls);
 
     kutasiarz->transform.setLocalPosition({3.f, 2.f, 3.f});
     kutasiarz->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
@@ -258,6 +263,10 @@ int main() {
     plane->transform.setLocalPosition({ 0.0f, -0.501f, 0.0f }); // z - fighting
     plane->transform.setLocalScale({ 15.f, 15.0f, 15.f });
 
+    point_lights[0] = PointLight(box_light, 0.032f, 0.09f);
+    //point_lights[1] = PointLight(box_light2, 0.032f, 0.09f);
+    directional_lights[0] = DirectionalLight(box_light_directional, glm::vec3(1.f, -1.f, 1.f));
+
    /* walls->addChild(box_diff_spec);
     walls->addChild(box_diff_spec2);
 
@@ -270,14 +279,18 @@ int main() {
         }
     }*/
 
-    point_lights = new PointLight[10];
-    directional_lights = new DirectionalLight[10];
+    
 
-    /*point_lights[0] = PointLight(box_light, 0.032f, 0.09f);
-    point_lights[1] = PointLight(box_light2, 0.032f, 0.09f);
-    directional_lights[0] = DirectionalLight(box_light_directional, glm::vec3(1.f, -1.f, 1.f));*/
+    Camera* camera_temp = new Camera(0.f, 0.f, 0.f);
 
-	loadScene("res/scene/scene.json", &rootNode, player, camera, point_lights, point_light_number, directional_lights, directional_light_number, models, colliders);
+	loadScene("res/scene/scene.json", rootNode, player, camera, point_lights, point_light_number, directional_lights, directional_light_number, models, colliders);
+
+	camera->setPosition(camera_temp->cameraPos);
+	camera->setObjectToFollow(camera_temp->object_to_follow, camera_temp->origin_point);
+	camera->Yaw = camera_temp->Yaw; 
+	camera->Pitch = camera_temp->Pitch;
+	camera->changeMode(camera_temp->mode);
+    //delete camera_temp;
 
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
@@ -299,7 +312,7 @@ int main() {
 
     //shader->setFloat("shininess", 64.f); //ustawione na stałe w shaderze, bo i tak nie zmienialiśmy
 
-    rootNode.updateSelfAndChild(true);
+    rootNode->updateSelfAndChild(true);
 
     // 2d zadanie
 
@@ -441,7 +454,7 @@ int main() {
         }
 
         point_lights[0].setModelPosition();
-        rootNode.updateSelfAndChild(false);
+        rootNode->updateSelfAndChild(false);
 
         if (camera->mode != FREE) {
             player->update(deltaTime, direction, camera->Yaw);
@@ -491,19 +504,19 @@ int main() {
         
         setLights(shader);
 
-        rootNode.updateSelfAndChild(false);
+        rootNode->updateSelfAndChild(false);
 
         //renderowanie pod cienie
         /*point_lights[0].render(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
-        rootNode.drawShadows(*shader_shadow);
+        rootNode->drawShadows(*shader_shadow);
         point_lights[0].renderBack(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
-        rootNode.drawShadows(*shader_shadow);*/
+        rootNode->drawShadows(*shader_shadow);*/
 
         directional_lights[0].render(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
-        rootNode.drawShadows(*shader_shadow);
+        rootNode->drawShadows(*shader_shadow);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         glClearColor(.01f, .01f, .01f, 1.0f);
@@ -541,15 +554,15 @@ int main() {
         //glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);
 
         float t = FLT_MAX;
-        rootNode.new_marked_object = nullptr;
-        rootNode.mark(getRayWorld(window->window), rootNode.new_marked_object, t, camera->cameraPos);
+        rootNode->new_marked_object = nullptr;
+        rootNode->mark(getRayWorld(window->window), rootNode->new_marked_object, t, camera->cameraPos);
 
         if (mouse_pressed) {
-            if (rootNode.marked_object != nullptr) rootNode.marked_object->is_marked = false;
+            if (rootNode->marked_object != nullptr) rootNode->marked_object->is_marked = false;
 
-            rootNode.marked_object = rootNode.new_marked_object;
+            rootNode->marked_object = rootNode->new_marked_object;
 
-            if (rootNode.marked_object != nullptr) rootNode.marked_object->is_marked = true;
+            if (rootNode->marked_object != nullptr) rootNode->marked_object->is_marked = true;
         }
 
         // == stencil buffer ==
@@ -560,11 +573,11 @@ int main() {
 
         // == standard drawing ==
 
-        rootNode.drawSelfAndChild(*shader, *shader_outline, dis, tot);
+        rootNode->drawSelfAndChild(*shader, *shader_outline, dis, tot);
         // == outline ==
 
         shader_outline->use();
-        rootNode.drawMarkedObject(*shader_outline);
+        rootNode->drawMarkedObject(*shader_outline);
         float fps = 1.f / deltaTime;
         
 
@@ -611,7 +624,7 @@ int main() {
 
     }
 
-	saveScene("res/scene/scene.json", &rootNode, player, camera, point_lights, point_light_number, directional_lights, directional_light_number, models);
+	saveScene("res/scene/scene.json", rootNode, player, point_lights, point_light_number, directional_lights, directional_light_number, models);
 
     // Audio engine cleanup
     audioEngine.Shutdown();

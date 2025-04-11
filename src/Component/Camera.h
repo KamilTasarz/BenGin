@@ -52,7 +52,7 @@ private:
 
 public:
 
-    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 cameraPos;
     glm::vec3 oldCameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -75,7 +75,8 @@ public:
         worldUp = cameraUp;
         object_to_follow = nullptr;
         updateCameraVectors();
-
+        std::cout << "Camera constructor called! Position: "
+            << cameraPos.x << ", " << cameraPos.y << ", " << cameraPos.z << std::endl;
     }
 
     glm::mat4 GetView();
@@ -85,10 +86,10 @@ public:
     void ProcessMouseMovement(float xoffset, float yoffset);
     
     // Setters
-    void setPosition(glm::vec3 position);
+    void setPosition(const glm::vec3& position);
     void setMovementSpeed(float speed);
     void setMouseSensitivity(float sensitivity);
-    void setObjectToFollow(Node* object, glm::vec3 origin);
+    void setObjectToFollow(Node* object, glm::vec3& origin);
 
     void changeMode(CameraMode mode);
 

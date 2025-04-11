@@ -33,6 +33,8 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
         Yaw += xoffset * MouseSensitivity;
         Pitch += yoffset * MouseSensitivity;
 
+		Yaw = fmodf(Yaw, 360.0f);
+
         if (Pitch > 89.0f)
             Pitch = 89.0f;
         if (Pitch < -89.0f)
@@ -43,7 +45,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
     
 }
 
-void Camera::setPosition(glm::vec3 position) {
+void Camera::setPosition(const glm::vec3& position) {
     cameraPos = position;
     updateCameraVectors();
 }
@@ -56,7 +58,7 @@ void Camera::setMouseSensitivity(float sensitivity) {
     MouseSensitivity = sensitivity;
 }
 
-void Camera::setObjectToFollow(Node* object, glm::vec3 origin)
+void Camera::setObjectToFollow(Node* object, glm::vec3& origin)
 {
     object_to_follow = object;
 	origin_point = origin;

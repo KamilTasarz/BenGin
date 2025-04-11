@@ -16,7 +16,7 @@ json save_node(Node* node);
 Node* load_node(json &j, std::vector<Model>& models, std::vector<BoundingBox*>& colliders);
 
 
-int saveScene(const std::string& filename, Node* rootNode, Player *player, Camera *camera, 
+int saveScene(const std::string& filename, Node*& rootNode, Player*& player, 
 	PointLight *point_lights, unsigned int point_num, DirectionalLight *directional_lights, unsigned int directional_num, std::vector<Model> &models) {
 
 	json sceneData;
@@ -40,7 +40,7 @@ int saveScene(const std::string& filename, Node* rootNode, Player *player, Camer
 		}
 		else {
 			//kutasiarz i cos
-			modelJson["directory"] = model->directory;
+			modelJson["directory"] = model->exact_path;
 		}
 		modelData.push_back(modelJson);
 	}
@@ -155,7 +155,7 @@ json save_node(Node* node) {
 	return j;
 }
 
-int loadScene(const std::string& filename, Node* rootNode, Player*& player, Camera*& camera,
+int loadScene(const std::string& filename, Node*& rootNode, Player*& player, Camera*& camera_w,
 	PointLight* point_lights, unsigned int& point_num, DirectionalLight* directional_lights, unsigned int& directional_num, std::vector<Model>& models, std::vector<BoundingBox*>& colliders) {
 
 	std::ifstream file(filename);
@@ -176,14 +176,21 @@ int loadScene(const std::string& filename, Node* rootNode, Player*& player, Came
 	for (json& modelJson : modelData) {
 		if (modelJson.contains("directory")) {
 			//kutasiarz i cos
-			std::string directory = modelJson["directory"];
+			std::string directory = modelJson["directory"].get<string>();
 			Model model(directory, modelJson["id"].get<int>());
 			models.push_back(model);
 		}
 		else {
 			//kostki i plane'y
 			int texture_count = modelJson["textures"].size();
-			const char** texture_names = new const char* [texture_count];
+			
+			const char** texture_names;
+			if (texture_count == 0) {
+				texture_names = nullptr;
+			}
+			else {
+				texture_names = new const char* [texture_count];
+			}
 			std::vector<std::string> texture_storage; 
 
 			for (int i = 0; i < texture_count; i++) {
@@ -236,19 +243,31 @@ int loadScene(const std::string& filename, Node* rootNode, Player*& player, Came
 
 	json playerData = sceneData["player"];
 
-	player = new Player(rootNode->getChildByName(playerData["node"]), playerData["range"], playerData["h_0"], playerData["speed"]);
+	player = new Player(rootNode->getChildByName(playerData["node"].get<string>()), playerData["range"].get<float>(), playerData["h_0"].get<float>(), playerData["speed"].get<float>());
 
 	json cameraData = sceneData["camera"];
+	glm::vec3 pos = json_to_vec3(cameraData["position"]);
+	glm::vec3 origin = json_to_vec3(cameraData["object_origin"]);
+	//delete camera;
+	//camera = new Camera(pos.x, pos.y, pos.z);
 
-	camera->cameraPos = json_to_vec3(cameraData["position"]); 
-	camera->Yaw = cameraData["Yaw"];
-	camera->Pitch = cameraData["Pitch"];
-	camera->setObjectToFollow(rootNode->getChildByName(cameraData["object_to_follow"]), json_to_vec3(cameraData["object_origin"]));
-	camera->changeMode((CameraMode)cameraData["mode"]);
+	camera_w->Yaw = cameraData["Yaw"];
+	camera_w->Pitch = cameraData["Pitch"];
+	camera_w->setPosition(pos);
+	camera_w->setObjectToFollow(rootNode->getChildByName(cameraData["object_to_follow"]), origin);
+	camera_w->changeMode((CameraMode)cameraData["mode"]);
 
 	return 0;
 }
 
+Model& getModelById(std::vector<Model>& models, int id) {
+	for (auto& model : models) {
+		if (model.id == id) {
+			return model;
+		}
+	}
+	throw std::runtime_error("Model not found");
+}
 
 Node* load_node(json &j, std::vector<Model>& models, std::vector<BoundingBox*>& colliders) {
 	Node* node = nullptr;
@@ -259,7 +278,7 @@ Node* load_node(json &j, std::vector<Model>& models, std::vector<BoundingBox*>& 
 	bool is_visible = j["is_visible"];
 	std::string name = j["name"];
 	if (model_id != -1) {
-		Model model = models[model_id];
+		Model &model = getModelById(models, model_id);
 		if (no_textures) {
 			node = new Node(model, name, true, id);
 		}

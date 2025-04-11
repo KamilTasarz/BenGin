@@ -45,6 +45,7 @@ private:
         }
         // retrieve the directory path of the filepath
         directory = path.substr(0, path.find_last_of('/'));
+        exact_path = path;
 
         // process ASSIMP's root node recursively
         processNode(scene->mRootNode, scene);
@@ -304,6 +305,7 @@ private:
                 texture.type = "texture_diffuse";
             }
             textures.push_back(texture);
+            textures_loaded.push_back(texture);
         }
         
         meshes.push_back(Mesh(vertices, textures));
@@ -363,6 +365,7 @@ private:
             if (texture.path.find(specular_name, 0) != string::npos) texture.type = "texture_specular";
             else texture.type = "texture_diffuse";
             textures.push_back(texture);
+            textures_loaded.push_back(texture);
         }
         
         meshes.push_back(Mesh(vertices, textures));
@@ -374,6 +377,7 @@ public:
     vector<Texture> textures_loaded; // stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh> meshes;
     string directory;
+    string exact_path;
     string mode;
     bool gammaCorrection;
 
