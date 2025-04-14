@@ -42,7 +42,13 @@ void Player::update(float delta_time, short inputs, float camera_yaw) {
         pos += (vel * delta_time) + 0.5f * grav * delta_time * delta_time;
         vel += grav * delta_time;
     }
-
+    float angY = player_node->transform.getLocalRotation().y;
+    if (inputs & 64) {
+        angY += speed * delta_time;
+    }
+    if (inputs & 128) {
+        angY -= speed * delta_time;
+    }
 
 
     if (vel.y < 0.f && player_node->AABB->collison) {
@@ -54,5 +60,6 @@ void Player::update(float delta_time, short inputs, float camera_yaw) {
     }
     player_node->AABB->collison = false;
     player_node->transform.setLocalPosition(pos);
+    player_node->transform.setLocalRotation({0.f, angY, 0.f});
 
 }

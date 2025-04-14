@@ -13,6 +13,7 @@ PascalCase - klasy/struktury
 #include "src/Basic/Shader.h"
 #include "src/Component/Camera.h"
 #include "src/Basic/Model.h"
+#include "src/Basic/Animator.h"
 #include "src/Gameplay/Player.h"
 
 #include "src/AudioEngine.h"
@@ -195,6 +196,10 @@ int main() {
 
     Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
     Model Kmodel("res/models/kutasiarz/The_Thing.obj");
+    Model Lmodel("res/models/man/CesiumMan.gltf");
+    const char* anim_path = "res/models/man/CesiumMan.gltf";
+    Animation *anim = new Animation(anim_path, Lmodel);
+    Animator* animator = new Animator(anim);
 
     const char* box_spec = "res/textures/box_specular.png", * box_diff = "res/textures/box_diffuse.png",
         * stone_name = "res/textures/stone.jpg", * wood_name = "res/textures/wood.jpg", * grass_name = "res/textures/grass.jpg";
@@ -213,8 +218,11 @@ int main() {
     *texture_names = { grass_name };
     Model Tmodel_plane(texture_names, 1, "plane");
 
-    Node* kutasiarz = new Node(Tmodel, "kutasiarz", false, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
+
+
+    Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, false, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    Node* ludzik = new Node(Lmodel, "ludzik", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 
     Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1", colliders);
@@ -226,7 +234,7 @@ int main() {
     Node* box_light_directional = new Node(Tmodel_light, "light_directional", true);
     Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f));
 
-    player = new Player(kutasiarz, 3.f, 3.f, 10.f);
+    player = new Player(ludzik, 3.f, 3.f, 10.f);
 
     rootNode.addChild(box_diff_spec);
     rootNode.addChild(box_diff_spec2);
@@ -237,13 +245,17 @@ int main() {
     rootNode.addChild(box_light_directional);
     rootNode.addChild(kutasiarz);
     rootNode.addChild(cos);
+    rootNode.addChild(ludzik);
     rootNode.addChild(plane);
+
+    ludzik->transform.setLocalPosition({ 3.f, 5.f, 3.f });
 
     kutasiarz->transform.setLocalPosition({ 3.f, 2.f, 3.f });
     kutasiarz->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
+    kutasiarz->transform.setLocalRotation({ 0.f, 45.f, 0.f });
 
-    cos->transform.setLocalPosition({ -5.0, -0.5f, -5.0f });
-    cos->transform.setLocalScale({ 2.0, 2.0f, 2.0f });
+    cos->transform.setLocalPosition({ -5.0, 0.5f, -5.0f });
+    cos->transform.setLocalScale({ 1.0f, 1.0f, 1.0f });
 
     box_diff_spec->transform.setLocalPosition({ 7.5f, 0.0f, 0.0f });
     box_diff_spec->transform.setLocalScale({ 1.0f, 3.0f, 14.0f });
@@ -412,6 +424,14 @@ int main() {
             direction += 32;
         }
 
+        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+            direction += 64;
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+            direction += 128;
+        }
+
         point_lights[0].updatePosition();
 
         float speed = 6.f;
@@ -444,20 +464,21 @@ int main() {
 
         for (auto&& collider : colliders) {
             
-            if (kutasiarz->AABB->isBoundingBoxIntersects(*collider)) {
+            if (player->player_node->AABB != collider && player->player_node->AABB->isBoundingBoxIntersects(*collider)) {
 
-                kutasiarz->AABB->collison = true;
+                player->player_node->AABB->collison = true;
 
-                kutasiarz->separate(collider);
+                player->player_node->separate(collider);
                 
             }
         }
-
 
         if (is_camera) {
             camera.ProcessKeyboard(deltaTime, direction);
             changeMouse(window);
         }  
+
+        animator->updateAnimation(deltaTime);
 		
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
@@ -471,13 +492,18 @@ int main() {
         view = camera.GetView();
 
         // unforms for ouline
-
+        auto f = animator->final_bone_matrices;
         shader_outline->use();
         shader_outline->setMat4("view", view);
-
+        for (int i = 0; i < f.size(); ++i)
+            shader_outline->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
 
         shader->use();
         shader->setMat4("view", view);
+        
+        for (int i = 0; i < f.size(); ++i)
+            shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+
         
         setLights(shader);
 

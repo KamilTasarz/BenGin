@@ -5,7 +5,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -14,12 +13,7 @@
 #include <iostream>
 #include <vector>
 
-struct Ass_impNodeData {
-	glm::mat4 transform;
-	std::string name;
-	int children_count;
-	std::vector<Ass_impNodeData> children;
-};
+
 
 struct KeyTranslation {
 	glm::vec3 translation;
@@ -48,7 +42,7 @@ public:
 	int id;
 	glm::mat4 local_model_matrix;
 
-	Bone(aiNodeAnim* anim_channel, int ID, std::string& name) : m_name(name), id(ID) {
+	Bone(aiNodeAnim* anim_channel, int ID, std::string name) : m_name(name), id(ID) {
 		local_model_matrix = glm::mat4(1.f);
 
 		num_position_keys = anim_channel->mNumPositionKeys;
@@ -70,7 +64,7 @@ public:
 		}
 
 		num_scale_keys = anim_channel->mNumScalingKeys;
-		for (int i = 0; i < num_position_keys; i++) {
+		for (int i = 0; i < num_scale_keys; i++) {
 			KeyScale key_scale;
 			key_scale.time_stamp = anim_channel->mScalingKeys[i].mTime;
 			aiVector3D temp_scale = anim_channel->mScalingKeys[i].mValue;
@@ -86,7 +80,8 @@ public:
 	int getPositionIndex(float animation_time);
 	int getRotationIndex(float animation_time);
 	int getScaleIndex(float animation_time);
+	void update(float animation_time);
+	std::string getBoneName() const { return m_name; }
 };
-
 
 #endif // !BONE_H

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MODEL_H
 #define MODEL_H
@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb_image/stb_image.h>
 #include <assimp/Importer.hpp>
+#include <assimp/importerdesc.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
@@ -47,7 +48,14 @@ private:
     {
         // read file via ASSIMP
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+
+        std::cout << "Obsługiwane formaty:\n";
+        for (size_t i = 0; i < importer.GetImporterCount(); ++i) {
+            const aiImporterDesc* desc = importer.GetImporterInfo(i);
+            std::cout << "- " << desc->mName << " (" << desc->mFileExtensions << ")\n";
+        }
+
+        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace); //| aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
         // check for errors
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
         {
@@ -187,16 +195,20 @@ private:
         for (int bone_id = 0; bone_id < mesh->mNumBones; bone_id++) {
             std::string bone_name = mesh->mBones[bone_id]->mName.C_Str();
             int ID = -1;
-            if (m_BoneInfoMap.find(bone_name) != m_BoneInfoMap.end()) {
+            if (m_BoneInfoMap.find(bone_name) == m_BoneInfoMap.end()) {
                 BoneInfo bone_to_add;
                 bone_to_add.id = m_BoneCounter;
-                m_BoneCounter++;
+                
                 //transformacja macierzy asimpa na glm
                 aiMatrix4x4 mat4 = mesh->mBones[bone_id]->mOffsetMatrix;
                 bone_to_add.offset = glm::transpose(glm::mat4(glm::vec4(mat4.a1, mat4.a2, mat4.a3, mat4.a4), glm::vec4(mat4.b1, mat4.b2, mat4.b3, mat4.b4), 
                     glm::vec4(mat4.c1, mat4.c2, mat4.c3, mat4.c4), glm::vec4(mat4.d1, mat4.d2, mat4.d3, mat4.d4)));
                 m_BoneInfoMap[bone_name] = bone_to_add;
+
+              
+
                 ID = m_BoneCounter;
+                m_BoneCounter++;
             }
             else {
                 //jesli juz jest w mapie to znaczy, ze pobieramy ID kosci i przypiszemy do wierzcholka tylko wage
@@ -206,8 +218,8 @@ private:
             if (ID != -1) {
 
                 //pobranie wag i ich ilosci dla kosci z danego mesha
-                auto weights = mesh->mBones[ID]->mWeights;
-                int numWeights = mesh->mBones[ID]->mNumWeights;
+                auto weights = mesh->mBones[bone_id]->mWeights;
+                int numWeights = mesh->mBones[bone_id]->mNumWeights;
 
                 for (int weightIndex = 0; weightIndex < numWeights; weightIndex++)
                 {

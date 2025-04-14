@@ -43,8 +43,10 @@ void BoundingBox::transformAABB(const glm::mat4& model) {
     max_point_world = glm::vec3(-FLT_MAX);
 
     for (int i = 0; i < 8; i++) {
-        glm::vec4 transformed = model * glm::vec4(corners[i], 1.0f);
-        glm::vec3 worldPos = glm::vec3(transformed);
+        glm::vec3 worldPos = glm::vec3(model * glm::vec4(corners[i], 1.0f));
+
+        //min_point_local = glm::min(min_point_local, worldPos);
+        //max_point_local = glm::max(max_point_local, worldPos);
 
         min_point_world = glm::min(min_point_world, worldPos);
         max_point_world = glm::max(max_point_world, worldPos);
@@ -52,47 +54,52 @@ void BoundingBox::transformAABB(const glm::mat4& model) {
 }
 
 void BoundingBox::draw(Shader& shader) {
-    if (VAO == 0) {
+    float vertices[] = {
+            min_point_world.x, min_point_world.y, min_point_world.z, //dolny kwadrat
+            min_point_world.x, min_point_world.y, max_point_world.z,
+            max_point_world.x, min_point_world.y, max_point_world.z,
+            max_point_world.x, min_point_world.y, min_point_world.z,
+            min_point_world.x, min_point_world.y, min_point_world.z,
 
-        float vertices[] = {
-            min_point_local.x, min_point_local.y, min_point_local.z, //dolny kwadrat
-            min_point_local.x, min_point_local.y, max_point_local.z,
-            max_point_local.x, min_point_local.y, max_point_local.z,
-            max_point_local.x, min_point_local.y, min_point_local.z,
-            min_point_local.x, min_point_local.y, min_point_local.z,
+            min_point_world.x, max_point_world.y, min_point_world.z, //gorny kwadrat
+            min_point_world.x, max_point_world.y, max_point_world.z,
+            max_point_world.x, max_point_world.y, max_point_world.z,
+            max_point_world.x, max_point_world.y, min_point_world.z,
+            min_point_world.x, max_point_world.y, min_point_world.z,
 
-            min_point_local.x, max_point_local.y, min_point_local.z, //gorny kwadrat
-            min_point_local.x, max_point_local.y, max_point_local.z,
-            max_point_local.x, max_point_local.y, max_point_local.z,
-            max_point_local.x, max_point_local.y, min_point_local.z,
-            min_point_local.x, max_point_local.y, min_point_local.z,
+            min_point_world.x, min_point_world.y, max_point_world.z, //pozostale kreski
+            min_point_world.x, max_point_world.y, max_point_world.z,
 
-            min_point_local.x, min_point_local.y, max_point_local.z, //pozostale kreski
-            min_point_local.x, max_point_local.y, max_point_local.z,
+            max_point_world.x, min_point_world.y, max_point_world.z,
+            max_point_world.x, max_point_world.y, max_point_world.z,
 
-            max_point_local.x, min_point_local.y, max_point_local.z,
-            max_point_local.x, max_point_local.y, max_point_local.z,
+            max_point_world.x, min_point_world.y, min_point_world.z,
+            max_point_world.x, max_point_world.y, min_point_world.z
+    };
+    
+    //if (VAO == 0) {
 
-            max_point_local.x, min_point_local.y, min_point_local.z,
-            max_point_local.x, max_point_local.y, min_point_local.z
-        };
+
 
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
 
         glBindVertexArray(VAO);
+
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
-
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-        glBindVertexArray(0);
-    }
+        
+    //}
+
+   
+    
 
     shader.use();
-    shader.setMat4("model", model);
-    glBindVertexArray(VAO);
+    shader.setMat4("model", glm::mat4(1.f));
+    
     glDrawArrays(GL_LINE_STRIP, 0, 10);
     glDrawArrays(GL_LINES, 10, 6);
     glBindVertexArray(0);

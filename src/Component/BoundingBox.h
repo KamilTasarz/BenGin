@@ -28,6 +28,7 @@ public:
 		max_point_local = max_point;
 		transformAABB(model);
 		this->model = glm::mat4(model);
+		//this->model = glm::mat4(1.f);
 	}
 
 	bool isRayIntersects(glm::vec3 direction, glm::vec3 origin, float &t) const; // t - parameter
