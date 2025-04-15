@@ -49,11 +49,11 @@ private:
         // read file via ASSIMP
         Assimp::Importer importer;
 
-        std::cout << "Obsługiwane formaty:\n";
+        /*std::cout << "Obsługiwane formaty:\n";
         for (size_t i = 0; i < importer.GetImporterCount(); ++i) {
             const aiImporterDesc* desc = importer.GetImporterInfo(i);
             std::cout << "- " << desc->mName << " (" << desc->mFileExtensions << ")\n";
-        }
+        }*/
 
         const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace); //| aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
         // check for errors

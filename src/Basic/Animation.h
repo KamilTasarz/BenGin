@@ -27,7 +27,7 @@ public:
 
 	Animation(const char* animation_path, Model &model) {
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(animation_path, aiProcess_Triangulate);
+		const aiScene* scene = importer.ReadFile(animation_path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 		if (scene && scene->mRootNode) {
 			cout << "Wczytano" << endl;
 			aiAnimation *anim = scene->mAnimations[0];

@@ -196,10 +196,13 @@ int main() {
 
     Model Tmodel("res/models/nanosuit2/nanosuit2.obj");
     Model Kmodel("res/models/kutasiarz/The_Thing.obj");
-    Model Lmodel("res/models/man/CesiumMan.gltf");
-    const char* anim_path = "res/models/man/CesiumMan.gltf";
+    Model Lmodel("res/models/man/CesiumMan2.gltf");    
+    const char* anim_path = "res/models/man/CesiumMan2.gltf";
+
+    //Model Lmodel("res/models/ludzik/ludzik.gltf");
+    //const char* anim_path = "res/models/ludzik/ludzik.gltf";
     Animation *anim = new Animation(anim_path, Lmodel);
-    Animator* animator = new Animator(anim);
+	//anim->speed *= 2.f;
 
     const char* box_spec = "res/textures/box_specular.png", * box_diff = "res/textures/box_diffuse.png",
         * stone_name = "res/textures/stone.jpg", * wood_name = "res/textures/wood.jpg", * grass_name = "res/textures/grass.jpg";
@@ -224,6 +227,7 @@ int main() {
     Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     Node* ludzik = new Node(Lmodel, "ludzik", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
+	ludzik->animator = new Animator(anim);
 
     Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1", colliders);
     Node* box_diff_spec2 = new Node(Tmodel_box_diff_spec, "box1", colliders);
@@ -232,6 +236,7 @@ int main() {
     Node* box_light = new Node(Tmodel_light, "light", true);
     Node* box_light2 = new Node(Tmodel_light, "light2", true);
     Node* box_light_directional = new Node(Tmodel_light, "light_directional", true);
+    //Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0);
     Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f));
 
     player = new Player(ludzik, 3.f, 3.f, 10.f);
@@ -249,6 +254,7 @@ int main() {
     rootNode.addChild(plane);
 
     ludzik->transform.setLocalPosition({ 3.f, 5.f, 3.f });
+    ludzik->transform.setLocalRotation({ -90.f, 0.f, 0.f });
 
     kutasiarz->transform.setLocalPosition({ 3.f, 2.f, 3.f });
     kutasiarz->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
@@ -478,7 +484,6 @@ int main() {
             changeMouse(window);
         }  
 
-        animator->updateAnimation(deltaTime);
 		
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
@@ -492,31 +497,20 @@ int main() {
         view = camera.GetView();
 
         // unforms for ouline
-        auto f = animator->final_bone_matrices;
-        shader_outline->use();
-        shader_outline->setMat4("view", view);
-        for (int i = 0; i < f.size(); ++i)
-            shader_outline->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
-
+        
         shader->use();
-        shader->setMat4("view", view);
-        
-        for (int i = 0; i < f.size(); ++i)
-            shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
-
-        
         setLights(shader);
 
-
         rootNode.updateSelfAndChild(false);
+		rootNode.updateAnimation(deltaTime);
 
         //renderowanie pod cienie
-        point_lights[0].render(depthMapFBO, *shader_shadow);
+        /*point_lights[0].render(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
         rootNode.drawShadows(*shader_shadow);
         point_lights[0].renderBack(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
-        rootNode.drawShadows(*shader_shadow);
+        rootNode.drawShadows(*shader_shadow);*/
 
         directional_lights[0].render(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -526,20 +520,24 @@ int main() {
         glClearColor(.01f, .01f, .01f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+        shader_outline->use();
+		shader_outline->setMat4("view", view);
+		shader_outline->setMat4("projection", projection);
+
         shader->use();
         shader->setMat4("view", view);
         shader->setMat4("projection", projection);
-        shader->setMat4("light_view_projection", point_lights[0].getMatrix());
-        shader->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
-        shader->setMat4("light_view_projection3", directional_lights[0].getMatrix());
+        //shader->setMat4("light_view_projection", point_lights[0].getMatrix());
+        //shader->setMat4("light_view_projection_back", point_lights[0].view_projection_back);
+        shader->setMat4("light_view_projection", directional_lights[0].getMatrix());
         shader->setInt("shadow_map", 3);
-        shader->setInt("shadow_map3", 5);
-        shader->setInt("shadow_map_back", 4);
-        glActiveTexture(GL_TEXTURE3);
+        //shader->setInt("shadow_map3", 5);
+        //shader->setInt("shadow_map_back", 4);
+        /*glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMap);
         glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMapBack);
-        glActiveTexture(GL_TEXTURE5);
+        glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMapBack);*/
+        glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);
 
         float t = FLT_MAX;

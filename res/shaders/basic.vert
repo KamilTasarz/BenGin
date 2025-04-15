@@ -12,8 +12,8 @@ out VS_OUT {
 	vec2 Cords;
 	vec3 Normal;
 	vec4 Light_Perspective_Pos;
-	vec4 Light_Perspective_Pos2;
-	vec4 Light_Perspective_Pos3;
+	//vec4 Light_Perspective_Pos2;
+	//vec4 Light_Perspective_Pos3;
 	//mat3 TBN;
 } vs_out;
 
@@ -21,8 +21,8 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 uniform mat4 light_view_projection;
-uniform mat4 light_view_projection3;
-uniform mat4 light_view_projection_back;
+//uniform mat4 light_view_projection3;
+//uniform mat4 light_view_projection_back;
 
 const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
@@ -66,8 +66,8 @@ void main()
 	}
 
 	vs_out.Light_Perspective_Pos = light_view_projection * vec4(vs_out.Pos, 1.0f);
-	vs_out.Light_Perspective_Pos2 = light_view_projection_back * vec4(vs_out.Pos, 1.0f);
-	vs_out.Light_Perspective_Pos3 = light_view_projection3 * vec4(vs_out.Pos, 1.0f);
+	//vs_out.Light_Perspective_Pos2 = light_view_projection_back * vec4(vs_out.Pos, 1.0f);
+	//vs_out.Light_Perspective_Pos3 = light_view_projection3 * vec4(vs_out.Pos, 1.0f);
 
 	
 	vec3 scale = vec3(length(model[0].xyz), length(model[1].xyz), length(model[2].xyz));
