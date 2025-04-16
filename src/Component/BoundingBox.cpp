@@ -108,9 +108,6 @@ void BoundingBox::draw(Shader& shader) {
         
     //}
 
-   
-    
-
     shader.use();
     shader.setMat4("model", glm::mat4(1.f));
     
