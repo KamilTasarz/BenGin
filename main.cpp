@@ -41,6 +41,7 @@ glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat
 void setLights(Shader* shader);
 // void initializeServices();
 void leftClick(float value);
+void BeginFullscreenInputLayer();
 
 string print(glm::vec3 v);
 
@@ -265,7 +266,7 @@ int main() {
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
     
-    projection = glm::perspective(glm::radians(30.f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.5f, 100.0f);
+    projection = camera->GetProjection();
 
     shader_outline->use();
     shader_outline->setMat4("projection", projection);
@@ -520,7 +521,7 @@ int main() {
         //glActiveTexture(GL_TEXTURE5);
         //glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);
 
-        /*float t = FLT_MAX;
+        float t = FLT_MAX;
         rootNode.new_marked_object = nullptr;
         rootNode.mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()), rootNode.new_marked_object, t, camera->cameraPos);
 
@@ -530,14 +531,7 @@ int main() {
             rootNode.marked_object = rootNode.new_marked_object;
 
             if (rootNode.marked_object != nullptr) rootNode.marked_object->is_marked = true;
-        }*/
-
-        // Przykład testowego przypisania – upewnij się, że rootNode ma co najmniej jedno dziecko.
-        if (!rootNode.children.empty()) {
-            rootNode.marked_object = kutasiarz;
-            rootNode.marked_object->is_marked = true;
         }
-
 
         // == stencil buffer ==
 
@@ -564,8 +558,6 @@ int main() {
         sprite2->render(*shader_background);
         sprite3->render(*shader_background);
         sprite->render(*shader_background);
-        
-
 
         // Render the 2D triangle
         glDisable(GL_DEPTH_TEST); // Disable depth test to render on top
@@ -588,41 +580,7 @@ int main() {
         ImGui::Text("Test test test test 123 123");
         ImGui::Text("Current FPS: %.1f", fps); // Dipslay current fps
 
-        
-
-        // IMGUIZMO
-        Node* modified_object = rootNode.marked_object;
-        if (modified_object != nullptr) {       
-
-            ImGuizmo::SetOrthographic(false); // If we want to change between perspective and orthographic it's added just in case
-            ImGuizmo::SetDrawlist(); // Draw to the current window
-
-            //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
-            ImGuizmo::SetRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-            
-            // Camera matrices for rendering ImGuizmo
-            glm::mat4 _view = camera->GetView();
-            glm::mat4 _projection = camera->GetProjection();
-
-            //const glm::mat4& _projection = glm::ortho(0.0f, (float) WINDOW_WIDTH, 0.0f, (float)WINDOW_HEIGHT);
-
-            // Test czy to pomoze
-            rootNode.forceUpdateSelfAndChild();
-
-            // Getting marked object transform
-            auto& _transform = modified_object->getTransform();
-            glm::mat4 _model_matrix = _transform.getModelMatrix();
-
-            ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
-                ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix));
-
-            if (ImGuizmo::IsUsing()) {
-            
-                modified_object->transform.setLocalPosition(_model_matrix[3]);
-
-            }
-
-        }
+        BeginFullscreenInputLayer();
 
         // Window render
         ImGui::End();
@@ -734,3 +692,76 @@ void setLights(Shader* shader) {
 //    ServiceLocator::provide(new InputManager());
 //
 //}
+
+void BeginFullscreenInputLayer()
+{
+    ImGuiWindowFlags window_flags =
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoScrollWithMouse |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoBringToFrontOnFocus |
+        ImGuiWindowFlags_NoFocusOnAppearing |
+        ImGuiWindowFlags_NoBackground;
+
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowSize(viewport->Size);
+    //ImGui::SetNextWindowViewport(viewport->ID);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+
+    ImGui::Begin("ImGuizmo Input Layer", nullptr, window_flags);
+    // To okno jest niewidzialne, ale aktywne — i ImGuizmo może działać wewnątrz
+
+    // IMGUIZMO
+    Node* modified_object = rootNode.marked_object;
+    if (modified_object != nullptr) {
+
+        //io = ImGui::GetIO();
+
+        ImGuizmo::SetOrthographic(false); // If we want to change between perspective and orthographic it's added just in case
+        ImGuizmo::SetDrawlist(); // Draw to the current window
+
+        //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+        ImGuizmo::SetRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        // Camera matrices for rendering ImGuizmo
+        glm::mat4 _view = camera->GetView();
+        glm::mat4 _projection = camera->GetProjection();
+
+        //const glm::mat4& _projection = glm::ortho(0.0f, (float) WINDOW_WIDTH, 0.0f, (float)WINDOW_HEIGHT);
+
+        // Test czy to pomoze
+        rootNode.forceUpdateSelfAndChild();
+
+        // Getting marked object transform
+        auto& _transform = modified_object->getTransform();
+        glm::mat4 _model_matrix = _transform.getModelMatrix();
+
+        ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
+            ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix));
+
+        if (ImGuizmo::IsUsing()) {
+
+            modified_object->transform.setLocalPosition(_model_matrix[3]);
+
+        }
+
+    }
+
+    // Ale UWAGA: ImGuizmo::SetRect(...) MUSI być ustawione na pełny ekran!
+    ImGuizmo::SetRect(viewport->Pos.x, viewport->Pos.y, viewport->Size.x, viewport->Size.y);
+
+    // Rysuj GUI albo nic — okno istnieje tylko po to, żeby przekazywać inputy
+
+    // Pamiętaj: nadal musi być End()!
+    ImGui::End();
+
+    ImGui::PopStyleVar(3);
+}

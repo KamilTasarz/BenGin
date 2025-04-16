@@ -54,7 +54,7 @@ public:
     float MouseSensitivity = MOUSE_SENSITIVITY;
     float Zoom = ZOOM;
 
-    float AspectRatio = 4.0f / 3.0f;
+    float AspectRatio = 16.0f / 9.0f;
     float NearPlane = 0.1f;
     float FarPlane = 100.1f;
 
