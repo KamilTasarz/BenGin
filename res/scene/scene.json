@@ -1,18 +1,18 @@
 {
     "camera": {
-        "Pitch": -17.29997444152832,
-        "Yaw": 123.80013275146484,
+        "Pitch": -16.10002899169922,
+        "Yaw": 18.3001708984375,
         "mode": 0,
         "object_origin": {
             "x": 0.0,
             "y": 2.0,
             "z": 0.0
         },
-        "object_to_follow": "cos",
+        "object_to_follow": "ludzik",
         "position": {
-            "x": 12.469930648803711,
-            "y": 7.442723274230957,
-            "z": -20.4082088470459
+            "x": -13.846085548400879,
+            "y": 8.019355773925781,
+            "z": -4.309401988983154
         }
     },
     "directional_lights": [
@@ -50,7 +50,11 @@
             "id": 1
         },
         {
-            "id": 2,
+            "directory": "res/models/man/CesiumMan2.gltf",
+            "id": 2
+        },
+        {
+            "id": 3,
             "mode": "cube",
             "textures": [
                 "res/textures/box_specular.png",
@@ -58,25 +62,25 @@
             ]
         },
         {
-            "id": 3,
+            "id": 4,
             "mode": "cube",
             "textures": [
                 "res/textures/wood.jpg"
             ]
         },
         {
-            "id": 4,
+            "id": 5,
             "mode": "cube",
             "textures": [
                 "res/textures/stone.jpg"
             ]
         },
         {
-            "id": 5,
+            "id": 6,
             "mode": "cube"
         },
         {
-            "id": 6,
+            "id": 7,
             "mode": "cube",
             "textures": [
                 "res/textures/grass.jpg"
@@ -85,7 +89,7 @@
     ],
     "player": {
         "h_0": 3.0,
-        "node": "cos",
+        "node": "ludzik",
         "range": 3.0,
         "speed": 10.0
     },
@@ -118,11 +122,11 @@
                 "id": 0,
                 "is_visible": true,
                 "model.id": 3,
-                "name": "box2",
+                "name": "box1",
                 "no_textures": false,
                 "position": {
-                    "x": -7.5,
-                    "y": 1.565667748451233,
+                    "x": 7.5,
+                    "y": 1.4268262386322021,
                     "z": 0.0
                 },
                 "rotation": {
@@ -139,12 +143,56 @@
             {
                 "id": 0,
                 "is_visible": true,
+                "model.id": 3,
+                "name": "box1",
+                "no_textures": false,
+                "position": {
+                    "x": 0.0,
+                    "y": 1.3672707080841064,
+                    "z": -7.5
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 16.0,
+                    "y": 3.0,
+                    "z": 1.0
+                }
+            },
+            {
+                "id": 0,
+                "is_visible": true,
                 "model.id": 4,
+                "name": "box2",
+                "no_textures": false,
+                "position": {
+                    "x": -7.5,
+                    "y": 1.3564674854278564,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 3.0,
+                    "z": 14.0
+                }
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 5,
                 "name": "box3",
                 "no_textures": false,
                 "position": {
-                    "x": 0.8982633352279663,
-                    "y": 1.469760537147522,
+                    "x": 0.0,
+                    "y": 1.4563806056976318,
                     "z": 7.5
                 },
                 "rotation": {
@@ -161,13 +209,13 @@
             {
                 "id": 0,
                 "is_visible": true,
-                "model.id": 5,
+                "model.id": 6,
                 "name": "light",
                 "no_textures": true,
                 "position": {
-                    "x": 0.0,
+                    "x": 0.6184706091880798,
                     "y": 2.0,
-                    "z": 0.0
+                    "z": -0.7859341502189636
                 },
                 "rotation": {
                     "x": 0.0,
@@ -183,7 +231,7 @@
             {
                 "id": 0,
                 "is_visible": true,
-                "model.id": 5,
+                "model.id": 6,
                 "name": "light2",
                 "no_textures": true,
                 "position": {
@@ -205,7 +253,7 @@
             {
                 "id": 0,
                 "is_visible": true,
-                "model.id": 5,
+                "model.id": 6,
                 "name": "light_directional",
                 "no_textures": true,
                 "position": {
@@ -232,12 +280,12 @@
                 "no_textures": false,
                 "position": {
                     "x": 3.0,
-                    "y": 4.43979024887085,
+                    "y": 2.0,
                     "z": 3.0
                 },
                 "rotation": {
                     "x": 0.0,
-                    "y": 0.0,
+                    "y": 45.0,
                     "z": 0.0
                 },
                 "scale": {
@@ -253,9 +301,9 @@
                 "name": "cos",
                 "no_textures": false,
                 "position": {
-                    "x": -4.902669906616211,
-                    "y": 0.001000012969598174,
-                    "z": -2.8305912017822266
+                    "x": -5.0,
+                    "y": 0.5,
+                    "z": -5.0
                 },
                 "rotation": {
                     "x": 0.0,
@@ -263,19 +311,41 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 2.0,
-                    "y": 2.0,
-                    "z": 2.0
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
                 }
             },
             {
                 "id": 0,
                 "is_visible": true,
-                "model.id": 6,
+                "model.id": 2,
+                "name": "ludzik",
+                "no_textures": false,
+                "position": {
+                    "x": 5.999083995819092,
+                    "y": -0.0009999030735343695,
+                    "z": -5.5123724937438965
+                },
+                "rotation": {
+                    "x": -90.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                }
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 7,
                 "name": "plane1",
                 "no_textures": false,
                 "position": {
-                    "x": 0.0,
+                    "x": 5.563406467437744,
                     "y": -0.5009999871253967,
                     "z": 0.0
                 },

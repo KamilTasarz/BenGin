@@ -177,17 +177,16 @@ int main() {
     directional_lights = new DirectionalLight[10];
 
     // --- //
+    
 
-
-
-    Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
+    /*Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
     Model Kmodel("res/models/kutasiarz/The_Thing.obj", 1);
     Model Lmodel("res/models/man/CesiumMan2.gltf", 2);    
-    const char* anim_path = "res/models/man/CesiumMan2.gltf";
+    
 
     //Model Lmodel("res/models/ludzik/ludzik.gltf");
     //const char* anim_path = "res/models/ludzik/ludzik.gltf";
-    Animation *anim = new Animation(anim_path, Lmodel);
+    
 	//anim->speed *= 2.f;
 
 
@@ -239,17 +238,17 @@ int main() {
 
     player = new Player(ludzik, 3.f, 3.f, 10.f);
 
-    rootNode.addChild(box_diff_spec);
-    rootNode.addChild(box_diff_spec2);
-    rootNode.addChild(box_wood);
-    rootNode.addChild(box_stone);
-    rootNode.addChild(box_light);
-    rootNode.addChild(box_light2);
-    rootNode.addChild(box_light_directional);
-    rootNode.addChild(kutasiarz);
-    rootNode.addChild(cos);
-    rootNode.addChild(ludzik);
-    rootNode.addChild(plane);
+    rootNode->addChild(box_diff_spec);
+    rootNode->addChild(box_diff_spec2);
+    rootNode->addChild(box_wood);
+    rootNode->addChild(box_stone);
+    rootNode->addChild(box_light);
+    rootNode->addChild(box_light2);
+    rootNode->addChild(box_light_directional);
+    rootNode->addChild(kutasiarz);
+    rootNode->addChild(cos);
+    rootNode->addChild(ludzik);
+    rootNode->addChild(plane);
 
     ludzik->transform.setLocalPosition({ 3.f, 5.f, 3.f });
     ludzik->transform.setLocalRotation({ -90.f, 0.f, 0.f });
@@ -308,12 +307,24 @@ int main() {
 
 	loadScene("res/scene/scene.json", rootNode, player, camera, point_lights, point_light_number, directional_lights, directional_light_number, models, colliders);
 
+    const char* anim_path = "res/models/man/CesiumMan2.gltf";
+    Animation* anim = new Animation(anim_path, models[2]);
+	rootNode->getChildByName("ludzik")->animator = new Animator(anim);
+
+	//Animation* anim2 = new Animation("res/models/mecha_ramie_peter/mecha_ramie.glb", ramie);
+
+	//_ramie->animator = new Animator(anim2);
+
 	/*camera->setPosition(camera_temp->cameraPos);
 	camera->setObjectToFollow(camera_temp->object_to_follow, camera_temp->origin_point);
 	camera->Yaw = camera_temp->Yaw; 
 	camera->Pitch = camera_temp->Pitch;
 	camera->changeMode(camera_temp->mode);*/
     //delete camera_temp;
+
+	glm::vec3 origin = glm::vec3(0.f, 2.f, 0.f);
+
+	camera->setObjectToFollow(rootNode->getChildByName("ludzik"), origin);
 
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
@@ -454,11 +465,11 @@ int main() {
             direction += 32;
         }
 
-        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_Q) == GLFW_PRESS) {
             direction += 64;
         }
 
-        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_E) == GLFW_PRESS) {
             direction += 128;
         }
 
