@@ -10,5 +10,7 @@ void main() {
 
 	
 	FragColor = texture(background, Cords);
+	//if (FragColor.w < 0.1f) discard;
+	//else FragColor.w = 0.5f;
 
 }

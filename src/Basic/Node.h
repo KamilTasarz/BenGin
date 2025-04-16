@@ -12,7 +12,6 @@
 #include <array>
 #include <memory>
 
-#include "../Component/Camera.h"
 #include "../Component/BoundingBox.h"
 #include "Model.h"
 
@@ -196,6 +195,9 @@ public:
     // No textures parameter
     bool no_textures;
 
+    // Visibility
+	bool is_visible = true;
+
     //Hitbox
     BoundingBox *AABB;
 
@@ -342,7 +344,7 @@ public:
     // Draw self and children
     void virtual drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) {
 
-        if (pModel) {
+        if (pModel && is_visible) {
             //_shader.setVec4("dynamicColor", color);
             _shader.use();
             _shader.setMat4("model", transform.getModelMatrix());
@@ -432,18 +434,23 @@ public:
         if (abs(v.x) <= abs(v.y) && abs(v.x) <= abs(v.z)) {
             v.y = 0.f;
             v.z = 0.f;
+			AABB->collison = v.x > 0.f ? 1 : -1;
         }
         else if (abs(v.y) <= abs(v.x) && abs(v.y) <= abs(v.z)) {
             v.x = 0.f;
             v.z = 0.f;
+            AABB->collison = v.y > 0.f ? 2 : -2;
         }
         else {
             v.x = 0.f;
             v.y = 0.f;
+			AABB->collison = v.z > 0.f ? 3 : -3;
         }
 
+		cout << "collison: " << AABB->collison << endl;
+
         transform.setLocalPosition(transform.getLocalPosition() + v);
-    
+        forceUpdateSelfAndChild();
     }
 
     const Transform& getTransform() {

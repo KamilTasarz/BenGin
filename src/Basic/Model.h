@@ -45,6 +45,7 @@ private:
         }
         // retrieve the directory path of the filepath
         directory = path.substr(0, path.find_last_of('/'));
+        exact_path = path;
 
         // process ASSIMP's root node recursively
         processNode(scene->mRootNode, scene);
@@ -304,6 +305,7 @@ private:
                 texture.type = "texture_diffuse";
             }
             textures.push_back(texture);
+            textures_loaded.push_back(texture);
         }
         
         meshes.push_back(Mesh(vertices, textures));
@@ -363,28 +365,32 @@ private:
             if (texture.path.find(specular_name, 0) != string::npos) texture.type = "texture_specular";
             else texture.type = "texture_diffuse";
             textures.push_back(texture);
+            textures_loaded.push_back(texture);
         }
         
         meshes.push_back(Mesh(vertices, textures));
     }
 
 public:
-
+    int id = 0;
     // model data 
     vector<Texture> textures_loaded; // stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh> meshes;
     string directory;
+    string exact_path;
+    string mode;
     bool gammaCorrection;
 
     glm::vec3 min_points = glm::vec3(FLT_MAX);
     glm::vec3 max_points = glm::vec3(-FLT_MAX);
 
     // constructor, expects a filepath to a 3D model.
-    Model(string const& path, bool gamma = false) : gammaCorrection(gamma) {
+    Model(string const& path, int id, bool gamma = false) : gammaCorrection(gamma), id(id) {
         loadModel(path);
     }
 
-    Model(const char** texture_names, short texture_number, string mode = "cube") {
+    Model(const char** texture_names, short texture_number, int id, string mode = "cube") : id(id) {
+        this->mode = mode;
         if (mode._Equal("cube")) {
             loadCube(texture_names, texture_number);
         }

@@ -10,31 +10,25 @@ glm::mat4 Camera::GetProjection() {
 
 void Camera::ProcessKeyboard(GLfloat deltaTime, int dir) {
 
-	GLfloat cameraSpeed = MovementSpeed * deltaTime;
-    if (1 & dir)
-        cameraPos += cameraSpeed * cameraFront;
-    if (2 & dir)
-        cameraPos -= cameraSpeed * cameraFront;
-    if (4 & dir)
-        cameraPos -= cameraRight * cameraSpeed;
-    if (8 & dir)
-        cameraPos += cameraRight * cameraSpeed;
-    if (16 & dir)
-        cameraPos += cameraUp * cameraSpeed;
-    if (32 & dir)
-        cameraPos -= cameraUp * cameraSpeed;
-
-}
-
-void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
-
-    Yaw += xoffset * MouseSensitivity;
-    Pitch += yoffset * MouseSensitivity;
-
-    if (Pitch > 89.0f)
-        Pitch = 89.0f;
-    if (Pitch < -89.0f)
-        Pitch = -89.0f;
+    if (mode == FREE) {
+        GLfloat cameraSpeed = MovementSpeed * deltaTime;
+        if (1 & dir)
+            cameraPos += cameraSpeed * cameraFront;
+        if (2 & dir)
+            cameraPos -= cameraSpeed * cameraFront;
+        if (4 & dir)
+            cameraPos -= cameraRight * cameraSpeed;
+        if (8 & dir)
+            cameraPos += cameraRight * cameraSpeed;
+        if (16 & dir)
+            cameraPos += cameraUp * cameraSpeed;
+        if (32 & dir)
+            cameraPos -= cameraUp * cameraSpeed;
+        
+    }
+    else if (mode == FOLLOWING) {
+        cameraPos = object_to_follow->transform.getGlobalPosition() + camera_following_offset;
+    }
 
     updateCameraVectors();
 
@@ -46,7 +40,24 @@ void Camera::ProcessGamepad() {
 
 }
 
-void Camera::setPosition(glm::vec3 position) {
+void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
+    if (mode != FOLLOWING) {
+        Yaw += xoffset * MouseSensitivity;
+        Pitch += yoffset * MouseSensitivity;
+
+		Yaw = fmodf(Yaw, 360.0f);
+
+        if (Pitch > 89.0f)
+            Pitch = 89.0f;
+        if (Pitch < -89.0f)
+            Pitch = -89.0f;
+
+        updateCameraVectors();
+    }
+    
+}
+
+void Camera::setPosition(const glm::vec3& position) {
     cameraPos = position;
     updateCameraVectors();
 }
@@ -62,6 +73,27 @@ void Camera::setMouseSensitivity(float sensitivity) {
 void Camera::setAspectRatio(float aspect_ratio) {
     AspectRatio = aspect_ratio;
 }
+
+void Camera::setObjectToFollow(Node* object, glm::vec3& origin)
+{
+    object_to_follow = object;
+	origin_point = origin;
+}
+
+void Camera::changeMode(CameraMode mode)
+{
+    if (mode == FOLLOWING && object_to_follow == nullptr) this->mode = FREE;
+    else this->mode = mode;
+
+	if (mode != FOLLOWING) {
+		cameraPos = oldCameraPos;
+    }
+    else {
+		oldCameraPos = cameraPos;
+    }
+
+}
+
 
 void Camera::setNearPlane(float near_plane) {
     NearPlane = near_plane;

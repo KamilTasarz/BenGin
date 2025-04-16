@@ -1,0 +1,315 @@
+{
+    "camera": {
+        "Pitch": -17.10007667541504,
+        "Yaw": -685.8994750976563,
+        "mode": 0,
+        "object_origin": {
+            "x": 0.0,
+            "y": 2.0,
+            "z": 0.0
+        },
+        "object_to_follow": "cos",
+        "position": {
+            "x": -34.904624938964844,
+            "y": 12.365649223327637,
+            "z": -19.81443977355957
+        }
+    },
+    "directional_lights": [
+        {
+            "ambient": {
+                "x": 0.20000000298023224,
+                "y": 0.20000000298023224,
+                "z": 0.20000000298023224
+            },
+            "diffuse": {
+                "x": 0.800000011920929,
+                "y": 0.800000011920929,
+                "z": 0.800000011920929
+            },
+            "direction": {
+                "x": 1.0,
+                "y": -1.0,
+                "z": 1.0
+            },
+            "node": "light_directional",
+            "specular": {
+                "x": 0.800000011920929,
+                "y": 0.800000011920929,
+                "z": 0.800000011920929
+            }
+        }
+    ],
+    "models": [
+        {
+            "directory": "res/models/nanosuit2/nanosuit2.obj",
+            "id": 0
+        },
+        {
+            "directory": "res/models/kutasiarz/The_Thing.obj",
+            "id": 1
+        },
+        {
+            "id": 2,
+            "mode": "cube",
+            "textures": [
+                "res/textures/box_specular.png",
+                "res/textures/box_diffuse.png"
+            ]
+        },
+        {
+            "id": 3,
+            "mode": "cube",
+            "textures": [
+                "res/textures/wood.jpg"
+            ]
+        },
+        {
+            "id": 4,
+            "mode": "cube",
+            "textures": [
+                "res/textures/stone.jpg"
+            ]
+        },
+        {
+            "id": 5,
+            "mode": "cube"
+        },
+        {
+            "id": 6,
+            "mode": "plane",
+            "textures": [
+                "res/textures/grass.jpg"
+            ]
+        }
+    ],
+    "player": {
+        "h_0": 3.0,
+        "node": "cos",
+        "range": 3.0,
+        "speed": 10.0
+    },
+    "point_lights": [
+        {
+            "ambient": {
+                "x": 0.20000000298023224,
+                "y": 0.20000000298023224,
+                "z": 0.20000000298023224
+            },
+            "constant": 1.0,
+            "diffuse": {
+                "x": 0.800000011920929,
+                "y": 0.800000011920929,
+                "z": 0.800000011920929
+            },
+            "linear": 0.09000000357627869,
+            "node": "light",
+            "quadratic": 0.03200000151991844,
+            "specular": {
+                "x": 0.800000011920929,
+                "y": 0.800000011920929,
+                "z": 0.800000011920929
+            }
+        }
+    ],
+    "scene": {
+        "children": [
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 3,
+                "name": "box2",
+                "no_textures": false,
+                "position": {
+                    "x": -7.5,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 3.0,
+                    "z": 14.0
+                }
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 4,
+                "name": "box3",
+                "no_textures": false,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 7.5
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 16.0,
+                    "y": 3.0,
+                    "z": 1.0
+                }
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 5,
+                "name": "light",
+                "no_textures": true,
+                "position": {
+                    "x": 0.5675472021102905,
+                    "y": 2.388814926147461,
+                    "z": 10.511640548706055
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.30000001192092896,
+                    "y": 0.30000001192092896,
+                    "z": 0.30000001192092896
+                }
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 5,
+                "name": "light2",
+                "no_textures": true,
+                "position": {
+                    "x": 8.0,
+                    "y": 4.0,
+                    "z": -8.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.30000001192092896,
+                    "y": 0.30000001192092896,
+                    "z": 0.30000001192092896
+                }
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 5,
+                "name": "light_directional",
+                "no_textures": true,
+                "position": {
+                    "x": -8.0,
+                    "y": 4.0,
+                    "z": -8.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.30000001192092896,
+                    "y": 0.30000001192092896,
+                    "z": 0.30000001192092896
+                }
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 0,
+                "name": "kutasiarz",
+                "no_textures": false,
+                "position": {
+                    "x": 3.0,
+                    "y": 2.0,
+                    "z": 3.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.30000001192092896,
+                    "y": 0.30000001192092896,
+                    "z": 0.30000001192092896
+                }
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 1,
+                "name": "cos",
+                "no_textures": false,
+                "position": {
+                    "x": 6.333871841430664,
+                    "y": 7.000999927520752,
+                    "z": -6.037295341491699
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 2.0,
+                    "y": 2.0,
+                    "z": 2.0
+                }
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 6,
+                "name": "plane1",
+                "no_textures": false,
+                "position": {
+                    "x": 0.0,
+                    "y": -0.5009999871253967,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 15.0,
+                    "y": 15.0,
+                    "z": 15.0
+                }
+            }
+        ],
+        "id": 0,
+        "is_visible": true,
+        "model.id": -1,
+        "name": "root",
+        "no_textures": true,
+        "position": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        }
+    }
+}

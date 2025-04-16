@@ -28,7 +28,7 @@ extern float lastY = (float)WINDOW_HEIGHT / 2.0;
 extern GLfloat deltaTime = 0.0f;
 extern GLfloat lastFrame = 0.0f;
 
-extern Camera* camera = new Camera(0.f, 0.f, -3.f);
+extern Camera* camera = new Camera(0.f, 2.f, -3.f);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double posX, double posY);
@@ -317,9 +317,9 @@ void mouseCallback(GLFWwindow* window, double posX, double posY) {
 	lastX = x;
 	lastY = y;
 
-	if (is_camera) {
+	//if (is_camera) {
 		camera->ProcessMouseMovement(offsetX, offsetY);
-	}
+	//}
 
 }
 
