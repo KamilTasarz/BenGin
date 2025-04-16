@@ -107,7 +107,7 @@ int main() {
 
     ///
 
-    Window* _window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.1.1");
+    Window* _window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.1.2");
 
     ServiceLocator::provide(_window);
     
