@@ -42,6 +42,22 @@ void Player::update(float delta_time, short inputs, float camera_yaw) {
 
 
 	glm::vec3 cur_grav = grav;
+    //if (delta_time < 0.01f) {
+    pos += (vel * delta_time) + 0.5f * grav * delta_time * delta_time;
+    vel += grav * delta_time;
+    //}
+
+	//if (vel.y < -2.f) {
+		//vel.y = -2.f;
+	//}   
+
+    float angY = player_node->transform.getLocalRotation().y;
+    if (inputs & 64) {
+        angY += speed * delta_time;
+    }
+    if (inputs & 128) {
+        angY -= speed * delta_time;
+    }
 
     if (vel.y < 0.f && player_node->AABB->collison == 2) {
         on_ground = true;
@@ -51,10 +67,14 @@ void Player::update(float delta_time, short inputs, float camera_yaw) {
     else {
         on_ground = false;
     }
+	
     pos += (vel * delta_time) + 0.5f * cur_grav * delta_time * delta_time;
     vel += cur_grav * delta_time;
 
+    player_node->transform.setLocalRotation({ player_node->transform.getLocalRotation().x, angY, player_node->transform.getLocalRotation().z});
+	player_node->transform.setLocalPosition(pos);
+
     player_node->AABB->collison = 0;
-    player_node->transform.setLocalPosition(pos);
+    
     player_node->forceUpdateSelfAndChild();
 }

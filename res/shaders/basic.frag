@@ -73,12 +73,12 @@ void main() {
         }
 
         
-        //float shadow2 = calulateShadow(fs_in.Light_Perspective_Pos3, shadow_map3);
-        //float shadow1 = min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
+
+        float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map);
+        //float shadow1 = 0.f;//min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
         
         //float shadow = clamp(shadow1+shadow2, 0.f, 1.f);
 
-        float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map);
 
         FragColor = vec4((res[0] + (res[1] + res[2]) * (1.f - shadow)), 1.f);
 

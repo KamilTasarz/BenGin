@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef MODEL_H
 #define MODEL_H
@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb_image/stb_image.h>
 #include <assimp/Importer.hpp>
+#include <assimp/importerdesc.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
@@ -22,10 +23,21 @@
 #include <map>
 #include <vector>
 
+
 using namespace std;
 
 unsigned int textureFromFile(const char* path, const string& directory, bool gamma = false);
 unsigned int textureFromFile(const char* full_path, bool gamma = false);
+
+struct BoneInfo
+{
+    // id wykorzystywane w shaderze do okreslenia z macierzy kosci, ktora to jest macierz
+    int id;
+
+    // offset przenoszacy kosc z originu
+    glm::mat4 offset;
+
+};
 
 class Model
 {
@@ -36,7 +48,14 @@ private:
     {
         // read file via ASSIMP
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+
+        /*std::cout << "Obsługiwane formaty:\n";
+        for (size_t i = 0; i < importer.GetImporterCount(); ++i) {
+            const aiImporterDesc* desc = importer.GetImporterInfo(i);
+            std::cout << "- " << desc->mName << " (" << desc->mFileExtensions << ")\n";
+        }*/
+
+        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace); //| aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
         // check for errors
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
         {
@@ -81,6 +100,12 @@ private:
         for (unsigned int i = 0; i < mesh->mNumVertices; i++)
         {
             Vertex vertex;
+
+            for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+                vertex.m_BoneIDs[i] = -1;
+                vertex.m_Weights[i] = 0.0f;
+            }
+
             glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
             // positions
             vector.x = mesh->mVertices[i].x;
@@ -159,8 +184,69 @@ private:
         std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
+        extractBoneWeightForVertices(vertices, mesh, scene);
+
         // return a mesh object created from the extracted mesh data
         return Mesh(vertices, indices, textures);
+    }
+
+    void extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
+    {
+        // przejscie po wszystkich kosciach danego meshu i zapisanie tych, ktorych nie ma w mapie informujacej o kosciach
+        for (int bone_id = 0; bone_id < mesh->mNumBones; bone_id++) {
+            std::string bone_name = mesh->mBones[bone_id]->mName.C_Str();
+            int ID = -1;
+            if (m_BoneInfoMap.find(bone_name) == m_BoneInfoMap.end()) {
+                BoneInfo bone_to_add;
+                bone_to_add.id = m_BoneCounter;
+                
+                //transformacja macierzy asimpa na glm
+                aiMatrix4x4 mat4 = mesh->mBones[bone_id]->mOffsetMatrix;
+                bone_to_add.offset = glm::transpose(glm::mat4(glm::vec4(mat4.a1, mat4.a2, mat4.a3, mat4.a4), glm::vec4(mat4.b1, mat4.b2, mat4.b3, mat4.b4), 
+                    glm::vec4(mat4.c1, mat4.c2, mat4.c3, mat4.c4), glm::vec4(mat4.d1, mat4.d2, mat4.d3, mat4.d4)));
+                m_BoneInfoMap[bone_name] = bone_to_add;
+
+              
+
+                ID = m_BoneCounter;
+                m_BoneCounter++;
+            }
+            else {
+                //jesli juz jest w mapie to znaczy, ze pobieramy ID kosci i przypiszemy do wierzcholka tylko wage
+                ID = m_BoneInfoMap[bone_name].id;
+            }
+
+            if (ID != -1) {
+
+                //pobranie wag i ich ilosci dla kosci z danego mesha
+                auto weights = mesh->mBones[bone_id]->mWeights;
+                int numWeights = mesh->mBones[bone_id]->mNumWeights;
+
+                for (int weightIndex = 0; weightIndex < numWeights; weightIndex++)
+                {
+
+                    int vertexId = weights[weightIndex].mVertexId;
+                    float weight = weights[weightIndex].mWeight;
+                    if (vertexId <= vertices.size()) {
+                        setVertexBoneData(vertices[vertexId], ID, weight);
+                    }
+                    
+                }
+            }
+        }
+    }
+
+    void setVertexBoneData(Vertex& vertex, int id, float weight) {
+        for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
+        {
+            if (vertex.m_BoneIDs[i] < 0)
+            {
+                vertex.m_Weights[i] = weight;
+                vertex.m_BoneIDs[i] = id;
+                break;
+            }
+        }
+
     }
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
@@ -380,6 +466,12 @@ public:
     string exact_path;
     string mode;
     bool gammaCorrection;
+
+    std::map<string, BoneInfo> m_BoneInfoMap;  // info o kosciach modelu
+    int m_BoneCounter = 0;
+
+    auto& GetBoneInfoMap() { return m_BoneInfoMap; }
+    int& GetBoneCount() { return m_BoneCounter; }
 
     glm::vec3 min_points = glm::vec3(FLT_MAX);
     glm::vec3 max_points = glm::vec3(-FLT_MAX);

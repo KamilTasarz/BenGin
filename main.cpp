@@ -16,6 +16,8 @@ CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
 
 #include "src/Basic/Shader.h"
 #include "src/Basic/Model.h"
+#include "src/Basic/Animator.h"
+#include "src/Gameplay/Player.h"
 
 #include "src/Component/Camera.h"
 #include "src/Gameplay/Player.h"
@@ -176,28 +178,39 @@ int main() {
 
     // --- //
 
-    /*Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
+
+
+    Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
     Model Kmodel("res/models/kutasiarz/The_Thing.obj", 1);
+    Model Lmodel("res/models/man/CesiumMan2.gltf", 2);    
+    const char* anim_path = "res/models/man/CesiumMan2.gltf";
+
+    //Model Lmodel("res/models/ludzik/ludzik.gltf");
+    //const char* anim_path = "res/models/ludzik/ludzik.gltf";
+    Animation *anim = new Animation(anim_path, Lmodel);
+	//anim->speed *= 2.f;
+
 
     const char* box_spec = "res/textures/box_specular.png", * box_diff = "res/textures/box_diffuse.png",
         * stone_name = "res/textures/stone.jpg", * wood_name = "res/textures/wood.jpg", * grass_name = "res/textures/grass.jpg";
 
     const char* texture_names[] = { box_spec, box_diff };
-    Model Tmodel_box_diff_spec(texture_names, 2, 2);
+    Model Tmodel_box_diff_spec(texture_names, 2, 3);
 
     *texture_names = { wood_name };
-    Model Tmodel_box_wood(texture_names, 1, 3);
+    Model Tmodel_box_wood(texture_names, 1, 4);
 
     *texture_names = { stone_name };
-    Model Tmodel_box_stone(texture_names, 1, 4);
+    Model Tmodel_box_stone(texture_names, 1, 5);
 
-    Model Tmodel_light(texture_names, 0, 5);
+    Model Tmodel_light(texture_names, 0, 6);
 
     *texture_names = { grass_name };
-    Model Tmodel_plane(texture_names, 1, 6);
+    Model Tmodel_plane(texture_names, 1, 7);
 
     models.push_back(Tmodel);
 	models.push_back(Kmodel);
+	models.push_back(Lmodel);
 	models.push_back(Tmodel_box_diff_spec);
 	models.push_back(Tmodel_box_wood);
 	models.push_back(Tmodel_box_stone);
@@ -206,40 +219,48 @@ int main() {
 
     rootNode = new Node("root", 0);
 
+
+
     Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, false, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    Node* ludzik = new Node(Lmodel, "ludzik", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
+	ludzik->animator = new Animator(anim);
+
+    Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1", colliders);
+    Node* box_diff_spec2 = new Node(Tmodel_box_diff_spec, "box1", colliders);
+    Node* box_wood = new Node(Tmodel_box_wood, "box2", colliders);
+    Node* box_stone = new Node(Tmodel_box_stone, "box3", colliders);
     Node* box_light = new Node(Tmodel_light, "light", true);
     Node* box_light2 = new Node(Tmodel_light, "light2", true);
     Node* box_light_directional = new Node(Tmodel_light, "light_directional", true);
-    Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1", colliders);
-    Node* box_diff_spec2 = new Node(Tmodel_box_diff_spec, "box1_2", colliders);
-    Node* box_wood = new Node(Tmodel_box_wood, "box2", colliders);
-    Node* box_stone = new Node(Tmodel_box_stone, "box3", colliders);
+    //Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0);
+    Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f));
 
-    Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0); //, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f)
+    player = new Player(ludzik, 3.f, 3.f, 10.f);
 
-    //InstanceManager* walls = new InstanceManager(Tmodel_box_diff_spec, "instance_manager_wall", shader_instanced, 20);
+    rootNode.addChild(box_diff_spec);
+    rootNode.addChild(box_diff_spec2);
+    rootNode.addChild(box_wood);
+    rootNode.addChild(box_stone);
+    rootNode.addChild(box_light);
+    rootNode.addChild(box_light2);
+    rootNode.addChild(box_light_directional);
+    rootNode.addChild(kutasiarz);
+    rootNode.addChild(cos);
+    rootNode.addChild(ludzik);
+    rootNode.addChild(plane);
 
-    player = new Player(cos, 3.f, 3.f, 10.f);
-    glm::vec3 origin = glm::vec3(0.f, 2.f, 0.f);
-	camera->setObjectToFollow(player->player_node, origin);
+    ludzik->transform.setLocalPosition({ 3.f, 5.f, 3.f });
+    ludzik->transform.setLocalRotation({ -90.f, 0.f, 0.f });
 
-    rootNode->addChild(box_wood);
-    rootNode->addChild(box_stone);
-    rootNode->addChild(box_light);
-    rootNode->addChild(box_light2);
-    rootNode->addChild(box_light_directional);
-    rootNode->addChild(kutasiarz);
-    rootNode->addChild(cos);
-    rootNode->addChild(plane);
-    //rootNode->addChild(walls);
-
-    kutasiarz->transform.setLocalPosition({3.f, 2.f, 3.f});
+    kutasiarz->transform.setLocalPosition({ 3.f, 2.f, 3.f });
     kutasiarz->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
+    kutasiarz->transform.setLocalRotation({ 0.f, 45.f, 0.f });
 
     cos->transform.setLocalPosition({ -5.0, 0.5f, -5.0f });
-    cos->transform.setLocalScale({ 2.0, 2.0f, 2.0f });
+
+    cos->transform.setLocalScale({ 1.0f, 1.0f, 1.0f });
 
     box_diff_spec->transform.setLocalPosition({ 7.5f, 0.0f, 0.0f });
     box_diff_spec->transform.setLocalScale({ 1.0f, 3.0f, 14.0f });
@@ -433,6 +454,14 @@ int main() {
             direction += 32;
         }
 
+        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+            direction += 64;
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+            direction += 128;
+        }
+
         point_lights[0].updatePosition();
 
         float speed = 6.f;
@@ -468,19 +497,17 @@ int main() {
             
             if (player->player_node->AABB != collider && player->player_node->AABB->isBoundingBoxIntersects(*collider)) {
 
-               
+
                 player->player_node->separate(collider);
                 
             }
         }
 
-        
-        
-
         //if (is_camera) {
             camera->ProcessKeyboard(deltaTime, direction);
             changeMouse(window->window);
         //}
+
 		
         if (glfwGetKey(window->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window->window, true);
@@ -495,6 +522,7 @@ int main() {
 
         // unforms for ouline
 
+
         shader_outline->use();
         shader_outline->setMat4("view", view);   
         shader_instanced->use();
@@ -504,9 +532,12 @@ int main() {
         shader->use();
         shader->setMat4("view", view);
         
+        shader->use();
         setLights(shader);
 
+
         rootNode->updateSelfAndChild(false);
+		rootNode->updateAnimation(deltaTime);
 
         //renderowanie pod cienie
         /*point_lights[0].render(depthMapFBO, *shader_shadow);
@@ -514,7 +545,9 @@ int main() {
         rootNode->drawShadows(*shader_shadow);
         point_lights[0].renderBack(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
+
         rootNode->drawShadows(*shader_shadow);*/
+
 
         directional_lights[0].render(depthMapFBO, *shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -523,6 +556,7 @@ int main() {
         glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         glClearColor(.01f, .01f, .01f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 
 
         background->update(deltaTime);
@@ -538,6 +572,11 @@ int main() {
         //shader_instanced->setInt("shadow_map3", 5);
         //shader_instanced->setInt("shadow_map_back", 4);
 
+        shader_outline->use();
+		shader_outline->setMat4("view", view);
+		shader_outline->setMat4("projection", projection);
+
+
         shader->use();
         shader->setMat4("view", view);
         shader->setMat4("projection", projection);
@@ -547,6 +586,11 @@ int main() {
         shader->setInt("shadow_map", 3);
         //shader->setInt("shadow_map3", 5);
         //shader->setInt("shadow_map_back", 4);
+
+        /*glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMap);
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, point_lights[0].depthMapBack);*/
 
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);

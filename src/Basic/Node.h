@@ -14,6 +14,7 @@
 
 #include "../Component/BoundingBox.h"
 #include "Model.h"
+#include "Animator.h"
 
 class Transform {
 
@@ -201,6 +202,8 @@ public:
     //Hitbox
     BoundingBox *AABB;
 
+	Animator* animator = nullptr; // Animator for the model
+
     // ----------- CONSTRUCTORS -----------
 
     // No model
@@ -348,6 +351,12 @@ public:
             //_shader.setVec4("dynamicColor", color);
             _shader.use();
             _shader.setMat4("model", transform.getModelMatrix());
+
+            if (animator != nullptr) {
+				auto f = animator->final_bone_matrices;
+                for (int i = 0; i < f.size(); ++i)
+                    _shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+            }
             if (is_marked) {
                 glStencilMask(0xFF);
             }
@@ -360,7 +369,12 @@ public:
             _shader.setInt("is_light", 0);
             
             _shader_outline.use();
-
+			_shader_outline.setMat4("model", transform.getModelMatrix());
+            if (animator != nullptr) {
+                auto f = animator->final_bone_matrices;
+                for (int i = 0; i < f.size(); ++i)
+                    _shader_outline.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+            }
             glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
             _shader_outline.setVec3("color", dynamic_color);
 
@@ -379,12 +393,26 @@ public:
 
     }
 
+	void updateAnimation(float deltaTime) {
+		if (animator != nullptr) {
+			animator->updateAnimation(deltaTime);
+		}
+		for (auto&& child : children) {
+			child->updateAnimation(deltaTime);
+		}
+	}
+
     void drawShadows(Shader& shader) {
         if (pModel) {
             
             shader.use();
             shader.setMat4("model", transform.getModelMatrix());
             if (!no_textures) {
+                if (animator != nullptr) {
+                    auto f = animator->final_bone_matrices;
+                    for (int i = 0; i < f.size(); ++i)
+                        shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+                }
                 pModel->Draw(shader); //jak nie ma tekstury to najpewniej swiatlo -> przyjmuje takie zalozenie
             } 
         }
