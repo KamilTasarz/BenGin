@@ -11,6 +11,8 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
+#include <imguizmo/ImGuizmo.h>
+
 #include <nlohmann/json.hpp>
 
 #include <iostream>

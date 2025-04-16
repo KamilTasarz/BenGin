@@ -100,7 +100,7 @@ public:
 
     void setModelMatrix(glm::mat4& model) {
         m_modelMatrix = model;
-        m_modelMatrix = true;
+        touched = true;
     }
 
     // -- GETTERS --
@@ -444,6 +444,10 @@ public:
 
         transform.setLocalPosition(transform.getLocalPosition() + v);
     
+    }
+
+    const Transform& getTransform() {
+        return transform;
     }
 
 };

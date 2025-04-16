@@ -15,12 +15,12 @@
 // Default camera values
 const float YAW = 45.0f;
 const float PITCH = 0.0f;
-const float SPEED = 5.0f;
-//const float SENSITIVITY
-//const float ZOOM
+const float MOVEMENT_SPEED = 20.0f;
+const float MOUSE_SENSITIVITY = 0.1f;
+const float ZOOM = 45.0f;
 
 enum CameraMode {
-    // There might be multiple camera modes in the future (p.e. free, fixed)S
+    // There might be multiple camera modes in the future (p.e. free, fixed)
 };
 
 class Camera {
@@ -50,12 +50,18 @@ public:
 
     float Yaw, Pitch;
 
-    float MovementSpeed = 20.0f; // Only temporary value, will be flexible later
-    float MouseSensitivity = 0.1f; // Only temporary value, will be flexible later
+    float MovementSpeed = MOVEMENT_SPEED;
+    float MouseSensitivity = MOUSE_SENSITIVITY;
+    float Zoom = ZOOM;
+
+    float AspectRatio = 4.0f / 3.0f;
+    float NearPlane = 0.1f;
+    float FarPlane = 100.1f;
 
     Camera(float x = 0.f, float y = 0.f, float z = 0.f) {
-        Yaw = 90.f;
-        Pitch = 0.f;
+
+        Yaw = 90.0f;
+        Pitch = 0.0f;
         cameraPos = glm::vec3(x, y, z);
         worldUp = cameraUp;
 
@@ -64,15 +70,19 @@ public:
     }
 
     glm::mat4 GetView();
+    glm::mat4 GetProjection();
 
     void ProcessKeyboard(GLfloat deltaTime, int dir);
-
     void ProcessMouseMovement(float xoffset, float yoffset);
+    void ProcessGamepad(); // TODO
     
     // Setters
     void setPosition(glm::vec3 position);
     void setMovementSpeed(float speed);
     void setMouseSensitivity(float sensitivity);
+    void setAspectRatio(float aspect_ratio);
+    void setNearPlane(float near_plane);
+    void setFarPlane(float far_plane);
 
 };
 

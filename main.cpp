@@ -37,7 +37,7 @@ CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
 #define WINDOW_HEIGHT 1080
 
 void changeMouse(GLFWwindow* window);
-glm::vec4 getRayWorld(GLFWwindow* window);
+glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection);
 void setLights(Shader* shader);
 // void initializeServices();
 void leftClick(float value);
@@ -520,9 +520,9 @@ int main() {
         //glActiveTexture(GL_TEXTURE5);
         //glBindTexture(GL_TEXTURE_2D, directional_lights[0].depthMap);
 
-        float t = FLT_MAX;
+        /*float t = FLT_MAX;
         rootNode.new_marked_object = nullptr;
-        rootNode.mark(getRayWorld(window->window), rootNode.new_marked_object, t, camera->cameraPos);
+        rootNode.mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()), rootNode.new_marked_object, t, camera->cameraPos);
 
         if (mouse_pressed) {
             if (rootNode.marked_object != nullptr) rootNode.marked_object->is_marked = false;
@@ -530,7 +530,14 @@ int main() {
             rootNode.marked_object = rootNode.new_marked_object;
 
             if (rootNode.marked_object != nullptr) rootNode.marked_object->is_marked = true;
+        }*/
+
+        // Przykład testowego przypisania – upewnij się, że rootNode ma co najmniej jedno dziecko.
+        if (!rootNode.children.empty()) {
+            rootNode.marked_object = kutasiarz;
+            rootNode.marked_object->is_marked = true;
         }
+
 
         // == stencil buffer ==
 
@@ -574,14 +581,52 @@ int main() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGuizmo::BeginFrame();
 
         // Window content
         ImGui::Begin("Test Window");
         ImGui::Text("Test test test test 123 123");
         ImGui::Text("Current FPS: %.1f", fps); // Dipslay current fps
-        ImGui::End();
+
+        
+
+        // IMGUIZMO
+        Node* modified_object = rootNode.marked_object;
+        if (modified_object != nullptr) {       
+
+            ImGuizmo::SetOrthographic(false); // If we want to change between perspective and orthographic it's added just in case
+            ImGuizmo::SetDrawlist(); // Draw to the current window
+
+            //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+            ImGuizmo::SetRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+            
+            // Camera matrices for rendering ImGuizmo
+            glm::mat4 _view = camera->GetView();
+            glm::mat4 _projection = camera->GetProjection();
+
+            //const glm::mat4& _projection = glm::ortho(0.0f, (float) WINDOW_WIDTH, 0.0f, (float)WINDOW_HEIGHT);
+
+            // Test czy to pomoze
+            rootNode.forceUpdateSelfAndChild();
+
+            // Getting marked object transform
+            auto& _transform = modified_object->getTransform();
+            glm::mat4 _model_matrix = _transform.getModelMatrix();
+
+            ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
+                ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix));
+
+            if (ImGuizmo::IsUsing()) {
+            
+                modified_object->transform.setLocalPosition(_model_matrix[3]);
+
+            }
+
+        }
 
         // Window render
+        ImGui::End();
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -635,7 +680,7 @@ void changeMouse(GLFWwindow* window) {
     }
 }
 
-glm::vec4 getRayWorld(GLFWwindow* window) {
+glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);
 
@@ -644,9 +689,9 @@ glm::vec4 getRayWorld(GLFWwindow* window) {
     normalizedMouse.y = 1.0f - (2.0f * mouseY) / WINDOW_HEIGHT;
 
     glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, -1.0f, 1.0f);
-    glm::vec4 rayEye = glm::inverse(projection) * rayClip;
+    glm::vec4 rayEye = glm::inverse(_projection) * rayClip;
     rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
-    glm::vec4 rayWorld = glm::normalize(glm::inverse(view) * rayEye);
+    glm::vec4 rayWorld = glm::normalize(glm::inverse(_view) * rayEye);
 
     return rayWorld;
 }
