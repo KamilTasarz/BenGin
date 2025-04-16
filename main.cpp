@@ -194,7 +194,7 @@ int main() {
     Model Tmodel_light(texture_names, 0, 5);
 
     *texture_names = { grass_name };
-    Model Tmodel_plane(texture_names, 1, 6, "plane");
+    Model Tmodel_plane(texture_names, 1, 6);
 
     models.push_back(Tmodel);
 	models.push_back(Kmodel);
@@ -204,6 +204,7 @@ int main() {
 	models.push_back(Tmodel_light);
 	models.push_back(Tmodel_plane);
 
+    rootNode = new Node("root", 0);
 
     Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, false, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -216,13 +217,13 @@ int main() {
     Node* box_wood = new Node(Tmodel_box_wood, "box2", colliders);
     Node* box_stone = new Node(Tmodel_box_stone, "box3", colliders);
 
-    Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f));
+    Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0); //, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f)
 
     //InstanceManager* walls = new InstanceManager(Tmodel_box_diff_spec, "instance_manager_wall", shader_instanced, 20);
 
     player = new Player(cos, 3.f, 3.f, 10.f);
-
-	camera->setObjectToFollow(player->player_node, glm::vec3(0.f, 2.f, 0.f));
+    glm::vec3 origin = glm::vec3(0.f, 2.f, 0.f);
+	camera->setObjectToFollow(player->player_node, origin);
 
     rootNode->addChild(box_wood);
     rootNode->addChild(box_stone);
@@ -262,13 +263,13 @@ int main() {
     box_light_directional->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
     plane->transform.setLocalPosition({ 0.0f, -0.501f, 0.0f }); // z - fighting
-    plane->transform.setLocalScale({ 15.f, 15.0f, 15.f });
+    plane->transform.setLocalScale({ 15.f, 1.0f, 15.f });
 
     point_lights[0] = PointLight(box_light, 0.032f, 0.09f);
     //point_lights[1] = PointLight(box_light2, 0.032f, 0.09f);
     directional_lights[0] = DirectionalLight(box_light_directional, glm::vec3(1.f, -1.f, 1.f));
 
-   /* walls->addChild(box_diff_spec);
+    /*walls->addChild(box_diff_spec);
     walls->addChild(box_diff_spec2);
 
     for (int i = 0; i < 20; i++) {
@@ -282,15 +283,15 @@ int main() {
 
     
 
-    Camera* camera_temp = new Camera(0.f, 0.f, 0.f);
+    //Camera* camera_temp = new Camera(0.f, 0.f, 0.f);
 
 	loadScene("res/scene/scene.json", rootNode, player, camera, point_lights, point_light_number, directional_lights, directional_light_number, models, colliders);
 
-	camera->setPosition(camera_temp->cameraPos);
+	/*camera->setPosition(camera_temp->cameraPos);
 	camera->setObjectToFollow(camera_temp->object_to_follow, camera_temp->origin_point);
 	camera->Yaw = camera_temp->Yaw; 
 	camera->Pitch = camera_temp->Pitch;
-	camera->changeMode(camera_temp->mode);
+	camera->changeMode(camera_temp->mode);*/
     //delete camera_temp;
 
     unsigned int depthMapFBO;
@@ -557,7 +558,7 @@ int main() {
         float t = FLT_MAX;
 
         rootNode->new_marked_object = nullptr;
-        rootNode->mark(getRayWorld(window->window), rootNode->new_marked_object, t, camera->cameraPos);
+        rootNode->mark(getRayWorld(window->window, view, projection), rootNode->new_marked_object, t, camera->cameraPos);
 
 
         if (mouse_pressed) {
@@ -757,7 +758,7 @@ void BeginFullscreenInputLayer()
     // To okno jest niewidzialne, ale aktywne — i ImGuizmo może działać wewnątrz
 
     // IMGUIZMO
-    Node* modified_object = rootNode.marked_object;
+    Node* modified_object = rootNode->marked_object;
     if (modified_object != nullptr) {
 
         //io = ImGui::GetIO();
@@ -775,7 +776,7 @@ void BeginFullscreenInputLayer()
         //const glm::mat4& _projection = glm::ortho(0.0f, (float) WINDOW_WIDTH, 0.0f, (float)WINDOW_HEIGHT);
 
         // Test czy to pomoze
-        rootNode.forceUpdateSelfAndChild();
+        rootNode->forceUpdateSelfAndChild();
 
         // Getting marked object transform
         auto& _transform = modified_object->getTransform();
