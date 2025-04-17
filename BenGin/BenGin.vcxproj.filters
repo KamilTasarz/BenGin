@@ -28,6 +28,7 @@
     <ClCompile Include="src\Basic\Animation.cpp" />
     <ClCompile Include="src\Basic\Bone.cpp" />
     <ClCompile Include="src\Basic\Animator.cpp" />
+    <ClCompile Include="src\BenGin\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -83,6 +84,10 @@
     <ClInclude Include="src\Basic\Bone.h" />
     <ClInclude Include="src\Basic\Animator.h" />
     <ClInclude Include="src\System\Serialization.h" />
+    <ClInclude Include="src\BenGin\Core.h" />
+    <ClInclude Include="src\BenGin\Application.h" />
+    <ClInclude Include="src\BenGin.h" />
+    <ClInclude Include="src\BenGin\EntryPoint.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
@@ -102,7 +107,6 @@
     <None Include="res\shaders\background.frag" />
     <None Include="freetype.dll" />
     <None Include="assimp-vc143-mtd.dll" />
-    <None Include="dependencies\lib\BenGin-Release-x64\BenGin.dll" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />

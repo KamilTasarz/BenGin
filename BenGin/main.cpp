@@ -1,4 +1,4 @@
-﻿//Kamil tu był - pozdrawiam
+﻿// Kamil tu był - pozdrawiam
 
 /*
 * 
@@ -533,7 +533,7 @@ int main() {
 
         view = camera->GetView();
 
-        // unforms for ouline
+        // unforms for outline
 
 
         shader_outline->use();
