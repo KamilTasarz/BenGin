@@ -1,4 +1,5 @@
 ﻿#include "Camera.h"
+#include "../Basic/Node.h"
 
 glm::mat4 Camera::GetView() {
 	return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
@@ -40,8 +41,28 @@ void Camera::ProcessGamepad() {
 
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
+void Camera::updateCameraVectors() {
     if (mode != FOLLOWING) {
+        glm::vec3 front;
+        front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+        front.y = sin(glm::radians(Pitch));
+        front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+        cameraFront = glm::normalize(front);
+
+        cameraRight = glm::normalize(glm::cross(cameraFront, worldUp));
+        cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
+    }
+    else {
+        cameraFront = (object_to_follow->transform.getGlobalPosition() + origin_point) - cameraPos;
+        cameraRight = glm::normalize(glm::cross(cameraFront, worldUp));
+        cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
+    }
+
+
+}
+
+void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
+    if (mode == FREE) {
         Yaw += xoffset * MouseSensitivity;
         Pitch += yoffset * MouseSensitivity;
 

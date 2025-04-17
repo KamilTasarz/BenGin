@@ -44,7 +44,7 @@ uniform DirectionLight directional_lights[10];
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
-uniform sampler2D shadow_map;
+uniform sampler2D shadow_map1;
 //uniform sampler2D shadow_map3;
 //uniform sampler2D shadow_map_back;
 
@@ -69,12 +69,12 @@ void main() {
             res += calculatePointLight(viewDir, point_lights[i]);
         }
         for (int i = 0; i < directional_light_number; i++) {
-            res += calculateDirectionalLight(viewDir, directional_lights[i]);
+            //res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
 
         
 
-        float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map);
+        float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map1);
         //float shadow1 = 0.f;//min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
         
         //float shadow = clamp(shadow1+shadow2, 0.f, 1.f);

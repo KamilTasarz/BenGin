@@ -12,7 +12,8 @@
 #include <sstream>
 #include <iostream>
 
-#include "../Basic/Node.h"
+class Node;
+
 
 // Default camera values
 const float YAW = 45.0f;
@@ -32,25 +33,7 @@ class Camera {
 
 private:
 
-    void updateCameraVectors() {
-        if (mode != FOLLOWING) {
-            glm::vec3 front;
-            front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-            front.y = sin(glm::radians(Pitch));
-            front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-            cameraFront = glm::normalize(front);
-
-            cameraRight = glm::normalize(glm::cross(cameraFront, worldUp));
-            cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
-        }
-        else {
-			cameraFront = (object_to_follow->transform.getGlobalPosition() + origin_point) - cameraPos;
-            cameraRight = glm::normalize(glm::cross(cameraFront, worldUp));
-            cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
-        }
-        
-
-    }
+    void updateCameraVectors();
 
 public:
 

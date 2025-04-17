@@ -71,6 +71,9 @@ void Player::update(float delta_time, short inputs, float camera_yaw) {
     pos += (vel * delta_time) + 0.5f * cur_grav * delta_time * delta_time;
     vel += cur_grav * delta_time;
 
+    if (pos.y < -10.f) pos.y = 20.f;
+	if (vel.y < -20.f) vel.y = -20.f;
+
     player_node->transform.setLocalRotation({ player_node->transform.getLocalRotation().x, angY, player_node->transform.getLocalRotation().z});
 	player_node->transform.setLocalPosition(pos);
 

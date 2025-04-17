@@ -15,6 +15,11 @@
 #include "../Component/BoundingBox.h"
 #include "Model.h"
 #include "Animator.h"
+#include "../Component/CameraGlobals.h"
+
+
+
+class SceneGraph;
 
 class Transform {
 
@@ -180,24 +185,22 @@ public:
     // Node transformation
     Transform transform;
 
+	SceneGraph* scene_graph;
+
     // Children list
     std::list<Node*> children;
 
-    // Pointer to a parent object
-    Node* parent = nullptr;
-
-    // Children size
     int size = 0;
 
-    // Root has ptr on marked object
-    Node *marked_object, *new_marked_object;
-    bool is_marked = false;
+	Node* parent = nullptr; // Pointer to a parent object
 
     // No textures parameter
     bool no_textures;
 
     // Visibility
 	bool is_visible = true;
+
+    bool is_marked = false;
 
     //Hitbox
     BoundingBox *AABB;
@@ -212,34 +215,28 @@ public:
         name = nameOfNode;
         id = _id;
         AABB = nullptr;
-        marked_object = nullptr;
-        new_marked_object = nullptr;
         no_textures = true;
     }
 
     // Model
-    Node(Model& model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
+    Node(Model& model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
         name = nameOfNode;
         id = _id;
-
+        no_textures = false;
         if (model.min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model.min_points, model.max_points);
         else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
 
-        marked_object = nullptr;
-        new_marked_object = nullptr;
         this->no_textures = no_textures;
         vector_of_colliders.push_back(AABB);
     }
 
-    Node(Model& model, std::string nameOfNode, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
+    Node(Model& model, std::string nameOfNode, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
         name = nameOfNode;
         id = _id;
-
+        no_textures = false;
         if (model.min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model.min_points, model.max_points);
         else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
 
-        marked_object = nullptr;
-        new_marked_object = nullptr;
         this->no_textures = no_textures;
     }
 
@@ -258,232 +255,35 @@ public:
     }
 
     // Add child
-    //template<typename... TArgs>
-    void virtual addChild(Node* p) {
-        children.emplace_back(p);
-        children.back()->parent = this; // Set this as the created child's parent
-        increaseCount();
-    }
+    void virtual addChild(Node* p);
 
-    void increaseCount() {
-        if (parent != nullptr) parent->increaseCount();
-        else size++;
-    }
+    void increaseCount();
 
     // Get child by its name
-    Node* getChildByName(const std::string& name) {
-        for (auto& child : children) {
-            if (child->name == name) {
-                return child;
-            }
+    Node* getChildByName(const std::string& name);
 
-            // Checks the children of the first level recursively
-            Node* foundChild = child->getChildByName(name);
-            if (foundChild != nullptr) {
-                return foundChild;
-            }
-        }
-        return nullptr;
-    }
+    Node* getChildById(int id);
 
-    void unmark() {
-        marked_object->is_marked = false;
-        marked_object = nullptr; //marked object returns as nullptr after draw
-    }
-
-    void mark(glm::vec4 rayWorld, Node* &marked_object, float& marked_depth, glm::vec3& cameraPos) {
-        
-        for (auto&& child : children) {
-            float t;
-            
-            if (child->AABB != nullptr && child->AABB->isRayIntersects(rayWorld, cameraPos, t)) {
-               
-                if (t < marked_depth) {
-                    
-                    marked_object = child;
-                    marked_depth = t;
-                }
-            }
-
-            child->mark(rayWorld, marked_object, marked_depth, cameraPos);
-        }
-        /*if (marked_object != nullptr) {
-            marked_object->is_marked = false;
-        }*/
-    }
+    void mark(glm::vec4 rayWorld, float& marked_depth);
 
     // Forcing an update of self and children even if there were no changes
-    void forceUpdateSelfAndChild() {
-        if (parent) {
-            transform.computeModelMatrix(parent->transform.getModelMatrix());        
-        }
-        else {
-            transform.computeModelMatrix();
-        }
-        if (AABB != nullptr) {
-            AABB->transformAABB(transform.getModelMatrix());
-        }
-
-    }
+    void forceUpdateSelfAndChild();
 
     // This will update if there were changes only (checks the dirty flag)
-    void virtual updateSelfAndChild(bool controlDirty) {
-
-        controlDirty |= transform.isDirty();
-
-        if (controlDirty) {
-            forceUpdateSelfAndChild();
-            //return;
-            //transform.computeModelMatrix();
-
-        }
-
-        for (auto&& child : children)
-        {
-            child->updateSelfAndChild(controlDirty);
-        }
-    }
+    void virtual updateSelfAndChild(bool controlDirty);
 
     // Draw self and children
-    void virtual drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) {
+    void virtual drawSelfAndChild();
 
-        if (pModel && is_visible) {
-            //_shader.setVec4("dynamicColor", color);
-            _shader.use();
-            _shader.setMat4("model", transform.getModelMatrix());
+    void updateAnimation(float deltaTime);
 
-            if (animator != nullptr) {
-				auto f = animator->final_bone_matrices;
-                for (int i = 0; i < f.size(); ++i)
-                    _shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
-            }
-            if (is_marked) {
-                glStencilMask(0xFF);
-            }
-            if (no_textures) {
-                _shader.setInt("is_light", 1);
-            }
-            pModel->Draw(_shader);
-            glStencilMask(0x00);
-            
-            _shader.setInt("is_light", 0);
-            
-            _shader_outline.use();
-			_shader_outline.setMat4("model", transform.getModelMatrix());
-            if (animator != nullptr) {
-                auto f = animator->final_bone_matrices;
-                for (int i = 0; i < f.size(); ++i)
-                    _shader_outline.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
-            }
-            glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
-            _shader_outline.setVec3("color", dynamic_color);
+    void drawShadows(Shader& shader);
 
-            AABB->draw(_shader_outline);
+    
 
-            display++;
-        }
+    void separate(const BoundingBox* other_AABB);
 
-        total++;
-
-        for (auto&& child : children) {
-            child->drawSelfAndChild(_shader, _shader_outline, display, total);
-        }
-
-        //_shader.setVec4("dynamicColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-
-    }
-
-	void updateAnimation(float deltaTime) {
-		if (animator != nullptr) {
-			animator->updateAnimation(deltaTime);
-		}
-		for (auto&& child : children) {
-			child->updateAnimation(deltaTime);
-		}
-	}
-
-    void drawShadows(Shader& shader) {
-        if (pModel) {
-            
-            shader.use();
-            shader.setMat4("model", transform.getModelMatrix());
-            if (!no_textures) {
-                if (animator != nullptr) {
-                    auto f = animator->final_bone_matrices;
-                    for (int i = 0; i < f.size(); ++i)
-                        shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
-                }
-                pModel->Draw(shader); //jak nie ma tekstury to najpewniej swiatlo -> przyjmuje takie zalozenie
-            } 
-        }
-
-        for (auto&& child : children) {
-            child->drawShadows(shader);
-        }
-    }
-
-    void drawMarkedObject(Shader& _shader_outline) {
-        if (marked_object != nullptr) {
-
-            glStencilFunc(GL_EQUAL, 1, 0xFF);
-            glStencilMask(0x00);
-            glDisable(GL_DEPTH_TEST);
-            glEnable(GL_BLEND);
-            //glm::vec3 scale_matrix = marked_object->transform.getLocalScale();
-            //scale_matrix += glm::vec3(0.05f);
-            //Transform transform = marked_object->transform;
-            //transform.setLocalScale(scale_matrix);
-            //transform.computeModelMatrix();
-            _shader_outline.setMat4("model", marked_object->transform.getModelMatrix());
-            
-            glm::vec3 dynamic_color = glm::vec3(0.4f, 0.f, 0.f);
-
-            _shader_outline.setVec3("color", dynamic_color);
-            marked_object->pModel->Draw(_shader_outline);
-
-            //unmark();
-            glStencilMask(0xFF);
-            glStencilFunc(GL_ALWAYS, 1, 0xFF);
-            glEnable(GL_DEPTH_TEST);
-            glDisable(GL_BLEND);
-        }
-    }
-
-    void separate(const BoundingBox* other_AABB) {
-
-        float left = (other_AABB->min_point_world.x - AABB->max_point_world.x);
-        float right = (other_AABB->max_point_world.x - AABB->min_point_world.x);
-        float up = (other_AABB->min_point_world.y - AABB->max_point_world.y);
-        float down = (other_AABB->max_point_world.y - AABB->min_point_world.y);
-        float front = (other_AABB->min_point_world.z - AABB->max_point_world.z);
-        float back = (other_AABB->max_point_world.z - AABB->min_point_world.z);
-        glm::vec3 v = glm::vec3(abs(left) < abs(right) ? left : right, abs(up) < abs(down) ? up : down, abs(front) < abs(back) ? front : back);
-
-        if (abs(v.x) <= abs(v.y) && abs(v.x) <= abs(v.z)) {
-            v.y = 0.f;
-            v.z = 0.f;
-			AABB->collison = v.x > 0.f ? 1 : -1;
-        }
-        else if (abs(v.y) <= abs(v.x) && abs(v.y) <= abs(v.z)) {
-            v.x = 0.f;
-            v.z = 0.f;
-            AABB->collison = v.y > 0.f ? 2 : -2;
-        }
-        else {
-            v.x = 0.f;
-            v.y = 0.f;
-			AABB->collison = v.z > 0.f ? 3 : -3;
-        }
-
-		cout << "collison: " << AABB->collison << endl;
-
-        transform.setLocalPosition(transform.getLocalPosition() + v);
-        forceUpdateSelfAndChild();
-    }
-
-    const Transform& getTransform() {
-        return transform;
-    }
+    const Transform& getTransform();
 
 };
 
@@ -492,115 +292,250 @@ public:
     int size = 0, current_min_id = 0;
     int max_size = 1000;
     unsigned int buffer;
-    Shader *shader_instanced;
 
-    InstanceManager(Model& model, std::string nameOfNode, Shader *_shader_instanced, int id = 0, int max_size = 1000) : Node(nameOfNode, id), max_size(max_size) {
+    InstanceManager(Model& model, std::string nameOfNode, int id = 0, int max_size = 1000) : Node(nameOfNode, id), max_size(max_size) {
         pModel = &model;
         AABB = nullptr;
-        shader_instanced = _shader_instanced;
         prepareBuffer();
     }
 
-    void drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) override {
-        shader_instanced->use();
-        glStencilMask(0xFF);
-        pModel->DrawInstanced(*shader_instanced, size);
-        glStencilMask(0x00);
-        
-    }
+    void drawSelfAndChild() override;
 
-    void updateSelfAndChild(bool controlDirty) override {
+    void updateSelfAndChild(bool controlDirty) override;
 
-        controlDirty |= transform.isDirty();
+    void addChild(Node* p) override;
 
-        if (controlDirty) {
-            forceUpdateSelfAndChild();
-        }
-
-        for (auto&& child : children)
-        {
-            bool is_dirty = child->transform.isDirty();
-            child->updateSelfAndChild(controlDirty);
-            if (is_dirty) {
-                updateBuffer(child);
-            }
-        }
-    }
-
-    void addChild(Node* p) override {
-        children.push_back(p);
-        children.back()->parent = this; // Set this as the created child's parent
-        size++;
-        p->id = current_min_id;
-        current_min_id++;
-        updateBuffer(p);
-    }
-
-    Node* find(int id) {
-        for (auto&& child : children) {
-            if (child->id == id) {
-                return child;
-            }
-        }
-        return nullptr;
-    }
+    Node* find(int id);
 
     
-    void removeChild(int id) {
-        //usuniecie ze sceny tworzylo by dziury w tablicy
-        //wiec znajdujemy to co usuwamy po indexach
-        Node* temp = find(id);
-        //zapisujemy index
-        int new_id = temp->id;
-        //usuwamy
-        children.remove(temp);
-        //i ostatni element dajemy w miejsce dziury
-        temp = children.back();
-        temp->id = new_id;
-        updateBuffer(temp);
-        current_min_id--;
-        size--;
-    }
+    void removeChild(int id);
 private:
-    void prepareBuffer()
-    {
-        glGenBuffers(1, &buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer);
-        glBufferData(GL_ARRAY_BUFFER, max_size * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
+    void prepareBuffer();
 
-        for (unsigned int i = 0; i < pModel->meshes.size(); i++)
-        {
-            unsigned int VAO = pModel->meshes[i].VAO;
-            glBindVertexArray(VAO);
-            // Atrybuty wierzchołków
-            GLsizei vec4_size = sizeof(glm::vec4);
-            glEnableVertexAttribArray(3);
-            glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)0);
-            glEnableVertexAttribArray(4);
-            glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(vec4_size));
-            glEnableVertexAttribArray(5);
-            glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(2 * vec4_size));
-            glEnableVertexAttribArray(6);
-            glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(3 * vec4_size));
-
-            glVertexAttribDivisor(3, 1);
-            glVertexAttribDivisor(4, 1);
-            glVertexAttribDivisor(5, 1);
-            glVertexAttribDivisor(6, 1);
-
-            glBindVertexArray(0);
-        }
-    }
-
-    void updateBuffer(Node *p) {
-        glBindBuffer(GL_ARRAY_BUFFER, buffer);
-        glBufferSubData(GL_ARRAY_BUFFER, p->id * sizeof(glm::mat4), sizeof(glm::mat4), &p->transform.getModelMatrix());
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
+    void updateBuffer(Node* p);
 };
 
 class Instance : public Node {
 
 };
+
+
+
+const unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
+
+class Light : public Node {
+public:
+
+    // Colors
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+
+    glm::mat4 view_projection;
+    glm::mat4 view_projection_back;
+    glm::mat4 view;
+    glm::mat4 projection;
+
+    unsigned int depthMap = 0;
+
+    Light(Model& model, std::string nameOfNode, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f)) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
+        
+		no_textures = true;
+
+        glGenTextures(1, &depthMap);
+        glBindTexture(GL_TEXTURE_2D, depthMap);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+            SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
+
+};
+
+class DirectionalLight : public Light {
+public:
+    glm::vec3 direction;
+
+
+    /*DirectionalLight() : Light(nullptr, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)) {
+        this->direction = glm::vec3(1.f, -1.f, 1.f);
+        view_projection = glm::mat4(1.f);
+    }*/
+
+    DirectionalLight(Model& model, std::string nameOfNode, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
+        : Light(model, nameOfNode, ambient, diffuse, specular), direction(direction) {
+        updateMatrix();
+    }
+
+    void render(unsigned int depthMapFBO, Shader& shader) {
+        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        shader.use();
+        updateMatrix();
+        shader.setMat4("view_projection", view_projection);
+
+    }
+
+    void updateMatrix() {
+        view = glm::lookAt(transform.getGlobalPosition(), transform.getGlobalPosition() + direction, glm::vec3(0.f, 1.f, 0.f));
+        float size = 15.f;
+        projection = glm::ortho(-size, size, -size, size, 1.5f, 25.f);
+        view_projection = projection * view;
+    }
+
+    glm::mat4& getMatrix() {
+        updateMatrix();
+        return view_projection;
+    }
+};
+
+class PointLight : public Light {
+public:
+
+    float quadratic;
+    float linear;
+    float constant;
+
+    unsigned int depthMapBack = 0;
+    glm::mat4 view_back;
+
+    //PointLight() : Light(Model& model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
+
+    PointLight(Model& model, std::string nameOfNode, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
+        : Light(model, nameOfNode, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
+
+        glGenTextures(1, &depthMapBack);
+        glBindTexture(GL_TEXTURE_2D, depthMapBack);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+            SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
+
+    void render(unsigned int depthMapFBO, Shader& shader) {
+        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        shader.use();
+        updateMatrix();
+        shader.setMat4("view_projection", view_projection);
+
+    }
+
+    void renderBack(unsigned int depthMapFBO, Shader& shader) {
+        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMapBack, 0);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        shader.use();
+        updateMatrix();
+        shader.setMat4("view_projection", view_projection_back);
+
+    }
+
+    void updateMatrix() {
+        view = glm::lookAt(transform.getGlobalPosition() + glm::vec3(0.0f, 0.5f, 0.0f), transform.getGlobalPosition() + glm::vec3(0.0f, -2.0f, 0.0f), glm::vec3(0.f, 0.f, 1.f));
+        view_back = glm::lookAt(transform.getGlobalPosition() + glm::vec3(0.0f, -0.5f, 0.0f), transform.getGlobalPosition() + glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.f, 0.f, -1.f));
+
+        projection = glm::perspective(glm::radians(170.f), 1.f, 0.5f, 40.f);
+        view_projection = projection * view;
+        view_projection_back = projection * view_back;
+    }
+
+    glm::mat4& getMatrix() {
+        updateMatrix();
+        return view_projection;
+    }
+};
+
+
+class SceneGraph {
+public:
+    Node* root;
+    // Root has ptr on marked object
+    Node* marked_object, * new_marked_object;
+    int size = 0, point_light_number = 0, directional_light_number = 0;
+    std::list<DirectionalLight*> directional_lights;
+    std::list<PointLight*> point_lights;
+
+    unsigned int depthMapFBO;
+
+    Shader* shader;
+    Shader* shader_instanced;
+    Shader* shader_instanced_outline;
+    Shader* shader_outline;
+    Shader* shader2D;
+    Shader* shader_shadow;
+    Shader* shader_text;
+    Shader* shader_background;
+
+    const char* vertexPath = "res/shaders/basic.vert";
+    const char* vertexPath_instanced = "res/shaders/instanced.vert";
+    const char* fragmentPath = "res/shaders/basic.frag";
+    const char* vertexPath_shadow = "res/shaders/shadow.vert";
+    const char* fragmentPath_shadow = "res/shaders/shadow.frag";
+    const char* fragmentPath_outline = "res/shaders/outline.frag";
+    const char* triangleVertexPath = "res/shaders/triangle.vert";
+    const char* triangleFragmentPath = "res/shaders/triangle.frag";
+    const char* vertexPath_text = "res/shaders/text.vert";
+    const char* fragmentPath_text = "res/shaders/text.frag";
+    const char* fragmentPath_background = "res/shaders/background.frag";
+
+    SceneGraph() {
+        root = new Node("root", 0);
+		root->scene_graph = this;
+        marked_object = nullptr;
+        new_marked_object = nullptr;
+        size++;
+        
+        glGenFramebuffers(1, &depthMapFBO);
+
+        shader = new Shader(vertexPath, fragmentPath);
+        shader_instanced = new Shader(vertexPath_instanced, fragmentPath);
+        shader_instanced_outline = new Shader(vertexPath_instanced, fragmentPath_outline);
+        shader_outline = new Shader(vertexPath, fragmentPath_outline);
+        shader2D = new Shader(triangleVertexPath, triangleFragmentPath);
+        shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
+        shader_text = new Shader(vertexPath_text, fragmentPath_text);
+        shader_background = new Shader(vertexPath_text, fragmentPath_background);
+    }
+
+    ~SceneGraph() {
+        delete shader;
+        delete shader_instanced;
+        delete shader_instanced_outline;
+        delete shader_outline;
+        delete shader2D;
+        delete shader_shadow;
+        delete shader_text;
+        delete shader_background;
+
+    }
+
+    void unmark();
+    void addChild(Node* p);
+    void addChild(Node* p, std::string name);
+    void addPointLight(PointLight* p);
+    void addDirectionalLight(DirectionalLight* p);
+    void setShaders();
+    void draw(float render_x, float render_y, float width, float height);
+    void drawMarkedObject();
+    
+    void update(float delta_time);
+    void forcedUpdate();
+    void setLights(Shader* shader);
+    void mark(glm::vec4 ray);
+};
+
 
 #endif // !NODE_H

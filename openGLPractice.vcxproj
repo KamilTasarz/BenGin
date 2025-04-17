@@ -82,9 +82,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\DevTools\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-
       <AdditionalDependencies>freetype.lib;assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug half|x64'">
@@ -101,9 +99,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\DevTools\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-
       <AdditionalDependencies>freetype.lib;assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -123,9 +119,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\DevTools\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-
       <AdditionalDependencies>freetype.lib;assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -148,9 +142,11 @@
     <ClCompile Include="src\Basic\Animation.cpp" />
     <ClCompile Include="src\Basic\Animator.cpp" />
     <ClCompile Include="src\Basic\Bone.cpp" />
+    <ClCompile Include="src\Basic\Node.cpp" />
     <ClCompile Include="src\Basic\Shader.cpp" />
     <ClCompile Include="src\Component\BoundingBox.cpp" />
     <ClCompile Include="src\Component\Camera.cpp" />
+    <ClCompile Include="src\Component\CameraGlobals.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\Gameplay\Player.cpp" />
     <ClCompile Include="src\AudioEngine.cpp" />
@@ -199,6 +195,7 @@
     <ClInclude Include="src\Basic\Shader.h" />
     <ClInclude Include="src\Component\BoundingBox.h" />
     <ClInclude Include="src\Component\Camera.h" />
+    <ClInclude Include="src\Component\CameraGlobals.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Gameplay\Player.h" />
     <ClInclude Include="src\Input\Input.h" />

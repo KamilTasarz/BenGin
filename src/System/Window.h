@@ -11,11 +11,11 @@
 #include <iostream>
 #include <memory>
 
-#include "src/System/ServiceLocator.h"
+#include "../System/ServiceLocator.h"
 
-#include "src/Input/InputManager.h"
-#include "src/Input/Input.h"
-
+#include "../Input/InputManager.h"
+#include "../Input/Input.h"
+#include "../Component/CameraGlobals.h"
 
 extern bool is_camera = true, is_camera_prev = false;
 extern bool mouse_pressed = false;
@@ -27,8 +27,6 @@ extern float lastY = (float)WINDOW_HEIGHT / 2.0;
 
 extern GLfloat deltaTime = 0.0f;
 extern GLfloat lastFrame = 0.0f;
-
-extern Camera* camera = new Camera(0.f, 2.f, -3.f);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double posX, double posY);
