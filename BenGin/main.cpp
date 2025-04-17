@@ -1,4 +1,6 @@
-﻿/*
+﻿//Kamil tu był - pozdrawiam
+
+/*
 * 
 *  KAMIL PILNUJ TEGO
 * 
