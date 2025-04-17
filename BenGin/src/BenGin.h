@@ -7,3 +7,6 @@
 
 // Contains entry point definition
 #include "BenGin/EntryPoint.h"
+
+// BenGin wrapping for spdlog library
+#include "BenGin/Log.h"

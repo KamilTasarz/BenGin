@@ -81,9 +81,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BENGIN;BENGIN_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\DevTools\glm-master\glm-master\glm;C:\DevTools\glad\include;C:\DevTools\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)BenGin\dependencies\spdlog\include;C:\DevTools\glm-master\glm-master\glm;C:\DevTools\glad\include;C:\DevTools\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -98,9 +99,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BENGIN;BENGIN_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\DevTools\glm-master\glm-master\glm;C:\DevTools\glad\include;C:\DevTools\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)BenGin\dependencies\spdlog\include;C:\DevTools\glm-master\glm-master\glm;C:\DevTools\glad\include;C:\DevTools\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -117,8 +119,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BENGIN;BENGIN_BUILD_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\DevTools\glm-master\glm-master\glm;C:\DevTools\glad\include;C:\DevTools\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)BenGin\dependencies\spdlog\include;C:\DevTools\glm-master\glm-master\glm;C:\DevTools\glad\include;C:\DevTools\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BenGin\Log.cpp" />
     <ClCompile Include="src\BenGin\Application.cpp" />
     <ClCompile Include="dependencies\imguizmo\GraphEditor.cpp" />
     <ClCompile Include="dependencies\imguizmo\ImCurveEdit.cpp" />
@@ -160,6 +164,7 @@
     <ClCompile Include="src\Input\InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\BenGin\Log.h" />
     <ClInclude Include="src\BenGin.h" />
     <ClInclude Include="src\BenGin\Application.h" />
     <ClInclude Include="config.h" />
