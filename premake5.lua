@@ -1,3 +1,5 @@
+-- To-Do: Change %{cfg.buildtarget.abspath} to relativepath (Cherno #7 Premake)
+
 workspace "BenGin" -- Solution Name
 	
 	architecture "x64" -- Platform (64 bit)
