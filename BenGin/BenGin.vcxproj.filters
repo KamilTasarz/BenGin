@@ -1,122 +1,168 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="dependencies\stb_image\stb_image.cpp" />
-    <ClCompile Include="glad.c" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="SimpleObject.cpp" />
-    <ClCompile Include="src\Gameplay\Player.cpp" />
-    <ClCompile Include="src\AudioEngine.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_demo.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\Basic\Shader.cpp" />
-    <ClCompile Include="src\Component\BoundingBox.cpp" />
-    <ClCompile Include="src\Component\Camera.cpp" />
-    <ClCompile Include="src\Input\InputManager.cpp" />
-    <ClCompile Include="src\Input\Input.cpp" />
-    <ClCompile Include="src\Engine.cpp" />
-    <ClCompile Include="dependencies\imguizmo\GraphEditor.cpp" />
-    <ClCompile Include="dependencies\imguizmo\ImCurveEdit.cpp" />
-    <ClCompile Include="dependencies\imguizmo\ImGradient.cpp" />
-    <ClCompile Include="dependencies\imguizmo\ImGuizmo.cpp" />
-    <ClCompile Include="dependencies\imguizmo\ImSequencer.cpp" />
-    <ClCompile Include="src\Basic\Animation.cpp" />
-    <ClCompile Include="src\Basic\Bone.cpp" />
-    <ClCompile Include="src\Basic\Animator.cpp" />
-    <ClCompile Include="src\BenGin\Application.cpp" />
-    <ClCompile Include="src\BenGin\Log.cpp" />
+    <Filter Include="dependencies">
+      <UniqueIdentifier>{8CAD9F58-7810-2FFD-2196-67B30DD8FA7F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies\glad">
+      <UniqueIdentifier>{13D8926A-7FEE-9000-C865-1C2234BB6188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Basic">
+      <UniqueIdentifier>{9E879DB2-0AF2-5129-5330-03CFBFD92F7E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BenGin">
+      <UniqueIdentifier>{0F909306-FB47-D553-644F-AEAF50267044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Component">
+      <UniqueIdentifier>{CF1FD8F2-3BE0-5329-041B-9DA6709A9805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Gameplay">
+      <UniqueIdentifier>{CC96E562-B8F9-7407-617F-ADBD4DC1408A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\HUD">
+      <UniqueIdentifier>{FD7C2FA9-695C-AE44-7274-391BDED214A6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Input">
+      <UniqueIdentifier>{EC4823B3-58B3-D729-A1F1-88CF0D9BB57E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\System">
+      <UniqueIdentifier>{A1A9A82F-8D61-EA7C-F668-C3D8E23F856D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Text">
+      <UniqueIdentifier>{61FC25CF-4DC9-80DA-76E2-6E82620EB668}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="config.h" />
-    <ClInclude Include="dependencies\stb_image\stb_image.h" />
-    <ClInclude Include="SimpleObject.h" />
-    <ClInclude Include="src\Basic\Mesh.h" />
-    <ClInclude Include="src\Basic\Model.h" />
-    <ClInclude Include="src\Basic\Node.h" />
-    <ClInclude Include="src\Gameplay\Player.h" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="src\AudioEngine.h" />
-    <ClInclude Include="dependencies\fmod\fmod.h" />
-    <ClInclude Include="dependencies\fmod\fmod.hpp" />
-    <ClInclude Include="dependencies\fmod\fmod_codec.h" />
-    <ClInclude Include="dependencies\fmod\fmod_common.h" />
-    <ClInclude Include="dependencies\fmod\fmod_dsp.h" />
-    <ClInclude Include="dependencies\fmod\fmod_dsp_effects.h" />
-    <ClInclude Include="dependencies\fmod\fmod_errors.h" />
-    <ClInclude Include="dependencies\fmod\fmod_output.h" />
-    <ClInclude Include="dependencies\fmod_studio\fmod_studio.h" />
-    <ClInclude Include="dependencies\fmod_studio\fmod_studio.hpp" />
-    <ClInclude Include="dependencies\fmod_studio\fmod_studio_common.h" />
-    <ClInclude Include="dependencies\imgui\imconfig.h" />
-    <ClInclude Include="dependencies\imgui\imgui.h" />
-    <ClInclude Include="dependencies\imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="dependencies\imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="dependencies\imgui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="dependencies\imgui\imgui_internal.h" />
-    <ClInclude Include="dependencies\imgui\imstb_rectpack.h" />
-    <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
-    <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
-    <ClInclude Include="src\Basic\Shader.h" />
-    <ClInclude Include="src\Component\BoundingBox.h" />
-    <ClInclude Include="src\Component\Camera.h" />
-    <ClInclude Include="src\Input\InputManager.h" />
-    <ClInclude Include="src\Input\InputKey.h" />
-    <ClInclude Include="src\System\ServiceLocator.h" />
-    <ClInclude Include="src\Input\InputDevice.h" />
-    <ClInclude Include="src\Input\Input.h" />
-    <ClInclude Include="src\System\Window.h" />
-    <ClInclude Include="src\Engine.h" />
-    <ClInclude Include="src\Text\Text.h" />
-    <ClInclude Include="src\HUD\Background.h" />
-    <ClInclude Include="src\HUD\Sprite.h" />
-    <ClInclude Include="dependencies\ft2build.h" />
-    <ClInclude Include="dependencies\imguizmo\GraphEditor.h" />
-    <ClInclude Include="dependencies\imguizmo\ImCurveEdit.h" />
-    <ClInclude Include="dependencies\imguizmo\ImGradient.h" />
-    <ClInclude Include="dependencies\imguizmo\ImGuizmo.h" />
-    <ClInclude Include="dependencies\imguizmo\ImSequencer.h" />
-    <ClInclude Include="dependencies\imguizmo\ImZoomSlider.h" />
-    <ClInclude Include="src\Basic\Animation.h" />
-    <ClInclude Include="src\Basic\Bone.h" />
-    <ClInclude Include="src\Basic\Animator.h" />
-    <ClInclude Include="src\System\Serialization.h" />
-    <ClInclude Include="src\BenGin\Core.h" />
-    <ClInclude Include="src\BenGin\Application.h" />
-    <ClInclude Include="src\BenGin.h" />
-    <ClInclude Include="src\BenGin\EntryPoint.h" />
-    <ClInclude Include="src\BenGin\Log.h" />
+    <ClInclude Include="dependencies\glad\glad.h">
+      <Filter>dependencies\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AudioEngine.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Basic\Animation.h">
+      <Filter>src\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Basic\Animator.h">
+      <Filter>src\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Basic\Bone.h">
+      <Filter>src\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Basic\Mesh.h">
+      <Filter>src\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Basic\Model.h">
+      <Filter>src\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Basic\Node.h">
+      <Filter>src\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Basic\Shader.h">
+      <Filter>src\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BenGin.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BenGin\Application.h">
+      <Filter>src\BenGin</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BenGin\Core.h">
+      <Filter>src\BenGin</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BenGin\EntryPoint.h">
+      <Filter>src\BenGin</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BenGin\Log.h">
+      <Filter>src\BenGin</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Component\BoundingBox.h">
+      <Filter>src\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Component\Camera.h">
+      <Filter>src\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gameplay\Player.h">
+      <Filter>src\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HUD\Background.h">
+      <Filter>src\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HUD\Sprite.h">
+      <Filter>src\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\Input.h">
+      <Filter>src\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\InputDevice.h">
+      <Filter>src\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\InputKey.h">
+      <Filter>src\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\InputManager.h">
+      <Filter>src\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\System\Serialization.h">
+      <Filter>src\System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\System\ServiceLocator.h">
+      <Filter>src\System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\System\Window.h">
+      <Filter>src\System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Text\Text.h">
+      <Filter>src\Text</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\basic.frag" />
-    <None Include="res\shaders\basic.vert" />
-    <None Include="res\shaders\outline.frag" />
-    <None Include="dependencies\fmod\fmod_dsp.cs" />
-    <None Include="dependencies\fmod\fmod_errors.cs" />
-    <None Include="dependencies\fmod\fmod.cs" />
-    <None Include="dependencies\fmod_studio\fmod_studio.cs" />
-    <None Include="fmodstudioL.dll" />
-    <None Include="fmodL.dll" />
-    <None Include="res\shaders\triangle.vert" />
-    <None Include="res\shaders\triangle.frag" />
-    <None Include="res\shaders\instanced.vert" />
-    <None Include="res\shaders\text.frag" />
-    <None Include="res\shaders\text.vert" />
-    <None Include="res\shaders\background.frag" />
-    <None Include="freetype.dll" />
-    <None Include="assimp-vc143-mtd.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="dependencies\lib\fmodL_vc.lib" />
-    <Library Include="dependencies\lib\fmodstudioL_vc.lib" />
-    <None Include="res\shaders\shadow.frag" />
-    <None Include="res\shaders\shadow.vert" />
-    <Library Include="dependencies\lib\assimp-vc143-mtd.lib" />
-    <Library Include="dependencies\lib\freetype.lib" />
-    <Library Include="dependencies\lib\glfw3.lib" />
+    <ClCompile Include="dependencies\glad\glad.c">
+      <Filter>dependencies\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AudioEngine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Basic\Animation.cpp">
+      <Filter>src\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Basic\Animator.cpp">
+      <Filter>src\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Basic\Bone.cpp">
+      <Filter>src\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Basic\Shader.cpp">
+      <Filter>src\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BenGin\Application.cpp">
+      <Filter>src\BenGin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BenGin\Log.cpp">
+      <Filter>src\BenGin</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component\BoundingBox.cpp">
+      <Filter>src\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component\Camera.cpp">
+      <Filter>src\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gameplay\Player.cpp">
+      <Filter>src\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input\Input.cpp">
+      <Filter>src\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input\InputManager.cpp">
+      <Filter>src\Input</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

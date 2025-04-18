@@ -1,10 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug half|x64">
-      <Configuration>Debug half</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -13,191 +9,153 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Dist|x64">
+      <Configuration>Dist</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{D8B634A9-C458-5F7F-AD13-73D39954E6CF}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3c27e22d-922e-4951-8254-27800391ab18}</ProjectGuid>
     <RootNamespace>BenGin</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>BenGin</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug half|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug half|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)dependencies;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)bin-intermediate\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug half|x64'">
-    <IncludePath>$(ProjectDir)dependencies;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)bin-intermediate\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\bin\Debug-windows-x86_64\BenGin\</OutDir>
+    <IntDir>..\bin-intermediate\Debug-windows-x86_64\BenGin\</IntDir>
+    <TargetName>BenGin</TargetName>
+    <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)dependencies;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)bin-intermediate\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\bin\Release-windows-x86_64\BenGin\</OutDir>
+    <IntDir>..\bin-intermediate\Release-windows-x86_64\BenGin\</IntDir>
+    <TargetName>BenGin</TargetName>
+    <TargetExt>.dll</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\bin\Dist-windows-x86_64\BenGin\</OutDir>
+    <IntDir>..\bin-intermediate\Dist-windows-x86_64\BenGin\</IntDir>
+    <TargetName>BenGin</TargetName>
+    <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>BENGIN;BENGIN_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)BenGin\dependencies\spdlog\include;C:\DevTools\glm-master\glm-master\glm;C:\DevTools\glad\include;C:\DevTools\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BENGIN;BENGIN_BUILD_DLL;BENGIN_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>dependencies\spdlog\include;dependencies\assimp;dependencies\glad;dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\DevTools\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;fmodL_vc.lib;fmodstudioL_vc.lib;freetype.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.;dependencies\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>..\bin\Debug-windows-x86_64\BenGin\BenGin.lib</ImportLibrary>
     </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug half|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>BENGIN;BENGIN_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)BenGin\dependencies\spdlog\include;C:\DevTools\glm-master\glm-master\glm;C:\DevTools\glad\include;C:\DevTools\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Optimization>MinSpace</Optimization>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\DevTools\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Debug-windows-x86_64\BenGin\BenGin.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\BenGin\BenGin.dll "..\bin\Debug-windows-x86_64\BenDitor\" &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\BenGin\BenGin.dll "..\bin\Debug-windows-x86_64\BenDitor\" &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>BENGIN;BENGIN_BUILD_DLL;BENGIN_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>dependencies\spdlog\include;dependencies\assimp;dependencies\glad;dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>BENGIN;BENGIN_BUILD_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)BenGin\dependencies\spdlog\include;C:\DevTools\glm-master\glm-master\glm;C:\DevTools\glad\include;C:\DevTools\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\DevTools\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;fmodL_vc.lib;fmodstudioL_vc.lib;freetype.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.;dependencies\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>..\bin\Release-windows-x86_64\BenGin\BenGin.lib</ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Release-windows-x86_64\BenGin\BenGin.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\BenGin\BenGin.dll "..\bin\Release-windows-x86_64\BenDitor\" &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\BenGin\BenGin.dll "..\bin\Release-windows-x86_64\BenDitor\" &gt; nul)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>BENGIN;BENGIN_BUILD_DLL;BENGIN_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>dependencies\spdlog\include;dependencies\assimp;dependencies\glad;dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;fmodL_vc.lib;fmodstudioL_vc.lib;freetype.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.;dependencies\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>..\bin\Dist-windows-x86_64\BenGin\BenGin.lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Dist-windows-x86_64\BenGin\BenGin.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\BenGin\BenGin.dll "..\bin\Dist-windows-x86_64\BenDitor\" &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\BenGin\BenGin.dll "..\bin\Dist-windows-x86_64\BenDitor\" &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\BenGin\Log.cpp" />
-    <ClCompile Include="src\BenGin\Application.cpp" />
-    <ClCompile Include="dependencies\imguizmo\GraphEditor.cpp" />
-    <ClCompile Include="dependencies\imguizmo\ImCurveEdit.cpp" />
-    <ClCompile Include="dependencies\imguizmo\ImGradient.cpp" />
-    <ClCompile Include="dependencies\imguizmo\ImGuizmo.cpp" />
-    <ClCompile Include="dependencies\imguizmo\ImSequencer.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_demo.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="dependencies\stb_image\stb_image.cpp" />
-    <ClCompile Include="glad.c" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="SimpleObject.cpp" />
-    <ClCompile Include="src\Basic\Animation.cpp" />
-    <ClCompile Include="src\Basic\Animator.cpp" />
-    <ClCompile Include="src\Basic\Bone.cpp" />
-    <ClCompile Include="src\Basic\Shader.cpp" />
-    <ClCompile Include="src\Component\BoundingBox.cpp" />
-    <ClCompile Include="src\Component\Camera.cpp" />
-    <ClCompile Include="src\Engine.cpp" />
-    <ClCompile Include="src\Gameplay\Player.cpp" />
-    <ClCompile Include="src\AudioEngine.cpp" />
-    <ClCompile Include="src\Input\Input.cpp" />
-    <ClCompile Include="src\Input\InputManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\BenGin\Log.h" />
-    <ClInclude Include="src\BenGin.h" />
-    <ClInclude Include="src\BenGin\Application.h" />
-    <ClInclude Include="config.h" />
-    <ClInclude Include="dependencies\fmod\fmod.h" />
-    <ClInclude Include="dependencies\fmod\fmod.hpp" />
-    <ClInclude Include="dependencies\fmod\fmod_codec.h" />
-    <ClInclude Include="dependencies\fmod\fmod_common.h" />
-    <ClInclude Include="dependencies\fmod\fmod_dsp.h" />
-    <ClInclude Include="dependencies\fmod\fmod_dsp_effects.h" />
-    <ClInclude Include="dependencies\fmod\fmod_errors.h" />
-    <ClInclude Include="dependencies\fmod\fmod_output.h" />
-    <ClInclude Include="dependencies\fmod_studio\fmod_studio.h" />
-    <ClInclude Include="dependencies\fmod_studio\fmod_studio.hpp" />
-    <ClInclude Include="dependencies\fmod_studio\fmod_studio_common.h" />
-    <ClInclude Include="dependencies\ft2build.h" />
-    <ClInclude Include="dependencies\imguizmo\GraphEditor.h" />
-    <ClInclude Include="dependencies\imguizmo\ImCurveEdit.h" />
-    <ClInclude Include="dependencies\imguizmo\ImGradient.h" />
-    <ClInclude Include="dependencies\imguizmo\ImGuizmo.h" />
-    <ClInclude Include="dependencies\imguizmo\ImSequencer.h" />
-    <ClInclude Include="dependencies\imguizmo\ImZoomSlider.h" />
-    <ClInclude Include="dependencies\imgui\imconfig.h" />
-    <ClInclude Include="dependencies\imgui\imgui.h" />
-    <ClInclude Include="dependencies\imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="dependencies\imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="dependencies\imgui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="dependencies\imgui\imgui_internal.h" />
-    <ClInclude Include="dependencies\imgui\imstb_rectpack.h" />
-    <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
-    <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
-    <ClInclude Include="dependencies\stb_image\stb_image.h" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="SimpleObject.h" />
+    <ClInclude Include="dependencies\glad\glad.h" />
     <ClInclude Include="src\AudioEngine.h" />
     <ClInclude Include="src\Basic\Animation.h" />
     <ClInclude Include="src\Basic\Animator.h" />
@@ -206,12 +164,17 @@
     <ClInclude Include="src\Basic\Model.h" />
     <ClInclude Include="src\Basic\Node.h" />
     <ClInclude Include="src\Basic\Shader.h" />
+    <ClInclude Include="src\BenGin.h" />
+    <ClInclude Include="src\BenGin\Application.h" />
     <ClInclude Include="src\BenGin\Core.h" />
     <ClInclude Include="src\BenGin\EntryPoint.h" />
+    <ClInclude Include="src\BenGin\Log.h" />
     <ClInclude Include="src\Component\BoundingBox.h" />
     <ClInclude Include="src\Component\Camera.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Gameplay\Player.h" />
+    <ClInclude Include="src\HUD\Background.h" />
+    <ClInclude Include="src\HUD\Sprite.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Input\InputDevice.h" />
     <ClInclude Include="src\Input\InputKey.h" />
@@ -219,37 +182,23 @@
     <ClInclude Include="src\System\Serialization.h" />
     <ClInclude Include="src\System\ServiceLocator.h" />
     <ClInclude Include="src\System\Window.h" />
-    <ClInclude Include="src\HUD\Background.h" />
-    <ClInclude Include="src\HUD\Sprite.h" />
     <ClInclude Include="src\Text\Text.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assimp-vc143-mtd.dll" />
-    <None Include="dependencies\fmod\fmod.cs" />
-    <None Include="dependencies\fmod\fmod_dsp.cs" />
-    <None Include="dependencies\fmod\fmod_errors.cs" />
-    <None Include="dependencies\fmod_studio\fmod_studio.cs" />
-    <None Include="fmodL.dll" />
-    <None Include="fmodstudioL.dll" />
-    <None Include="freetype.dll" />
-    <None Include="res\shaders\background.frag" />
-    <None Include="res\shaders\basic.frag" />
-    <None Include="res\shaders\basic.vert" />
-    <None Include="res\shaders\instanced.vert" />
-    <None Include="res\shaders\outline.frag" />
-    <None Include="res\shaders\triangle.frag" />
-    <None Include="res\shaders\triangle.vert" />
-    <None Include="res\shaders\text.frag" />
-    <None Include="res\shaders\text.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="dependencies\lib\assimp-vc143-mtd.lib" />
-    <Library Include="dependencies\lib\fmodL_vc.lib" />
-    <Library Include="dependencies\lib\fmodstudioL_vc.lib" />
-    <Library Include="dependencies\lib\freetype.lib" />
-    <Library Include="dependencies\lib\glfw3.lib" />
-    <None Include="res\shaders\shadow.frag" />
-    <None Include="res\shaders\shadow.vert" />
+    <ClCompile Include="dependencies\glad\glad.c" />
+    <ClCompile Include="src\AudioEngine.cpp" />
+    <ClCompile Include="src\Basic\Animation.cpp" />
+    <ClCompile Include="src\Basic\Animator.cpp" />
+    <ClCompile Include="src\Basic\Bone.cpp" />
+    <ClCompile Include="src\Basic\Shader.cpp" />
+    <ClCompile Include="src\BenGin\Application.cpp" />
+    <ClCompile Include="src\BenGin\Log.cpp" />
+    <ClCompile Include="src\Component\BoundingBox.cpp" />
+    <ClCompile Include="src\Component\Camera.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\Gameplay\Player.cpp" />
+    <ClCompile Include="src\Input\Input.cpp" />
+    <ClCompile Include="src\Input\InputManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
