@@ -75,7 +75,7 @@ project "BenGin" -- Engine Project Name
 		}
 
 		postbuildcommands {
-			("{COPY} %{cfg.buildtarget.abspath} \"../bin/" .. outputdir .. "/BenDitor/\"")
+			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/BenDitor/\"")
 		}
 
 	filter "configurations:Debug"
