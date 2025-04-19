@@ -47,10 +47,14 @@ project "BenGin" -- Engine Project Name
 	}
 
 	links {
-		"assimp-vc143-mtd",
-		"fmodL_vc",
-		"fmodstudioL_vc",
-		"freetype",
+		"assimp-vc143-mtd.dll",
+		"assimp-vc143-mtd.lib",
+		"fmodL.dll",
+		"fmodL_vc.lib",
+		"fmodstudioL.dll",
+		"fmodstudioL_vc.lib",
+		"freetype.dll",
+		"freetype.lib",
 		"glfw3.lib"
 	}
 
