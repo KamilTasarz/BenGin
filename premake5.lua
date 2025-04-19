@@ -129,7 +129,7 @@ project "BenDitor" -- editor project name
 		}
 
 		defines {		   -- our macros (used in Core.h to determine if dllimport or export)
-			"BENGIN",
+			"BENGIN"
 		}
 
 	filter "configurations:Debug"
