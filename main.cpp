@@ -90,6 +90,11 @@ Sprite *sprite, *sprite2, *sprite3;
 
 std::vector<Model> models;
 
+int previewX = WINDOW_WIDTH / 6;
+int previewY = WINDOW_HEIGHT / 3;
+int previewWidth = 2 * WINDOW_WIDTH / 3;
+int previewHeight = 2 * WINDOW_HEIGHT / 3;
+
 int main() {
 
 	// --- !!! THIS SHOULD ALL HAPPEN IN GAME/ENGINE CLASS (FRIEND TO INPUT MANAGER) - ESCPECIALLY PROCESS INPUT !!! --- //
@@ -434,7 +439,7 @@ int main() {
 
         // == standard drawing ==
 
-        sceneGraph->draw(WINDOW_WIDTH / 6, WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+        sceneGraph->draw(previewX, previewY, previewWidth, previewHeight);
         // == outline ==
 
         sceneGraph->drawMarkedObject();
@@ -549,16 +554,25 @@ glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);
 
-    glm::vec2 normalizedMouse;
-    normalizedMouse.x = (2.0f * mouseX) / WINDOW_WIDTH - 1.0f;
-    normalizedMouse.y = 1.0f - (2.0f * mouseY) / WINDOW_HEIGHT;
+    bool isInPreview = (mouseX >= previewX && mouseX < previewX + previewWidth &&
+        mouseY >= previewY && mouseY < previewY + previewHeight);
 
-    glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, -1.0f, 1.0f);
-    glm::vec4 rayEye = glm::inverse(_projection) * rayClip;
-    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
-    glm::vec4 rayWorld = glm::normalize(glm::inverse(_view) * rayEye);
+    if (isInPreview) {
+        glm::vec2 normalizedMouse;
+        normalizedMouse.x = (2.0f * (mouseX - previewX)) / previewWidth - 1.0f;
+        normalizedMouse.y = 1.0f - (2.0f * (previewY - mouseY)) / previewHeight;
 
-    return rayWorld;
+        glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, -1.0f, 1.0f);
+        glm::vec4 rayEye = glm::inverse(_projection) * rayClip;
+        rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+        glm::vec4 rayWorld = glm::normalize(glm::inverse(_view) * rayEye);
+
+		return rayWorld;
+	}
+	else {
+		return glm::vec4(0.f, 0.f, 0.f, 0.f);
+    }
+    
 }
 
 string print(glm::vec3 v) {
