@@ -45,6 +45,8 @@ glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat
 void leftClick(float value);
 void BeginFullscreenInputLayer();
 void DrawSceneNode(Node* node, int depth = 0);
+void DrawNodeBlock(Node* node, int depth = 0);
+void DrawHierarchyWindow(Node* root);
 
 string print(glm::vec3 v);
 
@@ -79,8 +81,8 @@ int frames = 0;
 SceneGraph* sceneGraph;
 
 // Cursor teleport to the other side of the screen
-float xCursorMargin = 30.0f;
-float yCursorMargin = 30.0f;
+float xCursorMargin = 10.0f;
+float yCursorMargin = 10.0f;
 
 Player *player;
 
@@ -219,7 +221,7 @@ int main() {
     sceneGraph->addChild(plane);
 
     ludzik->transform.setLocalPosition({ 3.f, 5.f, 3.f });
-    ludzik->transform.setLocalRotation({ -90.f, 0.f, 0.f });
+    //ludzik->transform.setLocalRotation({ -90.f, 0.f, 0.f });
 
     kutasiarz->transform.setLocalPosition({ 3.f, 2.f, 3.f });
     kutasiarz->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
@@ -440,6 +442,7 @@ int main() {
         // == standard drawing ==
 
         sceneGraph->draw(previewX, previewY, previewWidth, previewHeight);
+
         // == outline ==
 
         sceneGraph->drawMarkedObject();
@@ -483,19 +486,8 @@ int main() {
         ImGui::End();
 
 
-        ImGuiWindowFlags window_flags =
-            ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoCollapse |
-            ImGuiWindowFlags_NoTitleBar;
-
-        // Ustawiamy stałą pozycję i rozmiar okna
-        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(WINDOW_WIDTH / 6, WINDOW_HEIGHT / 2), ImGuiCond_Always);
-
-        ImGui::Begin("Scene Graph", nullptr, window_flags);
-        DrawSceneNode(sceneGraph->root);
-        ImGui::End();
+        
+        DrawHierarchyWindow(sceneGraph->root);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -553,6 +545,7 @@ void changeMouse(GLFWwindow* window) {
 glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);
+
 
     bool isInPreview = (mouseX >= previewX && mouseX < previewX + previewWidth &&
         mouseY >= previewY && mouseY < previewY + previewHeight);
@@ -626,7 +619,7 @@ void BeginFullscreenInputLayer()
         ImGuizmo::SetDrawlist(); // Draw to the current window
 
         //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
-        ImGuizmo::SetRect(WINDOW_WIDTH / 6, 0, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+        ImGuizmo::SetRect(WINDOW_WIDTH / 6, 0, 2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3);
 
         // Camera matrices for rendering ImGuizmo
         glm::mat4 _view = camera->GetView();
@@ -638,11 +631,19 @@ void BeginFullscreenInputLayer()
 
         
         ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
-            currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix));
+            currentOperation, ImGuizmo::WORLD, glm::value_ptr(_model_matrix));
 
-        glm::vec3 translation, rotation, scale;
-        ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(_model_matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
+        if (modified_object->parent) {
+			// w celu otrzymania loklalnych transformacji
+            _model_matrix = glm::inverse(modified_object->parent->transform.getModelMatrix()) * _model_matrix;
+        }
+		
 
+        glm::vec3 translation, scale, skew;
+        glm::vec4 perspective;
+		glm::quat rotation;
+        //ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(_model_matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
+		glm::decompose(_model_matrix, scale, rotation, translation, skew, perspective);
 
         if (ImGuizmo::IsUsing()) {
             if (currentOperation == ImGuizmo::OPERATION::TRANSLATE) {
@@ -721,4 +722,70 @@ void DrawSceneNode(Node* node, int depth) {
     for (auto& child : node->children) {
         DrawSceneNode(child, depth + 1);
     }
+}
+
+void DrawNodeBlock(Node* node, int depth)
+{
+    if (!node) return;
+
+    Node* selectedNode = node->scene_graph->marked_object;
+
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    float lineHeight = ImGui::GetTextLineHeightWithSpacing();
+    float indentSize = 20.0f;
+
+    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+	
+    ImVec2 itemPos = ImVec2(cursorPos.x + depth * indentSize, cursorPos.y);
+    ImVec2 itemSize = ImVec2(ImGui::GetContentRegionAvail().x - depth * indentSize, lineHeight);
+
+    // Niewidzialny przycisk dla kliknięcia
+    ImGui::SetCursorScreenPos(itemPos);
+    ImGui::InvisibleButton(node->name.c_str(), itemSize);
+
+    // Zaznaczenie
+    if (selectedNode == node)
+    {
+        drawList->AddRect(itemPos,
+            ImVec2(itemPos.x + itemSize.x, itemPos.y + itemSize.y),
+            IM_COL32(255, 255, 0, 255), 4.0f, 0, 2.0f);
+    }
+
+    // Nazwa
+    drawList->AddText(ImVec2(itemPos.x + 4, itemPos.y), IM_COL32_WHITE, node->name.c_str());
+
+    if (ImGui::IsItemClicked())
+    {
+
+        node->scene_graph->marked_object = node;
+    }
+
+    // Ustaw pozycję kursora na następną linię
+    ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y + lineHeight));
+
+    // Rekurencja: dzieci
+    for (auto& child : node->children)
+    {
+        DrawNodeBlock(child, depth + 1);
+    }
+}
+
+void DrawHierarchyWindow(Node* root)
+{
+    ImGuiWindowFlags window_flags =
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoTitleBar;
+
+    // Ustawiamy stałą pozycję i rozmiar okna
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(WINDOW_WIDTH / 6, WINDOW_HEIGHT / 2), ImGuiCond_Always);
+
+    ImGui::Begin("Scene Graph", nullptr, window_flags);
+
+    if (root)
+        DrawNodeBlock(root, 0);
+
+    ImGui::End();
 }

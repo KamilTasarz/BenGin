@@ -145,8 +145,11 @@ void SceneGraph::drawMarkedObject() {
 
         glm::vec3 dynamic_color = glm::vec3(0.4f, 0.f, 0.f);
 
-        shader_outline->setVec3("color", dynamic_color);
-        marked_object->pModel->Draw(*shader_outline);
+        if (marked_object->pModel) {
+            shader_outline->setVec3("color", dynamic_color);
+            marked_object->pModel->Draw(*shader_outline);
+        }
+
 
         //unmark();
         glStencilMask(0xFF);

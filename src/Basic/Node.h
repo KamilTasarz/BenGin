@@ -4,9 +4,10 @@
 #define NODE_H
 
 #include <glm/glm.hpp>
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 #include <list>
 #include <array>
@@ -27,7 +28,7 @@ protected:
 
     // Local position
     glm::vec3 m_pos = { 0.0f, 0.0f, 0.0f }; // Local position
-    glm::vec3 m_eulerRot = { 0.0f, 0.0f, 0.0f }; // Local rotation (degrees)
+    glm::quat m_quat = glm::quat(1.f, 0.f, 0.f, 0.f); // Local rotation (quat)
     glm::vec3 m_scale = { 1.0f, 1.0f, 1.0f }; // Local scale
 
     // Global position in a matrix
@@ -41,12 +42,18 @@ protected:
     glm::mat4 getLocalModelMatrix()
     {
         // X, Y and Z rotations
-        const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(m_eulerRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
-        const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(m_eulerRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(m_eulerRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        //const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(m_eulerRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        //const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(m_eulerRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        //const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(m_eulerRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
-        // Combining three rotation matrices
-        const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
+        //// Combining three rotation matrices
+        //const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
+
+        /*glm::quat qx = glm::angleAxis(glm::radians(m_quat.x), glm::vec3(1, 0, 0));
+        glm::quat qy = glm::angleAxis(glm::radians(m_quat.y), glm::vec3(0, 1, 0));
+        glm::quat qz = glm::angleAxis(glm::radians(m_quat.z), glm::vec3(0, 0, 1));
+        glm::quat rotation = qy * qx * qz;*/
+		glm::mat4 rotationMatrix = glm::mat4_cast(m_quat);
 
         // Combining translation, rotation and scale matrices and returning them as a local model matrix
         return glm::translate(glm::mat4(1.0f), m_pos) * rotationMatrix * glm::scale(glm::mat4(1.0f), m_scale);
@@ -92,7 +99,14 @@ public:
     // Set rotation and set "isDirty" to true, for the program to know changes have been made
     void setLocalRotation(const glm::vec3& newRotation)
     {
-        m_eulerRot = newRotation;
+        glm::vec3 eulerRadians = glm::radians(newRotation);
+        m_quat = glm::quat(eulerRadians);
+        m_isDirty = true;
+    }
+
+    void setLocalRotation(const glm::quat& newRotation)
+    {
+        m_quat = newRotation;
         m_isDirty = true;
     }
 
@@ -120,9 +134,9 @@ public:
         return m_pos;
     }
 
-    const glm::vec3& getLocalRotation() const
+    const glm::quat& getLocalRotation() const
     {
-        return m_eulerRot;
+        return m_quat;
     }
 
     const glm::vec3& getLocalScale() const
