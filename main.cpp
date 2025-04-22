@@ -97,6 +97,7 @@ unsigned int directional_light_number = 1;
 
 DirectionalLight *directional_lights;
 PointLight *point_lights;
+SpotLight *spotlight;
 
 Text* text;
 Background* background;
@@ -179,7 +180,7 @@ int main() {
     // --- //
     
 
-    /*Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
+    Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
     Model Kmodel("res/models/kutasiarz/The_Thing.obj", 1);
     Model Lmodel("res/models/man/CesiumMan2.gltf", 2);    
     
@@ -224,7 +225,7 @@ int main() {
     Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     Node* ludzik = new Node(Lmodel, "ludzik", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-	ludzik->animator = new Animator(anim);
+	//ludzik->animator = new Animator(anim);
 
     Node* box_diff_spec = new Node(Tmodel_box_diff_spec, "box1", colliders);
     Node* box_diff_spec2 = new Node(Tmodel_box_diff_spec, "box1", colliders);
@@ -232,6 +233,7 @@ int main() {
     Node* box_stone = new Node(Tmodel_box_stone, "box3", colliders);
     Node* box_light = new Node(Tmodel_light, "light", true);
     Node* box_light2 = new Node(Tmodel_light, "light2", true);
+    Node* box_light3 = new Node(Tmodel_light, "light3", true);
     Node* box_light_directional = new Node(Tmodel_light, "light_directional", true);
     //Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0);
     Node* plane = new Node(Tmodel_plane, "plane1", colliders, false, 0, glm::vec3(-0.5f, 0.0f, -0.5f), glm::vec3(0.5f, 0.0f, 0.5f));
@@ -244,6 +246,7 @@ int main() {
     rootNode->addChild(box_stone);
     rootNode->addChild(box_light);
     rootNode->addChild(box_light2);
+    rootNode->addChild(box_light3);
     rootNode->addChild(box_light_directional);
     rootNode->addChild(kutasiarz);
     rootNode->addChild(cos);
@@ -279,6 +282,9 @@ int main() {
     box_light2->transform.setLocalPosition({ 8.0f, 4.0f, -8.0f });
     box_light2->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
+    box_light3->transform.setLocalPosition({ -8.0f, 4.0f, -8.0f });
+    box_light3->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
+
     box_light_directional->transform.setLocalPosition({ -8.0f, 4.0f, -8.0f });
     box_light_directional->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
@@ -288,6 +294,7 @@ int main() {
     point_lights[0] = PointLight(box_light, 0.032f, 0.09f);
     //point_lights[1] = PointLight(box_light2, 0.032f, 0.09f);
     directional_lights[0] = DirectionalLight(box_light_directional, glm::vec3(1.f, -1.f, 1.f));
+    spotlight = new SpotLight(box_light3, 0.009f, 0.32f, 1.0f, 15.0f, 20.0f);
 
     /*walls->addChild(box_diff_spec);
     walls->addChild(box_diff_spec2);
@@ -305,7 +312,7 @@ int main() {
 
     //Camera* camera_temp = new Camera(0.f, 0.f, 0.f);
 
-	loadScene("res/scene/scene.json", rootNode, player, camera, point_lights, point_light_number, directional_lights, directional_light_number, models, colliders);
+	//loadScene("res/scene/scene.json", rootNode, player, camera, point_lights, point_light_number, directional_lights, directional_light_number, models, colliders);
 
     const char* anim_path = "res/models/man/CesiumMan2.gltf";
     Animation* anim = new Animation(anim_path, models[2]);
@@ -399,6 +406,9 @@ int main() {
             frames = 0;
         }
         
+        shader->use();
+        shader->setFloat("time", currentFrame);
+
         // Move to main game loop
         if (ServiceLocator::getInputManager()) {
             ServiceLocator::getInputManager()->processInput();
@@ -754,6 +764,7 @@ string print(glm::vec3 v) {
 void setLights(Shader* shader) {
 
     shader->setVec3("cameraPosition", camera->cameraPos);
+    shader->setVec3("cameraUp", camera->cameraUp);
     for (int i = 0; i < point_light_number; i++) {
         string index = to_string(i);
         point_lights[i].updatePosition();
@@ -773,6 +784,16 @@ void setLights(Shader* shader) {
         shader->setVec3("directional_lights[" + index + "].diffuse", directional_lights[i].diffuse);
         shader->setVec3("directional_lights[" + index + "].specular", directional_lights[i].specular);
     }
+
+    shader->setFloat("spotlight.constant", spotlight->constant);
+    shader->setFloat("spotlight.linear", spotlight->linear);
+    shader->setFloat("spotlight.quadratic", spotlight->quadratic);
+    shader->setVec3("spotlight.position", spotlight->position);
+    shader->setVec3("spotlight.ambient", spotlight->ambient);
+    shader->setVec3("spotlight.diffuse", spotlight->diffuse);
+    shader->setVec3("spotlight.specular", spotlight->specular);
+    shader->setFloat("spotlight.cut_off", spotlight->cut_off);
+    shader->setFloat("spotlight.outer_cut_off", spotlight->outer_cut_off);
 
 }
 

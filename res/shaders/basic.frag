@@ -27,10 +27,29 @@ struct DirectionLight {
 	
 };
 
+struct SpotLight {
+
+	vec3 position;
+	vec3 direction;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+
+	float cut_off;
+	float outer_cut_off;
+
+	float constant;
+	float linear;
+	float quadratic;
+
+};
+
 // definicje metod
 
 mat3 calculatePointLight(vec3 viewDir, PointLight light);
 mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light);
+mat3 calculateAlarmLight(vec3 viewDir, SpotLight light);
 float calulateShadow(vec4 position_from_light_perpective, sampler2D map);
 
 // uniformy
@@ -39,8 +58,12 @@ uniform int is_light;
 uniform int point_light_number;
 uniform int directional_light_number;
 
+uniform float time;
+
 uniform PointLight point_lights[10];
 uniform DirectionLight directional_lights[10];
+
+uniform SpotLight spotlight;
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
@@ -49,6 +72,7 @@ uniform sampler2D shadow_map;
 //uniform sampler2D shadow_map_back;
 
 uniform vec3 cameraPosition;
+uniform vec3 cameraUp;
 
 float shininess = 64.f;
 
@@ -72,7 +96,7 @@ void main() {
             res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
 
-        
+        res += calculateAlarmLight(viewDir, spotlight);
 
         float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map);
         //float shadow1 = 0.f;//min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
@@ -104,6 +128,37 @@ mat3 calculatePointLight(vec3 viewDir, PointLight light) {
     vec3 specular = light.specular * spec * vec3(texture(texture_specular1, fs_in.Cords)) * attenuation;
 
     return mat3(ambient, diffuse, specular);
+}
+
+
+mat3 calculateAlarmLight(vec3 viewDir, SpotLight light) {
+
+    vec3 lightDir = normalize(cross(viewDir, cameraUp));
+    float angle = radians(time);
+
+    vec3 spotDir = normalize(light.position - fs_in.Pos);
+    
+    lightDir = cos(angle) * lightDir + sin(angle) * cameraUp;
+
+    float theta = dot(spotDir, normalize(-lightDir));
+
+    float distance = distance(light.position, fs_in.Pos);
+    float attenuation = 1.0f / (light.quadratic * distance * distance + light.linear * distance + light.constant);
+
+    vec3 spotAmbient = vec3(0.0f), spotDiffuse = vec3(0.0f), spotSpecular = vec3(0.0f);
+
+    if (theta > spotlight.outer_cut_off) {
+        float intensity = clamp((theta - light.outer_cut_off) / (light.cut_off - light.outer_cut_off), 0.0, 1.0);
+        float spotDiff = max(dot(fs_in.Normal, spotDir), 0.0);
+        vec3 spotAmbient = light.ambient * texture(texture_diffuse1, TexCoords).rgb * intensity;
+        vec3 spotDiffuse = light.diffuse * spotDiff * texture(texture_diffuse1, TexCoords).rgb * intensity;
+        vec3 spotHalfwayDir = normalize(spotDir + viewDir);
+        float spotSpec = pow(max(dot(fs_in.Normal, spotHalfwayDir), 0.0), 16.0);
+        vec3 spotSpecular = light.specular * spotSpec * intensity;
+    }
+
+    return mat3(spotAmbient * attenuation, spotDiffuse * attenuation, spotSpecular * attenuation);
+
 }
 
 mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light) {

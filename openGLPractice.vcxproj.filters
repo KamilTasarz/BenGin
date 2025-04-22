@@ -14,7 +14,6 @@
     <ClCompile Include="dependencies\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
-
     <ClCompile Include="src\Basic\Shader.cpp" />
     <ClCompile Include="src\Component\BoundingBox.cpp" />
     <ClCompile Include="src\Component\Camera.cpp" />
@@ -26,7 +25,6 @@
     <ClCompile Include="dependencies\imguizmo\ImGradient.cpp" />
     <ClCompile Include="dependencies\imguizmo\ImGuizmo.cpp" />
     <ClCompile Include="dependencies\imguizmo\ImSequencer.cpp" />
-
     <ClCompile Include="src\Basic\Animation.cpp" />
     <ClCompile Include="src\Basic\Bone.cpp" />
     <ClCompile Include="src\Basic\Animator.cpp" />
@@ -84,6 +82,7 @@
     <ClInclude Include="src\Basic\Animation.h" />
     <ClInclude Include="src\Basic\Bone.h" />
     <ClInclude Include="src\Basic\Animator.h" />
+    <ClInclude Include="src\System\Serialization.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
@@ -103,6 +102,8 @@
     <None Include="res\shaders\text.vert" />
     <None Include="res\shaders\background.frag" />
     <None Include="freetype.dll" />
+    <None Include="res\shaders\alarm.frag" />
+    <None Include="res\shaders\alarm.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />

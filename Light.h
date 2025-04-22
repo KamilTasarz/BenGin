@@ -155,3 +155,48 @@ public:
             return view_projection;
         }
 };
+
+class SpotLight : public PointLight {
+
+public:
+
+    float cut_off, outer_cut_off; // inner, outer
+
+    SpotLight() : PointLight(nullptr, 0.09f, 0.32f, 1.0f, glm::vec3(0.7f, 0.3f, 0.1f), glm::vec3(0.7f, 0.3f, 0.1f), glm::vec3(0.7f, 0.3f, 0.1f)),
+         cut_off(glm::cos(glm::radians(12.5f))), outer_cut_off(glm::cos(glm::radians(17.5f))) {}
+
+    SpotLight(Node* node, float quadratic, float linear, float constant, float cut_off, float outer_cut_off,
+        glm::vec3 ambient = glm::vec3(0.7f, 0.3f, 0.1f), glm::vec3 diffuse = glm::vec3(0.7f, 0.3f, 0.1f), glm::vec3 specular = glm::vec3(0.7f, 0.3f, 0.1f))
+        : PointLight(node, quadratic, linear, constant, ambient, diffuse, specular), cut_off(glm::cos(glm::radians(cut_off))), outer_cut_off(glm::cos(glm::radians(outer_cut_off))) {
+        updateMatrix();
+    }
+
+    void render(unsigned int depthMapFBO, Shader& shader) {
+        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        shader.use();
+        updateMatrix();
+        shader.setMat4("view_projection", view_projection);
+    }
+
+    void updateMatrix() {
+        view = glm::lookAt(object->transform.getGlobalPosition(),
+            object->transform.getGlobalPosition(),// + direction,
+            glm::vec3(0.f, 1.f, 0.f));
+        projection = glm::perspective(glm::radians(45.f), 1.f, 0.1f, 100.f);
+        view_projection = projection * view;
+    }
+
+    glm::mat4& getMatrix() {
+        updateMatrix();
+        return view_projection;
+    }
+
+    void setCutOff(float innerAngle, float outerAngle) {
+        cut_off = glm::cos(glm::radians(innerAngle));
+        outer_cut_off = glm::cos(glm::radians(outerAngle));
+    }
+};
