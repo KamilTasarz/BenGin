@@ -59,7 +59,7 @@ void SceneGraph::setShaders() {
     shader_outline->setInt("directional_light_number", directional_light_number);
 }
 
-void SceneGraph::draw(float render_x, float render_y, float width, float height) {
+void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
 
     
 
@@ -70,12 +70,15 @@ void SceneGraph::draw(float render_x, float render_y, float width, float height)
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    glViewport(render_x, render_y, width, height);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glViewport(0, 0, width, height);
     glClearColor(.01f, .01f, .01f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     setShaders();
     root->drawSelfAndChild();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void SceneGraph::update(float delta_time) {
@@ -101,14 +104,16 @@ void SceneGraph::setLights(Shader* shader) {
     int i = 0;
     for (auto& point_light : point_lights) {
         string index = to_string(i);
+		glm::vec3 light_pos = point_light->transform.getGlobalPosition();
         shader->setFloat("point_lights[" + index + "].constant", point_light->constant);
         shader->setFloat("point_lights[" + index + "].linear", point_light->linear);
         shader->setFloat("point_lights[" + index + "].quadratic", point_light->quadratic);
-        shader->setVec3("point_lights[" + index + "].position", point_light->transform.getLocalPosition());
+        shader->setVec3("point_lights[" + index + "].position", light_pos);
         shader->setVec3("point_lights[" + index + "].ambient", point_light->ambient);
         shader->setVec3("point_lights[" + index + "].diffuse", point_light->diffuse);
         shader->setVec3("point_lights[" + index + "].specular", point_light->specular);
         i++;
+        
     }
     i = 0;
     for (auto& dir_light : directional_lights) {
@@ -135,6 +140,7 @@ void SceneGraph::drawMarkedObject() {
         glStencilMask(0x00);
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         //glm::vec3 scale_matrix = marked_object->transform.getLocalScale();
         //scale_matrix += glm::vec3(0.05f);
         //Transform transform = marked_object->transform;

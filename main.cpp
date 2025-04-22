@@ -46,7 +46,9 @@ void leftClick(float value);
 void BeginFullscreenInputLayer();
 void DrawSceneNode(Node* node, int depth = 0);
 void DrawNodeBlock(Node* node, int depth = 0);
-void DrawHierarchyWindow(Node* root);
+void DrawHierarchyWindow(Node* root, float x, float y, float width, float height);
+void previewDisplay();
+void assetBarDisplay(float x, float y, float width, float height);
 
 string print(glm::vec3 v);
 
@@ -88,14 +90,20 @@ Player *player;
 
 Text* text;
 Background* background;
-Sprite *sprite, *sprite2, *sprite3;
+Sprite *sprite, *sprite2, *sprite3, *icon;
 
 std::vector<Model> models;
 
 int previewX = WINDOW_WIDTH / 6;
-int previewY = WINDOW_HEIGHT / 3;
+int previewY = 0;
 int previewWidth = 2 * WINDOW_WIDTH / 3;
 int previewHeight = 2 * WINDOW_HEIGHT / 3;
+
+unsigned int framebuffer, colorTexture, depthRenderbuffer;
+
+bool isHUD = false, isInPreview = false;
+
+glm::vec2 normalizedMouse;
 
 int main() {
 
@@ -125,6 +133,7 @@ int main() {
     sprite = new AnimatedSprite(1920.f, 1080.f, 1.f, sprites, 6, 100.f, 300.f);
     sprite3 = new AnimatedSprite(1920.f, 1080.f, 1.f, "res/sprites/piratWalking.png", 1, 9, 9, 300.f, 300.f);
     sprite2 = new Sprite(1920.f, 1080.f, "res/sprites/heart2.png", 700.f, 100.f, 0.1f);
+	icon = new Sprite(1920.f, 1080.f, "res/sprites/icon.png", 0.f, 0.f, 1.f);
 
     //rootNode = new Node("root");
 
@@ -280,11 +289,43 @@ int main() {
 
     // --- GAME LOOP --- //
 
+
+
+    int fbWidth = previewWidth;
+    int fbHeight = previewHeight;
+
+    // 1. Tekstura kolorów
+    glGenTextures(1, &colorTexture);
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fbWidth, fbHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // 2. Bufor głębokości
+    glGenRenderbuffers(1, &depthRenderbuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, fbWidth, fbHeight);
+
+    // 3. Framebuffer
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "Framebuffer nie jest kompletny!" << std::endl;
+    }
+    glEnable(GL_STENCIL_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     while (!glfwWindowShouldClose(window->window)) {
 
-
-        glEnable(GL_STENCIL_TEST);
-        glEnable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glClearColor(0.f, 0.f, 0.f, 0.f);
+        
 
         // Delta time and fps calculation
 
@@ -343,7 +384,7 @@ int main() {
         if (glfwGetKey(window->window, GLFW_KEY_C) == GLFW_PRESS) {
             if (is_camera == is_camera_prev) {
                 is_camera = !is_camera;
-                camera->changeMode(static_cast<CameraMode>((camera->mode + 1) % 3));
+                camera->changeMode(camera->mode == FREE ? FIXED : FREE);
             }
         } else {
             is_camera_prev = is_camera;
@@ -391,20 +432,6 @@ int main() {
 
 		sceneGraph->update(deltaTime);
 
-        if (camera->mode != FREE) {
-            player->update(deltaTime, direction, camera->Yaw);
-        }
-
-        for (auto&& collider : colliders) {
-            
-            if (player->player_node->AABB != collider && player->player_node->AABB->isBoundingBoxIntersects(*collider)) {
-
-
-                player->player_node->separate(collider);
-                
-            }
-        }
-
         camera->ProcessKeyboard(deltaTime, direction);
         changeMouse(window->window);
         
@@ -419,8 +446,13 @@ int main() {
             mouse_pressed = false;
         }
 
-        background->update(deltaTime);
-        background->render(*sceneGraph->shader_background);
+        if (isHUD) {
+            glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+            background->update(deltaTime);
+            background->render(*sceneGraph->shader_background);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+   
 
         sceneGraph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));
 
@@ -441,32 +473,31 @@ int main() {
 
         // == standard drawing ==
 
-        sceneGraph->draw(previewX, previewY, previewWidth, previewHeight);
-
+        sceneGraph->draw(previewWidth, previewHeight, framebuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        sceneGraph->drawMarkedObject();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         // == outline ==
 
-        sceneGraph->drawMarkedObject();
-        float fps = 1.f / deltaTime;
-        
+        if (isHUD) {
+            float fps = 1.f / deltaTime;
 
 
-        text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *sceneGraph->shader_text, glm::vec3(1.f, 0.3f, 0.3f));
-        text->renderText("We have text render!", 200, 200, *sceneGraph->shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
-        sprite->update(deltaTime);
-        sprite3->update(deltaTime);
-        
-        sprite2->render(*sceneGraph->shader_background);
-        sprite3->render(*sceneGraph->shader_background);
-        sprite->render(*sceneGraph->shader_background);
+            text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *sceneGraph->shader_text, glm::vec3(1.f, 0.3f, 0.3f));
+            text->renderText("We have text render!", 200, 200, *sceneGraph->shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
+            sprite->update(deltaTime);
+            sprite3->update(deltaTime);
 
-        // Render the 2D triangle
-        /*glDisable(GL_DEPTH_TEST); // Disable depth test to render on top
-        shader2D->use();
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindVertexArray(0);
-        glEnable(GL_DEPTH_TEST);*/
+            sprite2->render(*sceneGraph->shader_background);
+            sprite3->render(*sceneGraph->shader_background);
+            sprite->render(*sceneGraph->shader_background);
 
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+
+
+
+   
         // ---------------------
 
         // ImGui Quick Test
@@ -480,14 +511,16 @@ int main() {
         ImGui::Text("Test test test test 123 123");
         ImGui::Text("Current FPS: %.1f", fps); // Dipslay current fps
 
-        BeginFullscreenInputLayer();
+        
 
         // Window render
         ImGui::End();
 
 
         
-        DrawHierarchyWindow(sceneGraph->root);
+        DrawHierarchyWindow(sceneGraph->root, 0, 0, WINDOW_WIDTH / 6, 2 * WINDOW_HEIGHT / 3);
+        previewDisplay();
+        assetBarDisplay(0, 2 * WINDOW_HEIGHT / 3, WINDOW_WIDTH, WINDOW_HEIGHT / 3);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -543,28 +576,16 @@ void changeMouse(GLFWwindow* window) {
 }
 
 glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
-    double mouseX, mouseY;
-    glfwGetCursorPos(window, &mouseX, &mouseY);
+    
+        
 
+    glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, -1.0f, 1.0f);
+    glm::vec4 rayEye = glm::inverse(_projection) * rayClip;
+    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+    glm::vec4 rayWorld = glm::normalize(glm::inverse(_view) * rayEye);
 
-    bool isInPreview = (mouseX >= previewX && mouseX < previewX + previewWidth &&
-        mouseY >= previewY && mouseY < previewY + previewHeight);
-
-    if (isInPreview) {
-        glm::vec2 normalizedMouse;
-        normalizedMouse.x = (2.0f * (mouseX - previewX)) / previewWidth - 1.0f;
-        normalizedMouse.y = 1.0f - (2.0f * (previewY - mouseY)) / previewHeight;
-
-        glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, -1.0f, 1.0f);
-        glm::vec4 rayEye = glm::inverse(_projection) * rayClip;
-        rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
-        glm::vec4 rayWorld = glm::normalize(glm::inverse(_view) * rayEye);
-
-		return rayWorld;
-	}
-	else {
-		return glm::vec4(0.f, 0.f, 0.f, 0.f);
-    }
+	return rayWorld;
+	
     
 }
 
@@ -583,108 +604,7 @@ string print(glm::vec3 v) {
 //
 //}
 
-void BeginFullscreenInputLayer()
-{
-    ImGuiWindowFlags window_flags =
-        ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_NoScrollWithMouse |
-        ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoSavedSettings |
-        ImGuiWindowFlags_NoBringToFrontOnFocus |
-        ImGuiWindowFlags_NoFocusOnAppearing |
-        ImGuiWindowFlags_NoBackground;
 
-    ImGuiViewport* viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(viewport->Pos);
-    ImGui::SetNextWindowSize(viewport->Size);
-    //ImGui::SetNextWindowViewport(viewport->ID);
-
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-
-    ImGui::Begin("ImGuizmo Input Layer", nullptr, window_flags);
-    // To okno jest niewidzialne, ale aktywne — i ImGuizmo może działać wewnątrz
-
-    // IMGUIZMO
-    Node* modified_object = sceneGraph->marked_object;
-    if (modified_object != nullptr) {
-
-        //io = ImGui::GetIO();
-
-        ImGuizmo::SetOrthographic(false); // If we want to change between perspective and orthographic it's added just in case
-        ImGuizmo::SetDrawlist(); // Draw to the current window
-
-        //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
-        ImGuizmo::SetRect(WINDOW_WIDTH / 6, 0, 2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3);
-
-        // Camera matrices for rendering ImGuizmo
-        glm::mat4 _view = camera->GetView();
-        glm::mat4 _projection = camera->GetProjection();
-
-        // Getting marked object transform
-        auto& _transform = modified_object->getTransform();
-        glm::mat4 _model_matrix = _transform.getModelMatrix();
-
-        
-        ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
-            currentOperation, ImGuizmo::WORLD, glm::value_ptr(_model_matrix));
-
-        if (modified_object->parent) {
-			// w celu otrzymania loklalnych transformacji
-            _model_matrix = glm::inverse(modified_object->parent->transform.getModelMatrix()) * _model_matrix;
-        }
-		
-
-        glm::vec3 translation, scale, skew;
-        glm::vec4 perspective;
-		glm::quat rotation;
-        //ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(_model_matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
-		glm::decompose(_model_matrix, scale, rotation, translation, skew, perspective);
-
-        if (ImGuizmo::IsUsing()) {
-            if (currentOperation == ImGuizmo::OPERATION::TRANSLATE) {
-                modified_object->transform.setLocalPosition(translation);
-			}
-			else if (currentOperation == ImGuizmo::OPERATION::ROTATE) {
-				modified_object->transform.setLocalRotation(rotation);
-			}
-            else if (currentOperation == ImGuizmo::OPERATION::SCALE) {
-                if (uniformScale) {
-                    if (scale.x != scale.y && scale.x != scale.z) {
-                        scale.y = scale.x;
-                        scale.z = scale.x;
-                    }
-                    else if (scale.y != scale.z && scale.y != scale.x) {
-                        scale.x = scale.y;
-                        scale.z = scale.y;
-                    }
-                    else {
-                        scale.x = scale.z;
-                        scale.y = scale.z;
-                    }
-                }
-                modified_object->transform.setLocalScale(scale);
-            }
-            
-
-        }
-
-    }
-
-    // Ale UWAGA: ImGuizmo::SetRect(...) MUSI być ustawione na pełny ekran!
-    ImGuizmo::SetRect(viewport->Pos.x, viewport->Pos.y, viewport->Size.x, viewport->Size.y);
-
-    // Rysuj GUI albo nic — okno istnieje tylko po to, żeby przekazywać inputy
-
-    // Pamiętaj: nadal musi być End()!
-    ImGui::End();
-
-    ImGui::PopStyleVar(3);
-}
 
 void DrawSceneNode(Node* node, int depth) {
     ImGui::Indent(depth * 20.0f); // wcięcie zależne od poziomu
@@ -770,22 +690,206 @@ void DrawNodeBlock(Node* node, int depth)
     }
 }
 
-void DrawHierarchyWindow(Node* root)
+void DrawHierarchyWindow(Node* root, float x, float y, float width, float height)
 {
     ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoTitleBar;
+        ImGuiWindowFlags_NoCollapse;
 
     // Ustawiamy stałą pozycję i rozmiar okna
-    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(WINDOW_WIDTH / 6, WINDOW_HEIGHT / 2), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
 
-    ImGui::Begin("Scene Graph", nullptr, window_flags);
+    ImGui::Begin("Scene", nullptr, window_flags);
 
     if (root)
         DrawNodeBlock(root, 0);
 
     ImGui::End();
+}
+
+void previewDisplay()
+{
+    ImGuiWindowFlags window_flags =
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoScrollWithMouse |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoBringToFrontOnFocus |
+        ImGuiWindowFlags_NoFocusOnAppearing |
+        ImGuiWindowFlags_NoBackground;
+
+
+    ImGui::SetNextWindowPos(ImVec2(previewX, previewY), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(previewWidth, previewHeight), ImGuiCond_Always);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+
+    ImGui::Begin("Viewport", nullptr, window_flags);
+
+    // Pokaż teksturę (zwróć uwagę na UV – odwrócone Y)
+    ImGui::Image((ImTextureID)(intptr_t)colorTexture, ImVec2(previewWidth, previewHeight), ImVec2(0, 1), ImVec2(1, 0));
+
+    isInPreview = ImGui::IsItemHovered();
+	if (isInPreview) {
+		ImVec2 mousePos = ImGui::GetMousePos();
+		normalizedMouse.x = (mousePos.x - previewX) / previewWidth;
+		normalizedMouse.y = (mousePos.y - previewY) / previewHeight;
+		normalizedMouse.y = 1.0f - normalizedMouse.y; // Odwrócenie Y
+		normalizedMouse.x = normalizedMouse.x * 2.0f - 1.0f; // Normalizacja do zakresu [-1, 1]
+		normalizedMouse.y = normalizedMouse.y * 2.0f - 1.0f; // Normalizacja do zakresu [-1, 1]
+	}
+
+    if (ImGui::BeginDragDropTarget()) {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_DRAG")) {
+            int id = *(int*)payload->Data;
+            // ➕ Dodaj asset do sceny (np. instancja modelu)
+			sceneGraph->addChild(new Node(getModelById(models, id), "entity", colliders));
+        }
+        ImGui::EndDragDropTarget();
+    }
+
+    BeginFullscreenInputLayer();
+
+    ImGui::End();
+
+    ImGui::PopStyleVar(3);
+}
+
+void BeginFullscreenInputLayer()
+{
+    //ImGuiViewport* viewport = ImGui::GetMainViewport();
+    //ImGui::SetNextWindowPos(viewport->Pos);
+    //ImGui::SetNextWindowSize(viewport->Size);
+    ////ImGui::SetNextWindowViewport(viewport->ID);
+
+
+
+    //ImGui::Begin("ImGuizmo Input Layer", nullptr, window_flags);
+    // To okno jest niewidzialne, ale aktywne — i ImGuizmo może działać wewnątrz
+
+    // IMGUIZMO
+    Node* modified_object = sceneGraph->marked_object;
+    if (modified_object != nullptr) {
+
+        //io = ImGui::GetIO();
+
+        ImGuizmo::SetOrthographic(false); // If we want to change between perspective and orthographic it's added just in case
+        ImGuizmo::SetDrawlist(); // Draw to the current window
+
+        //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+        ImGuizmo::SetRect(previewX, previewY, previewWidth, previewHeight);
+
+        // Camera matrices for rendering ImGuizmo
+        glm::mat4 _view = camera->GetView();
+        glm::mat4 _projection = camera->GetProjection();
+
+        // Getting marked object transform
+        auto& _transform = modified_object->getTransform();
+        glm::mat4 _model_matrix = _transform.getModelMatrix();
+
+
+        ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
+            currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix));
+
+        if (modified_object->parent) {
+            // w celu otrzymania loklalnych transformacji
+            _model_matrix = glm::inverse(modified_object->parent->transform.getModelMatrix()) * _model_matrix;
+        }
+
+
+        glm::vec3 translation, scale, skew;
+        glm::vec4 perspective;
+        glm::quat rotation;
+        //ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(_model_matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
+        glm::decompose(_model_matrix, scale, rotation, translation, skew, perspective);
+
+        if (ImGuizmo::IsUsing()) {
+            if (currentOperation == ImGuizmo::OPERATION::TRANSLATE) {
+                modified_object->transform.setLocalPosition(translation);
+            }
+            else if (currentOperation == ImGuizmo::OPERATION::ROTATE) {
+                modified_object->transform.setLocalRotation(rotation);
+            }
+            else if (currentOperation == ImGuizmo::OPERATION::SCALE) {
+                if (uniformScale) {
+                    if (scale.x != scale.y && scale.x != scale.z) {
+                        scale.y = scale.x;
+                        scale.z = scale.x;
+                    }
+                    else if (scale.y != scale.z && scale.y != scale.x) {
+                        scale.x = scale.y;
+                        scale.z = scale.y;
+                    }
+                    else {
+                        scale.x = scale.z;
+                        scale.y = scale.z;
+                    }
+                }
+                modified_object->transform.setLocalScale(scale);
+            }
+        }
+        modified_object->updateSelfAndChild(true);
+
+    }
+
+
+}
+
+void assetBarDisplay(float x, float y, float width, float height) {
+
+    ImGuiWindowFlags window_flags =
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoSavedSettings;
+
+
+    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+
+    ImGui::Begin("Assets", nullptr, window_flags);
+
+    float padding = 16.0f;
+    float thumbnailSize = 64.0f;
+    float cellSize = thumbnailSize + padding;
+
+    float panelWidth = ImGui::GetContentRegionAvail().x;
+    int columnCount = (int)(panelWidth / cellSize);
+    if (columnCount < 1) columnCount = 1;
+
+    ImGui::Columns(columnCount, nullptr, false);
+
+    for (auto& model : models) {
+        ImGui::PushID(model.id);
+
+        
+
+        // Ikona (np. asset.textureID albo fallback ikona)
+        if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)icon->sprite_id, ImVec2(thumbnailSize, thumbnailSize))) {
+            // (opcjonalne: obsługa kliknięcia na asset)
+        }
+
+        // DRAG SOURCE
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+            ImGui::SetDragDropPayload("ASSET_DRAG", &model.id, sizeof(model.id));
+            ImGui::Text("Dragging %s", model.directory.c_str());
+            ImGui::EndDragDropSource();
+        }
+        // Nazwa assetu
+        ImGui::TextWrapped(model.directory.c_str());
+
+        ImGui::NextColumn();
+        ImGui::PopID();
+    }
+
+    ImGui::Columns(1);
+    ImGui::End();
+
 }

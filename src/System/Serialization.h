@@ -15,13 +15,20 @@
 //json save_node(Node* node);
 //Node* load_node(json &j, std::vector<Model>& models, std::vector<BoundingBox*>& colliders);
 //
+Model& getModelById(std::vector<Model>& models, int id) {
+	for (auto& model : models) {
+		if (model.id == id) {
+			return model;
+		}
+	}
+	throw std::runtime_error("Model not found");
+}
 //
-//int saveScene(const std::string& filename, Node*& rootNode, Player*& player, 
-//	PointLight *point_lights, unsigned int point_num, DirectionalLight *directional_lights, unsigned int directional_num, std::vector<Model> &models) {
+//int saveScene(const std::string& filename, SceneGraph*& scene, Player*& player, std::vector<Model> &models) {
 //
 //	json sceneData;
 //	
-//	sceneData["scene"] = save_node(rootNode);
+//	sceneData["scene"] = save_node(scene->root);
 //	
 //	json modelData;
 //
@@ -57,7 +64,7 @@
 //		pointLightData["constant"] = point_lights[i].constant;
 //		pointLightData["linear"] = point_lights[i].linear;
 //		pointLightData["quadratic"] = point_lights[i].quadratic;
-//		pointLightData["node"] = point_lights[i].object->name;
+//		pointLightData["node"] = point_lights[i].name;
 //		
 //		pointLightsData.push_back(pointLightData);
 //	}
@@ -260,14 +267,7 @@
 //	return 0;
 //}
 //
-//Model& getModelById(std::vector<Model>& models, int id) {
-//	for (auto& model : models) {
-//		if (model.id == id) {
-//			return model;
-//		}
-//	}
-//	throw std::runtime_error("Model not found");
-//}
+//
 //
 //Node* load_node(json &j, std::vector<Model>& models, std::vector<BoundingBox*>& colliders) {
 //	Node* node = nullptr;

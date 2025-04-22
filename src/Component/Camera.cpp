@@ -106,12 +106,12 @@ void Camera::changeMode(CameraMode mode)
     if (mode == FOLLOWING && object_to_follow == nullptr) this->mode = FREE;
     else this->mode = mode;
 
-	if (mode != FOLLOWING) {
+	/*if (mode != FOLLOWING) {
 		cameraPos = oldCameraPos;
     }
     else {
 		oldCameraPos = cameraPos;
-    }
+    }*/
 
 }
 

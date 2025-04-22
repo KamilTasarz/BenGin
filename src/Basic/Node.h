@@ -542,7 +542,7 @@ public:
     void addPointLight(PointLight* p);
     void addDirectionalLight(DirectionalLight* p);
     void setShaders();
-    void draw(float render_x, float render_y, float width, float height);
+    void draw(float width, float height, unsigned int framebuffer);
     void drawMarkedObject();
     
     void update(float delta_time);
