@@ -60,6 +60,7 @@ const char* triangleFragmentPath = "res/shaders/triangle.frag";
 const char* vertexPath_text = "res/shaders/text.vert";
 const char* fragmentPath_text = "res/shaders/text.frag";
 const char* fragmentPath_background = "res/shaders/background.frag";
+const char* fragmentPath_toon = "res/shaders/alarm.frag";
 
 // Audio paths
 string track1 = "res/audios/music/kill-v-maim.ogg";
@@ -83,6 +84,8 @@ std::vector<BoundingBox*> colliders;
 float fps = 0.0f; // Current FPS
 float fps_timer = 0.0f;
 int frames = 0;
+
+float rot_offset = 0.f;
 
 Node* rootNode;
 
@@ -148,7 +151,7 @@ int main() {
     audioEngine.LoadSound(track2, true, true, true);
     audioEngine.LoadSound(sound_effect, false, false, true);
 
-    int current_track_id = audioEngine.PlaySounds(track1, Vector3{ 0.0f }, -10.0);
+    int current_track_id = 0; // audioEngine.PlaySounds(track1, Vector3{ 0.0f }, -10.0);
     bool paused = false;
 
     // When we want to call PlaySounds and don't care about the channel number
@@ -173,6 +176,7 @@ int main() {
     Shader* shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
     Shader* shader_text = new Shader(vertexPath_text, fragmentPath_text);
     Shader* shader_background = new Shader(vertexPath_text, fragmentPath_background);
+    Shader* shader_toon = new Shader(vertexPath, fragmentPath_toon);
 
     point_lights = new PointLight[10];
     directional_lights = new DirectionalLight[10];
@@ -282,7 +286,8 @@ int main() {
     box_light2->transform.setLocalPosition({ 8.0f, 4.0f, -8.0f });
     box_light2->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
-    box_light3->transform.setLocalPosition({ -8.0f, 4.0f, -8.0f });
+    box_light3->transform.setLocalPosition({0.0f, 1.0f, 0.0f });
+    box_light3->transform.setLocalRotation({0.0f, 0.0f, 0.0f });
     box_light3->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
     box_light_directional->transform.setLocalPosition({ -8.0f, 4.0f, -8.0f });
@@ -294,7 +299,7 @@ int main() {
     point_lights[0] = PointLight(box_light, 0.032f, 0.09f);
     //point_lights[1] = PointLight(box_light2, 0.032f, 0.09f);
     directional_lights[0] = DirectionalLight(box_light_directional, glm::vec3(1.f, -1.f, 1.f));
-    spotlight = new SpotLight(box_light3, 0.009f, 0.32f, 1.0f, 15.0f, 20.0f);
+    spotlight = new SpotLight(box_light3, 0.62f, 0.8f, 1.0f, 15.f, 20.f);
 
     /*walls->addChild(box_diff_spec);
     walls->addChild(box_diff_spec2);
@@ -512,7 +517,11 @@ int main() {
             player->update(deltaTime, direction, camera->Yaw);
         }
         
-        
+        rot_offset++;
+		if (rot_offset > 360.f) {
+			rot_offset = 0.f;
+		}
+		box_light3->transform.setLocalRotation({ 0.f, rot_offset, 0.f });
 
         for (auto&& collider : colliders) {
             
@@ -597,6 +606,11 @@ int main() {
 		shader_outline->setMat4("view", view);
 		shader_outline->setMat4("projection", projection);
 
+        shader_toon->use();
+        shader_toon->setMat4("view", view);
+        shader_toon->setMat4("projection", projection);
+        
+		setLights(shader_toon);
 
         shader->use();
         shader->setMat4("view", view);
@@ -641,6 +655,8 @@ int main() {
         glStencilMask(0x00);
 
         // == standard drawing ==
+
+        rootNode->drawSelfAndChild(*shader_toon, *shader_outline, dis, tot);
 
         rootNode->drawSelfAndChild(*shader, *shader_outline, dis, tot);
         // == outline ==
@@ -695,7 +711,7 @@ int main() {
 
     }
 
-	saveScene("res/scene/scene.json", rootNode, player, point_lights, point_light_number, directional_lights, directional_light_number, models);
+	//saveScene("res/scene/scene.json", rootNode, player, point_lights, point_light_number, directional_lights, directional_light_number, models);
 
     // Audio engine cleanup
     audioEngine.Shutdown();
@@ -784,11 +800,12 @@ void setLights(Shader* shader) {
         shader->setVec3("directional_lights[" + index + "].diffuse", directional_lights[i].diffuse);
         shader->setVec3("directional_lights[" + index + "].specular", directional_lights[i].specular);
     }
-
+    spotlight->update();
     shader->setFloat("spotlight.constant", spotlight->constant);
     shader->setFloat("spotlight.linear", spotlight->linear);
     shader->setFloat("spotlight.quadratic", spotlight->quadratic);
     shader->setVec3("spotlight.position", spotlight->position);
+    shader->setVec3("spotlight.direction", spotlight->direction);
     shader->setVec3("spotlight.ambient", spotlight->ambient);
     shader->setVec3("spotlight.diffuse", spotlight->diffuse);
     shader->setVec3("spotlight.specular", spotlight->specular);

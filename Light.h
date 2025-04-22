@@ -161,6 +161,7 @@ class SpotLight : public PointLight {
 public:
 
     float cut_off, outer_cut_off; // inner, outer
+    glm::vec3 direction = glm::vec3(1.f, 0.f, 0.f);
 
     SpotLight() : PointLight(nullptr, 0.09f, 0.32f, 1.0f, glm::vec3(0.7f, 0.3f, 0.1f), glm::vec3(0.7f, 0.3f, 0.1f), glm::vec3(0.7f, 0.3f, 0.1f)),
          cut_off(glm::cos(glm::radians(12.5f))), outer_cut_off(glm::cos(glm::radians(17.5f))) {}
@@ -198,5 +199,12 @@ public:
     void setCutOff(float innerAngle, float outerAngle) {
         cut_off = glm::cos(glm::radians(innerAngle));
         outer_cut_off = glm::cos(glm::radians(outerAngle));
+    }
+
+    void update() {
+
+		position = object->transform.getGlobalPosition();
+        direction = object->transform.getForward();
+        
     }
 };

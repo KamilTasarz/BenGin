@@ -1,4 +1,4 @@
-#version 330 core
+﻿#version 330 core
 
 in VS_OUT {
 	vec3 Pos;
@@ -49,7 +49,7 @@ struct SpotLight {
 
 mat3 calculatePointLight(vec3 viewDir, PointLight light);
 mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light);
-mat3 calculateAlarmLight(vec3 viewDir, SpotLight light);
+mat3 calculateSpotLight(vec3 viewDir, SpotLight light);
 float calulateShadow(vec4 position_from_light_perpective, sampler2D map);
 
 // uniformy
@@ -90,13 +90,13 @@ void main() {
         vec3 viewDir = normalize(cameraPosition - fs_in.Pos);
 	    mat3 res = mat3(0.f);
         for (int i = 0; i < point_light_number; i++) {
-            res += calculatePointLight(viewDir, point_lights[i]);
+            //res += calculatePointLight(viewDir, point_lights[i]);
         }
         for (int i = 0; i < directional_light_number; i++) {
-            res += calculateDirectionalLight(viewDir, directional_lights[i]);
+            //res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
 
-        res += calculateAlarmLight(viewDir, spotlight);
+        res += calculateSpotLight(viewDir, spotlight);
 
         float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map);
         //float shadow1 = 0.f;//min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
@@ -131,35 +131,39 @@ mat3 calculatePointLight(vec3 viewDir, PointLight light) {
 }
 
 
-mat3 calculateAlarmLight(vec3 viewDir, SpotLight light) {
-
-    vec3 lightDir = normalize(cross(viewDir, cameraUp));
-    float angle = radians(time);
+mat3 calculateSpotLight(vec3 viewDir, SpotLight light) {
+   
 
     vec3 spotDir = normalize(light.position - fs_in.Pos);
-    
-    lightDir = cos(angle) * lightDir + sin(angle) * cameraUp;
+    float theta = dot(spotDir, normalize(light.direction));
 
-    float theta = dot(spotDir, normalize(-lightDir));
+    float distance = length(light.position - fs_in.Pos);
+    float attenuation = 1.0 / (light.quadratic * distance * distance + light.linear * distance + light.constant);
 
-    float distance = distance(light.position, fs_in.Pos);
-    float attenuation = 1.0f / (light.quadratic * distance * distance + light.linear * distance + light.constant);
+    vec3 spotAmbient = vec3(0.0);
+    vec3 spotDiffuse = vec3(0.0);
+    vec3 spotSpecular = vec3(0.0);
 
-    vec3 spotAmbient = vec3(0.0f), spotDiffuse = vec3(0.0f), spotSpecular = vec3(0.0f);
-
-    if (theta > spotlight.outer_cut_off) {
+    if (theta > light.outer_cut_off) {
         float intensity = clamp((theta - light.outer_cut_off) / (light.cut_off - light.outer_cut_off), 0.0, 1.0);
+        
         float spotDiff = max(dot(fs_in.Normal, spotDir), 0.0);
-        vec3 spotAmbient = light.ambient * texture(texture_diffuse1, TexCoords).rgb * intensity;
-        vec3 spotDiffuse = light.diffuse * spotDiff * texture(texture_diffuse1, TexCoords).rgb * intensity;
+        spotAmbient = light.ambient * texture(texture_diffuse1, fs_in.Cords).rgb * intensity;
+        spotDiffuse = light.diffuse * spotDiff * texture(texture_diffuse1, fs_in.Cords).rgb * intensity;
+
         vec3 spotHalfwayDir = normalize(spotDir + viewDir);
         float spotSpec = pow(max(dot(fs_in.Normal, spotHalfwayDir), 0.0), 16.0);
-        vec3 spotSpecular = light.specular * spotSpec * intensity;
+        spotSpecular = light.specular * spotSpec * intensity;
+
+        // Zastosuj tłumienie
+        spotAmbient *= attenuation;
+        spotDiffuse *= attenuation;
+        spotSpecular *= attenuation;
     }
 
-    return mat3(spotAmbient * attenuation, spotDiffuse * attenuation, spotSpecular * attenuation);
-
+    return mat3(spotAmbient, spotDiffuse, spotSpecular);
 }
+
 
 mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light) {
     vec3 lightDir = normalize(-light.direction);
