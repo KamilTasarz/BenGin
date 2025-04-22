@@ -39,8 +39,7 @@ void main()
 	float rimIntensity = 1.f;
    
     vec3 finalColor = vec3(0.f) + rim * rimColor * rimIntensity;
-	float alpha = 1.f;
-	if (length(finalColor) < 0.5f) { alpha = 0.f; };
+	
 
-    FragColor = vec4(finalColor, alpha);
+    FragColor = vec4(finalColor, 1.f);
 }
