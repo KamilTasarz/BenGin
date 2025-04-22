@@ -85,7 +85,7 @@ float fps = 0.0f; // Current FPS
 float fps_timer = 0.0f;
 int frames = 0;
 
-float rot_offset = 0.f;
+float rot_offset = 0.f, angle = 0.f;
 
 Node* rootNode;
 
@@ -510,6 +510,15 @@ int main() {
             point_lights[0].position -= camera->cameraUp * speed * deltaTime;
         }
 
+        if (glfwGetKey(window->window, GLFW_KEY_I) == GLFW_PRESS) {
+			angle += 1.f;
+        }
+        if (glfwGetKey(window->window, GLFW_KEY_K) == GLFW_PRESS) {
+            angle -= 1.f;
+        }
+
+		box_light_directional->transform.setLocalRotation({ -45.f, angle, 0.f });
+
         point_lights[0].setModelPosition();
         rootNode->updateSelfAndChild(false);
 
@@ -794,6 +803,7 @@ void setLights(Shader* shader) {
     }
 
     for (int i = 0; i < directional_light_number; i++) {
+        directional_lights[i].update();
         string index = to_string(i);
         shader->setVec3("directional_lights[" + index + "].direction", directional_lights[i].direction);
         shader->setVec3("directional_lights[" + index + "].ambient", directional_lights[i].ambient);

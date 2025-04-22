@@ -54,17 +54,20 @@ public:
 
 class DirectionalLight : public Light {
 public:
-    glm::vec3 direction;
+    glm::vec3 direction, origin_direction;
     
 
     DirectionalLight() : Light(nullptr, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)) {
-        this->direction = glm::vec3(1.f, -1.f, 1.f);
+        this->origin_direction = glm::vec3(1.f, -1.f, 1.f);
         view_projection = glm::mat4(1.f);
+        
     }
 
     DirectionalLight(Node* node, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
-        : Light(node, ambient, diffuse, specular), direction(direction) {
+        : Light(node, ambient, diffuse, specular) {
         updateMatrix();
+        origin_direction = object->transform.getForward();
+        update();
     }
 
     void render(unsigned int depthMapFBO, Shader &shader) {
@@ -89,6 +92,13 @@ public:
     glm::mat4& getMatrix() {
         updateMatrix();
         return view_projection;
+    }
+
+    void update() {
+
+        position = object->transform.getGlobalPosition();
+        direction = object->transform.getForward();
+
     }
 };
 

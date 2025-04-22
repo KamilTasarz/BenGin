@@ -92,14 +92,14 @@ void main() {
         for (int i = 0; i < directional_light_number; i++) {
             res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
-        float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map);
-        res[1] *= (1.f - shadow);
-        res[2] *= (1.f - shadow);
+        //float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map);
+        //res[1] *= (1.f - shadow);
+       // res[2] *= (1.f - shadow);
         
-        for (int i = 0; i < point_light_number; i++) {
-            res += calculatePointLight(viewDir, point_lights[i]);
-        }
-        res += calculateSpotLight(viewDir, spotlight);
+        //for (int i = 0; i < point_light_number; i++) {
+        //    res += calculatePointLight(viewDir, point_lights[i]);
+       // }
+       // res += calculateSpotLight(viewDir, spotlight);
 
         
         //float shadow1 = 0.f;//min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
