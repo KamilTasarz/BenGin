@@ -198,6 +198,7 @@ public:
 
     // Visibility
 	bool is_visible = true;
+	bool rim = false;
 
     //Hitbox
     BoundingBox *AABB;
@@ -218,9 +219,10 @@ public:
     }
 
     // Model
-    Node(Model& model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
+    Node(Model& model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f), bool rim = false) : pModel{ &model } {
         name = nameOfNode;
         id = _id;
+		this->rim = rim;
 
         if (model.min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model.min_points, model.max_points);
         else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
@@ -231,10 +233,10 @@ public:
         vector_of_colliders.push_back(AABB);
     }
 
-    Node(Model& model, std::string nameOfNode, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
+    Node(Model& model, std::string nameOfNode, bool no_textures = false, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f), bool rim = false) : pModel{ &model } {
         name = nameOfNode;
         id = _id;
-
+        this->rim = rim;
         if (model.min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model.min_points, model.max_points);
         else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
 
@@ -345,28 +347,45 @@ public:
     }
 
     // Draw self and children
-    void virtual drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) {
+    void virtual drawSelfAndChild(Shader& _shader, Shader& _shader_outline, Shader& _shader_rim, unsigned int& display, unsigned int& total) {
 
         if (pModel && is_visible) {
             //_shader.setVec4("dynamicColor", color);
-            _shader.use();
-            _shader.setMat4("model", transform.getModelMatrix());
+            if (!rim) {
+                _shader.use();
+                _shader.setMat4("model", transform.getModelMatrix());
 
-            if (animator != nullptr) {
-				auto f = animator->final_bone_matrices;
-                for (int i = 0; i < f.size(); ++i)
-                    _shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+                if (animator != nullptr) {
+                    auto f = animator->final_bone_matrices;
+                    for (int i = 0; i < f.size(); ++i)
+                        _shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+                }
+                if (is_marked) {
+                    glStencilMask(0xFF);
+                }
+                if (no_textures) {
+                    _shader.setInt("is_light", 1);
+                }
+                pModel->Draw(_shader);
+                glStencilMask(0x00);
+
+                _shader.setInt("is_light", 0);
             }
-            if (is_marked) {
-                glStencilMask(0xFF);
+            else {
+				_shader_rim.use();
+				_shader_rim.setMat4("model", transform.getModelMatrix());
+				if (animator != nullptr) {
+					auto f = animator->final_bone_matrices;
+					for (int i = 0; i < f.size(); ++i)
+						_shader_rim.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+				}
+                if (is_marked) {
+                    glStencilMask(0xFF);
+                }
+				pModel->Draw(_shader_rim);
+                glStencilMask(0x00);
             }
-            if (no_textures) {
-                _shader.setInt("is_light", 1);
-            }
-            pModel->Draw(_shader);
-            glStencilMask(0x00);
-            
-            _shader.setInt("is_light", 0);
+           
             
             _shader_outline.use();
 			_shader_outline.setMat4("model", transform.getModelMatrix());
@@ -386,7 +405,7 @@ public:
         total++;
 
         for (auto&& child : children) {
-            child->drawSelfAndChild(_shader, _shader_outline, display, total);
+            child->drawSelfAndChild(_shader, _shader_outline, _shader_rim, display, total);
         }
 
         //_shader.setVec4("dynamicColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -501,7 +520,7 @@ public:
         prepareBuffer();
     }
 
-    void drawSelfAndChild(Shader& _shader, Shader& _shader_outline, unsigned int& display, unsigned int& total) override {
+    void drawSelfAndChild(Shader& _shader, Shader& _shader_outline, Shader& _shader_rim, unsigned int& display, unsigned int& total) override {
         shader_instanced->use();
         glStencilMask(0xFF);
         pModel->DrawInstanced(*shader_instanced, size);

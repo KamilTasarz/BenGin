@@ -176,7 +176,7 @@ int main() {
     Shader* shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
     Shader* shader_text = new Shader(vertexPath_text, fragmentPath_text);
     Shader* shader_background = new Shader(vertexPath_text, fragmentPath_background);
-    Shader* shader_toon = new Shader(vertexPath, fragmentPath_toon);
+    Shader* shader_rim = new Shader(vertexPath, fragmentPath_toon);
 
     point_lights = new PointLight[10];
     directional_lights = new DirectionalLight[10];
@@ -226,7 +226,7 @@ int main() {
 
 
     Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, false, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
-    Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    Node* cos = new Node(Kmodel, "cos", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), true);
     Node* ludzik = new Node(Lmodel, "ludzik", colliders, false, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	//ludzik->animator = new Animator(anim);
@@ -280,13 +280,13 @@ int main() {
     box_stone->transform.setLocalPosition({ 0.0f, 0.0f, 7.5f });
     box_stone->transform.setLocalScale({ 16.0f, 3.0f, 1.0f });
 
-    box_light->transform.setLocalPosition({ 0.0f, 2.0f, 0.0f });
+    box_light->transform.setLocalPosition({ 7.5f, 2.0f, 7.5f });
     box_light->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
     box_light2->transform.setLocalPosition({ 8.0f, 4.0f, -8.0f });
     box_light2->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
-    box_light3->transform.setLocalPosition({0.0f, 1.0f, 0.0f });
+    box_light3->transform.setLocalPosition({0.0f, 0.0f, 0.0f });
     box_light3->transform.setLocalRotation({0.0f, 0.0f, 0.0f });
     box_light3->transform.setLocalScale({ 0.3f, 0.3f, 0.3f });
 
@@ -299,7 +299,7 @@ int main() {
     point_lights[0] = PointLight(box_light, 0.032f, 0.09f);
     //point_lights[1] = PointLight(box_light2, 0.032f, 0.09f);
     directional_lights[0] = DirectionalLight(box_light_directional, glm::vec3(1.f, -1.f, 1.f));
-    spotlight = new SpotLight(box_light3, 0.62f, 0.8f, 1.0f, 15.f, 20.f);
+    spotlight = new SpotLight(box_light3, 0.44f, 0.35f, 1.0f, 20.f, 20.f);
 
     /*walls->addChild(box_diff_spec);
     walls->addChild(box_diff_spec2);
@@ -606,11 +606,11 @@ int main() {
 		shader_outline->setMat4("view", view);
 		shader_outline->setMat4("projection", projection);
 
-        shader_toon->use();
-        shader_toon->setMat4("view", view);
-        shader_toon->setMat4("projection", projection);
+        shader_rim->use();
+        shader_rim->setMat4("view", view);
+        shader_rim->setMat4("projection", projection);
         
-		setLights(shader_toon);
+		setLights(shader_rim);
 
         shader->use();
         shader->setMat4("view", view);
@@ -656,9 +656,9 @@ int main() {
 
         // == standard drawing ==
 
-        rootNode->drawSelfAndChild(*shader_toon, *shader_outline, dis, tot);
-
-        rootNode->drawSelfAndChild(*shader, *shader_outline, dis, tot);
+        rootNode->drawSelfAndChild(*shader, *shader_outline, *shader_rim, dis, tot);
+        
+        
         // == outline ==
 
         shader_outline->use();

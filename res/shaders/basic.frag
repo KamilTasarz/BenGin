@@ -89,22 +89,25 @@ void main() {
         
         vec3 viewDir = normalize(cameraPosition - fs_in.Pos);
 	    mat3 res = mat3(0.f);
-        for (int i = 0; i < point_light_number; i++) {
-            //res += calculatePointLight(viewDir, point_lights[i]);
-        }
         for (int i = 0; i < directional_light_number; i++) {
-            //res += calculateDirectionalLight(viewDir, directional_lights[i]);
+            res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
-
+        float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map);
+        res[1] *= (1.f - shadow);
+        res[2] *= (1.f - shadow);
+        
+        for (int i = 0; i < point_light_number; i++) {
+            res += calculatePointLight(viewDir, point_lights[i]);
+        }
         res += calculateSpotLight(viewDir, spotlight);
 
-        float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map);
+        
         //float shadow1 = 0.f;//min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
         
         //float shadow = clamp(shadow1+shadow2, 0.f, 1.f);
 
 
-        FragColor = vec4((res[0] + (res[1] + res[2]) * (1.f - shadow)), 1.f);
+        FragColor = vec4((res[0] + (res[1] + res[2]) ), 1.f);
 
     } else {
         FragColor = vec4(1.f);
