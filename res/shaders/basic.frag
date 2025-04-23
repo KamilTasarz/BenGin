@@ -141,7 +141,6 @@ mat3 calculateSpotLight(vec3 viewDir, SpotLight light) {
     float theta = dot(spotDir, normalize(light.direction));
 
     float distance = length(light.position - fs_in.Pos);
-    float attenuation = 1.0; // (light.quadratic * distance * distance + light.linear * distance + light.constant);
 
     vec3 spotAmbient = vec3(0.0);
     vec3 spotDiffuse = vec3(0.0);
@@ -158,9 +157,6 @@ mat3 calculateSpotLight(vec3 viewDir, SpotLight light) {
         float spotSpec = pow(max(dot(fs_in.Normal, spotHalfwayDir), 0.0), 16.0);
         spotSpecular = light.specular * texture(texture_diffuse1, fs_in.Cords).rgb * spotSpec * intensity;
 
-        spotAmbient *= attenuation;
-        spotDiffuse *= attenuation;
-        spotSpecular *= attenuation;
     }
 
     return mat3(spotAmbient, spotDiffuse, spotSpecular);
