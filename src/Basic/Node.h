@@ -541,6 +541,8 @@ public:
     void addChild(Node* p, std::string name);
     void addPointLight(PointLight* p);
     void addDirectionalLight(DirectionalLight* p);
+    void addPointLight(PointLight* p, std::string name);
+    void addDirectionalLight(DirectionalLight* p, std::string name);
     void setShaders();
     void draw(float width, float height, unsigned int framebuffer);
     void drawMarkedObject();

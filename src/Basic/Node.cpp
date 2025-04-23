@@ -35,6 +35,19 @@ void SceneGraph::addDirectionalLight(DirectionalLight* p) {
     directional_light_number++;
 }
 
+void SceneGraph::addPointLight(PointLight* p, std::string name) {
+    addChild(p, name);
+    point_lights.push_back(p);
+    point_light_number++;
+}
+
+void SceneGraph::addDirectionalLight(DirectionalLight* p, std::string name) {
+    addChild(p, name);
+    directional_lights.push_back(p);
+    directional_light_number++;
+}
+
+
 void SceneGraph::setShaders() {
     glm::mat4 projection = camera->GetProjection();
     glm::mat4 view = camera->GetView();
@@ -247,6 +260,9 @@ void  Node::updateSelfAndChild(bool controlDirty) {
 
     controlDirty |= transform.isDirty();
 
+     
+   
+
     if (controlDirty) {
         forceUpdateSelfAndChild();
         //return;
@@ -298,10 +314,12 @@ void Node::drawSelfAndChild() {
 
     }
 
-
-    for (auto&& child : children) {
-        child->drawSelfAndChild();
+    if (is_visible) {
+        for (auto&& child : children) {
+            child->drawSelfAndChild();
+        }
     }
+    
 
     //_shader.setVec4("dynamicColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -321,7 +339,7 @@ void Node::drawShadows(Shader& shader) {
 
         shader.use();
         shader.setMat4("model", transform.getModelMatrix());
-        if (!no_textures) {
+        if (!no_textures && is_visible) {
             if (animator != nullptr) {
                 auto f = animator->final_bone_matrices;
                 for (int i = 0; i < f.size(); ++i)

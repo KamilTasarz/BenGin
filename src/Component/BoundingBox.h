@@ -5,6 +5,11 @@
 
 #include "../Basic/Shader.h"
 
+struct SnapResult {
+	bool shouldSnap = false;
+	glm::vec3 snapOffset = glm::vec3(0.f);
+};
+
 
 class BoundingBox {
 
@@ -30,7 +35,10 @@ public:
 	}
 
 	bool isRayIntersects(glm::vec3 direction, glm::vec3 origin, float &t) const; // t - parameter
-	bool isBoundingBoxIntersects(const BoundingBox& other_bounding_box) const; // t - parameter
+	bool isBoundingBoxIntersects(const BoundingBox& other_bounding_box) const;
+	SnapResult trySnapToWallsX(const BoundingBox& other, float snapThreshold);
+	SnapResult trySnapToWallsY(const BoundingBox& other, float snapThreshold);
+	SnapResult trySnapToWallsZ(const BoundingBox& other, float snapThreshold);
 	void transformAABB(const glm::mat4& model);
 	void draw(Shader& shader);
 	void setBuffers();
