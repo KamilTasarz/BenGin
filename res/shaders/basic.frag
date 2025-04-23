@@ -141,7 +141,7 @@ mat3 calculateSpotLight(vec3 viewDir, SpotLight light) {
     float theta = dot(spotDir, normalize(light.direction));
 
     float distance = length(light.position - fs_in.Pos);
-    float attenuation = 1.0 / (light.quadratic * distance * distance + light.linear * distance + light.constant);
+    float attenuation = 1.0; // (light.quadratic * distance * distance + light.linear * distance + light.constant);
 
     vec3 spotAmbient = vec3(0.0);
     vec3 spotDiffuse = vec3(0.0);

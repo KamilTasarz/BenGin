@@ -177,7 +177,7 @@ public:
          cut_off(glm::cos(glm::radians(12.5f))), outer_cut_off(glm::cos(glm::radians(17.5f))) {}
 
     SpotLight(Node* node, float quadratic, float linear, float constant, float cut_off, float outer_cut_off,
-        glm::vec3 ambient = glm::vec3(0.7f, 0.3f, 0.1f), glm::vec3 diffuse = glm::vec3(0.7f, 0.3f, 0.1f), glm::vec3 specular = glm::vec3(0.7f, 0.3f, 0.1f))
+        glm::vec3 ambient = glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3 diffuse = glm::vec3(0.8f, 0.1f, 0.1f), glm::vec3 specular = glm::vec3(0.8f, 0.1f, 0.1f))
         : PointLight(node, quadratic, linear, constant, ambient, diffuse, specular), cut_off(glm::cos(glm::radians(cut_off))), outer_cut_off(glm::cos(glm::radians(outer_cut_off))) {
         updateMatrix();
     }
