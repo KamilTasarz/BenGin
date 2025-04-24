@@ -14,9 +14,10 @@
 #include <memory>
 
 #include "../Component/BoundingBox.h"
+#include "../Component/CameraGlobals.h"
 #include "Model.h"
 #include "Animator.h"
-#include "../Component/CameraGlobals.h"
+#include "../Grid.h"
 
 
 
@@ -482,6 +483,8 @@ public:
     std::list<DirectionalLight*> directional_lights;
     std::list<PointLight*> point_lights;
 
+	Grid* grid = nullptr;
+
     unsigned int depthMapFBO;
 
     Shader* shader;
@@ -506,7 +509,11 @@ public:
     const char* fragmentPath_background = "res/shaders/background.frag";
 
     SceneGraph() {
+
         root = new Node("root", 0);
+		grid = new Grid();
+        grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
+        grid->Update();
 		root->scene_graph = this;
         marked_object = nullptr;
         new_marked_object = nullptr;

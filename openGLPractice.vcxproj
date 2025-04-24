@@ -136,7 +136,9 @@
     <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="dependencies\stb_image\stb_image.cpp" />
+    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SimpleObject.cpp" />
     <ClCompile Include="src\Basic\Animation.cpp" />
@@ -183,6 +185,8 @@
     <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
+    <ClInclude Include="Editor.h" />
+    <ClInclude Include="Grid.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="SimpleObject.h" />
     <ClInclude Include="src\AudioEngine.h" />
@@ -221,6 +225,8 @@
     <None Include="res\shaders\background.frag" />
     <None Include="res\shaders\basic.frag" />
     <None Include="res\shaders\basic.vert" />
+    <None Include="res\shaders\grid.frag" />
+    <None Include="res\shaders\grid.vert" />
     <None Include="res\shaders\instanced.vert" />
     <None Include="res\shaders\outline.frag" />
     <None Include="res\shaders\triangle.frag" />

@@ -25,7 +25,7 @@ const float ZOOM = 45.0f;
 enum CameraMode {
 
     // There might be multiple camera modes in the future (p.e. free, fixed)
-    FREE = 0, FOLLOWING = 1, FIXED = 2
+    FREE = 0, FOLLOWING = 1, FIXED = 2, FRONT_ORTO = 3
 
 };
 

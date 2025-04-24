@@ -48,6 +48,7 @@ void DrawNodeBlock(Node* node, int depth = 0);
 void DrawHierarchyWindow(Node* root, float x, float y, float width, float height);
 void previewDisplay();
 void assetBarDisplay(float x, float y, float width, float height);
+void DrawGrid(const glm::vec3& cameraPos, float gridSize = 1.0f, int halfCount = 50);
 
 string print(glm::vec3 v);
 
@@ -520,23 +521,13 @@ int main() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGuizmo::BeginFrame();
-
-        // Window content
-        ImGui::Begin("Test Window");
-        ImGui::Text("Test test test test 123 123");
-        ImGui::Text("Current FPS: %.1f", fps); // Dipslay current fps
-
-        
-
-        // Window render
-        ImGui::End();
-
+        ImGuizmo::BeginFrame();        
 
         
         DrawHierarchyWindow(sceneGraph->root, 0, 0, WINDOW_WIDTH / 6, 2 * WINDOW_HEIGHT / 3);
         previewDisplay();
         assetBarDisplay(0, 2 * WINDOW_HEIGHT / 3, WINDOW_WIDTH, WINDOW_HEIGHT / 3);
+
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -736,7 +727,13 @@ void previewDisplay()
 
     ImGui::Begin("Viewport", nullptr, window_flags);
 
-    // Pokaż teksturę (zwróć uwagę na UV – odwrócone Y)
+    if (ImGui::Button("ORTO", ImVec2(100, 24))) {
+		camera->mode != FRONT_ORTO ? camera->changeMode(FRONT_ORTO) : camera->changeMode(FREE);
+		sceneGraph->grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
+		sceneGraph->grid->Update();
+    }
+
+
     ImGui::Image((ImTextureID)(intptr_t)colorTexture, ImVec2(previewWidth, previewHeight), ImVec2(0, 1), ImVec2(1, 0));
 
     isInPreview = ImGui::IsItemHovered();
@@ -754,6 +751,9 @@ void previewDisplay()
             int id = *(int*)payload->Data;
             
 			sceneGraph->addChild(new Node(getModelById(models, id), "entity", colliders));
+            for (auto& collider : colliders) {
+
+            }
         }
         ImGui::EndDragDropTarget();
     }
@@ -763,6 +763,20 @@ void previewDisplay()
     ImGui::End();
 
     ImGui::PopStyleVar(3);
+}
+
+int getDominantAxis(const glm::vec3& delta) {
+	
+    int dominantAxis = -1;
+    float maxDelta = 0.0f;
+    for (int i = 0; i < 3; ++i) {
+        if (std::abs(delta[i]) > maxDelta) {
+            dominantAxis = i;
+            maxDelta = std::abs(delta[i]);
+        }
+    }
+
+    return dominantAxis;
 }
 
 void RenderGuizmo()
@@ -783,7 +797,7 @@ void RenderGuizmo()
 
         //io = ImGui::GetIO();
 
-        ImGuizmo::SetOrthographic(false); // If we want to change between perspective and orthographic it's added just in case
+        ImGuizmo::SetOrthographic(camera->mode == FRONT_ORTO); // If we want to change between perspective and orthographic it's added just in case
         ImGuizmo::SetDrawlist(); // Draw to the current window
 
         //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
@@ -797,12 +811,13 @@ void RenderGuizmo()
         auto& _transform = modified_object->getTransform();
         glm::mat4 _model_matrix = _transform.getModelMatrix();
 
+		glm::dvec3 lastPos = _transform.getLocalPosition();
 
         ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
             currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix));
 
         if (ImGuizmo::IsUsing()) {
-            SnapResult result;
+            /*SnapResult result;
             for (auto& collider : colliders) {
                 if (modified_object->AABB != collider) {
                      SnapResult tempX, tempY, tempZ;
@@ -816,7 +831,9 @@ void RenderGuizmo()
                          break;
                      }
                 }
-            }
+            }*/
+
+            
 
 
 
@@ -835,7 +852,7 @@ void RenderGuizmo()
             
 
 
-            if (result.shouldSnap && !isSnapped) {
+            /*if (result.shouldSnap && !isSnapped) {
                 translation += result.snapOffset;
                 lastSnapOffset = result.snapOffset;
                 snapedPosition = translation;
@@ -846,7 +863,27 @@ void RenderGuizmo()
                 if (glm::length(currentOffset - lastSnapOffset) > 0.5f) {
                     isSnapped = false;
                 }
+            }*/
+
+            glm::dvec3 delta = (glm::dvec3)translation - lastPos;
+            int axis = getDominantAxis(delta); 
+
+            // 2. pobierz aktywną krawędź AABB
+            if (axis >= 0) {
+                double edge = (delta[axis] > 0) ? sceneGraph->marked_object->AABB->max_point_world[axis] : sceneGraph->marked_object->AABB->min_point_world[axis];
+
+                // 3. snap
+                double snapValue = 1.0f;
+                double snapped = round(edge / snapValue) * snapValue;
+                double offset = snapped - edge;
+
+                if (std::abs(offset) < 0.2f) {
+                    glm::dvec3 snapVec(0.0);
+                    snapVec[axis] = offset;
+                    translation += snapVec;
+                }
             }
+            
 
         
             if (currentOperation == ImGuizmo::OPERATION::TRANSLATE) {

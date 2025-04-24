@@ -36,6 +36,9 @@ public:
 
 	bool isRayIntersects(glm::vec3 direction, glm::vec3 origin, float &t) const; // t - parameter
 	bool isBoundingBoxIntersects(const BoundingBox& other_bounding_box) const;
+	
+
+
 	SnapResult trySnapToWallsX(const BoundingBox& other, float snapThreshold);
 	SnapResult trySnapToWallsY(const BoundingBox& other, float snapThreshold);
 	SnapResult trySnapToWallsZ(const BoundingBox& other, float snapThreshold);

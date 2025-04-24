@@ -1,4 +1,5 @@
 ﻿#include "Node.h"
+#include "../Component/CameraGlobals.h"
 
 void SceneGraph::unmark() {
     marked_object->is_marked = false;
@@ -87,6 +88,8 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
     glViewport(0, 0, width, height);
     glClearColor(.01f, .01f, .01f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	grid->Draw();
 
     setShaders();
     root->drawSelfAndChild();
