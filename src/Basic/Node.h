@@ -17,8 +17,9 @@
 #include "../Component/CameraGlobals.h"
 #include "Model.h"
 #include "Animator.h"
-#include "../Grid.h"
 
+#include <set>
+#include "../Grid.h"
 
 
 class SceneGraph;
@@ -203,7 +204,7 @@ public:
 	SceneGraph* scene_graph;
 
     // Children list
-    std::list<Node*> children;
+    std::set<Node*> children;
 
     int size = 0;
 
@@ -279,6 +280,20 @@ public:
 
     Node* getChildById(int id);
 
+    std::set<Node*> getAllChildren() {
+        std::set<Node*> result;
+        collectAllChildren(result);
+        return result;
+    }
+
+    void collectAllChildren(std::set<Node*>& out) {
+        for (Node* child : children) {
+            if (out.insert(child).second) { // If it's the first occurence of the child
+                child->collectAllChildren(out);
+            }
+        }
+    }
+
     void mark(glm::vec4 rayWorld, float& marked_depth);
 
     // Forcing an update of self and children even if there were no changes
@@ -294,7 +309,13 @@ public:
 
     void drawShadows(Shader& shader);
 
-    
+    std::string getName() {
+        return name;
+    }
+
+    void rename(std::string new_name) {
+        this->name = new_name;
+    }
 
     void separate(const BoundingBox* other_AABB);
 
