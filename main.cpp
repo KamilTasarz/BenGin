@@ -373,33 +373,36 @@ int main() {
         // Audio control section (just temporarily hardcoded)
         audioEngine.Update();
 
-        if (glfwGetKey(window->window, GLFW_KEY_1) == GLFW_PRESS) {
-            audioEngine.stopSound(current_track_id);
-            //current_track_id = audioEngine.PlaySounds(track1, Vector3{0.0f}, -11.0);
-        }
-        if (glfwGetKey(window->window, GLFW_KEY_2) == GLFW_PRESS) {
-            audioEngine.stopSound(current_track_id);
-            //current_track_id = audioEngine.PlaySounds(track2, Vector3{ 0.0f }, -11.0);
-        }
 
-        // Pausing/resuming
-        if (glfwGetKey(window->window, GLFW_KEY_3) == GLFW_PRESS && pauseTimer <= 0.0f) {
-            if (paused) {
-                audioEngine.resumeSound(current_track_id);
-            } else {
-                audioEngine.pauseSound(current_track_id);
-            }
-            paused = !paused;
-            pauseTimer = pauseCooldown;
-        }
 
-        if (glfwGetKey(window->window, GLFW_KEY_4) == GLFW_PRESS) {
-            useless_garbage = audioEngine.PlaySounds(sound_effect);
-        }
+        //if (glfwGetKey(window->window, GLFW_KEY_1) == GLFW_PRESS) {
+        //    audioEngine.stopSound(current_track_id);
+        //    current_track_id = audioEngine.PlaySounds(track1, Vector3{0.0f}, -11.0);
+        //}
+        //if (glfwGetKey(window->window, GLFW_KEY_2) == GLFW_PRESS) {
+        //    audioEngine.stopSound(current_track_id);
+        //    current_track_id = audioEngine.PlaySounds(track2, Vector3{ 0.0f }, -11.0);
+        //}
 
-        if (pauseTimer > 0.0f) {
-            pauseTimer -= deltaTime;
-        }
+
+        //// Pausing/resuming
+        //if (glfwGetKey(window->window, GLFW_KEY_3) == GLFW_PRESS && pauseTimer <= 0.0f) {
+        //    if (paused) {
+        //        audioEngine.resumeSound(current_track_id);
+        //    } else {
+        //        audioEngine.pauseSound(current_track_id);
+        //    }
+        //    paused = !paused;
+        //    pauseTimer = pauseCooldown;
+        //}
+
+        //if (glfwGetKey(window->window, GLFW_KEY_4) == GLFW_PRESS) {
+        //    useless_garbage = audioEngine.PlaySounds(sound_effect);
+        //}
+
+        //if (pauseTimer > 0.0f) {
+        //    pauseTimer -= deltaTime;
+        //}
 
         // --- //
 
