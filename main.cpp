@@ -39,7 +39,7 @@ CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
 #define WINDOW_HEIGHT 1080
 
 void changeMouse(GLFWwindow* window);
-glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection);
+Ray getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection);
 //void setLights(Shader* shader);
 // void initializeServices();
 void leftClick(float value);
@@ -375,11 +375,11 @@ int main() {
 
         if (glfwGetKey(window->window, GLFW_KEY_1) == GLFW_PRESS) {
             audioEngine.stopSound(current_track_id);
-            current_track_id = audioEngine.PlaySounds(track1, Vector3{0.0f}, -11.0);
+            //current_track_id = audioEngine.PlaySounds(track1, Vector3{0.0f}, -11.0);
         }
         if (glfwGetKey(window->window, GLFW_KEY_2) == GLFW_PRESS) {
             audioEngine.stopSound(current_track_id);
-            current_track_id = audioEngine.PlaySounds(track2, Vector3{ 0.0f }, -11.0);
+            //current_track_id = audioEngine.PlaySounds(track2, Vector3{ 0.0f }, -11.0);
         }
 
         // Pausing/resuming
@@ -590,18 +590,30 @@ void changeMouse(GLFWwindow* window) {
     
 }
 
-glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
+Ray getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
     
-        
+    if (camera->mode != FRONT_ORTO) {
 
-    glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, -1.0f, 1.0f);
-    glm::vec4 rayEye = glm::inverse(_projection) * rayClip;
-    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
-    glm::vec4 rayWorld = glm::normalize(glm::inverse(_view) * rayEye);
+        glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, -1.0f, 1.0f);
+        glm::vec4 rayEye = glm::inverse(_projection) * rayClip;
+        rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+        glm::vec4 rayWorld = glm::normalize(glm::inverse(_view) * rayEye);
 
-	return rayWorld;
+        return {camera->cameraPos, rayWorld};
+    }
+    else {
+        glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, 0.0f, 1.0f);
+        glm::vec4 worldPos = glm::inverse(_projection * _view) * rayClip;
+        worldPos /= worldPos.w;
+
+        // 2. Kierunek: w ortho zawsze „w głąb kamery” — z= -1 w view space
+        glm::vec4 direction = glm::normalize(glm::vec4(glm::inverse(_view) * glm::vec4(0, 0, -1, 0)));
+
+        return { glm::vec3(worldPos), direction };
+    }
+
 	
-    
+
 }
 
 string print(glm::vec3 v) {
@@ -752,17 +764,8 @@ void previewDisplay()
 
     ImGui::Begin("Viewport", nullptr, window_flags);
 
-    if (ImGui::Button("ORTO", ImVec2(100, 24))) {
-		camera->mode != FRONT_ORTO ? camera->changeMode(FRONT_ORTO) : camera->changeMode(FREE);
-		sceneGraph->grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
-		sceneGraph->grid->Update();
-    }
-
-    if (ImGui::Button("GRID_SNAP", ImVec2(100, 24))) {
-        isGridSnap = !isGridSnap;
-    }
-
     ImGui::Image((ImTextureID)(intptr_t)colorTexture, ImVec2(previewWidth, previewHeight), ImVec2(0, 1), ImVec2(1, 0));
+
 
     isInPreview = ImGui::IsItemHovered();
 	if (isInPreview) {
@@ -778,8 +781,11 @@ void previewDisplay()
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_DRAG")) {
             int id = *(int*)payload->Data;
             
-			sceneGraph->addChild(new Node(getModelById(models, id), "entity", colliders));
-            
+            Node* p = new Node(getModelById(models, id), "entity", colliders);
+
+
+			sceneGraph->addChild(p);
+			sceneGraph->marked_object = p;
         }
         ImGui::EndDragDropTarget();
     }
@@ -975,6 +981,21 @@ void assetBarDisplay(float x, float y, float width, float height) {
     float panelWidth = ImGui::GetContentRegionAvail().x;
     int columnCount = (int)(panelWidth / cellSize);
     if (columnCount < 1) columnCount = 1;
+
+    if (ImGui::Button("ORTO", ImVec2(100, 24))) {
+        camera->mode != FRONT_ORTO ? camera->changeMode(FRONT_ORTO) : camera->changeMode(FREE);
+        sceneGraph->grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
+        sceneGraph->grid->Update();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("GRID_SNAP", ImVec2(100, 24))) {
+        isGridSnap = !isGridSnap;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("SAVE", ImVec2(100, 24))) {
+        saveScene("res/scene/scene_temp.json", sceneGraph, models);
+    }
+
 
     ImGui::Columns(columnCount, nullptr, false);
 

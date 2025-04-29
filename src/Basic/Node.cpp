@@ -128,7 +128,7 @@ void SceneGraph::forcedUpdate() {
     root->updateSelfAndChild(true);
 }
 
-void SceneGraph::mark(glm::vec4 ray) {
+void SceneGraph::mark(Ray ray) {
     float t = FLT_MAX;
     new_marked_object = nullptr;
     root->mark(ray, t);
@@ -245,12 +245,12 @@ Node* Node::getChildById(int id) {
     return nullptr;
 }
 
-void Node::mark(glm::vec4 rayWorld, float& marked_depth) {
+void Node::mark(Ray rayWorld, float& marked_depth) {
 
     for (auto&& child : children) {
         float t;
 
-        if (child->AABB != nullptr && child->AABB->isRayIntersects(rayWorld, camera->cameraPos, t)) {
+        if (child->AABB != nullptr && child->AABB->isRayIntersects(rayWorld.direction, rayWorld.origin, t)) {
 
             if (t < marked_depth) {
 

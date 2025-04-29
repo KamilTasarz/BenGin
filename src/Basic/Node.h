@@ -21,6 +21,10 @@
 #include <set>
 #include "../Grid.h"
 
+struct Ray {
+	glm::vec3 origin;
+	glm::vec4 direction;
+};
 
 class SceneGraph;
 
@@ -294,7 +298,7 @@ public:
         }
     }
 
-    void mark(glm::vec4 rayWorld, float& marked_depth);
+    void mark(Ray rayWorld, float& marked_depth);
 
     // Forcing an update of self and children even if there were no changes
     void forceUpdateSelfAndChild();
@@ -582,7 +586,7 @@ public:
     void update(float delta_time);
     void forcedUpdate();
     void setLights(Shader* shader);
-    void mark(glm::vec4 ray);
+    void mark(Ray ray);
 };
 
 
