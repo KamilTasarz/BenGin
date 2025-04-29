@@ -24,6 +24,20 @@ void SceneGraph::addChild(Node* p, std::string name) {
     }
 }
 
+void SceneGraph::deleteChild(Node* p)
+{
+    Node* parent = p->parent;
+    if (!parent) return;
+
+    auto& siblings = parent->children;
+    auto it = std::find(siblings.begin(), siblings.end(), p);
+    if (it != siblings.end()) {
+        siblings.erase(it);
+        delete p;
+    }
+}
+
+
 void SceneGraph::addPointLight(PointLight* p) {
     addChild(p);
     point_lights.push_back(p);

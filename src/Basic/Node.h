@@ -479,6 +479,9 @@ public:
     Node* root;
     // Root has ptr on marked object
     Node* marked_object, * new_marked_object;
+
+	Node* to_delete = nullptr;
+
     int size = 0, point_light_number = 0, directional_light_number = 0;
     std::list<DirectionalLight*> directional_lights;
     std::list<PointLight*> point_lights;
@@ -546,6 +549,7 @@ public:
     void unmark();
     void addChild(Node* p);
     void addChild(Node* p, std::string name);
+	void deleteChild(Node* p);
     void addPointLight(PointLight* p);
     void addDirectionalLight(DirectionalLight* p);
     void addPointLight(PointLight* p, std::string name);

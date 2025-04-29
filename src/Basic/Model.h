@@ -164,12 +164,33 @@ private:
         }
         // process materials
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        //aiTexture* _textures =  scene->mTextures[mesh->mMaterialIndex];
         // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
         // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
         // Same applies to other texture as the following list summarizes:
         // diffuse: texture_diffuseN
         // specular: texture_specularN
         // normal: texture_normalN
+
+        std::cout << "Number of materials: " << scene->mNumMaterials << std::endl;
+
+        for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
+            aiMaterial* material = scene->mMaterials[i];
+            std::cout << "Material " << i << " has " << material->GetTextureCount(aiTextureType_DIFFUSE) << " diffuse textures." << std::endl;
+
+            // Dla każdego materiału wypisz inne dostępne tekstury
+            for (int t = aiTextureType_DIFFUSE; t <= aiTextureType_HEIGHT; t++) {
+                int textureCount = material->GetTextureCount((aiTextureType)t);
+                std::cout << "Texture type " << t << " count: " << textureCount << std::endl;
+            }
+        }
+
+        aiString path;
+        if (material->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS) {
+            std::string texPath = path.C_Str();
+            // Załaduj plik tekstury (np. przez stb_image)
+        }
+
 
         // 1. diffuse maps
         vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");

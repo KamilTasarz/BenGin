@@ -48,7 +48,6 @@ void DrawNodeBlock(Node* node, int depth = 0);
 void DrawHierarchyWindow(Node* root, float x, float y, float width, float height);
 void previewDisplay();
 void assetBarDisplay(float x, float y, float width, float height);
-void DrawGrid(const glm::vec3& cameraPos, float gridSize = 1.0f, int halfCount = 50);
 
 string print(glm::vec3 v);
 
@@ -101,7 +100,7 @@ int previewHeight = 2 * WINDOW_HEIGHT / 3;
 
 unsigned int framebuffer, colorTexture, depthRenderbuffer;
 
-bool isHUD = false, isInPreview = false;
+bool isHUD = false, isInPreview = false, isGridSnap = false;
 
 glm::vec2 normalizedMouse;
 
@@ -177,7 +176,8 @@ int main() {
     Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
     Model Kmodel("res/models/kutasiarz/The_Thing.obj", 1);
     Model Lmodel("res/models/man/CesiumMan2.gltf", 2);    
-    Model Rmodel("res/models/mecha_ramie_peter/mecha_ramie.obj", 8);    
+    cout << "Model" << endl;
+    Model Rmodel("res/models/mecha_ramie_peter/mecha_ramie_FINFIN.glb", 8);    
     
 
     //Model Lmodel("res/models/ludzik/ludzik.gltf");
@@ -291,10 +291,10 @@ int main() {
     Animation* anim = new Animation(anim_path, models[2]);
 	sceneGraph->root->getChildByName("ludzik")->animator = new Animator(anim);
 
-    /*const char* anim_path2 = "res/models/mecha_ramie_peter/mecha_ramie.glb";
+    const char* anim_path2 = "res/models/mecha_ramie_peter/mecha_ramie_FINFIN.glb";
 
     Animation* anim2 = new Animation(anim_path2, getModelById(models, 8));
-    sceneGraph->root->getChildByName("ramie")->animator = new Animator(anim2);*/
+    sceneGraph->root->getChildByName("ramie")->animator = new Animator(anim2);
 
 
 
@@ -556,30 +556,33 @@ int main() {
 }
 
 void changeMouse(GLFWwindow* window) {
-    double mouseX, mouseY;
-    glfwGetCursorPos(window, &mouseX, &mouseY);
+    if (camera->mode == FREE) {
+        double mouseX, mouseY;
+        glfwGetCursorPos(window, &mouseX, &mouseY);
 
-    int windowWidth, windowHeight;
-    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+        int windowWidth, windowHeight;
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-    if (mouseX <= xCursorMargin) {
-        glfwSetCursorPos(window, windowWidth - xCursorMargin - 1, mouseY);
-        lastX = windowWidth - xCursorMargin - 1;
-    }
-    else if (mouseX >= windowWidth - xCursorMargin) {
-        glfwSetCursorPos(window, xCursorMargin + 1, mouseY);
-        lastX = xCursorMargin + 1;
-    }
+        if (mouseX <= xCursorMargin) {
+            glfwSetCursorPos(window, windowWidth - xCursorMargin - 1, mouseY);
+            lastX = windowWidth - xCursorMargin - 1;
+        }
+        else if (mouseX >= windowWidth - xCursorMargin) {
+            glfwSetCursorPos(window, xCursorMargin + 1, mouseY);
+            lastX = xCursorMargin + 1;
+        }
 
-    if (mouseY <= yCursorMargin) {
-        glfwSetCursorPos(window, mouseX, windowHeight - yCursorMargin - 1);
-        lastY = windowHeight - yCursorMargin - 1;
+        if (mouseY <= yCursorMargin) {
+            glfwSetCursorPos(window, mouseX, windowHeight - yCursorMargin - 1);
+            lastY = windowHeight - yCursorMargin - 1;
 
+        }
+        else if (mouseY >= windowHeight - yCursorMargin) {
+            glfwSetCursorPos(window, mouseX, yCursorMargin + 1);
+            lastY = yCursorMargin + 1;
+        }
     }
-    else if (mouseY >= windowHeight - yCursorMargin) {
-        glfwSetCursorPos(window, mouseX, yCursorMargin + 1);
-        lastY = yCursorMargin + 1;
-    }
+    
 }
 
 glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
@@ -643,6 +646,8 @@ void DrawNodeBlock(Node* node, int depth)
         drawList->AddRect(itemPos,
             ImVec2(itemPos.x + itemSize.x, itemPos.y + itemSize.y),
             IM_COL32(255, 255, 0, 255), 4.0f, 0, 2.0f);
+
+        
     }
 
     // Nazwa
@@ -681,6 +686,21 @@ void DrawNodeBlock(Node* node, int depth)
     for (auto& child : node->children)
     {
         DrawNodeBlock(child, depth + 1);
+    }
+
+    if (selectedNode == node) {
+        if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
+
+            sceneGraph->to_delete = node;
+
+            sceneGraph->marked_object = nullptr;
+        }
+        
+    }
+
+    if (node == sceneGraph->root && sceneGraph->to_delete) {
+		sceneGraph->deleteChild(sceneGraph->to_delete);
+		sceneGraph->to_delete = nullptr;
     }
 }
 
@@ -733,6 +753,9 @@ void previewDisplay()
 		sceneGraph->grid->Update();
     }
 
+    if (ImGui::Button("GRID_SNAP", ImVec2(100, 24))) {
+        isGridSnap = !isGridSnap;
+    }
 
     ImGui::Image((ImTextureID)(intptr_t)colorTexture, ImVec2(previewWidth, previewHeight), ImVec2(0, 1), ImVec2(1, 0));
 
@@ -751,9 +774,7 @@ void previewDisplay()
             int id = *(int*)payload->Data;
             
 			sceneGraph->addChild(new Node(getModelById(models, id), "entity", colliders));
-            for (auto& collider : colliders) {
-
-            }
+            
         }
         ImGui::EndDragDropTarget();
     }
@@ -812,9 +833,12 @@ void RenderGuizmo()
         glm::mat4 _model_matrix = _transform.getModelMatrix();
 
 		glm::dvec3 lastPos = _transform.getLocalPosition();
+        
+        bool useSnap = ImGui::IsKeyDown(ImGuiKey_LeftShift);
 
+        float snap[3] = { 1.0f, 1.0f, 1.0f };
         ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
-            currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix));
+            currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix), nullptr, useSnap ? snap : nullptr);
 
         if (ImGuizmo::IsUsing()) {
             /*SnapResult result;
@@ -865,24 +889,32 @@ void RenderGuizmo()
                 }
             }*/
 
-            glm::dvec3 delta = (glm::dvec3)translation - lastPos;
-            int axis = getDominantAxis(delta); 
+            
+            if (isGridSnap) {
+                glm::dvec3 delta = (glm::dvec3)translation - lastPos;
+                int axis = getDominantAxis(delta);
 
-            // 2. pobierz aktywną krawędź AABB
-            if (axis >= 0) {
-                double edge = (delta[axis] > 0) ? sceneGraph->marked_object->AABB->max_point_world[axis] : sceneGraph->marked_object->AABB->min_point_world[axis];
+                // 2. pobierz aktywną krawędź AABB
+                if (axis >= 0) {
+                    float edge = sceneGraph->marked_object->AABB->min_point_world[axis];
 
-                // 3. snap
-                double snapValue = 1.0f;
-                double snapped = round(edge / snapValue) * snapValue;
-                double offset = snapped - edge;
+                    // 3. snap
+                    double snapValue = 1.0;
+                    float snapped = round(edge / snapValue) * snapValue;
+                    /*snapped.x = round(edge.x / snapValue) * snapValue;
+                    snapped.y = round(edge.y / snapValue) * snapValue;
+                    snapped.z = round(edge.z / snapValue) * snapValue;*/
+                    float offset = snapped - edge;
 
-                if (std::abs(offset) < 0.2f) {
-                    glm::dvec3 snapVec(0.0);
-                    snapVec[axis] = offset;
-                    translation += snapVec;
+                    if (std::abs(offset) < 0.2) {
+                        glm::dvec3 snapVec(0.0);
+                        snapVec[axis] = offset;
+                        translation += snapVec;
+                    }
                 }
             }
+
+            
             
 
         

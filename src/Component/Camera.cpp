@@ -43,6 +43,18 @@ void Camera::ProcessKeyboard(GLfloat deltaTime, int dir) {
     else if (mode == FOLLOWING) {
         cameraPos = object_to_follow->transform.getGlobalPosition() + camera_following_offset;
     }
+    else if (mode == FRONT_ORTO) {
+        GLfloat cameraSpeed = MovementSpeed * deltaTime;
+        if (4 & dir)
+            cameraPos -= cameraRight * cameraSpeed;
+        if (8 & dir)
+            cameraPos += cameraRight * cameraSpeed;
+        if (16 & dir)
+            cameraPos += cameraUp * cameraSpeed;
+        if (32 & dir)
+            cameraPos -= cameraUp * cameraSpeed;
+
+    }
 
     updateCameraVectors();
 
