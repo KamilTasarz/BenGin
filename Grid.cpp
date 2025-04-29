@@ -34,21 +34,23 @@ void Grid::Init()
 void Grid::Update()
 {
 	lineVertices.clear();
+	float offset = 0.5f;
 	if (gridType == GRID_XZ) {
 		// Generate grid vertices
 		for (int i = -halfCount; i <= halfCount; ++i) {
-			lineVertices.push_back(glm::vec3(-halfCount * gridSize, 0.0f, i * gridSize));
-			lineVertices.push_back(glm::vec3(halfCount * gridSize, 0.0f, i * gridSize));
-			lineVertices.push_back(glm::vec3(i * gridSize, 0.0f, -halfCount * gridSize));
-			lineVertices.push_back(glm::vec3(i * gridSize, 0.0f, halfCount * gridSize));
+			
+			lineVertices.push_back(glm::vec3(-halfCount * gridSize, 0.0f, i * gridSize + offset));
+			lineVertices.push_back(glm::vec3(halfCount * gridSize, 0.0f, i * gridSize + offset));
+			lineVertices.push_back(glm::vec3(i * gridSize + offset, 0.0f, -halfCount * gridSize));
+			lineVertices.push_back(glm::vec3(i * gridSize + offset, 0.0f, halfCount * gridSize));
 		}
 	}
 	else { //GRID XY
 		for (int i = -halfCount; i <= halfCount; ++i) {
-			lineVertices.push_back(glm::vec3(-halfCount * gridSize, i * gridSize, 0.0f));
-			lineVertices.push_back(glm::vec3(halfCount * gridSize, i * gridSize, 0.0f));
-			lineVertices.push_back(glm::vec3(i * gridSize, -halfCount * gridSize, 0.0f));
-			lineVertices.push_back(glm::vec3(i * gridSize, halfCount * gridSize, 0.0f));
+			lineVertices.push_back(glm::vec3(-halfCount * gridSize, i * gridSize + offset, 0.0f));
+			lineVertices.push_back(glm::vec3(halfCount * gridSize, i * gridSize + offset, 0.0f));
+			lineVertices.push_back(glm::vec3(i * gridSize + offset, -halfCount * gridSize, 0.0f));
+			lineVertices.push_back(glm::vec3(i * gridSize + offset, halfCount * gridSize, 0.0f));
 		}
 	}
 	glBindVertexArray(vao);

@@ -291,7 +291,7 @@ int main() {
 
 	loadScene("res/scene/scene.json", sceneGraph, models, colliders);
 
-    const char* anim_path = "res/models/man/CesiumMan2.gltf";
+    /*const char* anim_path = "res/models/man/CesiumMan2.gltf";
 
     Animation* anim = new Animation(anim_path, models[2]);
 	sceneGraph->root->getChildByName("ludzik")->animator = new Animator(anim);
@@ -299,7 +299,7 @@ int main() {
     const char* anim_path2 = "res/models/mecha_ramie_peter/mecha_ramie_FINFIN.glb";
 
     Animation* anim2 = new Animation(anim_path2, getModelById(models, 8));
-    sceneGraph->root->getChildByName("ramie")->animator = new Animator(anim2);
+    sceneGraph->root->getChildByName("ramie")->animator = new Animator(anim2);*/
 
 
 
@@ -532,7 +532,7 @@ int main() {
         DrawHierarchyWindow(sceneGraph->root, 0, 0, WINDOW_WIDTH / 6, 2 * WINDOW_HEIGHT / 3);
         previewDisplay();
         assetBarDisplay(0, 2 * WINDOW_HEIGHT / 3, WINDOW_WIDTH, WINDOW_HEIGHT / 3);
-        //propertiesWindowDisplay(sceneGraph, sceneGraph->marked_object, 5 * WINDOW_WIDTH / 6, 0, WINDOW_WIDTH / 6, 2 * WINDOW_HEIGHT / 3);
+        propertiesWindowDisplay(sceneGraph, sceneGraph->marked_object, 5 * WINDOW_WIDTH / 6, 0, WINDOW_WIDTH / 6, 2 * WINDOW_HEIGHT / 3);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -1015,172 +1015,172 @@ void assetBarDisplay(float x, float y, float width, float height) {
 }
 
 
-//void propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float x, float y, float width, float height) {
-//
-//    ImGuiWindowFlags window_flags =
-//        ImGuiWindowFlags_NoResize |
-//        ImGuiWindowFlags_NoMove |
-//        ImGuiWindowFlags_NoCollapse |
-//        ImGuiWindowFlags_NoSavedSettings;
-//
-//    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
-//    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
-//
-//    ImGui::Begin("Properties", nullptr, window_flags);
-//
-//    if (preview_node) {
-//
-//        // Name and rename section
-//        static char name_buffer[128];
-//        static std::string current_name;
-//
-//        // If swap selection, update current name and fill the buffer with the newly selected node's name
-//        if (current_name != preview_node->getName()) {
-//            current_name = preview_node->getName();
-//            strncpy_s(name_buffer, current_name.c_str(), sizeof(name_buffer));
-//            name_buffer[sizeof(name_buffer) - 1] = '\0'; // Safety null terminator
-//        }
-//
-//        ImGui::Text("Name: ");
-//        ImGui::SameLine();
-//        ImGui::PushItemWidth(-1);
-//
-//        if (ImGui::InputText("##NodeName", name_buffer, sizeof(name_buffer), ImGuiInputTextFlags_EnterReturnsTrue)) {
-//            preview_node->rename(std::string(name_buffer));
-//            current_name = preview_node->getName();
-//        }
-//        ImGui::PopItemWidth();
-//
-//        ImGui::Separator();
-//
-//        // ----------------- //
-//
-//        // Transform section
-//        static glm::vec3 position_buffer, rotation_buffer, scale_buffer;
-//        static std::string last_node_id = "";
-//        auto& T = preview_node->transform;
-//
-//        if (preview_node->getName() != last_node_id) {
-//
-//            position_buffer = T.getLocalPosition();
-//            // Convert quaternion to euler angles
-//            glm::vec3 euler = glm::degrees(glm::eulerAngles(T.getLocalRotation()));
-//            rotation_buffer = euler;
-//            scale_buffer = T.getLocalScale();
-//            last_node_id = preview_node->id;
-//
-//        }
-//
-//        // How wide is a single number field
-//        const float field_width = 50.0f;
-//
-//        // --- Position ---
-//        ImGui::Text("Position: "); ImGui::SameLine();
-//        ImGui::PushID("pos");
-//        ImGui::PushItemWidth(field_width);
-//        if (ImGui::InputFloat("X##pos", &position_buffer.x, 0.0f, 0.0f, "%.3f")) {
-//            T.setLocalPosition(position_buffer);
-//        }
-//        ImGui::PopItemWidth(); ImGui::SameLine();
-//        ImGui::PushItemWidth(field_width);
-//        if (ImGui::InputFloat("Y##pos", &position_buffer.y, 0.0f, 0.0f, "%.3f")) {
-//            T.setLocalPosition(position_buffer);
-//        }
-//        ImGui::PopItemWidth(); ImGui::SameLine();
-//        ImGui::PushItemWidth(field_width);
-//        if (ImGui::InputFloat("Z##pos", &position_buffer.z, 0.0f, 0.0f, "%.3f")) {
-//            T.setLocalPosition(position_buffer);
-//        }
-//        ImGui::PopItemWidth();
-//        ImGui::PopID();
-//
-//        // --- Rotation ---
-//        ImGui::Text("Rotation: "); ImGui::SameLine();
-//        ImGui::PushID("rot");
-//        ImGui::PushItemWidth(field_width);
-//        if (ImGui::InputFloat("X##rot", &rotation_buffer.x, 0.0f, 0.0f, "%.1f")) {
-//            T.setLocalRotation(glm::vec3(rotation_buffer.x, rotation_buffer.y, rotation_buffer.z));
-//        }
-//        ImGui::PopItemWidth(); ImGui::SameLine();
-//        ImGui::PushItemWidth(field_width);
-//        if (ImGui::InputFloat("Y##rot", &rotation_buffer.y, 0.0f, 0.0f, "%.1f")) {
-//            T.setLocalRotation(glm::vec3(rotation_buffer.x, rotation_buffer.y, rotation_buffer.z));
-//        }
-//        ImGui::PopItemWidth(); ImGui::SameLine();
-//        ImGui::PushItemWidth(field_width);
-//        if (ImGui::InputFloat("Z##rot", &rotation_buffer.z, 0.0f, 0.0f, "%.1f")) {
-//            T.setLocalRotation(glm::vec3(rotation_buffer.x, rotation_buffer.y, rotation_buffer.z));
-//        }
-//        ImGui::PopItemWidth();
-//        ImGui::PopID();
-//
-//        // --- Scale ---
-//        ImGui::Text("Scale:"); ImGui::SameLine();
-//        ImGui::PushID("scl");
-//        ImGui::PushItemWidth(field_width);
-//        if (ImGui::InputFloat("X##scl", &scale_buffer.x, 0.0f, 0.0f, "%.3f")) {
-//            T.setLocalScale(scale_buffer);
-//        }
-//        ImGui::PopItemWidth(); ImGui::SameLine();
-//        ImGui::PushItemWidth(field_width);
-//        if (ImGui::InputFloat("Y##scl", &scale_buffer.y, 0.0f, 0.0f, "%.3f")) {
-//            T.setLocalScale(scale_buffer);
-//        }
-//        ImGui::PopItemWidth(); ImGui::SameLine();
-//        ImGui::PushItemWidth(field_width);
-//        if (ImGui::InputFloat("Z##scl", &scale_buffer.z, 0.0f, 0.0f, "%.3f")) {
-//            T.setLocalScale(scale_buffer);
-//        }
-//        ImGui::PopItemWidth();
-//        ImGui::PopID();
-//
-//        ImGui::Separator();
-//
-//        // Parent and reparent section
-//
-//        // Get viable parent options
-//        std::set<Node*> parent_options = root->root->getAllChildren();
-//        parent_options.erase(preview_node);
-//
-//        parent_options.insert(root->root);
-//
-//        static std::string last_preview_name;
-//        static std::string selected_parent_name;
-//        if (last_preview_name != preview_node->getName()) {
-//            selected_parent_name = preview_node->parent ? preview_node->parent->getName() : root->root->getName();
-//            last_preview_name = preview_node->getName();
-//        }
-//
-//        ImGui::Text("Parent: "); ImGui::SameLine();
-//        ImGui::PushItemWidth(-1);
-//        if (ImGui::BeginCombo("##ParentCombo", selected_parent_name.c_str())) {
-//            for (auto potential_parent : parent_options) {
-//                bool is_sel = (potential_parent->getName() == selected_parent_name);
-//                if (ImGui::Selectable(potential_parent->getName().c_str(), is_sel)) {
-//                    if (preview_node != root->root) {
-//                        // reparent
-//                        if (preview_node->parent) {
-//                            preview_node->parent->children.erase(preview_node);
-//                        }
-//                        potential_parent->children.insert(preview_node);
-//                        preview_node->parent = potential_parent;
-//                        selected_parent_name = potential_parent->getName();
-//                    }
-//                }
-//                if (is_sel)
-//                    ImGui::SetItemDefaultFocus();
-//            }
-//            ImGui::EndCombo();
-//        }
-//        ImGui::PopItemWidth();
-//
-//    }
-//    else {
-//
-//        ImGui::Text("Not selected");
-//
-//    }
-//
-//    ImGui::End();
-//
-//}
+void propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float x, float y, float width, float height) {
+
+    ImGuiWindowFlags window_flags =
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoSavedSettings;
+
+    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+
+    ImGui::Begin("Properties", nullptr, window_flags);
+
+    if (preview_node) {
+
+        // Name and rename section
+        static char name_buffer[128];
+        static std::string current_name;
+
+        // If swap selection, update current name and fill the buffer with the newly selected node's name
+        if (current_name != preview_node->getName()) {
+            current_name = preview_node->getName();
+            strncpy_s(name_buffer, current_name.c_str(), sizeof(name_buffer));
+            name_buffer[sizeof(name_buffer) - 1] = '\0'; // Safety null terminator
+        }
+
+        ImGui::Text("Name: ");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(-1);
+
+        if (ImGui::InputText("##NodeName", name_buffer, sizeof(name_buffer), ImGuiInputTextFlags_EnterReturnsTrue)) {
+            preview_node->rename(std::string(name_buffer));
+            current_name = preview_node->getName();
+        }
+        ImGui::PopItemWidth();
+
+        ImGui::Separator();
+
+        // ----------------- //
+
+        // Transform section
+        static glm::vec3 position_buffer, rotation_buffer, scale_buffer;
+        static std::string last_node_id = "";
+        auto& T = preview_node->transform;
+
+        if (preview_node->getName() != last_node_id) {
+
+            position_buffer = T.getLocalPosition();
+            // Convert quaternion to euler angles
+            glm::vec3 euler = glm::degrees(glm::eulerAngles(T.getLocalRotation()));
+            rotation_buffer = euler;
+            scale_buffer = T.getLocalScale();
+            last_node_id = preview_node->id;
+
+        }
+
+        // How wide is a single number field
+        const float field_width = 50.0f;
+
+        // --- Position ---
+        ImGui::Text("Position: "); ImGui::SameLine();
+        ImGui::PushID("pos");
+        ImGui::PushItemWidth(field_width);
+        if (ImGui::InputFloat("X##pos", &position_buffer.x, 0.0f, 0.0f, "%.3f")) {
+            T.setLocalPosition(position_buffer);
+        }
+        ImGui::PopItemWidth(); ImGui::SameLine();
+        ImGui::PushItemWidth(field_width);
+        if (ImGui::InputFloat("Y##pos", &position_buffer.y, 0.0f, 0.0f, "%.3f")) {
+            T.setLocalPosition(position_buffer);
+        }
+        ImGui::PopItemWidth(); ImGui::SameLine();
+        ImGui::PushItemWidth(field_width);
+        if (ImGui::InputFloat("Z##pos", &position_buffer.z, 0.0f, 0.0f, "%.3f")) {
+            T.setLocalPosition(position_buffer);
+        }
+        ImGui::PopItemWidth();
+        ImGui::PopID();
+
+        // --- Rotation ---
+        ImGui::Text("Rotation: "); ImGui::SameLine();
+        ImGui::PushID("rot");
+        ImGui::PushItemWidth(field_width);
+        if (ImGui::InputFloat("X##rot", &rotation_buffer.x, 0.0f, 0.0f, "%.1f")) {
+            T.setLocalRotation(glm::vec3(rotation_buffer.x, rotation_buffer.y, rotation_buffer.z));
+        }
+        ImGui::PopItemWidth(); ImGui::SameLine();
+        ImGui::PushItemWidth(field_width);
+        if (ImGui::InputFloat("Y##rot", &rotation_buffer.y, 0.0f, 0.0f, "%.1f")) {
+            T.setLocalRotation(glm::vec3(rotation_buffer.x, rotation_buffer.y, rotation_buffer.z));
+        }
+        ImGui::PopItemWidth(); ImGui::SameLine();
+        ImGui::PushItemWidth(field_width);
+        if (ImGui::InputFloat("Z##rot", &rotation_buffer.z, 0.0f, 0.0f, "%.1f")) {
+            T.setLocalRotation(glm::vec3(rotation_buffer.x, rotation_buffer.y, rotation_buffer.z));
+        }
+        ImGui::PopItemWidth();
+        ImGui::PopID();
+
+        // --- Scale ---
+        ImGui::Text("Scale:"); ImGui::SameLine();
+        ImGui::PushID("scl");
+        ImGui::PushItemWidth(field_width);
+        if (ImGui::InputFloat("X##scl", &scale_buffer.x, 0.0f, 0.0f, "%.3f")) {
+            T.setLocalScale(scale_buffer);
+        }
+        ImGui::PopItemWidth(); ImGui::SameLine();
+        ImGui::PushItemWidth(field_width);
+        if (ImGui::InputFloat("Y##scl", &scale_buffer.y, 0.0f, 0.0f, "%.3f")) {
+            T.setLocalScale(scale_buffer);
+        }
+        ImGui::PopItemWidth(); ImGui::SameLine();
+        ImGui::PushItemWidth(field_width);
+        if (ImGui::InputFloat("Z##scl", &scale_buffer.z, 0.0f, 0.0f, "%.3f")) {
+            T.setLocalScale(scale_buffer);
+        }
+        ImGui::PopItemWidth();
+        ImGui::PopID();
+
+        ImGui::Separator();
+
+        // Parent and reparent section
+
+        // Get viable parent options
+        std::set<Node*> parent_options = root->root->getAllChildren();
+        parent_options.erase(preview_node);
+
+        parent_options.insert(root->root);
+
+        static std::string last_preview_name;
+        static std::string selected_parent_name;
+        if (last_preview_name != preview_node->getName()) {
+            selected_parent_name = preview_node->parent ? preview_node->parent->getName() : root->root->getName();
+            last_preview_name = preview_node->getName();
+        }
+
+        ImGui::Text("Parent: "); ImGui::SameLine();
+        ImGui::PushItemWidth(-1);
+        if (ImGui::BeginCombo("##ParentCombo", selected_parent_name.c_str())) {
+            for (auto potential_parent : parent_options) {
+                bool is_sel = (potential_parent->getName() == selected_parent_name);
+                if (ImGui::Selectable(potential_parent->getName().c_str(), is_sel)) {
+                    if (preview_node != root->root) {
+                        // reparent
+                        if (preview_node->parent) {
+                            preview_node->parent->children.erase(preview_node);
+                        }
+                        potential_parent->children.insert(preview_node);
+                        preview_node->parent = potential_parent;
+                        selected_parent_name = potential_parent->getName();
+                    }
+                }
+                if (is_sel)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+        ImGui::PopItemWidth();
+
+    }
+    else {
+
+        ImGui::Text("Not selected");
+
+    }
+
+    ImGui::End();
+
+}

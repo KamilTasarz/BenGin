@@ -1,12 +1,12 @@
 {
     "camera": {
-        "Pitch": -32.100006103515625,
-        "Yaw": -127.60140228271484,
-        "mode": 2,
+        "Pitch": -4.299990177154541,
+        "Yaw": -89.70135498046875,
+        "mode": 3,
         "position": {
-            "x": 12.223220825195313,
-            "y": 4.16102409362793,
-            "z": 7.689276218414307
+            "x": 0.0,
+            "y": -1.6687583923339844,
+            "z": 50.04999923706055
         }
     },
     "models": [
@@ -70,15 +70,37 @@
     "scene": {
         "children": [
             {
+                "directional_light": {
+                    "ambient": {
+                        "x": 0.20000000298023224,
+                        "y": 0.20000000298023224,
+                        "z": 0.20000000298023224
+                    },
+                    "diffuse": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    },
+                    "direction": {
+                        "x": -1.0,
+                        "y": -1.0,
+                        "z": 0.0
+                    },
+                    "specular": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    }
+                },
                 "id": 0,
-                "is_visible": true,
-                "model.id": 3,
-                "name": "box1",
-                "no_textures": false,
+                "is_visible": false,
+                "model.id": 6,
+                "name": "dir_light",
+                "no_textures": true,
                 "position": {
-                    "x": 7.5,
-                    "y": 0.0,
-                    "z": 0.16377043724060059
+                    "x": 3.0,
+                    "y": 3.0,
+                    "z": 3.0
                 },
                 "rotation": {
                     "w": 1.0,
@@ -88,93 +110,21 @@
                 },
                 "scale": {
                     "x": 1.0,
-                    "y": 3.0,
-                    "z": 14.0
-                },
-                "type": "Node"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": 3,
-                "name": "box1_copy",
-                "no_textures": false,
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": -7.5
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 16.0,
-                    "y": 3.0,
+                    "y": 1.0,
                     "z": 1.0
                 },
-                "type": "Node"
+                "type": "DirectionalLight"
             },
             {
                 "id": 0,
                 "is_visible": true,
-                "model.id": 4,
-                "name": "box2",
+                "model.id": 9,
+                "name": "entity_1",
                 "no_textures": false,
                 "position": {
-                    "x": 0.4421091079711914,
-                    "y": -0.0938788652420044,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
+                    "x": -1.0,
                     "y": 0.0,
                     "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 3.0,
-                    "z": 14.0
-                },
-                "type": "Node"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": 5,
-                "name": "box3",
-                "no_textures": false,
-                "position": {
-                    "x": -8.083019256591797,
-                    "y": 6.562500953674316,
-                    "z": 7.5
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 16.0,
-                    "y": 3.0,
-                    "z": 1.0
-                },
-                "type": "Node"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": 1,
-                "name": "cos",
-                "no_textures": false,
-                "position": {
-                    "x": 8.344413757324219,
-                    "y": -5.655251502990723,
-                    "z": -6.568489074707031
                 },
                 "rotation": {
                     "w": 1.0,
@@ -192,17 +142,17 @@
             {
                 "id": 0,
                 "is_visible": true,
-                "model.id": 2,
-                "name": "ludzik",
+                "model.id": 9,
+                "name": "entity_3",
                 "no_textures": false,
                 "position": {
-                    "x": -13.475854873657227,
-                    "y": 1.5426499843597412,
-                    "z": 7.140938758850098
+                    "x": 2.0,
+                    "y": 0.0,
+                    "z": 0.0
                 },
                 "rotation": {
-                    "w": 0.7926948070526123,
-                    "x": -0.6096187233924866,
+                    "w": 1.0,
+                    "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
                 },
@@ -216,8 +166,32 @@
             {
                 "id": 0,
                 "is_visible": true,
-                "model.id": 7,
-                "name": "plane1",
+                "model.id": 9,
+                "name": "entity_2",
+                "no_textures": false,
+                "position": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Node"
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 9,
+                "name": "entity",
                 "no_textures": false,
                 "position": {
                     "x": 0.0,
@@ -231,39 +205,15 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 15.0,
+                    "x": 1.0,
                     "y": 1.0,
-                    "z": 15.0
+                    "z": 1.0
                 },
                 "type": "Node"
             },
             {
                 "id": 0,
-                "is_visible": true,
-                "model.id": 8,
-                "name": "ramie",
-                "no_textures": false,
-                "position": {
-                    "x": -1.493406057357788,
-                    "y": 1.2261990308761597,
-                    "z": 5.725992679595947
-                },
-                "rotation": {
-                    "w": 0.5174740552902222,
-                    "x": -0.8056020736694336,
-                    "y": 0.15591494739055634,
-                    "z": 0.2427271157503128
-                },
-                "scale": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "type": "Node"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
+                "is_visible": false,
                 "model.id": 6,
                 "name": "light",
                 "no_textures": true,
@@ -307,7 +257,7 @@
             },
             {
                 "id": 0,
-                "is_visible": true,
+                "is_visible": false,
                 "model.id": 6,
                 "name": "light_copy",
                 "no_textures": true,
@@ -333,8 +283,8 @@
                 },
                 "position": {
                     "x": 7.359019756317139,
-                    "y": 2.92682147026062,
-                    "z": -1.5949530601501465
+                    "y": 2.216658353805542,
+                    "z": -4.272721290588379
                 },
                 "rotation": {
                     "w": 1.0,
@@ -348,76 +298,6 @@
                     "z": 1.0
                 },
                 "type": "PointLight"
-            },
-            {
-                "directional_light": {
-                    "ambient": {
-                        "x": 0.20000000298023224,
-                        "y": 0.20000000298023224,
-                        "z": 0.20000000298023224
-                    },
-                    "diffuse": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    },
-                    "direction": {
-                        "x": -1.0,
-                        "y": -1.0,
-                        "z": 0.0
-                    },
-                    "specular": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    }
-                },
-                "id": 0,
-                "is_visible": true,
-                "model.id": 6,
-                "name": "dir_light",
-                "no_textures": true,
-                "position": {
-                    "x": 8.349387168884277,
-                    "y": 7.88335657119751,
-                    "z": 4.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "DirectionalLight"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": 9,
-                "name": "entity",
-                "no_textures": false,
-                "position": {
-                    "x": 6.255895137786865,
-                    "y": 2.735642910003662,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "Node"
             }
         ],
         "id": 0,
@@ -426,9 +306,9 @@
         "name": "root",
         "no_textures": true,
         "position": {
-            "x": 4.345337390899658,
+            "x": 0.0,
             "y": 0.0,
-            "z": 5.983357906341553
+            "z": 0.0
         },
         "rotation": {
             "w": 1.0,
