@@ -69,7 +69,7 @@ void main() {
             res += calculatePointLight(viewDir, point_lights[i]);
         }
         for (int i = 0; i < directional_light_number; i++) {
-            //res += calculateDirectionalLight(viewDir, directional_lights[i]);
+            res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
 
         

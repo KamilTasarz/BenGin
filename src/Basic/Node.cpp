@@ -78,6 +78,13 @@ void SceneGraph::setShaders() {
     shader->setMat4("view", view);
     shader->setInt("point_light_number", point_light_number);
     shader->setInt("directional_light_number", directional_light_number);
+    
+    shader_tile->use();
+    setLights(shader_tile);
+    shader_tile->setMat4("projection", projection);
+    shader_tile->setMat4("view", view);
+    shader_tile->setInt("point_light_number", point_light_number);
+    shader_tile->setInt("directional_light_number", directional_light_number);
 
     shader_instanced->use();
     setLights(shader_instanced);
@@ -304,8 +311,16 @@ void Node::drawSelfAndChild() {
 
     if (pModel && is_visible) {
         //_shader.setVec4("dynamicColor", color);
-        scene_graph->shader->use();
-        scene_graph->shader->setMat4("model", transform.getModelMatrix());
+
+        if (pModel->mode.empty()) {
+            scene_graph->shader->use();
+            scene_graph->shader->setMat4("model", transform.getModelMatrix());
+        }
+        else {
+			scene_graph->shader_tile->use();
+			scene_graph->shader_tile->setMat4("model", transform.getModelMatrix());
+        }
+        
 
         if (animator != nullptr) {
             auto f = animator->final_bone_matrices;
@@ -317,11 +332,25 @@ void Node::drawSelfAndChild() {
         }
         if (no_textures) {
             scene_graph->shader->setInt("is_light", 1);
+            scene_graph->shader_tile->setInt("is_light", 1);
         }
-        pModel->Draw(*scene_graph->shader);
-        glStencilMask(0x00);
 
-        scene_graph->shader->setInt("is_light", 0);
+        if (pModel->mode.empty()) {
+            pModel->Draw(*scene_graph->shader);
+
+            glStencilMask(0x00);
+
+            scene_graph->shader->setInt("is_light", 0);
+        }
+        else {
+            pModel->Draw(*scene_graph->shader_tile);
+
+            glStencilMask(0x00);
+
+            scene_graph->shader_tile->setInt("is_light", 0);
+        }
+        
+        
 
         scene_graph->shader_outline->use();
         scene_graph->shader_outline->setMat4("model", transform.getModelMatrix());

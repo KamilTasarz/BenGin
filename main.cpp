@@ -101,7 +101,7 @@ int previewHeight = 2 * WINDOW_HEIGHT / 3;
 
 unsigned int framebuffer, colorTexture, depthRenderbuffer;
 
-bool isHUD = false, isInPreview = false, isGridSnap = false;
+bool isHUD = false, isInPreview = false, isGridSnap = false, pressed_add = false;
 
 glm::vec2 normalizedMouse;
 
@@ -207,6 +207,10 @@ int main() {
     *texture_names = { tile_name };
     Model Tmodel_Tile(texture_names, 1, 9);
 
+    Model model_kolce("res/models/kolce/kolec_wiele.obj", 10);
+    Model model_door("res/models/door/Door_closed_v3.glb", 11);
+    Model model_cheese("res/models/cheese/Cheese3.gltf", 12);
+
     models.push_back(Tmodel);
 	models.push_back(Kmodel);
 	models.push_back(Lmodel);
@@ -217,6 +221,9 @@ int main() {
 	models.push_back(Tmodel_light);
 	models.push_back(Tmodel_plane);
 	models.push_back(Tmodel_Tile);
+	models.push_back(model_kolce);
+	models.push_back(model_door);
+	models.push_back(model_cheese);
 
     /*Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -406,13 +413,35 @@ int main() {
 
         // --- //
 
-        if (glfwGetKey(window->window, GLFW_KEY_C) == GLFW_PRESS) {
+        if (glfwGetKey(window->window, GLFW_KEY_C) == GLFW_PRESS && camera->mode != FRONT_ORTO) {
             if (is_camera == is_camera_prev) {
                 is_camera = !is_camera;
                 camera->changeMode(camera->mode == FREE ? FIXED : FREE);
             }
         } else {
             is_camera_prev = is_camera;
+        }
+
+
+        if (glfwGetKey(window->window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+            if (!pressed_add) {
+                if (sceneGraph->marked_object != nullptr) {
+                    Node* newNode = new Node(*sceneGraph->marked_object->pModel ,sceneGraph->marked_object->getName(), colliders, sceneGraph->marked_object->id);
+					newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition());
+					newNode->transform.setLocalRotation(sceneGraph->marked_object->transform.getLocalRotation());
+					newNode->transform.setLocalScale(sceneGraph->marked_object->transform.getLocalScale());
+                    
+                    sceneGraph->addChild(newNode);
+                    sceneGraph->marked_object = newNode;
+                }
+                
+            }
+            pressed_add = true;
+            
+        }
+        else {
+
+            pressed_add = false;
         }
 
         int direction = 0;
@@ -422,8 +451,9 @@ int main() {
             direction += 2;
         if (glfwGetKey(window->window, GLFW_KEY_A) == GLFW_PRESS)
             direction += 4;
-        if (glfwGetKey(window->window, GLFW_KEY_D) == GLFW_PRESS)
+        if (glfwGetKey(window->window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL) != GLFW_PRESS)
             direction += 8;
+
         if (glfwGetKey(window->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             direction += 16;
 
@@ -793,6 +823,8 @@ void previewDisplay()
         ImGui::EndDragDropTarget();
     }
 
+    
+
     RenderGuizmo();
 
     ImGui::End();
@@ -850,7 +882,7 @@ void RenderGuizmo()
         
         bool useSnap = ImGui::IsKeyDown(ImGuiKey_LeftShift);
 
-        float snap[3] = { 1.0f, 1.0f, 1.0f };
+        float snap[3] = { 0.5f, 0.5f, 0.5f };
         ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
             currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix), nullptr, useSnap ? snap : nullptr);
 
@@ -996,7 +1028,7 @@ void assetBarDisplay(float x, float y, float width, float height) {
     }
     ImGui::SameLine();
     if (ImGui::Button("SAVE", ImVec2(100, 24))) {
-        saveScene("res/scene/scene_temp.json", sceneGraph, models);
+        saveScene("res/scene/scene.json", sceneGraph, models);
     }
 
 

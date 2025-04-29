@@ -516,6 +516,7 @@ public:
     unsigned int depthMapFBO;
 
     Shader* shader;
+    Shader* shader_tile;
     Shader* shader_instanced;
     Shader* shader_instanced_outline;
     Shader* shader_outline;
@@ -525,6 +526,7 @@ public:
     Shader* shader_background;
 
     const char* vertexPath = "res/shaders/basic.vert";
+    const char* vertexPath_tile = "res/shaders/tile.vert";
     const char* vertexPath_instanced = "res/shaders/instanced.vert";
     const char* fragmentPath = "res/shaders/basic.frag";
     const char* vertexPath_shadow = "res/shaders/shadow.vert";
@@ -550,6 +552,7 @@ public:
         glGenFramebuffers(1, &depthMapFBO);
 
         shader = new Shader(vertexPath, fragmentPath);
+        shader_tile = new Shader(vertexPath_tile, fragmentPath);
         shader_instanced = new Shader(vertexPath_instanced, fragmentPath);
         shader_instanced_outline = new Shader(vertexPath_instanced, fragmentPath_outline);
         shader_outline = new Shader(vertexPath, fragmentPath_outline);
@@ -561,6 +564,7 @@ public:
 
     ~SceneGraph() {
         delete shader;
+        delete shader_tile;
         delete shader_instanced;
         delete shader_instanced_outline;
         delete shader_outline;

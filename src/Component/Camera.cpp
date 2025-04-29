@@ -49,9 +49,9 @@ void Camera::ProcessKeyboard(GLfloat deltaTime, int dir) {
             cameraPos -= cameraRight * cameraSpeed;
         if (8 & dir)
             cameraPos += cameraRight * cameraSpeed;
-        if (16 & dir)
+        if (1 & dir)
             cameraPos += cameraUp * cameraSpeed;
-        if (32 & dir)
+        if (2 & dir)
             cameraPos -= cameraUp * cameraSpeed;
 
     }
