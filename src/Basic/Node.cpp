@@ -168,7 +168,7 @@ void SceneGraph::drawMarkedObject() {
 // ====NODE====
 
 void Node::addChild(Node* p) {
-    children.emplace_back(p);
+    children.insert(p);
     p->scene_graph = scene_graph; // Set this as the created child's parent
     p->parent = this; // Set this as the created child's parent
     increaseCount();
@@ -403,8 +403,8 @@ void InstanceManager::updateSelfAndChild(bool controlDirty) {
 }
 
 void InstanceManager::addChild(Node* p) {
-    children.push_back(p);
-    children.back()->parent = this; // Set this as the created child's parent
+    children.insert(p);
+    p->parent = this; // Set this as the created child's parent
     size++;
     p->id = current_min_id;
     current_min_id++;
@@ -426,14 +426,17 @@ void InstanceManager::removeChild(int id) {
     //usuniecie ze sceny tworzylo by dziury w tablicy
     //wiec znajdujemy to co usuwamy po indexach
     Node* temp = find(id);
+    if (!temp) return;
     //zapisujemy index
     int new_id = temp->id;
     //usuwamy
-    children.remove(temp);
+    children.erase(temp);
     //i ostatni element dajemy w miejsce dziury
-    temp = children.back();
-    temp->id = new_id;
-    updateBuffer(temp);
+    if (!children.empty()) {
+        temp = *children.rbegin();
+        temp->id = new_id;
+        updateBuffer(temp);
+    }
     current_min_id--;
     size--;
 }
