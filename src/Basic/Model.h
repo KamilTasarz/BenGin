@@ -485,7 +485,7 @@ public:
     vector<Mesh> meshes;
     string directory;
     string exact_path;
-    string mode;
+    string mode = "";
     bool gammaCorrection;
 
     std::map<string, BoneInfo> m_BoneInfoMap;  // info o kosciach modelu

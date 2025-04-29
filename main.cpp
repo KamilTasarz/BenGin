@@ -976,10 +976,16 @@ void assetBarDisplay(float x, float y, float width, float height) {
     for (auto& model : models) {
         ImGui::PushID(model.id);
 
-        
+		ImTextureID _icon = icon->sprite_id;
+        string name = model.directory;
+        if (!model.mode.empty() && model.textures_loaded.size() > 0) {
+            
+			_icon = model.textures_loaded[0].id;
+			name = model.mode + " " + model.textures_loaded[0].path;
+        } 
 
         // Ikona (np. asset.textureID albo fallback ikona)
-        if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)icon->sprite_id, ImVec2(thumbnailSize, thumbnailSize))) {
+        if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)_icon, ImVec2(thumbnailSize, thumbnailSize))) {
             // (opcjonalne: obsługa kliknięcia na asset)
         }
 
@@ -990,7 +996,9 @@ void assetBarDisplay(float x, float y, float width, float height) {
             ImGui::EndDragDropSource();
         }
         // Nazwa assetu
-        ImGui::TextWrapped(model.directory.c_str());
+        
+        
+        ImGui::TextWrapped(name.c_str());
 
         ImGui::NextColumn();
         ImGui::PopID();
