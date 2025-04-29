@@ -1,4 +1,4 @@
-﻿/*
+/*
 * 
 *  KAMIL PILNUJ TEGO
 * 
@@ -43,8 +43,7 @@ glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat
 //void setLights(Shader* shader);
 // void initializeServices();
 void leftClick(float value);
-void BeginFullscreenInputLayer();
-void DrawSceneNode(Node* node, int depth = 0);
+void RenderGuizmo();
 void DrawNodeBlock(Node* node, int depth = 0);
 void DrawHierarchyWindow(Node* root, float x, float y, float width, float height);
 void previewDisplay();
@@ -90,7 +89,7 @@ Player *player;
 
 Text* text;
 Background* background;
-Sprite *sprite, *sprite2, *sprite3, *icon;
+Sprite *sprite, *sprite2, *sprite3, *icon, *eye_icon, *eye_slashed_icon;
 
 std::vector<Model> models;
 
@@ -101,9 +100,13 @@ int previewHeight = 2 * WINDOW_HEIGHT / 3;
 
 unsigned int framebuffer, colorTexture, depthRenderbuffer;
 
-bool isHUD = false, isInPreview = false;
+bool isHUD = false, isInPreview = false, isGridSnap = false;
 
 glm::vec2 normalizedMouse;
+
+bool isSnapped = false;
+glm::vec3 lastSnapOffset;
+glm::vec3 snapedPosition;
 
 int main() {
 
@@ -134,6 +137,8 @@ int main() {
     sprite3 = new AnimatedSprite(1920.f, 1080.f, 1.f, "res/sprites/piratWalking.png", 1, 9, 9, 300.f, 300.f);
     sprite2 = new Sprite(1920.f, 1080.f, "res/sprites/heart2.png", 700.f, 100.f, 0.1f);
 	icon = new Sprite(1920.f, 1080.f, "res/sprites/icon.png", 0.f, 0.f, 1.f);
+	eye_icon = new Sprite(1920.f, 1080.f, "res/sprites/eye.png", 0.f, 0.f, 1.f);
+	eye_slashed_icon = new Sprite(1920.f, 1080.f, "res/sprites/eye_slashed.png", 0.f, 0.f, 1.f);
 
     //rootNode = new Node("root");
 
@@ -171,6 +176,8 @@ int main() {
     Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
     Model Kmodel("res/models/kutasiarz/The_Thing.obj", 1);
     Model Lmodel("res/models/man/CesiumMan2.gltf", 2);    
+    cout << "Model" << endl;
+    Model Rmodel("res/models/mecha_ramie_peter/mecha_ramie_FINFIN.glb", 8);    
     
 
     //Model Lmodel("res/models/ludzik/ludzik.gltf");
@@ -199,15 +206,17 @@ int main() {
     models.push_back(Tmodel);
 	models.push_back(Kmodel);
 	models.push_back(Lmodel);
+	models.push_back(Rmodel);
 	models.push_back(Tmodel_box_diff_spec);
 	models.push_back(Tmodel_box_wood);
 	models.push_back(Tmodel_box_stone);
 	models.push_back(Tmodel_light);
 	models.push_back(Tmodel_plane);
 
-    Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
+    /*Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     Node* ludzik = new Node(Lmodel, "ludzik", colliders, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    Node* ramie = new Node(Rmodel, "ramie", colliders, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 
 
@@ -228,6 +237,7 @@ int main() {
     sceneGraph->addChild(cos);
     sceneGraph->addChild(ludzik);
     sceneGraph->addChild(plane);
+    sceneGraph->addChild(ramie);
 
     ludzik->transform.setLocalPosition({ 3.f, 5.f, 3.f });
     //ludzik->transform.setLocalRotation({ -90.f, 0.f, 0.f });
@@ -274,12 +284,19 @@ int main() {
         }
     }*/
 
-	//loadScene("res/scene/scene.json", rootNode, player, camera, point_lights, point_light_number, directional_lights, directional_light_number, models, colliders);
+	loadScene("res/scene/scene.json", sceneGraph, models, colliders);
 
     const char* anim_path = "res/models/man/CesiumMan2.gltf";
 
     Animation* anim = new Animation(anim_path, models[2]);
 	sceneGraph->root->getChildByName("ludzik")->animator = new Animator(anim);
+
+    const char* anim_path2 = "res/models/mecha_ramie_peter/mecha_ramie_FINFIN.glb";
+
+    Animation* anim2 = new Animation(anim_path2, getModelById(models, 8));
+    sceneGraph->root->getChildByName("ramie")->animator = new Animator(anim2);
+
+
 
 	glm::vec3 origin = glm::vec3(0.f, 2.f, 0.f);
 
@@ -504,23 +521,13 @@ int main() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGuizmo::BeginFrame();
-
-        // Window content
-        ImGui::Begin("Test Window");
-        ImGui::Text("Test test test test 123 123");
-        ImGui::Text("Current FPS: %.1f", fps); // Dipslay current fps
-
-        
-
-        // Window render
-        ImGui::End();
-
+        ImGuizmo::BeginFrame();        
 
         
         DrawHierarchyWindow(sceneGraph->root, 0, 0, WINDOW_WIDTH / 6, 2 * WINDOW_HEIGHT / 3);
         previewDisplay();
         assetBarDisplay(0, 2 * WINDOW_HEIGHT / 3, WINDOW_WIDTH, WINDOW_HEIGHT / 3);
+
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -531,7 +538,7 @@ int main() {
 
     }
 
-	//saveScene("res/scene/scene.json", rootNode, player, point_lights, point_light_number, directional_lights, directional_light_number, models);
+	saveScene("res/scene/scene.json", sceneGraph, models);
 
     // Audio engine cleanup
     audioEngine.Shutdown();
@@ -549,30 +556,33 @@ int main() {
 }
 
 void changeMouse(GLFWwindow* window) {
-    double mouseX, mouseY;
-    glfwGetCursorPos(window, &mouseX, &mouseY);
+    if (camera->mode == FREE) {
+        double mouseX, mouseY;
+        glfwGetCursorPos(window, &mouseX, &mouseY);
 
-    int windowWidth, windowHeight;
-    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+        int windowWidth, windowHeight;
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-    if (mouseX <= xCursorMargin) {
-        glfwSetCursorPos(window, windowWidth - xCursorMargin - 1, mouseY);
-        lastX = windowWidth - xCursorMargin - 1;
-    }
-    else if (mouseX >= windowWidth - xCursorMargin) {
-        glfwSetCursorPos(window, xCursorMargin + 1, mouseY);
-        lastX = xCursorMargin + 1;
-    }
+        if (mouseX <= xCursorMargin) {
+            glfwSetCursorPos(window, windowWidth - xCursorMargin - 1, mouseY);
+            lastX = windowWidth - xCursorMargin - 1;
+        }
+        else if (mouseX >= windowWidth - xCursorMargin) {
+            glfwSetCursorPos(window, xCursorMargin + 1, mouseY);
+            lastX = xCursorMargin + 1;
+        }
 
-    if (mouseY <= yCursorMargin) {
-        glfwSetCursorPos(window, mouseX, windowHeight - yCursorMargin - 1);
-        lastY = windowHeight - yCursorMargin - 1;
+        if (mouseY <= yCursorMargin) {
+            glfwSetCursorPos(window, mouseX, windowHeight - yCursorMargin - 1);
+            lastY = windowHeight - yCursorMargin - 1;
 
+        }
+        else if (mouseY >= windowHeight - yCursorMargin) {
+            glfwSetCursorPos(window, mouseX, yCursorMargin + 1);
+            lastY = yCursorMargin + 1;
+        }
     }
-    else if (mouseY >= windowHeight - yCursorMargin) {
-        glfwSetCursorPos(window, mouseX, yCursorMargin + 1);
-        lastY = yCursorMargin + 1;
-    }
+    
 }
 
 glm::vec4 getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
@@ -606,47 +616,14 @@ string print(glm::vec3 v) {
 
 
 
-void DrawSceneNode(Node* node, int depth) {
-    ImGui::Indent(depth * 20.0f); // wcięcie zależne od poziomu
 
-    ImVec2 item_start = ImGui::GetCursorScreenPos();
-    ImGui::Text("%s", node->name.c_str());
-    ImVec2 item_end = ImGui::GetCursorScreenPos();
-    item_end.y += ImGui::GetTextLineHeight();
-
-    // Klikalna powierzchnia
-    ImRect rect(item_start, item_end);
-    bool hovered = ImGui::IsMouseHoveringRect(rect.Min, rect.Max);
-    bool clicked = hovered && ImGui::IsMouseClicked(0);
-
-    if (clicked) {
-        node->is_marked = !node->is_marked;
-		if (node->is_marked) {
-			sceneGraph->marked_object = node;
-		}
-		else {
-			sceneGraph->marked_object = nullptr;
-		}
-    }
-
-    if (node->is_marked) {
-        ImU32 color = ImGui::GetColorU32(ImGuiCol_Header); // kolor zaznaczenia
-        ImGui::GetWindowDrawList()->AddRectFilled(rect.Min, rect.Max, color);
-        ImGui::SetCursorScreenPos(item_start);
-        ImGui::Text("%s", node->name.c_str()); // ponowne rysowanie na zaznaczeniu
-    }
-
-    // Reset wcięcia
-    ImGui::Unindent(depth * 20.0f);
-
-    for (auto& child : node->children) {
-        DrawSceneNode(child, depth + 1);
-    }
-}
 
 void DrawNodeBlock(Node* node, int depth)
 {
+
     if (!node) return;
+
+    float eye_offset = 40.f;
 
     Node* selectedNode = node->scene_graph->marked_object;
 
@@ -657,7 +634,7 @@ void DrawNodeBlock(Node* node, int depth)
     ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 	
     ImVec2 itemPos = ImVec2(cursorPos.x + depth * indentSize, cursorPos.y);
-    ImVec2 itemSize = ImVec2(ImGui::GetContentRegionAvail().x - depth * indentSize, lineHeight);
+    ImVec2 itemSize = ImVec2(ImGui::GetContentRegionAvail().x - depth * indentSize - eye_offset, lineHeight);
 
     // Niewidzialny przycisk dla kliknięcia
     ImGui::SetCursorScreenPos(itemPos);
@@ -669,6 +646,8 @@ void DrawNodeBlock(Node* node, int depth)
         drawList->AddRect(itemPos,
             ImVec2(itemPos.x + itemSize.x, itemPos.y + itemSize.y),
             IM_COL32(255, 255, 0, 255), 4.0f, 0, 2.0f);
+
+        
     }
 
     // Nazwa
@@ -680,13 +659,48 @@ void DrawNodeBlock(Node* node, int depth)
         node->scene_graph->marked_object = node;
     }
 
+    ImVec2 iconPos = ImVec2(itemPos.x + itemSize.x, itemPos.y); 
+    ImGui::SetCursorScreenPos(iconPos);
+    
+
+    ImTextureID icon = node->is_visible ? eye_icon->sprite_id : eye_slashed_icon->sprite_id;
+
+    ImVec2 icon_size = ImVec2(lineHeight, lineHeight);
+    std::string img_id = "##eye_" + node->name;
+
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+    //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0)); 
+    //ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+
+    if (ImGui::ImageButton(img_id.c_str(), icon, icon_size)) {
+        node->is_visible = !node->is_visible;
+    }
+
+    ImGui::PopStyleColor();
+
     // Ustaw pozycję kursora na następną linię
-    ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y + lineHeight));
+    ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y + lineHeight + 10.f));
+
 
     // Rekurencja: dzieci
     for (auto& child : node->children)
     {
         DrawNodeBlock(child, depth + 1);
+    }
+
+    if (selectedNode == node) {
+        if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
+
+            sceneGraph->to_delete = node;
+
+            sceneGraph->marked_object = nullptr;
+        }
+        
+    }
+
+    if (node == sceneGraph->root && sceneGraph->to_delete) {
+		sceneGraph->deleteChild(sceneGraph->to_delete);
+		sceneGraph->to_delete = nullptr;
     }
 }
 
@@ -733,7 +747,16 @@ void previewDisplay()
 
     ImGui::Begin("Viewport", nullptr, window_flags);
 
-    // Pokaż teksturę (zwróć uwagę na UV – odwrócone Y)
+    if (ImGui::Button("ORTO", ImVec2(100, 24))) {
+		camera->mode != FRONT_ORTO ? camera->changeMode(FRONT_ORTO) : camera->changeMode(FREE);
+		sceneGraph->grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
+		sceneGraph->grid->Update();
+    }
+
+    if (ImGui::Button("GRID_SNAP", ImVec2(100, 24))) {
+        isGridSnap = !isGridSnap;
+    }
+
     ImGui::Image((ImTextureID)(intptr_t)colorTexture, ImVec2(previewWidth, previewHeight), ImVec2(0, 1), ImVec2(1, 0));
 
     isInPreview = ImGui::IsItemHovered();
@@ -749,20 +772,35 @@ void previewDisplay()
     if (ImGui::BeginDragDropTarget()) {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_DRAG")) {
             int id = *(int*)payload->Data;
-            // ➕ Dodaj asset do sceny (np. instancja modelu)
+            
 			sceneGraph->addChild(new Node(getModelById(models, id), "entity", colliders));
+            
         }
         ImGui::EndDragDropTarget();
     }
 
-    BeginFullscreenInputLayer();
+    RenderGuizmo();
 
     ImGui::End();
 
     ImGui::PopStyleVar(3);
 }
 
-void BeginFullscreenInputLayer()
+int getDominantAxis(const glm::vec3& delta) {
+	
+    int dominantAxis = -1;
+    float maxDelta = 0.0f;
+    for (int i = 0; i < 3; ++i) {
+        if (std::abs(delta[i]) > maxDelta) {
+            dominantAxis = i;
+            maxDelta = std::abs(delta[i]);
+        }
+    }
+
+    return dominantAxis;
+}
+
+void RenderGuizmo()
 {
     //ImGuiViewport* viewport = ImGui::GetMainViewport();
     //ImGui::SetNextWindowPos(viewport->Pos);
@@ -780,7 +818,7 @@ void BeginFullscreenInputLayer()
 
         //io = ImGui::GetIO();
 
-        ImGuizmo::SetOrthographic(false); // If we want to change between perspective and orthographic it's added just in case
+        ImGuizmo::SetOrthographic(camera->mode == FRONT_ORTO); // If we want to change between perspective and orthographic it's added just in case
         ImGuizmo::SetDrawlist(); // Draw to the current window
 
         //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
@@ -794,23 +832,92 @@ void BeginFullscreenInputLayer()
         auto& _transform = modified_object->getTransform();
         glm::mat4 _model_matrix = _transform.getModelMatrix();
 
+		glm::dvec3 lastPos = _transform.getLocalPosition();
+        
+        bool useSnap = ImGui::IsKeyDown(ImGuiKey_LeftShift);
 
+        float snap[3] = { 1.0f, 1.0f, 1.0f };
         ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
-            currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix));
-
-        if (modified_object->parent) {
-            // w celu otrzymania loklalnych transformacji
-            _model_matrix = glm::inverse(modified_object->parent->transform.getModelMatrix()) * _model_matrix;
-        }
-
-
-        glm::vec3 translation, scale, skew;
-        glm::vec4 perspective;
-        glm::quat rotation;
-        //ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(_model_matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
-        glm::decompose(_model_matrix, scale, rotation, translation, skew, perspective);
+            currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix), nullptr, useSnap ? snap : nullptr);
 
         if (ImGuizmo::IsUsing()) {
+            /*SnapResult result;
+            for (auto& collider : colliders) {
+                if (modified_object->AABB != collider) {
+                     SnapResult tempX, tempY, tempZ;
+					 tempX = modified_object->AABB->trySnapToWallsX(*collider, 0.5f);
+					 tempY = modified_object->AABB->trySnapToWallsY(*collider, 0.5f);
+					 tempZ = modified_object->AABB->trySnapToWallsZ(*collider, 0.5f);
+					 result.shouldSnap = tempX.shouldSnap || tempY.shouldSnap || tempZ.shouldSnap;
+					
+                     if (result.shouldSnap) {
+                         result.snapOffset = tempX.snapOffset + tempY.snapOffset + tempZ.snapOffset;
+                         break;
+                     }
+                }
+            }*/
+
+            
+
+
+
+            if (modified_object->parent) {
+                // w celu otrzymania loklalnych transformacji
+                _model_matrix = glm::inverse(modified_object->parent->transform.getModelMatrix()) * _model_matrix;
+            }
+
+
+            glm::vec3 translation, scale, skew;
+            glm::vec4 perspective;
+            glm::quat rotation;
+            //ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(_model_matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
+            glm::decompose(_model_matrix, scale, rotation, translation, skew, perspective);
+
+            
+
+
+            /*if (result.shouldSnap && !isSnapped) {
+                translation += result.snapOffset;
+                lastSnapOffset = result.snapOffset;
+                snapedPosition = translation;
+                isSnapped = true;
+            }
+            else if (isSnapped) {
+                glm::vec3 currentOffset = translation - snapedPosition;
+                if (glm::length(currentOffset - lastSnapOffset) > 0.5f) {
+                    isSnapped = false;
+                }
+            }*/
+
+            
+            if (isGridSnap) {
+                glm::dvec3 delta = (glm::dvec3)translation - lastPos;
+                int axis = getDominantAxis(delta);
+
+                // 2. pobierz aktywną krawędź AABB
+                if (axis >= 0) {
+                    float edge = sceneGraph->marked_object->AABB->min_point_world[axis];
+
+                    // 3. snap
+                    double snapValue = 1.0;
+                    float snapped = round(edge / snapValue) * snapValue;
+                    /*snapped.x = round(edge.x / snapValue) * snapValue;
+                    snapped.y = round(edge.y / snapValue) * snapValue;
+                    snapped.z = round(edge.z / snapValue) * snapValue;*/
+                    float offset = snapped - edge;
+
+                    if (std::abs(offset) < 0.2) {
+                        glm::dvec3 snapVec(0.0);
+                        snapVec[axis] = offset;
+                        translation += snapVec;
+                    }
+                }
+            }
+
+            
+            
+
+        
             if (currentOperation == ImGuizmo::OPERATION::TRANSLATE) {
                 modified_object->transform.setLocalPosition(translation);
             }
@@ -869,10 +976,16 @@ void assetBarDisplay(float x, float y, float width, float height) {
     for (auto& model : models) {
         ImGui::PushID(model.id);
 
-        
+		ImTextureID _icon = icon->sprite_id;
+        string name = model.directory;
+        if (!model.mode.empty() && model.textures_loaded.size() > 0) {
+            
+			_icon = model.textures_loaded[0].id;
+			name = model.mode + " " + model.textures_loaded[0].path;
+        } 
 
         // Ikona (np. asset.textureID albo fallback ikona)
-        if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)icon->sprite_id, ImVec2(thumbnailSize, thumbnailSize))) {
+        if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)_icon, ImVec2(thumbnailSize, thumbnailSize))) {
             // (opcjonalne: obsługa kliknięcia na asset)
         }
 
@@ -883,7 +996,9 @@ void assetBarDisplay(float x, float y, float width, float height) {
             ImGui::EndDragDropSource();
         }
         // Nazwa assetu
-        ImGui::TextWrapped(model.directory.c_str());
+        
+        
+        ImGui::TextWrapped(name.c_str());
 
         ImGui::NextColumn();
         ImGui::PopID();

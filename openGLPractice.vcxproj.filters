@@ -30,6 +30,8 @@
     <ClCompile Include="src\Basic\Animator.cpp" />
     <ClCompile Include="src\Basic\Node.cpp" />
     <ClCompile Include="src\Component\CameraGlobals.cpp" />
+    <ClCompile Include="Editor.cpp" />
+    <ClCompile Include="Grid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -86,6 +88,8 @@
     <ClInclude Include="src\Basic\Animator.h" />
     <ClInclude Include="src\System\Serialization.h" />
     <ClInclude Include="src\Component\CameraGlobals.h" />
+    <ClInclude Include="Editor.h" />
+    <ClInclude Include="Grid.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
@@ -105,6 +109,8 @@
     <None Include="res\shaders\text.vert" />
     <None Include="res\shaders\background.frag" />
     <None Include="freetype.dll" />
+    <None Include="res\shaders\grid.vert" />
+    <None Include="res\shaders\grid.frag" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />

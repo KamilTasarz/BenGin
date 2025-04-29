@@ -14,11 +14,12 @@
 #include <memory>
 
 #include "../Component/BoundingBox.h"
+#include "../Component/CameraGlobals.h"
 #include "Model.h"
 #include "Animator.h"
-#include "../Component/CameraGlobals.h"
-#include <set>
 
+#include <set>
+#include "../Grid.h"
 
 
 class SceneGraph;
@@ -499,9 +500,14 @@ public:
     Node* root;
     // Root has ptr on marked object
     Node* marked_object, * new_marked_object;
+
+	Node* to_delete = nullptr;
+
     int size = 0, point_light_number = 0, directional_light_number = 0;
     std::list<DirectionalLight*> directional_lights;
     std::list<PointLight*> point_lights;
+
+	Grid* grid = nullptr;
 
     unsigned int depthMapFBO;
 
@@ -527,7 +533,11 @@ public:
     const char* fragmentPath_background = "res/shaders/background.frag";
 
     SceneGraph() {
+
         root = new Node("root", 0);
+		grid = new Grid();
+        grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
+        grid->Update();
 		root->scene_graph = this;
         marked_object = nullptr;
         new_marked_object = nullptr;
@@ -560,8 +570,11 @@ public:
     void unmark();
     void addChild(Node* p);
     void addChild(Node* p, std::string name);
+	void deleteChild(Node* p);
     void addPointLight(PointLight* p);
     void addDirectionalLight(DirectionalLight* p);
+    void addPointLight(PointLight* p, std::string name);
+    void addDirectionalLight(DirectionalLight* p, std::string name);
     void setShaders();
     void draw(float width, float height, unsigned int framebuffer);
     void drawMarkedObject();

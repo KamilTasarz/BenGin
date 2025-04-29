@@ -1,4 +1,4 @@
-#include "BoundingBox.h"
+﻿#include "BoundingBox.h"
 
 bool BoundingBox::isRayIntersects(glm::vec3 direction, glm::vec3 origin, float& t) const
 {
@@ -25,6 +25,69 @@ bool BoundingBox::isBoundingBoxIntersects(const BoundingBox& other_bounding_box)
          other_bounding_box.min_point_world.y < max_point_world.y && other_bounding_box.max_point_world.y > min_point_world.y &&
          other_bounding_box.min_point_world.z < max_point_world.z && other_bounding_box.max_point_world.z > min_point_world.z;
 }
+
+SnapResult BoundingBox::trySnapToWallsX(const BoundingBox& other, float snapThreshold) {
+    SnapResult result;
+
+    
+    float dx = std::abs(max_point_world.x - other.min_point_world.x); // prawa krawędź naszego do lewej tamtego
+    if (dx < snapThreshold) {
+        result.shouldSnap = true;
+        result.snapOffset = glm::vec3(other.min_point_world.x - max_point_world.x, 0, 0);
+        return result;
+    }
+
+    dx = std::abs(min_point_world.x - other.max_point_world.x); // lewa krawędź naszego do prawej tamtego
+    if (dx < snapThreshold) {
+        result.shouldSnap = true;
+        result.snapOffset = glm::vec3(other.max_point_world.x - min_point_world.x, 0, 0);
+        return result;
+    }
+        
+
+    return result;
+}
+
+SnapResult BoundingBox::trySnapToWallsY(const BoundingBox& other, float snapThreshold) {
+    SnapResult result;
+
+    float dy = std::abs(min_point_world.y - other.max_point_world.y); // dolna krawędź naszego do gornej tamtego
+    if (dy < snapThreshold) {
+        result.shouldSnap = true;
+        result.snapOffset = glm::vec3(0, other.max_point_world.y - min_point_world.y, 0);
+        return result;
+    }
+
+    dy = std::abs(max_point_world.y - other.min_point_world.y); // gorna krawędź naszego do dolnej tamtego
+    if (dy < snapThreshold) {
+        result.shouldSnap = true;
+        result.snapOffset = glm::vec3(0, other.min_point_world.y - max_point_world.y, 0);
+        return result;
+    }
+
+    return result;
+}
+
+SnapResult BoundingBox::trySnapToWallsZ(const BoundingBox& other, float snapThreshold) {
+    SnapResult result;
+
+    float dz = std::abs(min_point_world.z - other.max_point_world.z); // przednia krawędź naszego do tylnej tamtego
+    if (dz < snapThreshold) {
+        result.shouldSnap = true;
+        result.snapOffset = glm::vec3(0, 0, other.max_point_world.z - min_point_world.z);
+        return result;
+    }
+
+    dz = std::abs(max_point_world.z - other.min_point_world.z); // tylna krawędź naszego do przedniej tamtego
+    if (dz < snapThreshold) {
+        result.shouldSnap = true;
+        result.snapOffset = glm::vec3(0, 0, other.min_point_world.z - max_point_world.z);
+        return result;
+    }
+
+    return result;
+}
+
 
 void BoundingBox::transformAABB(const glm::mat4& model) {
     this->model = glm::mat4(model);

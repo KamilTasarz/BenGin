@@ -1,4 +1,5 @@
 ﻿#include "Node.h"
+#include "../Component/CameraGlobals.h"
 
 void SceneGraph::unmark() {
     marked_object->is_marked = false;
@@ -6,8 +7,11 @@ void SceneGraph::unmark() {
 }
 
 void SceneGraph::addChild(Node* p) {
+    int i = 1;
+	string name = p->name;
     while (root->getChildByName(p->name)) {
-        p->name += "_copy";
+        p->name = name + "_" + to_string(i);
+        i++;
     }
     root->addChild(p);
 }
@@ -15,13 +19,30 @@ void SceneGraph::addChild(Node* p) {
 void SceneGraph::addChild(Node* p, std::string name) {
     Node* parent = root->getChildByName(name);
     if (parent != nullptr) {
-
+        int i = 1;
+        string name = p->name;
         while (root->getChildByName(p->name)) {
-            p->name += "_copy";
+            
+            p->name = name + "_" + to_string(i);
+            i++;
         }
         parent->addChild(p);
     }
 }
+
+void SceneGraph::deleteChild(Node* p)
+{
+    Node* parent = p->parent;
+    if (!parent) return;
+
+    auto& siblings = parent->children;
+    auto it = std::find(siblings.begin(), siblings.end(), p);
+    if (it != siblings.end()) {
+        siblings.erase(it);
+        delete p;
+    }
+}
+
 
 void SceneGraph::addPointLight(PointLight* p) {
     addChild(p);
@@ -34,6 +55,19 @@ void SceneGraph::addDirectionalLight(DirectionalLight* p) {
     directional_lights.push_back(p);
     directional_light_number++;
 }
+
+void SceneGraph::addPointLight(PointLight* p, std::string name) {
+    addChild(p, name);
+    point_lights.push_back(p);
+    point_light_number++;
+}
+
+void SceneGraph::addDirectionalLight(DirectionalLight* p, std::string name) {
+    addChild(p, name);
+    directional_lights.push_back(p);
+    directional_light_number++;
+}
+
 
 void SceneGraph::setShaders() {
     glm::mat4 projection = camera->GetProjection();
@@ -74,6 +108,8 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
     glViewport(0, 0, width, height);
     glClearColor(.01f, .01f, .01f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	grid->Draw();
 
     setShaders();
     root->drawSelfAndChild();
@@ -247,6 +283,9 @@ void  Node::updateSelfAndChild(bool controlDirty) {
 
     controlDirty |= transform.isDirty();
 
+     
+   
+
     if (controlDirty) {
         forceUpdateSelfAndChild();
         //return;
@@ -298,10 +337,12 @@ void Node::drawSelfAndChild() {
 
     }
 
-
-    for (auto&& child : children) {
-        child->drawSelfAndChild();
+    if (is_visible) {
+        for (auto&& child : children) {
+            child->drawSelfAndChild();
+        }
     }
+    
 
     //_shader.setVec4("dynamicColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -321,7 +362,7 @@ void Node::drawShadows(Shader& shader) {
 
         shader.use();
         shader.setMat4("model", transform.getModelMatrix());
-        if (!no_textures) {
+        if (!no_textures && is_visible) {
             if (animator != nullptr) {
                 auto f = animator->final_bone_matrices;
                 for (int i = 0; i < f.size(); ++i)

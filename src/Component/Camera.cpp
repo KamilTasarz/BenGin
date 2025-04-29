@@ -2,11 +2,24 @@
 #include "../Basic/Node.h"
 
 glm::mat4 Camera::GetView() {
-	return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+    if (mode != FRONT_ORTO) {
+        return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+    }
+    else {
+		cameraUp = glm::vec3(0.f, 1.f, 0.f);
+        return glm::lookAt(cameraPos, cameraPos + glm::vec3(0.0f, 0.0f, -1.f), cameraUp);
+    }
+	
 }
 
 glm::mat4 Camera::GetProjection() {
-    return glm::perspective(glm::radians(Zoom), AspectRatio, NearPlane, FarPlane);
+    if (mode != FRONT_ORTO) {
+        return glm::perspective(glm::radians(Zoom), AspectRatio, NearPlane, FarPlane);
+    }
+    else {
+		return glm::ortho(-20.f, 20.f, -11.25f, 11.25f, NearPlane, FarPlane);
+    }
+    
 }
 
 void Camera::ProcessKeyboard(GLfloat deltaTime, int dir) {
@@ -29,6 +42,18 @@ void Camera::ProcessKeyboard(GLfloat deltaTime, int dir) {
     }
     else if (mode == FOLLOWING) {
         cameraPos = object_to_follow->transform.getGlobalPosition() + camera_following_offset;
+    }
+    else if (mode == FRONT_ORTO) {
+        GLfloat cameraSpeed = MovementSpeed * deltaTime;
+        if (4 & dir)
+            cameraPos -= cameraRight * cameraSpeed;
+        if (8 & dir)
+            cameraPos += cameraRight * cameraSpeed;
+        if (16 & dir)
+            cameraPos += cameraUp * cameraSpeed;
+        if (32 & dir)
+            cameraPos -= cameraUp * cameraSpeed;
+
     }
 
     updateCameraVectors();
@@ -103,8 +128,15 @@ void Camera::setObjectToFollow(Node* object, glm::vec3& origin)
 
 void Camera::changeMode(CameraMode mode)
 {
+    if (this->mode == FRONT_ORTO) cameraPos = oldCameraPos;
+
     if (mode == FOLLOWING && object_to_follow == nullptr) this->mode = FREE;
     else this->mode = mode;
+
+    if (mode == FRONT_ORTO) {
+        oldCameraPos = cameraPos;
+        cameraPos = glm::vec3(0.0f, 0.0f, FarPlane / 2);
+    }
 
 	/*if (mode != FOLLOWING) {
 		cameraPos = oldCameraPos;
