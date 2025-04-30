@@ -32,7 +32,7 @@ CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
 #include "src/Input/Input.h"
 
 #include "src/System/Serialization.h"
-
+#include "src/ResourceManager.h"
 #include "config.h"
 
 #define WINDOW_WIDTH 1920
@@ -92,7 +92,8 @@ Text* text;
 Background* background;
 Sprite *sprite, *sprite2, *sprite3, *icon, *eye_icon, *eye_slashed_icon;
 
-std::vector<Model> models;
+//std::vector<Model> models;
+
 
 int previewX = WINDOW_WIDTH / 6;
 int previewY = 0;
@@ -174,11 +175,13 @@ int main() {
 
 	sceneGraph = new SceneGraph();   
 
-    Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
+    ResourceManager::Instance().init();
+
+    /*Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
     Model Kmodel("res/models/kutasiarz/The_Thing.obj", 1);
     Model Lmodel("res/models/man/CesiumMan2.gltf", 2);    
     cout << "Model" << endl;
-    Model Rmodel("res/models/mecha_ramie_peter/mecha_ramie_FINFIN.glb", 8);    
+    Model Rmodel("res/models/mecha_ramie_peter/mecha_ramie1.gltf", 8);
     
 
     //Model Lmodel("res/models/ludzik/ludzik.gltf");
@@ -209,7 +212,7 @@ int main() {
     Model Tmodel_Tile(texture_names, 1, 9);
 
     Model model_kolce("res/models/kolce/kolec_wiele.obj", 10);
-    Model model_door("res/models/door/Door_closed_v3.glb", 11);
+    Model model_door("res/models/door/Doors.gltf", 11);
     Model model_cheese("res/models/cheese/Cheese3.gltf", 12);
 
     *texture_names = { back_name };
@@ -228,7 +231,7 @@ int main() {
 	models.push_back(model_kolce);
 	models.push_back(model_door);
 	models.push_back(model_cheese);
-	models.push_back(plane_back);
+	models.push_back(plane_back);*/
 
     /*Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -301,14 +304,14 @@ int main() {
         }
     }*/
 
-	loadScene("res/scene/scene.json", sceneGraph, models, colliders);
+	loadScene("res/scene/scene.json", sceneGraph, colliders);
 
     /*const char* anim_path = "res/models/man/CesiumMan2.gltf";
 
     Animation* anim = new Animation(anim_path, models[2]);
 	sceneGraph->root->getChildByName("ludzik")->animator = new Animator(anim);
 
-    const char* anim_path2 = "res/models/mecha_ramie_peter/mecha_ramie_FINFIN.glb";
+    const char* anim_path2 = "res/models/mecha_ramie_peter/mecha_ramie1.gltf";
 
     Animation* anim2 = new Animation(anim_path2, getModelById(models, 8));
     sceneGraph->root->getChildByName("ramie")->animator = new Animator(anim2);*/
@@ -431,7 +434,7 @@ int main() {
         if (glfwGetKey(window->window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
             if (!pressed_add) {
                 if (sceneGraph->marked_object != nullptr) {
-                    Node* newNode = new Node(*sceneGraph->marked_object->pModel ,sceneGraph->marked_object->getName(), colliders, sceneGraph->marked_object->id);
+                    Node* newNode = new Node(sceneGraph->marked_object->pModel ,sceneGraph->marked_object->getName(), colliders, sceneGraph->marked_object->id);
 					newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition());
 					newNode->transform.setLocalRotation(sceneGraph->marked_object->transform.getLocalRotation());
 					newNode->transform.setLocalScale(sceneGraph->marked_object->transform.getLocalScale());
@@ -581,7 +584,7 @@ int main() {
 
     }
 
-	saveScene("res/scene/scene.json", sceneGraph, models);
+	saveScene("res/scene/scene.json", sceneGraph);
 
     // Audio engine cleanup
     audioEngine.Shutdown();
@@ -818,8 +821,8 @@ void previewDisplay()
     if (ImGui::BeginDragDropTarget()) {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_DRAG")) {
             int id = *(int*)payload->Data;
-            
-            Node* p = new Node(getModelById(models, id), "entity", colliders);
+            //Model
+            Node* p = new Node(ResourceManager::Instance().getModel(id), "entity", colliders);
 
 
 			sceneGraph->addChild(p);
@@ -1033,21 +1036,28 @@ void assetBarDisplay(float x, float y, float width, float height) {
     }
     ImGui::SameLine();
     if (ImGui::Button("SAVE", ImVec2(100, 24))) {
-        saveScene("res/scene/scene.json", sceneGraph, models);
+        saveScene("res/scene/scene.json", sceneGraph);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("EDITING_VIEW", ImVec2(100, 24))) {
+		sceneGraph->is_editing = !sceneGraph->is_editing;
     }
 
 
     ImGui::Columns(columnCount, nullptr, false);
 
-    for (auto& model : models) {
-        ImGui::PushID(model.id);
+	int size = ResourceManager::Instance().getModels().size();
+
+    for (auto& [key, model] : ResourceManager::Instance().getModels()) {
+
+        ImGui::PushID(model->id);
 
 		ImTextureID _icon = icon->sprite_id;
-        string name = model.directory;
-        if (!model.mode.empty() && model.textures_loaded.size() > 0) {
+        string name = model->directory;
+        if (!model->mode.empty() && model->textures_loaded.size() > 0) {
             
-			_icon = model.textures_loaded[0].id;
-			name = model.mode + " " + model.textures_loaded[0].path;
+			_icon = model->textures_loaded[0].id;
+			name = model->mode + " " + model->textures_loaded[0].path;
         } 
 
         // Ikona (np. asset.textureID albo fallback ikona)
@@ -1057,8 +1067,8 @@ void assetBarDisplay(float x, float y, float width, float height) {
 
         // DRAG SOURCE
         if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-            ImGui::SetDragDropPayload("ASSET_DRAG", &model.id, sizeof(model.id));
-            ImGui::Text("Dragging %s", model.directory.c_str());
+            ImGui::SetDragDropPayload("ASSET_DRAG", &model->id, sizeof(model->id));
+            ImGui::Text("Dragging %s", model->directory.c_str());
             ImGui::EndDragDropSource();
         }
         // Nazwa assetu

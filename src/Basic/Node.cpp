@@ -116,7 +116,11 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
     glClearColor(.01f, .01f, .01f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	grid->Draw();
+    if (is_editing) {
+        grid->Draw();
+    }
+
+	
 
     setShaders();
     root->drawSelfAndChild();
@@ -177,7 +181,7 @@ void SceneGraph::setLights(Shader* shader) {
 }
 
 void SceneGraph::drawMarkedObject() {
-    if (marked_object != nullptr) {
+    if (marked_object != nullptr && is_editing) {
 
         glStencilFunc(GL_EQUAL, 1, 0xFF);
         glStencilMask(0x00);
@@ -362,7 +366,10 @@ void Node::drawSelfAndChild() {
         glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
         scene_graph->shader_outline->setVec3("color", dynamic_color);
 
-        AABB->draw(*scene_graph->shader_outline);
+        if (scene_graph->is_editing) {
+            AABB->draw(*scene_graph->shader_outline);
+        }
+        
 
     }
 

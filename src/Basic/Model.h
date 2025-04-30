@@ -172,18 +172,7 @@ private:
         // specular: texture_specularN
         // normal: texture_normalN
 
-        std::cout << "Number of materials: " << scene->mNumMaterials << std::endl;
-
-        for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
-            aiMaterial* material = scene->mMaterials[i];
-            std::cout << "Material " << i << " has " << material->GetTextureCount(aiTextureType_DIFFUSE) << " diffuse textures." << std::endl;
-
-            // Dla każdego materiału wypisz inne dostępne tekstury
-            for (int t = aiTextureType_DIFFUSE; t <= aiTextureType_HEIGHT; t++) {
-                int textureCount = material->GetTextureCount((aiTextureType)t);
-                std::cout << "Texture type " << t << " count: " << textureCount << std::endl;
-            }
-        }
+        
 
         aiString path;
         if (material->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS) {

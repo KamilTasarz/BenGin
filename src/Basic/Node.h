@@ -200,7 +200,7 @@ public:
     glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     // Node model
-    Model* pModel = nullptr;
+    shared_ptr<Model> pModel = nullptr;
 
     // Node transformation
     Transform transform;
@@ -239,22 +239,22 @@ public:
     }
 
     // Model
-    Node(Model& model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
+    Node(shared_ptr<Model> model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ model } {
         name = nameOfNode;
         id = _id;
         no_textures = false;
-        if (model.min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model.min_points, model.max_points);
+        if (model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
         else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
 
         this->no_textures = no_textures;
         vector_of_colliders.push_back(AABB);
     }
 
-    Node(Model& model, std::string nameOfNode, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ &model } {
+    Node(shared_ptr<Model> model, std::string nameOfNode, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ model } {
         name = nameOfNode;
         id = _id;
         no_textures = false;
-        if (model.min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model.min_points, model.max_points);
+        if (model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
         else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
 
         this->no_textures = no_textures;
@@ -333,8 +333,8 @@ public:
     int max_size = 1000;
     unsigned int buffer;
 
-    InstanceManager(Model& model, std::string nameOfNode, int id = 0, int max_size = 1000) : Node(nameOfNode, id), max_size(max_size) {
-        pModel = &model;
+    InstanceManager(shared_ptr<Model> model, std::string nameOfNode, int id = 0, int max_size = 1000) : Node(nameOfNode, id), max_size(max_size) {
+        pModel = model;
         AABB = nullptr;
         prepareBuffer();
     }
@@ -378,7 +378,7 @@ public:
 
     unsigned int depthMap = 0;
 
-    Light(Model& model, std::string nameOfNode, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f)) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
+    Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f)) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
         
 		no_textures = true;
 
@@ -404,7 +404,7 @@ public:
         view_projection = glm::mat4(1.f);
     }*/
 
-    DirectionalLight(Model& model, std::string nameOfNode, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
+    DirectionalLight(shared_ptr<Model> model, std::string nameOfNode, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
         : Light(model, nameOfNode, ambient, diffuse, specular), direction(direction) {
         updateMatrix();
     }
@@ -444,9 +444,9 @@ public:
     unsigned int depthMapBack = 0;
     glm::mat4 view_back;
 
-    //PointLight() : Light(Model& model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
+    //PointLight() : Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
 
-    PointLight(Model& model, std::string nameOfNode, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
+    PointLight(shared_ptr<Model> model, std::string nameOfNode, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
         : Light(model, nameOfNode, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
 
         glGenTextures(1, &depthMapBack);
@@ -514,6 +514,8 @@ public:
 	Grid* grid = nullptr;
 
     unsigned int depthMapFBO;
+
+	bool is_editing = true;
 
     Shader* shader;
     Shader* shader_tile;

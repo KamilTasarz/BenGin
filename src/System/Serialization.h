@@ -4,6 +4,7 @@
 #include "../Gameplay/Player.h"
 #include "../Component/CameraGlobals.h"
 #include "../Light.h"
+#include "../ResourceManager.h"
 #include <nlohmann/json.hpp>
 #include <functional>
 #include <iostream>
@@ -14,7 +15,7 @@ using json = nlohmann::json;
 json vec3_to_json(const glm::vec3& vec);
 json quat_to_json(const glm::quat& quat);
 json save_node(Node* node);
-Node* load_node(json& j, std::vector<Model>& models, std::vector<BoundingBox*>& colliders, SceneGraph*& scene);
+Node* load_node(json& j, std::vector<BoundingBox*>& colliders, SceneGraph*& scene);
 
 Model& getModelById(std::vector<Model>& models, int id) {
 	for (auto& model : models) {
@@ -25,35 +26,35 @@ Model& getModelById(std::vector<Model>& models, int id) {
 	throw std::runtime_error("Model not found");
 }
 
-int saveScene(const std::string& filename, SceneGraph*& scene, std::vector<Model> &models) {
+int saveScene(const std::string& filename, SceneGraph*& scene) {
 
 	json sceneData;
 	
 	sceneData["scene"] = save_node(scene->root);
 	
-	json modelData;
+	//json modelData;
 
-	for (auto model = models.begin(); model != models.end(); model++) {
-		json modelJson;
-		modelJson["id"] = model->id;
-		if (model->directory.empty()) {
-			//kostki i plane'y
-			modelJson["mode"] = model->mode;
-			for (int i = 0; i < model->textures_loaded.size(); i++) {
-				/*json textureJson;
-				textureJson["path"] = model->textures_loaded[i].path;
-				modelJson["textures"].push_back(textureJson);*/
-				modelJson["textures"].push_back(model->textures_loaded[i].path);
-			}
-		}
-		else {
-			//kutasiarz i cos
-			modelJson["directory"] = model->exact_path;
-		}
-		modelData.push_back(modelJson);
-	}
+	//for (auto model = models.begin(); model != models.end(); model++) {
+	//	json modelJson;
+	//	modelJson["id"] = model->id;
+	//	if (model->directory.empty()) {
+	//		//kostki i plane'y
+	//		modelJson["mode"] = model->mode;
+	//		for (int i = 0; i < model->textures_loaded.size(); i++) {
+	//			/*json textureJson;
+	//			textureJson["path"] = model->textures_loaded[i].path;
+	//			modelJson["textures"].push_back(textureJson);*/
+	//			modelJson["textures"].push_back(model->textures_loaded[i].path);
+	//		}
+	//	}
+	//	else {
+	//		//kutasiarz i cos
+	//		modelJson["directory"] = model->exact_path;
+	//	}
+	//	modelData.push_back(modelJson);
+	//}
 
-	sceneData["models"] = modelData;
+	//sceneData["models"] = modelData;
 
 	json cameraData;
 	cameraData["position"] = vec3_to_json(camera->cameraPos);
@@ -164,7 +165,7 @@ json save_node(Node* node) {
 	return j;
 }
 
-int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<Model>& models, std::vector<BoundingBox*>& colliders) {
+int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<BoundingBox*>& colliders) {
 
 	std::ifstream file(filename);
 	if (!file) {
@@ -216,7 +217,7 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<Model
 
 	scene = new SceneGraph();
 
-	load_node(sceneData["scene"], models, colliders, scene);
+	load_node(sceneData["scene"],  colliders, scene);
 
 	//json playerData = sceneData["player"];
 
@@ -239,7 +240,7 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<Model
 
 
 
-Node* load_node(json& j, std::vector<Model>& models, std::vector<BoundingBox*>& colliders, SceneGraph *&scene) {
+Node* load_node(json& j, std::vector<BoundingBox*>& colliders, SceneGraph *&scene) {
 	Node* node = nullptr;
 
 
@@ -258,7 +259,7 @@ Node* load_node(json& j, std::vector<Model>& models, std::vector<BoundingBox*>& 
 		scene->root->is_visible = is_visible;
 		for (json j : j["children"]) {
 
-			Node* child = load_node(j, models, colliders, scene);
+			Node* child = load_node(j, colliders, scene);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
 				scene->addPointLight(point_light);
@@ -279,7 +280,7 @@ Node* load_node(json& j, std::vector<Model>& models, std::vector<BoundingBox*>& 
 		if (type._Equal("Node")) {
 
 			if (model_id != -1) {
-				Model& model = getModelById(models, model_id);
+				shared_ptr<Model> model = ResourceManager::Instance().getModel(model_id); //getModelById(models, model_id);
 				if (no_textures) {
 					node = new Node(model, name, id);
 				}
@@ -298,14 +299,14 @@ Node* load_node(json& j, std::vector<Model>& models, std::vector<BoundingBox*>& 
 			float constant = j["point_light"]["constant"];
 			float linear = j["point_light"]["linear"];
 			float quadratic = j["point_light"]["quadratic"];
-			node = new PointLight(getModelById(models, model_id), name, quadratic, linear, constant, ambient, diffuse, specular);
+			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, quadratic, linear, constant, ambient, diffuse, specular);
 		}
 		else if (type._Equal("DirectionalLight")) {
 			glm::vec3 ambient = json_to_vec3(j["directional_light"]["ambient"]);
 			glm::vec3 specular = json_to_vec3(j["directional_light"]["specular"]);
 			glm::vec3 diffuse = json_to_vec3(j["directional_light"]["diffuse"]);
 			glm::vec3 direction = json_to_vec3(j["directional_light"]["direction"]);
-			node = new DirectionalLight(getModelById(models, model_id), name, direction, ambient, diffuse, specular);
+			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, direction, ambient, diffuse, specular);
 		}
 		else {
 			std::cerr << "Unknown node type: " << type << std::endl;
@@ -320,7 +321,7 @@ Node* load_node(json& j, std::vector<Model>& models, std::vector<BoundingBox*>& 
 
 		// Rekurencyjnie zapisujemy dzieci
 		for (json j : j["children"]) {
-			Node* child = load_node(j, models, colliders, scene);
+			Node* child = load_node(j, colliders, scene);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
 				scene->addPointLight(point_light, node->name);

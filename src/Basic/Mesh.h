@@ -36,6 +36,7 @@ struct Vertex {
 
 struct Texture {
     unsigned int id;
+    //unsigned int logic_id = 0;
     string type;
     string path;
 };
