@@ -141,9 +141,10 @@ void BoundingBox::setBuffers() {
             max_point_world.x, max_point_world.y, min_point_world.z
     };
     
-    //if (VAO == 0) {
-
-
+    if (VAO != 0) {
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
+    }
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
