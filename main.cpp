@@ -188,7 +188,8 @@ int main() {
 
 
     const char* box_spec = "res/textures/box_specular.png", * box_diff = "res/textures/box_diffuse.png",
-        * stone_name = "res/textures/stone.jpg", * wood_name = "res/textures/wood.jpg", * grass_name = "res/textures/grass.jpg", * tile_name = "res/textures/CeramicTile.png";
+        * stone_name = "res/textures/stone.jpg", * wood_name = "res/textures/wood.jpg", * grass_name = "res/textures/grass.jpg",
+        * tile_name = "res/textures/CeramicTile.png", * back_name = "res/textures/background.jpg";
 
     const char* texture_names[] = { box_spec, box_diff };
     Model Tmodel_box_diff_spec(texture_names, 2, 3);
@@ -211,6 +212,9 @@ int main() {
     Model model_door("res/models/door/Door_closed_v3.glb", 11);
     Model model_cheese("res/models/cheese/Cheese3.gltf", 12);
 
+    *texture_names = { back_name };
+    Model plane_back(texture_names, 1, 13, "plane");
+
     models.push_back(Tmodel);
 	models.push_back(Kmodel);
 	models.push_back(Lmodel);
@@ -224,6 +228,7 @@ int main() {
 	models.push_back(model_kolce);
 	models.push_back(model_door);
 	models.push_back(model_cheese);
+	models.push_back(plane_back);
 
     /*Node* kutasiarz = new Node(Tmodel, "kutasiarz", colliders, 0, glm::vec3(-2.f, -3.f, -2.f), glm::vec3(2.f, 3.f, 2.f));
     Node* cos = new Node(Kmodel, "cos", colliders, 0, glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
