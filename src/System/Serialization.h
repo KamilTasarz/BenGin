@@ -12,10 +12,22 @@
 
 using json = nlohmann::json;
 
+Model& getModelById(std::vector<Model>& models, int id);
 json vec3_to_json(const glm::vec3& vec);
 json quat_to_json(const glm::quat& quat);
+glm::quat json_to_quat(const json& j);
+glm::vec3 json_to_vec3(const json& j);
 json save_node(Node* node);
-Node* load_node(json& j, std::vector<BoundingBox*>& colliders, SceneGraph*& scene);
+int saveScene(const std::string& filename, SceneGraph*& scene);
+int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<shared_ptr<Prefab>>& prefabs, std::vector<BoundingBox*>& colliders);
+Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<shared_ptr<Prefab>>& prefabs, SceneGraph*& scene);
+
+shared_ptr<Prefab> getPrefab(std::vector<shared_ptr<Prefab>>& prefabs, std::string name);
+Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name);
+
+shared_ptr<Prefab> loadPrefab(const std::string& filename);
+void savePrefab(shared_ptr<Prefab>& prefab);
+
 
 Model& getModelById(std::vector<Model>& models, int id) {
 	for (auto& model : models) {
@@ -138,6 +150,14 @@ json save_node(Node* node) {
 		pointLightData["quadratic"] = point_lights->quadratic;
 		j["point_light"] = pointLightData;
 	}
+	else if (dynamic_cast<PrefabInstance*>(node)) {
+		j["type"] = "PrefabInstance";
+		PrefabInstance* prefab_inst = dynamic_cast<PrefabInstance*>(node);
+		json pointLightData;
+		pointLightData["prefab_name"] = prefab_inst->prefab->prefab_scene_graph->root->name;
+	
+		j["prefab_instance"] = pointLightData;
+	}
 	else {
 		j["type"] = "Node";
 	}
@@ -165,7 +185,7 @@ json save_node(Node* node) {
 	return j;
 }
 
-int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<BoundingBox*>& colliders) {
+int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<shared_ptr<Prefab>>& prefabs, std::vector<BoundingBox*>& colliders) {
 
 	std::ifstream file(filename);
 	if (!file) {
@@ -217,7 +237,7 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<Bound
 
 	scene = new SceneGraph();
 
-	load_node(sceneData["scene"],  colliders, scene);
+	load_node(sceneData["scene"],  colliders, prefabs, scene);
 
 	//json playerData = sceneData["player"];
 
@@ -238,9 +258,17 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<Bound
 	return 0;
 }
 
+shared_ptr<Prefab> getPrefab(std::vector<shared_ptr<Prefab>>& prefabs, std::string name) {
+	for (auto& prefab : prefabs) {
+		if (prefab->prefab_scene_graph->root->name._Equal(name)) {
+			return prefab;
+		}
+		
+	}
+	return nullptr;
+}
 
-
-Node* load_node(json& j, std::vector<BoundingBox*>& colliders, SceneGraph *&scene) {
+Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<shared_ptr<Prefab>>& prefabs, SceneGraph *&scene) {
 	Node* node = nullptr;
 
 
@@ -259,7 +287,7 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, SceneGraph *&scen
 		scene->root->is_visible = is_visible;
 		for (json j : j["children"]) {
 
-			Node* child = load_node(j, colliders, scene);
+			Node* child = load_node(j, colliders, prefabs, scene);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
 				scene->addPointLight(point_light);
@@ -308,6 +336,10 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, SceneGraph *&scen
 			glm::vec3 direction = json_to_vec3(j["directional_light"]["direction"]);
 			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, direction, ambient, diffuse, specular);
 		}
+		else if (type._Equal("PrefabInstance")) {
+			std::string prefab_name = j["prefab_instance"]["prefab_name"];
+			node = new PrefabInstance(getPrefab(prefabs, prefab_name));
+		}
 		else {
 			std::cerr << "Unknown node type: " << type << std::endl;
 			return nullptr;
@@ -321,7 +353,7 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, SceneGraph *&scen
 
 		// Rekurencyjnie zapisujemy dzieci
 		for (json j : j["children"]) {
-			Node* child = load_node(j, colliders, scene);
+			Node* child = load_node(j, colliders, prefabs, scene);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
 				scene->addPointLight(point_light, node->name);
@@ -341,4 +373,199 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, SceneGraph *&scen
 	
 
 	return node;
+}
+
+Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
+{
+
+	Node* node = nullptr;
+
+
+
+	int model_id = j["model.id"];
+	int id = j["id"];
+	bool no_textures = j["no_textures"];
+	bool is_visible = j["is_visible"];
+	std::string name = j["name"];
+	std::string type = j["type"];
+
+	if (name._Equal(_name)) {
+		scene->root->transform.setLocalPosition(json_to_vec3(j["position"]));
+		scene->root->transform.setLocalRotation(json_to_quat(j["rotation"]));
+		scene->root->transform.setLocalScale(json_to_vec3(j["scale"]));
+		scene->root->is_visible = is_visible;
+		for (json j : j["children"]) {
+
+			Node* child = load_prefab_node(j, scene, _name);
+			if (dynamic_cast<PointLight*>(child)) {
+				PointLight* point_light = dynamic_cast<PointLight*>(child);
+				scene->addPointLight(point_light);
+			}
+			else if (dynamic_cast<DirectionalLight*>(child)) {
+				DirectionalLight* directional_light = dynamic_cast<DirectionalLight*>(child);
+				scene->addDirectionalLight(directional_light);
+			}
+			else {
+				scene->addChild(child);
+			}
+
+
+
+		}
+	}
+	else {
+		if (type._Equal("Node")) {
+
+			if (model_id != -1) {
+				shared_ptr<Model> model = ResourceManager::Instance().getModel(model_id); //getModelById(models, model_id);
+				
+				node = new Node(model, name, id);
+				
+			}
+			else {
+				node = new Node(name);
+			}
+		}
+		else if (type._Equal("PointLight")) {
+			glm::vec3 ambient = json_to_vec3(j["point_light"]["ambient"]);
+			glm::vec3 specular = json_to_vec3(j["point_light"]["specular"]);
+			glm::vec3 diffuse = json_to_vec3(j["point_light"]["diffuse"]);
+			float constant = j["point_light"]["constant"];
+			float linear = j["point_light"]["linear"];
+			float quadratic = j["point_light"]["quadratic"];
+			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, quadratic, linear, constant, ambient, diffuse, specular);
+		}
+		else if (type._Equal("DirectionalLight")) {
+			glm::vec3 ambient = json_to_vec3(j["directional_light"]["ambient"]);
+			glm::vec3 specular = json_to_vec3(j["directional_light"]["specular"]);
+			glm::vec3 diffuse = json_to_vec3(j["directional_light"]["diffuse"]);
+			glm::vec3 direction = json_to_vec3(j["directional_light"]["direction"]);
+			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, direction, ambient, diffuse, specular);
+		}
+		else {
+			std::cerr << "Unknown node type: " << type << std::endl;
+			return nullptr;
+		}
+		node->is_visible = is_visible;
+
+		node->transform.setLocalPosition(json_to_vec3(j["position"]));
+		node->transform.setLocalRotation(json_to_quat(j["rotation"]));
+		node->transform.setLocalScale(json_to_vec3(j["scale"]));
+
+
+		// Rekurencyjnie zapisujemy dzieci
+		for (json j : j["children"]) {
+			Node* child = load_prefab_node(j, scene, _name);
+			if (dynamic_cast<PointLight*>(child)) {
+				PointLight* point_light = dynamic_cast<PointLight*>(child);
+				scene->addPointLight(point_light, node->name);
+			}
+			else if (dynamic_cast<DirectionalLight*>(child)) {
+				DirectionalLight* directional_light = dynamic_cast<DirectionalLight*>(child);
+				scene->addDirectionalLight(directional_light, node->name);
+			}
+			else {
+				scene->addChild(child, node->name);
+			}
+
+
+		}
+	}
+
+
+
+	return node;
+}
+
+shared_ptr<Prefab> loadPrefab(const std::string& filename)
+{
+	shared_ptr<Prefab> prefab = make_shared<Prefab>();
+
+	std::ifstream file(filename);
+	if (!file) {
+		std::cerr << "Błąd: Nie można otworzyć pliku JSON!\n";
+		
+	}
+	else {
+		json prefab_data;
+		file >> prefab_data;
+		file.close();
+
+		std::string name = prefab_data["name"];
+		PrefabType type = PrefabType(prefab_data["pref_type"].get<int>());
+		prefab->prefab_type = type;
+		prefab->prefab_scene_graph->root->name = name;
+		load_prefab_node(prefab_data, prefab->prefab_scene_graph, name);
+		
+
+	}
+
+
+	return prefab;
+}
+
+void loadPrefabs(std::vector<shared_ptr<Prefab>>& prefabs) {
+	const fs::path prefab_dir = "res/scene/prefabs";
+
+	for (const auto& entry : fs::recursive_directory_iterator(prefab_dir)) {
+		if (entry.is_regular_file()) {
+			shared_ptr<Prefab> prefab = loadPrefab(entry.path().string());
+			prefab->prefab_scene_graph->forcedUpdate();
+			prefabs.push_back(prefab);
+		}
+	}
+}
+
+
+
+void savePrefab(shared_ptr<Prefab>& prefab)
+{
+	std::string filename = "res/scene/prefabs";
+	std::string name = prefab->prefab_scene_graph->root->getName();
+
+	json json_prefab = save_node(prefab->prefab_scene_graph->root);
+
+	switch (prefab->prefab_type) {
+	case VERTICAL_DOWN:
+		filename += "/vertical/down/";
+		json_prefab["pref_type"] = 1;
+		break;
+	case VERTICAL_UP:
+		filename += "/vertical/up/";
+		json_prefab["pref_type"] = 0;
+		break;
+	case HORIZONTAL_LEFT:
+		filename += "/horizontal/left/";
+		json_prefab["pref_type"] = 2;
+		break;
+	case HORIZONTAL_RIGHT:
+		filename += "/horizontal/right/";
+		json_prefab["pref_type"] = 3;
+		break;
+	default:
+		break;
+	}
+
+	filename += name + ".json";
+
+	
+
+	json_prefab["name"] = name;
+
+	std::ofstream file(filename);
+	if (!file.is_open()) {
+		std::cerr << "Error opening file for writing: " << filename << std::endl;
+		
+	}
+	else {
+		file << json_prefab.dump(4);
+		file.close();
+	}
+	
+}
+
+void savePrefabs(std::vector<shared_ptr<Prefab>>& prefabs) {
+	for (auto& prefab : prefabs) {
+		savePrefab(prefab);
+	}
 }

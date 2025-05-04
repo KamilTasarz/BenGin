@@ -48,6 +48,7 @@ void DrawNodeBlock(Node* node, int depth = 0);
 void DrawHierarchyWindow(Node* root, float x, float y, float width, float height);
 void previewDisplay();
 void assetBarDisplay(float x, float y, float width, float height);
+void operationBarDisplay(float x, float y, float width, float height);
 void propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float x, float y, float width, float height);
 
 string print(glm::vec3 v);
@@ -81,6 +82,7 @@ float fps_timer = 0.0f;
 int frames = 0;
 
 SceneGraph* sceneGraph;
+SceneGraph* editor_sceneGraph;
 
 // Cursor teleport to the other side of the screen
 float xCursorMargin = 10.0f;
@@ -109,6 +111,10 @@ glm::vec2 normalizedMouse;
 bool isSnapped = false;
 glm::vec3 lastSnapOffset;
 glm::vec3 snapedPosition;
+
+bool scene_editor = true;
+std::vector<shared_ptr<Prefab>> prefabs;
+int current_prefab = 0, current_opt1 = 0, current_opt2 = 0;
 
 int main() {
 
@@ -173,7 +179,8 @@ int main() {
     ImGui_ImplGlfw_InitForOpenGL(window->window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-	sceneGraph = new SceneGraph();   
+	editor_sceneGraph = new SceneGraph();   
+    sceneGraph = editor_sceneGraph;
 
     ResourceManager::Instance().init();
 
@@ -303,8 +310,8 @@ int main() {
             walls->addChild(temp);
         }
     }*/
-
-	loadScene("res/scene/scene.json", sceneGraph, colliders);
+    loadPrefabs(prefabs);
+	loadScene("res/scene/scene.json", editor_sceneGraph, prefabs, colliders);
 
     /*const char* anim_path = "res/models/man/CesiumMan2.gltf";
 
@@ -316,7 +323,7 @@ int main() {
     Animation* anim2 = new Animation(anim_path2, getModelById(models, 8));
     sceneGraph->root->getChildByName("ramie")->animator = new Animator(anim2);*/
 
-
+    sceneGraph = editor_sceneGraph;
 
 	glm::vec3 origin = glm::vec3(0.f, 2.f, 0.f);
 
@@ -359,6 +366,21 @@ int main() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     while (!glfwWindowShouldClose(window->window)) {
+
+        if (scene_editor) {
+
+			sceneGraph = editor_sceneGraph;
+        }
+        else {
+            if (prefabs.size() > 0) {
+                sceneGraph = prefabs[current_prefab]->prefab_scene_graph;
+            }
+            else {
+                sceneGraph = editor_sceneGraph;
+            }
+
+        }
+
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glClearColor(0.f, 0.f, 0.f, 0.f);
@@ -512,7 +534,7 @@ int main() {
         if (isHUD) {
             glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
             background->update(deltaTime);
-            background->render(*sceneGraph->shader_background);
+            background->render(*ResourceManager::Instance().shader_background);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
    
@@ -546,14 +568,14 @@ int main() {
             float fps = 1.f / deltaTime;
 
 
-            text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *sceneGraph->shader_text, glm::vec3(1.f, 0.3f, 0.3f));
-            text->renderText("We have text render!", 200, 200, *sceneGraph->shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
+            text->renderText("Fps: " + to_string(fps), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f,*ResourceManager::Instance().shader_text, glm::vec3(1.f, 0.3f, 0.3f));
+            text->renderText("We have text render!", 200, 200, *ResourceManager::Instance().shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
             sprite->update(deltaTime);
             sprite3->update(deltaTime);
 
-            sprite2->render(*sceneGraph->shader_background);
-            sprite3->render(*sceneGraph->shader_background);
-            sprite->render(*sceneGraph->shader_background);
+            sprite2->render(*ResourceManager::Instance().shader_background);
+            sprite3->render(*ResourceManager::Instance().shader_background);
+            sprite->render(*ResourceManager::Instance().shader_background);
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
@@ -572,7 +594,8 @@ int main() {
         
         DrawHierarchyWindow(sceneGraph->root, 0, 0, WINDOW_WIDTH / 6, 2 * WINDOW_HEIGHT / 3);
         previewDisplay();
-        assetBarDisplay(0, 2 * WINDOW_HEIGHT / 3, WINDOW_WIDTH, WINDOW_HEIGHT / 3);
+        assetBarDisplay(0, 2 * WINDOW_HEIGHT / 3, 2 * WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3);
+        operationBarDisplay(2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3, WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3);
         propertiesWindowDisplay(sceneGraph, sceneGraph->marked_object, 5 * WINDOW_WIDTH / 6, 0, WINDOW_WIDTH / 6, 2 * WINDOW_HEIGHT / 3);
 
         ImGui::Render();
@@ -584,7 +607,8 @@ int main() {
 
     }
 
-	saveScene("res/scene/scene.json", sceneGraph);
+	saveScene("res/scene/scene.json", editor_sceneGraph);
+    savePrefabs(prefabs);
 
     // Audio engine cleanup
     audioEngine.Shutdown();
@@ -1025,23 +1049,7 @@ void assetBarDisplay(float x, float y, float width, float height) {
     int columnCount = (int)(panelWidth / cellSize);
     if (columnCount < 1) columnCount = 1;
 
-    if (ImGui::Button("ORTO", ImVec2(100, 24))) {
-        camera->mode != FRONT_ORTO ? camera->changeMode(FRONT_ORTO) : camera->changeMode(FREE);
-        sceneGraph->grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
-        sceneGraph->grid->Update();
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("GRID_SNAP", ImVec2(100, 24))) {
-        isGridSnap = !isGridSnap;
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("SAVE", ImVec2(100, 24))) {
-        saveScene("res/scene/scene.json", sceneGraph);
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("EDITING_VIEW", ImVec2(100, 24))) {
-		sceneGraph->is_editing = !sceneGraph->is_editing;
-    }
+    
 
 
     ImGui::Columns(columnCount, nullptr, false);
@@ -1083,6 +1091,155 @@ void assetBarDisplay(float x, float y, float width, float height) {
     ImGui::Columns(1);
     ImGui::End();
 
+}
+
+void operationBarDisplay(float x, float y, float width, float height)
+{
+    ImGuiWindowFlags window_flags =
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoSavedSettings;
+
+
+    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+
+    ImGui::Begin("Operations", nullptr, window_flags);
+
+
+    if (ImGui::Button("ORTO", ImVec2(100, 24))) {
+        camera->mode != FRONT_ORTO ? camera->changeMode(FRONT_ORTO) : camera->changeMode(FREE);
+        sceneGraph->grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
+        sceneGraph->grid->Update();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("GRID_SNAP", ImVec2(100, 24))) {
+        isGridSnap = !isGridSnap;
+    }
+    
+    if (ImGui::Button("SAVE", ImVec2(100, 24))) {
+        saveScene("res/scene/scene.json", sceneGraph);
+    }
+
+    if (ImGui::Button("EDITING_VIEW", ImVec2(100, 24))) {
+        sceneGraph->is_editing = !sceneGraph->is_editing;
+    }
+
+    
+
+    
+
+    std::vector<const char*> items;
+    
+
+    int size = prefabs.size();
+
+    for (const auto& prefab : prefabs) {
+        items.push_back(prefab->prefab_scene_graph->root->name.c_str());
+    }
+    if (size == 0) {
+        items.push_back("<none>");
+    }
+    
+
+    // wyświetl combo box tylko jeśli jest coś do wyboru
+    if (ImGui::Combo("Choose prefab", &current_prefab, items.data(), items.size())) {
+        if (current_prefab == size) {
+            std::cout << "Wybrano: brak\n";
+        }
+        else {
+            std::cout << "Wybrano: " << items[current_prefab] << "\n";
+        }
+    }
+
+    if (ImGui::Button("ADD_PREFAB_INSTANCE", ImVec2(100, 24))) {
+        if (size > 0) {
+            Node* inst = new PrefabInstance(prefabs[current_prefab]);
+            editor_sceneGraph->addChild(inst);
+            editor_sceneGraph->marked_object = inst;
+        }
+        
+    }
+
+    if (scene_editor) {
+
+
+
+        ImGui::Separator();
+
+        const char* opt1[] = { "HORIZONTAL", "VERTICAL" };
+
+        if (ImGui::Combo("Choose direction", &current_opt1, opt1, 2)) {
+
+        }
+        ImGui::SameLine();
+
+        const char* opt2[2];
+
+        if (current_opt1 == 0) {
+            opt2[0] = "UP";
+            opt2[1] = "DOWN";
+        }
+        else {
+            opt2[0] = "LEFT";
+            opt2[1] = "RIGHT";
+        }
+
+        if (ImGui::Combo("Choose orientation", &current_opt2, opt2, 2)) {
+
+        }
+
+
+        if (ImGui::Button("CREATE_PREFAB", ImVec2(100, 24))) {
+
+            PrefabType type;
+            if (current_opt1 == 0) {
+                if (current_opt2 == 0) {
+                    type = HORIZONTAL_LEFT;
+                }
+                else {
+                    type = HORIZONTAL_RIGHT;
+                }
+
+            }
+            else {
+                if (current_opt2 == 0) {
+                    type = VERTICAL_UP;
+                }
+                else {
+                    type = VERTICAL_DOWN;
+                }
+            }
+            std::string name = "Prefab_new";
+            bool unique = false;
+            while (!unique) {
+                unique = true;
+                for (auto& prefab : prefabs) {
+                    if (prefab->prefab_scene_graph->root->name._Equal(name)) {
+                        name += "new";
+                        unique = false;
+                        break;
+                    }
+                }
+            }
+            shared_ptr<Prefab> new_prefab = make_shared<Prefab>(name, type);
+            prefabs.push_back(new_prefab);
+
+        }
+
+        if (ImGui::Button("EDIT_PREFAB", ImVec2(100, 24))) {
+            scene_editor = !scene_editor;
+        }
+    }
+    else {
+        if (ImGui::Button("RETURN", ImVec2(100, 24))) {
+            scene_editor = !scene_editor;
+        }
+    }
+
+    ImGui::Separator();
+    ImGui::End();
 }
 
 

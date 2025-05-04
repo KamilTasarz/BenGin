@@ -1,6 +1,8 @@
 ﻿#include "Node.h"
 #include "../Component/CameraGlobals.h"
 
+#include "../ResourceManager.h"
+
 void SceneGraph::unmark() {
     marked_object->is_marked = false;
     marked_object = nullptr; //marked object returns as nullptr after draw
@@ -70,34 +72,37 @@ void SceneGraph::addDirectionalLight(DirectionalLight* p, std::string name) {
 
 
 void SceneGraph::setShaders() {
+
+    
+
     glm::mat4 projection = camera->GetProjection();
     glm::mat4 view = camera->GetView();
-    shader->use();
-    setLights(shader);
-    shader->setMat4("projection", projection);
-    shader->setMat4("view", view);
-    shader->setInt("point_light_number", point_light_number);
-    shader->setInt("directional_light_number", directional_light_number);
+    ResourceManager::Instance().shader->use();
+    setLights(ResourceManager::Instance().shader);
+    ResourceManager::Instance().shader->setMat4("projection", projection);
+    ResourceManager::Instance().shader->setMat4("view", view);
+    ResourceManager::Instance().shader->setInt("point_light_number", point_light_number);
+    ResourceManager::Instance().shader->setInt("directional_light_number", directional_light_number);
     
-    shader_tile->use();
-    setLights(shader_tile);
-    shader_tile->setMat4("projection", projection);
-    shader_tile->setMat4("view", view);
-    shader_tile->setInt("point_light_number", point_light_number);
-    shader_tile->setInt("directional_light_number", directional_light_number);
+    ResourceManager::Instance().shader_tile->use();
+    setLights(ResourceManager::Instance().shader_tile);
+    ResourceManager::Instance().shader_tile->setMat4("projection", projection);
+    ResourceManager::Instance().shader_tile->setMat4("view", view);
+    ResourceManager::Instance().shader_tile->setInt("point_light_number", point_light_number);
+    ResourceManager::Instance().shader_tile->setInt("directional_light_number", directional_light_number);
 
-    shader_instanced->use();
-    setLights(shader_instanced);
-    shader_instanced->setMat4("projection", projection);
-    shader_instanced->setMat4("view", view);
-    shader_instanced->setInt("point_light_number", point_light_number);
-    shader_instanced->setInt("directional_light_number", directional_light_number);
+    ResourceManager::Instance().shader_instanced->use();
+    setLights(ResourceManager::Instance().shader_instanced);
+    ResourceManager::Instance().shader_instanced->setMat4("projection", projection);
+    ResourceManager::Instance().shader_instanced->setMat4("view", view);
+    ResourceManager::Instance().shader_instanced->setInt("point_light_number", point_light_number);
+    ResourceManager::Instance().shader_instanced->setInt("directional_light_number", directional_light_number);
 
-    shader_outline->use();
-    shader_outline->setMat4("projection", projection);
-    shader_outline->setMat4("view", view);
-    shader_outline->setInt("point_light_number", point_light_number);
-    shader_outline->setInt("directional_light_number", directional_light_number);
+    ResourceManager::Instance().shader_outline->use();
+    ResourceManager::Instance().shader_outline->setMat4("projection", projection);
+    ResourceManager::Instance().shader_outline->setMat4("view", view);
+    ResourceManager::Instance().shader_outline->setInt("point_light_number", point_light_number);
+    ResourceManager::Instance().shader_outline->setInt("directional_light_number", directional_light_number);
 }
 
 void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
@@ -105,9 +110,9 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
     
 
     for (auto& dir_light : directional_lights) {
-        dir_light->render(depthMapFBO, *shader_shadow);
+        dir_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
-        root->drawShadows(*shader_shadow);
+        root->drawShadows(*ResourceManager::Instance().shader_shadow);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
@@ -193,14 +198,14 @@ void SceneGraph::drawMarkedObject() {
         //Transform transform = marked_object->transform;
         //transform.setLocalScale(scale_matrix);
         //transform.computeModelMatrix();
-        shader_outline->use();
-        shader_outline->setMat4("model", marked_object->transform.getModelMatrix());
+        ResourceManager::Instance().shader_outline->use();
+        ResourceManager::Instance().shader_outline->setMat4("model", marked_object->transform.getModelMatrix());
 
         glm::vec3 dynamic_color = glm::vec3(0.4f, 0.f, 0.f);
 
         if (marked_object->pModel) {
-            shader_outline->setVec3("color", dynamic_color);
-            marked_object->pModel->Draw(*shader_outline);
+            ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+            marked_object->pModel->Draw(*ResourceManager::Instance().shader_outline);
         }
 
 
@@ -317,57 +322,57 @@ void Node::drawSelfAndChild() {
         //_shader.setVec4("dynamicColor", color);
 
         if (pModel->mode.empty()) {
-            scene_graph->shader->use();
-            scene_graph->shader->setMat4("model", transform.getModelMatrix());
+            ResourceManager::Instance().shader->use();
+            ResourceManager::Instance().shader->setMat4("model", transform.getModelMatrix());
         }
         else {
-			scene_graph->shader_tile->use();
-			scene_graph->shader_tile->setMat4("model", transform.getModelMatrix());
+			ResourceManager::Instance().shader_tile->use();
+			ResourceManager::Instance().shader_tile->setMat4("model", transform.getModelMatrix());
         }
         
 
         if (animator != nullptr) {
             auto f = animator->final_bone_matrices;
             for (int i = 0; i < f.size(); ++i)
-                scene_graph->shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+                ResourceManager::Instance().shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
         }
         if (is_marked) {
             glStencilMask(0xFF);
         }
         if (no_textures) {
-            scene_graph->shader->setInt("is_light", 1);
-            scene_graph->shader_tile->setInt("is_light", 1);
+            ResourceManager::Instance().shader->setInt("is_light", 1);
+            ResourceManager::Instance().shader_tile->setInt("is_light", 1);
         }
 
         if (pModel->mode.empty()) {
-            pModel->Draw(*scene_graph->shader);
+            pModel->Draw(*ResourceManager::Instance().shader);
 
             glStencilMask(0x00);
 
-            scene_graph->shader->setInt("is_light", 0);
+            ResourceManager::Instance().shader->setInt("is_light", 0);
         }
         else {
-            pModel->Draw(*scene_graph->shader_tile);
+            pModel->Draw(*ResourceManager::Instance().shader_tile);
 
             glStencilMask(0x00);
 
-            scene_graph->shader_tile->setInt("is_light", 0);
+            ResourceManager::Instance().shader_tile->setInt("is_light", 0);
         }
         
         
 
-        scene_graph->shader_outline->use();
-        scene_graph->shader_outline->setMat4("model", transform.getModelMatrix());
+        ResourceManager::Instance().shader_outline->use();
+        ResourceManager::Instance().shader_outline->setMat4("model", transform.getModelMatrix());
         if (animator != nullptr) {
             auto f = animator->final_bone_matrices;
             for (int i = 0; i < f.size(); ++i)
-                scene_graph->shader_outline->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+                ResourceManager::Instance().shader_outline->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
         }
         glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
-        scene_graph->shader_outline->setVec3("color", dynamic_color);
+        ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
 
         if (scene_graph->is_editing) {
-            AABB->draw(*scene_graph->shader_outline);
+            AABB->draw(*ResourceManager::Instance().shader_outline);
         }
         
 
@@ -382,6 +387,78 @@ void Node::drawSelfAndChild() {
 
     //_shader.setVec4("dynamicColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
+}
+
+void Node::drawSelfAndChild(Transform& parent)
+{
+	glm::mat4 globalTransform = parent.getModelMatrix() * transform.getModelMatrix();
+
+    if (pModel && is_visible) {
+        //_shader.setVec4("dynamicColor", color);
+
+        if (pModel->mode.empty()) {
+            ResourceManager::Instance().shader->use();
+            ResourceManager::Instance().shader->setMat4("model", globalTransform);
+        }
+        else {
+            ResourceManager::Instance().shader_tile->use();
+            ResourceManager::Instance().shader_tile->setMat4("model", globalTransform);
+        }
+
+
+        if (animator != nullptr) {
+            auto f = animator->final_bone_matrices;
+            for (int i = 0; i < f.size(); ++i)
+                ResourceManager::Instance().shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+        }
+        if (is_marked) {
+            glStencilMask(0xFF);
+        }
+        if (no_textures) {
+            ResourceManager::Instance().shader->setInt("is_light", 1);
+            ResourceManager::Instance().shader_tile->setInt("is_light", 1);
+        }
+
+        if (pModel->mode.empty()) {
+            pModel->Draw(*ResourceManager::Instance().shader);
+
+            glStencilMask(0x00);
+
+            ResourceManager::Instance().shader->setInt("is_light", 0);
+        }
+        else {
+            pModel->Draw(*ResourceManager::Instance().shader_tile);
+
+            glStencilMask(0x00);
+
+            ResourceManager::Instance().shader_tile->setInt("is_light", 0);
+        }
+
+
+
+        ResourceManager::Instance().shader_outline->use();
+        ResourceManager::Instance().shader_outline->setMat4("model", globalTransform);
+        if (animator != nullptr) {
+            auto f = animator->final_bone_matrices;
+            for (int i = 0; i < f.size(); ++i)
+                ResourceManager::Instance().shader_outline->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+        }
+        glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
+        ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+
+        if (scene_graph->is_editing) {
+
+            //AABB->draw(*ResourceManager::Instance().shader_outline);
+        }
+
+
+    }
+
+    if (is_visible) {
+        for (auto&& child : children) {
+            child->drawSelfAndChild(parent);
+        }
+    }
 }
 
 void Node::updateAnimation(float deltaTime) {
@@ -455,8 +532,8 @@ const Transform& Node::getTransform() {
 
 void InstanceManager::drawSelfAndChild() {
     glStencilMask(0xFF);
-    scene_graph->shader_instanced->use();
-    pModel->DrawInstanced(*scene_graph->shader_instanced, size);
+    ResourceManager::Instance().shader_instanced->use();
+    pModel->DrawInstanced(*ResourceManager::Instance().shader_instanced, size);
     glStencilMask(0x00);
 
 }
@@ -551,4 +628,15 @@ void InstanceManager::updateBuffer(Node* p) {
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferSubData(GL_ARRAY_BUFFER, p->id * sizeof(glm::mat4), sizeof(glm::mat4), &p->transform.getModelMatrix());
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void PrefabInstance::drawSelfAndChild()
+{
+    prefab->prefab_scene_graph->root->drawSelfAndChild(transform);
+    /*ResourceManager::Instance().shader_outline->use();
+    glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
+    ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+    for (auto& collider : prefab_colliders) {
+        collider->draw(*ResourceManager::Instance().shader_outline);
+    }*/
 }

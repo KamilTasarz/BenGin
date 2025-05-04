@@ -116,6 +116,34 @@ void BoundingBox::transformAABB(const glm::mat4& model) {
     }
 }
 
+void BoundingBox::transformWithOffsetAABB(const glm::mat4& model)
+{
+    glm::mat4 _model = model * this->model;
+    glm::vec3 corners[8] = {
+        {min_point_local.x, min_point_local.y, min_point_local.z},
+        {min_point_local.x, min_point_local.y, max_point_local.z},
+        {min_point_local.x, max_point_local.y, min_point_local.z},
+        {min_point_local.x, max_point_local.y, max_point_local.z},
+        {max_point_local.x, min_point_local.y, min_point_local.z},
+        {max_point_local.x, min_point_local.y, max_point_local.z},
+        {max_point_local.x, max_point_local.y, min_point_local.z},
+        {max_point_local.x, max_point_local.y, max_point_local.z}
+    };
+
+    min_point_world = glm::vec3(FLT_MAX);
+    max_point_world = glm::vec3(-FLT_MAX);
+
+    for (int i = 0; i < 8; i++) {
+        glm::vec3 worldPos = glm::vec3(_model * glm::vec4(corners[i], 1.0f));
+
+        //min_point_local = glm::min(min_point_local, worldPos);
+        //max_point_local = glm::max(max_point_local, worldPos);
+
+        min_point_world = glm::min(min_point_world, worldPos);
+        max_point_world = glm::max(max_point_world, worldPos);
+    }
+}
+
 
 void BoundingBox::setBuffers() {
     float vertices[] = {

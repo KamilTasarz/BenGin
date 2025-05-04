@@ -43,6 +43,7 @@ public:
 	SnapResult trySnapToWallsY(const BoundingBox& other, float snapThreshold);
 	SnapResult trySnapToWallsZ(const BoundingBox& other, float snapThreshold);
 	void transformAABB(const glm::mat4& model);
+	void transformWithOffsetAABB(const glm::mat4& model);
 	void draw(Shader& shader);
 	void setBuffers();
 	

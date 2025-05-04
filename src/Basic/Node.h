@@ -243,10 +243,17 @@ public:
         name = nameOfNode;
         id = _id;
         no_textures = false;
-        if (model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
+
+        if (model && model->mode._Equal("plane")) {
+			max_point = glm::vec3(0.5f, 0.0f, 0.5f);
+			min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
+
+        }
+
+        if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
         else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
 
-        this->no_textures = no_textures;
+        //this->no_textures = no_textures;
         vector_of_colliders.push_back(AABB);
     }
 
@@ -254,10 +261,17 @@ public:
         name = nameOfNode;
         id = _id;
         no_textures = false;
-        if (model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
+        
+        if (model && model->mode._Equal("plane")) {
+            max_point = glm::vec3(0.5f, 0.0f, 0.5f);
+            min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
+
+        }
+
+        if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
         else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
 
-        this->no_textures = no_textures;
+        //this->no_textures = no_textures;
     }
 
     // DESTRUCTOR
@@ -308,6 +322,9 @@ public:
 
     // Draw self and children
     void virtual drawSelfAndChild();
+
+	// Draw self and children for prefabs -> computing model matrix
+    void virtual drawSelfAndChild(Transform &parent);
 
     void updateAnimation(float deltaTime);
 
@@ -517,28 +534,7 @@ public:
 
 	bool is_editing = true;
 
-    Shader* shader;
-    Shader* shader_tile;
-    Shader* shader_instanced;
-    Shader* shader_instanced_outline;
-    Shader* shader_outline;
-    Shader* shader2D;
-    Shader* shader_shadow;
-    Shader* shader_text;
-    Shader* shader_background;
-
-    const char* vertexPath = "res/shaders/basic.vert";
-    const char* vertexPath_tile = "res/shaders/tile.vert";
-    const char* vertexPath_instanced = "res/shaders/instanced.vert";
-    const char* fragmentPath = "res/shaders/basic.frag";
-    const char* vertexPath_shadow = "res/shaders/shadow.vert";
-    const char* fragmentPath_shadow = "res/shaders/shadow.frag";
-    const char* fragmentPath_outline = "res/shaders/outline.frag";
-    const char* triangleVertexPath = "res/shaders/triangle.vert";
-    const char* triangleFragmentPath = "res/shaders/triangle.frag";
-    const char* vertexPath_text = "res/shaders/text.vert";
-    const char* fragmentPath_text = "res/shaders/text.frag";
-    const char* fragmentPath_background = "res/shaders/background.frag";
+    
 
     SceneGraph() {
 
@@ -553,27 +549,11 @@ public:
         
         glGenFramebuffers(1, &depthMapFBO);
 
-        shader = new Shader(vertexPath, fragmentPath);
-        shader_tile = new Shader(vertexPath_tile, fragmentPath);
-        shader_instanced = new Shader(vertexPath_instanced, fragmentPath);
-        shader_instanced_outline = new Shader(vertexPath_instanced, fragmentPath_outline);
-        shader_outline = new Shader(vertexPath, fragmentPath_outline);
-        shader2D = new Shader(triangleVertexPath, triangleFragmentPath);
-        shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
-        shader_text = new Shader(vertexPath_text, fragmentPath_text);
-        shader_background = new Shader(vertexPath_text, fragmentPath_background);
+
     }
 
     ~SceneGraph() {
-        delete shader;
-        delete shader_tile;
-        delete shader_instanced;
-        delete shader_instanced_outline;
-        delete shader_outline;
-        delete shader2D;
-        delete shader_shadow;
-        delete shader_text;
-        delete shader_background;
+
 
     }
 
@@ -595,5 +575,69 @@ public:
     void mark(Ray ray);
 };
 
+enum PrefabType {
+	VERTICAL_UP,
+	VERTICAL_DOWN,
+	HORIZONTAL_LEFT,    
+	HORIZONTAL_RIGHT    
+};
+
+class Prefab {
+
+public:
+    //shared_ptr<SceneGraph> prefab_scene_graph;
+    SceneGraph* prefab_scene_graph;
+	PrefabType prefab_type;
+
+	Prefab(std::string name = "Prefab", PrefabType prefab_type = HORIZONTAL_RIGHT) {
+		//this->prefab_scene_graph = make_shared<SceneGraph>();
+		this->prefab_scene_graph = new SceneGraph();
+		this->prefab_scene_graph->root->name = name;
+		this->prefab_type = prefab_type;
+        prefab_scene_graph->directional_lights.push_back(new DirectionalLight(nullptr, "editor_light"));
+        prefab_scene_graph->directional_light_number++;
+        //prefab_scene_graph->addDirectionalLight();
+	}
+
+
+};
+
+class PrefabInstance : public Node {
+public:
+    shared_ptr<Prefab> prefab;
+	std::vector<BoundingBox*> prefab_colliders;
+
+    PrefabInstance(shared_ptr<Prefab> prefab) : Node(prefab->prefab_scene_graph->root->name + "_inst") {
+        this->prefab = prefab;
+        //set_prefab_colliders(prefab->prefab_scene_graph->root);
+        
+    }
+
+    /*void set_prefab_colliders(Node* node) {
+        if (node->AABB) {
+			BoundingBox* new_collider = new BoundingBox(*node->AABB);
+            new_collider->transformWithOffsetAABB(transform.getModelMatrix());
+			prefab_colliders.push_back(new_collider);
+        }
+		for (Node* child : node->children) {
+			set_prefab_colliders(child);
+		}
+    }
+
+	void updateSelfAndChild(bool controlDirty) override {
+
+		controlDirty = controlDirty || transform.isDirty();
+
+		if (controlDirty) {
+			transform.computeModelMatrix();
+            for (auto& collider : prefab_colliders) {
+				collider->transformWithOffsetAABB(transform.getModelMatrix());
+            }
+		}
+		
+	}*/
+
+    void drawSelfAndChild() override;
+};
 
 #endif // !NODE_H
