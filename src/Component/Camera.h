@@ -22,6 +22,7 @@ const float MOVEMENT_SPEED = 20.0f;
 const float MOUSE_SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
 
+
 enum CameraMode {
 
     // There might be multiple camera modes in the future (p.e. free, fixed)
@@ -50,6 +51,8 @@ public:
     Node *object_to_follow;
 
     float Yaw, Pitch;
+    
+    float orto_zoom = 1.f;
 
     float MovementSpeed = MOVEMENT_SPEED;
     float MouseSensitivity = MOUSE_SENSITIVITY;

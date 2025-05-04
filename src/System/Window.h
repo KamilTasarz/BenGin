@@ -28,6 +28,7 @@ extern float lastY = (float)WINDOW_HEIGHT / 2.0;
 extern GLfloat deltaTime = 0.0f;
 extern GLfloat lastFrame = 0.0f;
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double posX, double posY);
 void leftClick(float value);
@@ -95,6 +96,7 @@ public:
 		glViewport(0, 0, width, height);
 
 		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+        glfwSetScrollCallback(window, scroll_callback);
 		glfwSetCursorPosCallback(window, mouseCallback);
 
         glEnable(GL_DEPTH_TEST);
@@ -114,6 +116,7 @@ public:
         auto input = std::make_shared<Input>();
 
         glfwSetWindowUserPointer(window, input.get());
+        
 
         // KEYBOARD
         glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -319,6 +322,16 @@ void mouseCallback(GLFWwindow* window, double posX, double posY) {
 		camera->ProcessMouseMovement(offsetX, offsetY);
 	//}
 
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    
+
+    float spd = 0.05f;
+
+    if (camera->mode == FRONT_ORTO) {
+        camera->orto_zoom += yoffset * spd;
+    }
 }
 
 void leftClick(float value) {

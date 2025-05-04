@@ -17,7 +17,7 @@ glm::mat4 Camera::GetProjection() {
         return glm::perspective(glm::radians(Zoom), AspectRatio, NearPlane, FarPlane);
     }
     else {
-		return glm::ortho(-20.f, 20.f, -11.25f, 11.25f, NearPlane, FarPlane);
+		return glm::ortho(-20.f * orto_zoom, 20.f * orto_zoom, -11.25f * orto_zoom, 11.25f * orto_zoom, NearPlane, FarPlane);
     }
     
 }
