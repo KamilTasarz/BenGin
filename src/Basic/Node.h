@@ -194,6 +194,11 @@ public:
     // Unique node name
     std::string name;
 
+    // Holds info on how many nodes with the same name there are
+    unsigned int counter = 0;
+
+    std::string displayName;
+
     int id;
 
     // Color
@@ -233,6 +238,8 @@ public:
     Node(std::string nameOfNode, int _id = 0) {
         pModel = nullptr;
         name = nameOfNode;
+        counter = 0;
+        updateDisplayName();
         id = _id;
         AABB = nullptr;
         no_textures = true;
@@ -241,6 +248,8 @@ public:
     // Model
     Node(shared_ptr<Model> model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ model } {
         name = nameOfNode;
+        counter = 0;
+        updateDisplayName();
         id = _id;
         no_textures = false;
         if (model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
@@ -252,6 +261,8 @@ public:
 
     Node(shared_ptr<Model> model, std::string nameOfNode, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ model } {
         name = nameOfNode;
+        counter = 0;
+        updateDisplayName();
         id = _id;
         no_textures = false;
         if (model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
@@ -267,6 +278,16 @@ public:
             delete child;
         }
         delete AABB;
+    }
+
+    std::string getDisplayName() {
+        return this->displayName;
+    }
+
+    // Name to display in ImGui only (name set by user + counter)
+    void updateDisplayName() {
+
+        this->displayName = this->name + "_" + to_string(this->counter);
     }
 
     // Change color
@@ -319,6 +340,7 @@ public:
 
     void rename(std::string new_name) {
         this->name = new_name;
+        updateDisplayName();
     }
 
     void separate(const BoundingBox* other_AABB);
@@ -396,8 +418,8 @@ public:
 
 class DirectionalLight : public Light {
 public:
-    glm::vec3 direction;
 
+    glm::vec3 direction;
 
     /*DirectionalLight() : Light(nullptr, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)) {
         this->direction = glm::vec3(1.f, -1.f, 1.f);
@@ -543,6 +565,7 @@ public:
     SceneGraph() {
 
         root = new Node("root", 0);
+        root->displayName = "root";
 		grid = new Grid();
         grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
         grid->Update();

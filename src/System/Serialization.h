@@ -243,7 +243,7 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<Bound
 Node* load_node(json& j, std::vector<BoundingBox*>& colliders, SceneGraph *&scene) {
 	Node* node = nullptr;
 
-
+	std::cout << "Bleh" << std::endl;
 
 	int model_id = j["model.id"];
 	int id = j["id"];

@@ -1,0 +1,7 @@
+#pragma once
+
+enum NodeType {
+
+	GAME_OBJECT, DIRECTIONAL_LIGHT , POINT_LIGHT, INSTANCE_MANAGER
+
+};

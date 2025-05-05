@@ -49,6 +49,7 @@ void DrawHierarchyWindow(Node* root, float x, float y, float width, float height
 void previewDisplay();
 void assetBarDisplay(float x, float y, float width, float height);
 void propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float x, float y, float width, float height);
+void updateCounter(SceneGraph* root, Node* node_to_update);
 
 string print(glm::vec3 v);
 
@@ -326,8 +327,6 @@ int main() {
 
     // --- GAME LOOP --- //
 
-
-
     int fbWidth = previewWidth;
     int fbHeight = previewHeight;
 
@@ -434,11 +433,14 @@ int main() {
         if (glfwGetKey(window->window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
             if (!pressed_add) {
                 if (sceneGraph->marked_object != nullptr) {
-                    Node* newNode = new Node(sceneGraph->marked_object->pModel ,sceneGraph->marked_object->getName(), colliders, sceneGraph->marked_object->id);
+                    Node* newNode = new Node(sceneGraph->marked_object->pModel, sceneGraph->marked_object->getName(), colliders, sceneGraph->marked_object->id);
 					newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition());
 					newNode->transform.setLocalRotation(sceneGraph->marked_object->transform.getLocalRotation());
 					newNode->transform.setLocalScale(sceneGraph->marked_object->transform.getLocalScale());
                     
+                    updateCounter(sceneGraph, newNode);
+                    newNode->updateDisplayName();
+
                     sceneGraph->addChild(newNode);
                     sceneGraph->marked_object = newNode;
                 }
@@ -557,10 +559,7 @@ int main() {
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
-
-
-
-   
+  
         // ---------------------
 
         // ImGui Quick Test
@@ -696,7 +695,7 @@ void DrawNodeBlock(Node* node, int depth)
 
     // Niewidzialny przycisk dla kliknięcia
     ImGui::SetCursorScreenPos(itemPos);
-    ImGui::InvisibleButton(node->name.c_str(), itemSize);
+    ImGui::InvisibleButton(node->displayName.c_str(), itemSize);
 
     // Zaznaczenie
     if (selectedNode == node)
@@ -709,7 +708,7 @@ void DrawNodeBlock(Node* node, int depth)
     }
 
     // Nazwa
-    drawList->AddText(ImVec2(itemPos.x + 4, itemPos.y), IM_COL32_WHITE, node->name.c_str());
+    drawList->AddText(ImVec2(itemPos.x + 4, itemPos.y), IM_COL32_WHITE, node->displayName.c_str());
 
     if (ImGui::IsItemClicked())
     {
@@ -724,7 +723,7 @@ void DrawNodeBlock(Node* node, int depth)
     ImTextureID icon = node->is_visible ? eye_icon->sprite_id : eye_slashed_icon->sprite_id;
 
     ImVec2 icon_size = ImVec2(lineHeight, lineHeight);
-    std::string img_id = "##eye_" + node->name;
+    std::string img_id = "##eye_" + node->displayName;
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
     //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0)); 
@@ -824,6 +823,8 @@ void previewDisplay()
             //Model
             Node* p = new Node(ResourceManager::Instance().getModel(id), "entity", colliders);
 
+            updateCounter(sceneGraph, p);
+            p->updateDisplayName();
 
 			sceneGraph->addChild(p);
 			sceneGraph->marked_object = p;
@@ -1112,6 +1113,26 @@ void propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float x, floa
             name_buffer[sizeof(name_buffer) - 1] = '\0'; // Safety null terminator
         }
 
+        //std::string type_id;
+
+        //switch (preview_node->type) {
+        //case GAME_OBJECT:
+        //    type_id = "game object";
+        //    break;
+        //case DIRECTIONAL_LIGHT:
+        //    type_id = "directional";
+        //    break;
+        //case POINT_LIGHT:
+        //    type_id = "point";
+        //    break;
+        //case INSTANCE_MANAGER:
+        //    type_id = "instance";
+        //    break;
+        //}
+
+        //// Debug test
+        //ImGui::Text(type_id.c_str());
+
         ImGui::Text("Name: ");
         ImGui::SameLine();
         ImGui::PushItemWidth(-1);
@@ -1254,4 +1275,15 @@ void propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float x, floa
 
     ImGui::End();
 
+}
+
+// Update counter
+void updateCounter(SceneGraph* root, Node* node_to_update) {
+    int temp = 0;
+    for (auto&& obj : root->root->getAllChildren()) {
+        if (obj->getName() == node_to_update->getName() && obj != node_to_update) {
+            temp += 1;
+        }
+    }
+    node_to_update->counter = temp;
 }

@@ -7,25 +7,47 @@ void SceneGraph::unmark() {
 }
 
 void SceneGraph::addChild(Node* p) {
-    int i = 1;
-	string name = p->name;
-    while (root->getChildByName(p->name)) {
-        p->name = name + "_" + to_string(i);
-        i++;
+    int i = 0;
+	string base_name = p->name;
+    
+    for (auto& obj : root->getAllChildren()) {
+        if (obj->name._Equal(base_name) && obj != p) {
+            i++;
+        }
     }
+
+    p->counter = i;
+    p->name = base_name + "_" + to_string(i);
     root->addChild(p);
 }
 
 void SceneGraph::addChild(Node* p, std::string name) {
     Node* parent = root->getChildByName(name);
     if (parent != nullptr) {
-        int i = 1;
-        string name = p->name;
-        while (root->getChildByName(p->name)) {
+        int i = 0;
+        string _name = name;
+
+        for (auto& obj : root->getAllChildren()) {
+            if (obj->name._Equal(_name) && obj != p) {
+                i++;
+            }
+        }
+
+        p->counter = i;
+
+        if (i > 0) {
+            p->name = _name + "_" + to_string(i);
+        }
+        else {
+            p->name = _name;
+        }
+
+        /*while (root->getChildByName(p->name)) {
             
             p->name = name + "_" + to_string(i);
             i++;
-        }
+        }*/
+
         parent->addChild(p);
     }
 }

@@ -46,9 +46,9 @@ void Camera::ProcessKeyboard(GLfloat deltaTime, int dir) {
     else if (mode == FRONT_ORTO) {
         GLfloat cameraSpeed = MovementSpeed * deltaTime;
         if (4 & dir)
-            cameraPos -= cameraRight * cameraSpeed;
-        if (8 & dir)
             cameraPos += cameraRight * cameraSpeed;
+        if (8 & dir)
+            cameraPos -= cameraRight * cameraSpeed;
         if (1 & dir)
             cameraPos += cameraUp * cameraSpeed;
         if (2 & dir)
