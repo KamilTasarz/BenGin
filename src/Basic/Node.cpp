@@ -266,7 +266,7 @@ void Node::mark(Ray rayWorld, float& marked_depth) {
     for (auto&& child : children) {
         float t;
 
-        if (child->AABB != nullptr && child->AABB->isRayIntersects(rayWorld.direction, rayWorld.origin, t)) {
+        if (child->AABB != nullptr && child->in_frustrum && child->AABB->isRayIntersects(rayWorld.direction, rayWorld.origin, t)) {
 
             if (t < marked_depth) {
 
@@ -318,7 +318,7 @@ void  Node::updateSelfAndChild(bool controlDirty) {
 // Draw self and children
 void Node::drawSelfAndChild() {
 
-    if (pModel && is_visible) {
+    if (pModel && is_visible && in_frustrum) {
         //_shader.setVec4("dynamicColor", color);
 
         if (pModel->mode.empty()) {
@@ -393,7 +393,7 @@ void Node::drawSelfAndChild(Transform& parent)
 {
 	glm::mat4 globalTransform = parent.getModelMatrix() * transform.getModelMatrix();
 
-    if (pModel && is_visible) {
+    if (pModel && is_visible && in_frustrum) {
         //_shader.setVec4("dynamicColor", color);
 
         if (pModel->mode.empty()) {
@@ -632,11 +632,21 @@ void InstanceManager::updateBuffer(Node* p) {
 
 void PrefabInstance::drawSelfAndChild()
 {
-    prefab->prefab_scene_graph->root->drawSelfAndChild(transform);
-    /*ResourceManager::Instance().shader_outline->use();
-    glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
-    ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
-    for (auto& collider : prefab_colliders) {
-        collider->draw(*ResourceManager::Instance().shader_outline);
-    }*/
+    if (in_frustrum) {
+        prefab->prefab_scene_graph->root->drawSelfAndChild(transform);
+
+        if (scene_graph->is_editing) {
+            ResourceManager::Instance().shader_outline->use();
+            glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
+            ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+            for (auto& collider : prefab_colliders) {
+                collider->draw(*ResourceManager::Instance().shader_outline);
+            }
+            dynamic_color = glm::vec3(0.f, 0.6f, 0.6f);
+            ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+            AABB->draw(*ResourceManager::Instance().shader_outline);
+        }
+    }
+    
+    
 }

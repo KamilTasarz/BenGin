@@ -73,6 +73,7 @@ float pauseCooldown = 0.5f; // Half second cooldown
 //glm::mat4 projection;
 
 std::vector<BoundingBox*> colliders;
+std::vector<BoundingBox*> current_colliders;
 
 ImGuizmo::OPERATION currentOperation(ImGuizmo::TRANSLATE);
 bool uniformScale = false;
@@ -365,6 +366,9 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    camera->setAABB();
+
+
     while (!glfwWindowShouldClose(window->window)) {
 
         if (scene_editor) {
@@ -410,7 +414,21 @@ int main() {
         // Audio control section (just temporarily hardcoded)
         audioEngine.Update();
 
+		/*current_colliders.clear();
 
+        for (auto& collider : colliders) {
+            if (camera->isInFrustrum(collider)) {
+				current_colliders.push_back(collider);
+            }
+        }
+
+		cout << "Colliders: " << current_colliders.size() << endl;*/
+
+        ResourceManager::Instance().shader_outline->use();
+        glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
+        ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+       
+        camera->AABB->draw(*ResourceManager::Instance().shader_outline);
 
         //if (glfwGetKey(window->window, GLFW_KEY_1) == GLFW_PRESS) {
         //    audioEngine.stopSound(current_track_id);
@@ -538,8 +556,9 @@ int main() {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
    
-
+        sceneGraph->root->checkIfInFrustrum();
         sceneGraph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));
+        
 
 
         if (mouse_pressed && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL)) {
@@ -1155,7 +1174,7 @@ void operationBarDisplay(float x, float y, float width, float height)
 
     if (ImGui::Button("ADD_PREFAB_INSTANCE", ImVec2(100, 24))) {
         if (size > 0) {
-            Node* inst = new PrefabInstance(prefabs[current_prefab]);
+            Node* inst = new PrefabInstance(prefabs[current_prefab], colliders);
             editor_sceneGraph->addChild(inst);
             editor_sceneGraph->marked_object = inst;
         }

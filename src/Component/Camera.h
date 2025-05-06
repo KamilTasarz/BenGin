@@ -12,6 +12,8 @@
 #include <sstream>
 #include <iostream>
 
+#include "BoundingBox.h"
+
 class Node;
 
 
@@ -62,6 +64,8 @@ public:
     float NearPlane = 0.1f;
     float FarPlane = 100.1f;
 
+	BoundingBox* AABB = nullptr;
+
     Camera(float x = 0.f, float y = 0.f, float z = 0.f) : mode(FREE) {
 
         Yaw = 90.0f;
@@ -70,13 +74,17 @@ public:
         cameraPos = glm::vec3(x, y, z);
         worldUp = cameraUp;
         object_to_follow = nullptr;
+
+        
         updateCameraVectors();
         std::cout << "Camera constructor called! Position: "
             << cameraPos.x << ", " << cameraPos.y << ", " << cameraPos.z << std::endl;
-    }
+
+      }
 
     glm::mat4 GetView();
     glm::mat4 GetProjection();
+    void setAABB();
 
     void ProcessKeyboard(GLfloat deltaTime, int dir);
     void ProcessMouseMovement(float xoffset, float yoffset);
@@ -94,7 +102,7 @@ public:
     void setObjectToFollow(Node* object, glm::vec3& origin);
 
     void changeMode(CameraMode mode);
-
+	bool isInFrustrum(BoundingBox* AABB);
 };
 
 #endif

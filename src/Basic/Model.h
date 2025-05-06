@@ -67,7 +67,45 @@ private:
         exact_path = path;
 
         // process ASSIMP's root node recursively
+        findAABB(scene->mRootNode, scene);
         processNode(scene->mRootNode, scene);
+        max_points -= min_points;
+		min_points = glm::vec3(0.0f, 0.0f, 0.0f);
+    }
+
+    void findAABB(aiNode* node, const aiScene* scene) {
+        for (unsigned int i = 0; i < node->mNumMeshes; i++)
+        {
+			findAABBMesh(scene->mMeshes[node->mMeshes[i]], scene);
+        }
+        // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
+        for (unsigned int i = 0; i < node->mNumChildren; i++)
+        {
+            findAABB(node->mChildren[i], scene);
+        }
+    }
+
+    void findAABBMesh(aiMesh* mesh, const aiScene* scene) {
+        for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+        {
+            Vertex vertex;
+
+
+            glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+            // positions
+            vector.x = mesh->mVertices[i].x;
+            vector.y = mesh->mVertices[i].y;
+            vector.z = mesh->mVertices[i].z;
+            vertex.Position = vector;
+
+            min_points.x = min(min_points.x, vector.x);
+            min_points.y = min(min_points.y, vector.y);
+            min_points.z = min(min_points.z, vector.z);
+
+            max_points.x = max(max_points.x, vector.x);
+            max_points.y = max(max_points.y, vector.y);
+            max_points.z = max(max_points.z, vector.z);
+        }
     }
 
     // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
@@ -87,6 +125,11 @@ private:
             processNode(node->mChildren[i], scene);
         }
 
+        
+
+        /*max_points.x = ceil(max_points.x - min_points.x) + min_points.x;
+        max_points.y = ceil(max_points.y - min_points.y) + min_points.y;
+        max_points.z = ceil(max_points.z - min_points.z) + min_points.z;*/
     }
 
     Mesh processMesh(aiMesh* mesh, const aiScene* scene)
@@ -95,6 +138,8 @@ private:
         vector<Vertex> vertices;
         vector<unsigned int> indices;
         vector<Texture> textures;
+
+        glm::vec3 translate = -min_points;
 
         // walk through each of the mesh's vertices
         for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -108,18 +153,12 @@ private:
 
             glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
             // positions
-            vector.x = mesh->mVertices[i].x;
-            vector.y = mesh->mVertices[i].y;
-            vector.z = mesh->mVertices[i].z;
+            vector.x = mesh->mVertices[i].x + translate.x;
+            vector.y = mesh->mVertices[i].y + translate.y;
+            vector.z = mesh->mVertices[i].z + translate.z;
             vertex.Position = vector;
 
-            min_points.x = min(min_points.x, vector.x);
-            min_points.y = min(min_points.y, vector.y);
-            min_points.z = min(min_points.z, vector.z);
-
-            max_points.x = max(max_points.x, vector.x);
-            max_points.y = max(max_points.y, vector.y);
-            max_points.z = max(max_points.z, vector.z);
+            
 
             // normals
             if (mesh->HasNormals())
@@ -154,6 +193,9 @@ private:
 
             vertices.push_back(vertex);
         }
+
+
+
         // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
         for (unsigned int i = 0; i < mesh->mNumFaces; i++)
         {

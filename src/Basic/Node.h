@@ -219,6 +219,7 @@ public:
 
     // Visibility
 	bool is_visible = true;
+	bool in_frustrum = true;
 
     bool is_marked = false;
 
@@ -303,6 +304,19 @@ public:
         collectAllChildren(result);
         return result;
     }
+
+	void checkIfInFrustrum() {
+        if (AABB) {
+            in_frustrum = camera->isInFrustrum(AABB);
+        }
+        else {
+            in_frustrum = true;
+        }
+		
+		for (auto& child : children) {
+			child->checkIfInFrustrum();
+		}
+	}
 
     void collectAllChildren(std::set<Node*>& out) {
         for (Node* child : children) {
@@ -607,17 +621,20 @@ public:
     shared_ptr<Prefab> prefab;
 	std::vector<BoundingBox*> prefab_colliders;
 
-    PrefabInstance(shared_ptr<Prefab> prefab) : Node(prefab->prefab_scene_graph->root->name + "_inst") {
+    PrefabInstance(shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders) : Node(prefab->prefab_scene_graph->root->name + "_inst") {
         this->prefab = prefab;
-        //set_prefab_colliders(prefab->prefab_scene_graph->root);
-        
+        AABB = new BoundingBox(transform.getModelMatrix());
+        set_prefab_colliders(prefab->prefab_scene_graph->root);
+        colliders.push_back(AABB);
     }
 
-    /*void set_prefab_colliders(Node* node) {
+    void set_prefab_colliders(Node* node) {
         if (node->AABB) {
-			BoundingBox* new_collider = new BoundingBox(*node->AABB);
+			BoundingBox* new_collider = new BoundingBox(node->transform.getModelMatrix(), node->AABB->min_point_local, node->AABB->max_point_local);
             new_collider->transformWithOffsetAABB(transform.getModelMatrix());
 			prefab_colliders.push_back(new_collider);
+            AABB->max_point_local = max(AABB->max_point_local, new_collider->max_point_world);
+            AABB->min_point_local = min(AABB->min_point_local, new_collider->min_point_world);
         }
 		for (Node* child : node->children) {
 			set_prefab_colliders(child);
@@ -630,12 +647,13 @@ public:
 
 		if (controlDirty) {
 			transform.computeModelMatrix();
+            AABB->transformAABB(transform.getModelMatrix());
             for (auto& collider : prefab_colliders) {
 				collider->transformWithOffsetAABB(transform.getModelMatrix());
             }
 		}
 		
-	}*/
+	}
 
     void drawSelfAndChild() override;
 };

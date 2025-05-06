@@ -22,6 +22,16 @@ glm::mat4 Camera::GetProjection() {
     
 }
 
+void Camera::setAABB()
+{
+    float height = 2.0f * tan(glm::radians(Zoom) / 2.0f) * FarPlane;
+    float width = height * AspectRatio;
+    //glm::vec3 halfExtents = glm::vec3(width / 2, height / 2, FarPlane / 2);
+
+    AABB = new BoundingBox(glm::mat4(1), cameraPos - glm::vec3(width / 2, height / 2, cameraPos.z), cameraPos + glm::vec3(width / 2, height / 2, -cameraPos.z - FarPlane));
+
+}
+
 void Camera::ProcessKeyboard(GLfloat deltaTime, int dir) {
 
     if (mode == FREE) {
@@ -82,8 +92,10 @@ void Camera::updateCameraVectors() {
         cameraRight = glm::normalize(glm::cross(cameraFront, worldUp));
         cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
     }
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, cameraPos);
 
-
+    if (AABB) AABB->transformAABB(model);
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
@@ -145,6 +157,11 @@ void Camera::changeMode(CameraMode mode)
 		oldCameraPos = cameraPos;
     }*/
 
+}
+
+bool Camera::isInFrustrum(BoundingBox* AABB)
+{
+    return this->AABB->isBoundingBoxIntersects(*AABB);
 }
 
 

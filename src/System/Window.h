@@ -330,7 +330,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     float spd = 0.05f;
 
     if (camera->mode == FRONT_ORTO) {
-        camera->orto_zoom += yoffset * spd;
+        camera->orto_zoom -= yoffset * spd;
     }
 }
 

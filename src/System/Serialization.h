@@ -338,7 +338,11 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<share
 		}
 		else if (type._Equal("PrefabInstance")) {
 			std::string prefab_name = j["prefab_instance"]["prefab_name"];
-			node = new PrefabInstance(getPrefab(prefabs, prefab_name));
+			shared_ptr<Prefab> prefab = getPrefab(prefabs, prefab_name);
+			if (prefab) {
+				node = new PrefabInstance(prefab, colliders);
+			}
+			
 		}
 		else {
 			std::cerr << "Unknown node type: " << type << std::endl;
