@@ -92,7 +92,7 @@ Player *player;
 
 Text* text;
 Background* background;
-Sprite *sprite, *sprite2, *sprite3, *icon, *eye_icon, *eye_slashed_icon;
+Sprite *sprite, *sprite2, *sprite3, *icon, *eye_icon, *eye_slashed_icon, *dir_light_icon, *point_light_icon;
 
 //std::vector<Model> models;
 
@@ -125,7 +125,7 @@ int main() {
 
     ///
 
-    Window* _window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.1.2");
+    Window* _window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.1.4");
 
     ServiceLocator::provide(_window);
     
@@ -147,6 +147,8 @@ int main() {
 	icon = new Sprite(1920.f, 1080.f, "res/sprites/icon.png", 0.f, 0.f, 1.f);
 	eye_icon = new Sprite(1920.f, 1080.f, "res/sprites/eye.png", 0.f, 0.f, 1.f);
 	eye_slashed_icon = new Sprite(1920.f, 1080.f, "res/sprites/eye_slashed.png", 0.f, 0.f, 1.f);
+    dir_light_icon = new Sprite(1920.f, 1080.f, "res/sprites/dir_light_icon.png", 0.f, 0.f, 1.f);
+    point_light_icon = new Sprite(1920.f, 1080.f, "res/sprites/point_light_icon.png", 0.f, 0.f, 1.f);
 
     //rootNode = new Node("root");
 
@@ -332,8 +334,6 @@ int main() {
     sceneGraph->forcedUpdate();
 
     // --- GAME LOOP --- //
-
-
 
     int fbWidth = previewWidth;
     int fbHeight = previewHeight;
@@ -875,12 +875,23 @@ void previewDisplay()
     if (ImGui::BeginDragDropTarget()) {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_DRAG")) {
             int id = *(int*)payload->Data;
-            //Model
-            Node* p = new Node(ResourceManager::Instance().getModel(id), "entity", colliders);
+            if (id == 30) {
+                DirectionalLight* newNode = new DirectionalLight(ResourceManager::Instance().getModel(6), "dir_light");
+                newNode->transform.setLocalPosition({0.f, 0.f, 0.f});
+                sceneGraph->addDirectionalLight(newNode);
+            }
+            else if (id == 31) {
+                PointLight* newNode = new PointLight(ResourceManager::Instance().getModel(6), "point_light", 0.032f, 0.09f);
+                newNode->transform.setLocalPosition({0.f, 0.f, 0.f});
+                sceneGraph->addPointLight(newNode);
+            }
+            else {
+                //Model
+                Node* p = new Node(ResourceManager::Instance().getModel(id), "entity", colliders);
 
-
-			sceneGraph->addChild(p);
-			sceneGraph->marked_object = p;
+                sceneGraph->addChild(p);
+                sceneGraph->marked_object = p;
+            }
         }
         ImGui::EndDragDropTarget();
     }
@@ -1116,6 +1127,62 @@ void assetBarDisplay(float x, float y, float width, float height) {
 
         ImGui::NextColumn();
         ImGui::PopID();
+    }
+
+    // Directional light
+
+    {
+
+        std::shared_ptr<ViewLight> temp = ResourceManager::Instance().getLight(30);
+
+        ImGui::PushID(temp->id);
+
+        ImTextureID _icon = dir_light_icon->sprite_id;
+        string name = temp->type;
+
+        if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)_icon, ImVec2(thumbnailSize, thumbnailSize))) {
+            // (opcjonalne: obsługa kliknięcia na asset)
+        }
+
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+            ImGui::SetDragDropPayload("ASSET_DRAG", &temp->id, sizeof(temp->id));
+            ImGui::Text("Dragging %s", name.c_str());
+            ImGui::EndDragDropSource();
+        }
+
+        ImGui::TextWrapped(name.c_str());
+
+        ImGui::NextColumn();
+        ImGui::PopID();
+
+    }
+
+    // Point light
+
+    {
+    
+        std::shared_ptr<ViewLight> temp = ResourceManager::Instance().getLight(31);
+
+        ImGui::PushID(temp->id);
+
+        ImTextureID _icon = point_light_icon->sprite_id;
+        string name = temp->type;
+
+        if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)_icon, ImVec2(thumbnailSize, thumbnailSize))) {
+            // (opcjonalne: obsługa kliknięcia na asset)
+        }
+
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+            ImGui::SetDragDropPayload("ASSET_DRAG", &temp->id, sizeof(temp->id));
+            ImGui::Text("Dragging %s", name.c_str());
+            ImGui::EndDragDropSource();
+        }
+
+        ImGui::TextWrapped(name.c_str());
+
+        ImGui::NextColumn();
+        ImGui::PopID();
+
     }
 
     ImGui::Columns(1);

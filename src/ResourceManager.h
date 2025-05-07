@@ -19,6 +19,11 @@ namespace fs = std::filesystem;
 
 using json = nlohmann::json;
 
+struct ViewLight {
+    unsigned int id;
+    std::string type;
+};
+
 class ResourceManager
 {
 private:
@@ -26,6 +31,8 @@ private:
 	std::unordered_map<unsigned int, std::shared_ptr<Model>> models;
 	//tekstury (nie modeli) z unikalnym id logicznym
 	std::unordered_map<unsigned int, std::shared_ptr<Texture>> textures;
+    //swiatla z unikalnym id logicznym
+    std::unordered_map<unsigned int, std::shared_ptr<ViewLight>> lights;
 
     ResourceManager() {
         shader = new Shader(vertexPath, fragmentPath);
@@ -92,7 +99,10 @@ public:
 	std::shared_ptr<Model> getModel(unsigned int id);
 	std::unordered_map<unsigned int, shared_ptr<Model>> getModels();
 	std::unordered_map<unsigned int, shared_ptr<Texture>> getTextures();
+	std::unordered_map<unsigned int, shared_ptr<ViewLight>> getLights();
 	std::shared_ptr<Texture> getTexture(unsigned int id);
+
+	std::shared_ptr<ViewLight> getLight(unsigned int id);
 
 
 };

@@ -58,15 +58,30 @@ void ResourceManager::init(const char* path)
 			for (json model : resourceData["builtin_models"]) {
 				std::string type = model["type"].get<string>();
 				unsigned int id = model["id"].get<unsigned int>();
-				json textures = model["textures_id"];
-				const char* texture_names[4];
-				for (int i = 0; i < textures.size(); i++) {
-					texture_names[i] = getTexture(textures[i].get<unsigned int>()).get()->path.c_str();
+
+				if (type == "directional_light") {
+					shared_ptr<ViewLight> light = std::make_shared<ViewLight>(id, type);
+					lights[id] = light;
+					std::cout << "Light loaded: " << type << " id: " << id << std::endl;
 				}
-				shared_ptr<Model> modelPtr = std::make_shared<Model>(texture_names, textures.size(), id, type);
-				models[id] = modelPtr;
-				cout << "Model loaded: " << type << " id: " << id << endl;
-				if (highest_id < id) highest_id = id;
+				else if (type == "point_light") {
+					shared_ptr<ViewLight> light = std::make_shared<ViewLight>(id, type);
+					lights[id] = light;
+					std::cout << "Light loaded: " << type << " id: " << id << std::endl;
+				}
+				else {
+
+					json textures = model["textures_id"];
+					const char* texture_names[4];
+					for (int i = 0; i < textures.size(); i++) {
+						texture_names[i] = getTexture(textures[i].get<unsigned int>()).get()->path.c_str();
+					}
+					shared_ptr<Model> modelPtr = std::make_shared<Model>(texture_names, textures.size(), id, type);
+					models[id] = modelPtr;
+					cout << "Model loaded: " << type << " id: " << id << endl;
+					if (highest_id < id) highest_id = id;
+
+				}
 			}
 		}
 
@@ -154,6 +169,11 @@ std::unordered_map<unsigned int, shared_ptr<Texture>> ResourceManager::getTextur
 	return textures;
 }
 
+std::unordered_map<unsigned int, shared_ptr<ViewLight>> ResourceManager::getLights()
+{
+	return lights;
+}
+
 std::shared_ptr<Texture> ResourceManager::getTexture(unsigned int id)
 {
 	if (textures.find(id) != textures.end()) {
@@ -161,6 +181,17 @@ std::shared_ptr<Texture> ResourceManager::getTexture(unsigned int id)
 	}
 	else {
 		std::cerr << "Texture with ID " << id << " not found!" << std::endl;
+		return nullptr;
+	}
+}
+
+std::shared_ptr<ViewLight> ResourceManager::getLight(unsigned int id)
+{
+	if (lights.find(id) != lights.end()) {
+		return lights[id];
+	}
+	else {
+		std::cerr << "Light with ID " << id << " not found!" << std::endl;
 		return nullptr;
 	}
 }
