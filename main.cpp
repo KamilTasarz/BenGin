@@ -456,13 +456,33 @@ int main() {
         if (glfwGetKey(window->window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
             if (!pressed_add) {
                 if (sceneGraph->marked_object != nullptr) {
-                    Node* newNode = new Node(sceneGraph->marked_object->pModel ,sceneGraph->marked_object->getName(), colliders, sceneGraph->marked_object->id);
-					newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition());
-					newNode->transform.setLocalRotation(sceneGraph->marked_object->transform.getLocalRotation());
-					newNode->transform.setLocalScale(sceneGraph->marked_object->transform.getLocalScale());
-                    
-                    sceneGraph->addChild(newNode);
-                    sceneGraph->marked_object = newNode;
+                    if (dynamic_cast<DirectionalLight*>(sceneGraph->marked_object)) {
+                        DirectionalLight* temp = dynamic_cast<DirectionalLight*>(sceneGraph->marked_object);
+                        DirectionalLight* newNode = new DirectionalLight(temp->pModel, temp->getName(),
+                            temp->getDirection(), temp->getAmbient(), temp->getDiffuse(), temp->getSpecular());
+                        newNode->transform.setLocalPosition(temp->transform.getLocalPosition());
+                        newNode->transform.setLocalRotation(temp->transform.getLocalRotation());
+                        newNode->transform.setLocalScale(temp->transform.getLocalScale());
+                        sceneGraph->addDirectionalLight(newNode);
+                    }
+                    else if (dynamic_cast<PointLight*>(sceneGraph->marked_object)) {
+                        PointLight* temp = dynamic_cast<PointLight*>(sceneGraph->marked_object);
+                        PointLight* newNode = new PointLight(temp->pModel, temp->getName(),
+                            temp->quadratic, temp->linear, temp->constant, temp->getAmbient(), temp->getDiffuse(), temp->getSpecular());
+                        newNode->transform.setLocalPosition(temp->transform.getLocalPosition());
+                        newNode->transform.setLocalRotation(temp->transform.getLocalRotation());
+                        newNode->transform.setLocalScale(temp->transform.getLocalScale());
+                        sceneGraph->addPointLight(newNode);
+                    }
+                    else {
+                        Node* newNode = new Node(sceneGraph->marked_object->pModel, sceneGraph->marked_object->getName(), colliders, sceneGraph->marked_object->id);
+                        newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition());
+                        newNode->transform.setLocalRotation(sceneGraph->marked_object->transform.getLocalRotation());
+                        newNode->transform.setLocalScale(sceneGraph->marked_object->transform.getLocalScale());
+
+                        sceneGraph->addChild(newNode);
+                        sceneGraph->marked_object = newNode;
+                    }
                 }
                 
             }
@@ -780,9 +800,19 @@ void DrawNodeBlock(Node* node, int depth)
         
     }
 
-    if (node == sceneGraph->root && sceneGraph->to_delete) {
-		sceneGraph->deleteChild(sceneGraph->to_delete);
-		sceneGraph->to_delete = nullptr;
+    if (node == sceneGraph->root && sceneGraph->to_delete ) {
+        if (dynamic_cast<DirectionalLight*>(sceneGraph->to_delete)) {
+            sceneGraph->deleteDirectionalLight(dynamic_cast<DirectionalLight*>(sceneGraph->to_delete));
+            sceneGraph->to_delete = nullptr;
+        }
+        else if (dynamic_cast<PointLight*>(sceneGraph->to_delete)) {
+            sceneGraph->deletePointLight(dynamic_cast<PointLight*>(sceneGraph->to_delete));
+            sceneGraph->to_delete = nullptr;
+        }
+        else {
+            sceneGraph->deleteChild(sceneGraph->to_delete);
+            sceneGraph->to_delete = nullptr;
+        }
     }
 }
 

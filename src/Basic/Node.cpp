@@ -45,6 +45,19 @@ void SceneGraph::deleteChild(Node* p)
     }
 }
 
+void SceneGraph::deletePointLight(PointLight* p) {
+    auto it = std::find(point_lights.begin(), point_lights.end(), p);
+    point_lights.erase(it);
+    point_light_number--;
+    deleteChild(p);
+}
+
+void SceneGraph::deleteDirectionalLight(DirectionalLight* p) {
+    auto it = std::find(directional_lights.begin(), directional_lights.end(), p);
+    directional_lights.erase(it);
+    directional_light_number--;
+    deleteChild(p);
+}
 
 void SceneGraph::addPointLight(PointLight* p) {
     addChild(p);

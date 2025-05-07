@@ -409,6 +409,18 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
 
+    glm::vec3 getAmbient() {
+        return ambient;
+    }
+
+    glm::vec3 getDiffuse() {
+        return diffuse;
+    }
+
+    glm::vec3 getSpecular() {
+        return specular;
+    }
+
 };
 
 class DirectionalLight : public Light {
@@ -424,6 +436,10 @@ public:
     DirectionalLight(shared_ptr<Model> model, std::string nameOfNode, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
         : Light(model, nameOfNode, ambient, diffuse, specular), direction(direction) {
         updateMatrix();
+    }
+
+    glm::vec3 getDirection() {
+        return direction;
     }
 
     void render(unsigned int depthMapFBO, Shader& shader) {
@@ -515,6 +531,7 @@ public:
     }
 };
 
+class PrefabInstance;
 
 class SceneGraph {
 public:
@@ -561,6 +578,8 @@ public:
     void addChild(Node* p);
     void addChild(Node* p, std::string name);
 	void deleteChild(Node* p);
+    void deletePointLight(PointLight* p);
+    void deleteDirectionalLight(DirectionalLight* p);
     void addPointLight(PointLight* p);
     void addDirectionalLight(DirectionalLight* p);
     void addPointLight(PointLight* p, std::string name);
