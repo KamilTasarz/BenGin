@@ -6,10 +6,11 @@
 #include <memory>
 
 #include "../Input/InputManager.h"
-#include "../Input/Input.h"
-//#include "Window.h"
+//#include "../Input/Input.h"
+#include "Window.h"
 
-class Window;
+//class Window;
+//class InputManager;
 
 class ServiceLocator {
 

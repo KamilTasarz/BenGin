@@ -19,7 +19,6 @@
     <ClCompile Include="src\Component\Camera.cpp" />
     <ClCompile Include="src\Input\InputManager.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
-    <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="dependencies\imguizmo\GraphEditor.cpp" />
     <ClCompile Include="dependencies\imguizmo\ImCurveEdit.cpp" />
     <ClCompile Include="dependencies\imguizmo\ImGradient.cpp" />
@@ -30,9 +29,12 @@
     <ClCompile Include="src\Basic\Animator.cpp" />
     <ClCompile Include="src\Basic\Node.cpp" />
     <ClCompile Include="src\Component\CameraGlobals.cpp" />
-    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\System\Editor.cpp" />
+    <ClCompile Include="src\System\Engine.cpp" />
+    <ClCompile Include="src\System\Window.cpp" />
+    <ClCompile Include="src\System\Serialization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -73,7 +75,6 @@
     <ClInclude Include="src\Input\InputDevice.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\System\Window.h" />
-    <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Text\Text.h" />
     <ClInclude Include="src\HUD\Background.h" />
     <ClInclude Include="src\HUD\Sprite.h" />
@@ -89,9 +90,10 @@
     <ClInclude Include="src\Basic\Animator.h" />
     <ClInclude Include="src\System\Serialization.h" />
     <ClInclude Include="src\Component\CameraGlobals.h" />
-    <ClInclude Include="Editor.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="src\ResourceManager.h" />
+    <ClInclude Include="src\System\Editor.h" />
+    <ClInclude Include="src\System\Engine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />

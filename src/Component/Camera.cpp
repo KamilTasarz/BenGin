@@ -93,6 +93,7 @@ void Camera::updateCameraVectors() {
         cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
     }
 	glm::mat4 model = glm::mat4(1.0f);
+
 	model = glm::translate(model, cameraPos);
 
     if (AABB) AABB->transformAABB(model);

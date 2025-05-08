@@ -136,7 +136,6 @@
     <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="dependencies\stb_image\stb_image.cpp" />
-    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="main.cpp" />
@@ -149,12 +148,15 @@
     <ClCompile Include="src\Component\BoundingBox.cpp" />
     <ClCompile Include="src\Component\Camera.cpp" />
     <ClCompile Include="src\Component\CameraGlobals.cpp" />
-    <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\Gameplay\Player.cpp" />
     <ClCompile Include="src\AudioEngine.cpp" />
     <ClCompile Include="src\Input\Input.cpp" />
     <ClCompile Include="src\Input\InputManager.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\System\Editor.cpp" />
+    <ClCompile Include="src\System\Engine.cpp" />
+    <ClCompile Include="src\System\Serialization.cpp" />
+    <ClCompile Include="src\System\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -186,7 +188,6 @@
     <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="dependencies\stb_image\stb_image.h" />
-    <ClInclude Include="Editor.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="SimpleObject.h" />
@@ -201,13 +202,14 @@
     <ClInclude Include="src\Component\BoundingBox.h" />
     <ClInclude Include="src\Component\Camera.h" />
     <ClInclude Include="src\Component\CameraGlobals.h" />
-    <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Gameplay\Player.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Input\InputDevice.h" />
     <ClInclude Include="src\Input\InputKey.h" />
     <ClInclude Include="src\Input\InputManager.h" />
     <ClInclude Include="src\ResourceManager.h" />
+    <ClInclude Include="src\System\Editor.h" />
+    <ClInclude Include="src\System\Engine.h" />
     <ClInclude Include="src\System\Serialization.h" />
     <ClInclude Include="src\System\ServiceLocator.h" />
     <ClInclude Include="src\System\Window.h" />

@@ -8,12 +8,13 @@
 
 #include <nlohmann/json.hpp>
 
-
-#include "Basic/Model.h"
-
 #include <filesystem>
 #include <iostream>
 
+#include "Basic/Shader.h"
+
+class Model;
+struct Texture;
 
 namespace fs = std::filesystem;
 
@@ -26,6 +27,8 @@ private:
 	std::unordered_map<unsigned int, std::shared_ptr<Model>> models;
 	//tekstury (nie modeli) z unikalnym id logicznym
 	std::unordered_map<unsigned int, std::shared_ptr<Texture>> textures;
+    //sprite z wyszukiwaniem po nazwie
+    //std::unordered_map<std::string, std::shared_ptr<Sprite>> sprites;
 
     ResourceManager() {
         shader = new Shader(vertexPath, fragmentPath);
@@ -90,9 +93,10 @@ public:
 	void init(const char* path = "res/");
 
 	std::shared_ptr<Model> getModel(unsigned int id);
-	std::unordered_map<unsigned int, shared_ptr<Model>> getModels();
-	std::unordered_map<unsigned int, shared_ptr<Texture>> getTextures();
+	std::unordered_map<unsigned int, std::shared_ptr<Model>> getModels();
+	std::unordered_map<unsigned int, std::shared_ptr<Texture>> getTextures();
 	std::shared_ptr<Texture> getTexture(unsigned int id);
+	//std::shared_ptr<Sprite> getSprite(const std::string& name);
 
 
 };

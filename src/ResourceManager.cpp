@@ -2,6 +2,11 @@
 
 #include <set>
 
+
+#include "HUD/Sprite.h"
+#include "Basic/Model.h"
+#include "Basic/Mesh.h"
+
 void ResourceManager::init(const char* path)
 {
 	std::string pathStr(path);
@@ -121,6 +126,17 @@ void ResourceManager::init(const char* path)
 				}
 			}
 		}
+		/*if (resourceData.contains("sprites")) {
+			for (json sprite : resourceData["sprites"]) {
+				string type = sprite["type"].get<string>();
+				if (type._Equal("sprite")) {
+					unique_ptr<Sprite> spritePtr = std::make_unique<Sprite>(sprite["width"].get<float>(), sprite["height"].get<float>(), sprite["path"].get<string>(), sprite["x"].get<float>(), sprite["y"].get<float>(), sprite["scale"].get<float>());
+				}
+				else if (type._Equal("animated_sprite")) {
+
+				}
+			}
+		}*/
 
 		std::ofstream outFile(pathStr + "config.json");
 		if (outFile.is_open()) {
@@ -164,3 +180,8 @@ std::shared_ptr<Texture> ResourceManager::getTexture(unsigned int id)
 		return nullptr;
 	}
 }
+
+//std::shared_ptr<Sprite> ResourceManager::getSprite(const std::string& name)
+//{
+//	return sprites[name];
+//}

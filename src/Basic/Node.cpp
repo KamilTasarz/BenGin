@@ -1,7 +1,35 @@
 ﻿#include "Node.h"
+
+#include "../config.h"
+
+#include "../Component/BoundingBox.h"
 #include "../Component/CameraGlobals.h"
+#include "Model.h"
+#include "Animator.h"
+#include "../Basic/Shader.h"
+
+#include "../Grid.h"
 
 #include "../ResourceManager.h"
+
+using namespace std;
+
+SceneGraph::SceneGraph()
+{
+
+    root = new Node("root", 0);
+    grid = new Grid();
+    grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
+    grid->Update();
+    root->scene_graph = this;
+    marked_object = nullptr;
+    new_marked_object = nullptr;
+    size++;
+
+    glGenFramebuffers(1, &depthMapFBO);
+
+
+}
 
 void SceneGraph::unmark() {
     marked_object->is_marked = false;
@@ -261,6 +289,19 @@ Node* Node::getChildById(int id) {
     return nullptr;
 }
 
+void Node::checkIfInFrustrum() {
+    if (AABB) {
+        in_frustrum = camera->isInFrustrum(AABB);
+    }
+    else {
+        in_frustrum = true;
+    }
+
+    for (auto& child : children) {
+        child->checkIfInFrustrum();
+    }
+}
+
 void Node::mark(Ray rayWorld, float& marked_depth) {
 
     for (auto&& child : children) {
@@ -490,7 +531,40 @@ void Node::drawShadows(Shader& shader) {
     }
 }
 
+Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id, glm::vec3 min_point, glm::vec3 max_point) : pModel{ model } {
+    name = nameOfNode;
+    id = _id;
+    no_textures = false;
 
+    if (model && model->mode._Equal("plane")) {
+        max_point = glm::vec3(0.5f, 0.0f, 0.5f);
+        min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
+
+    }
+
+    if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
+    else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+
+    //this->no_textures = no_textures;
+    vector_of_colliders.push_back(AABB);
+}
+
+Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::vec3 min_point, glm::vec3 max_point) : pModel{ model } {
+    name = nameOfNode;
+    id = _id;
+    no_textures = false;
+
+    if (model && model->mode._Equal("plane")) {
+        max_point = glm::vec3(0.5f, 0.0f, 0.5f);
+        min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
+
+    }
+
+    if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
+    else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+
+    //this->no_textures = no_textures;
+}
 
 void Node::separate(const BoundingBox* other_AABB) {
 
@@ -500,14 +574,14 @@ void Node::separate(const BoundingBox* other_AABB) {
     float down = (other_AABB->max_point_world.y - AABB->min_point_world.y);
     float front = (other_AABB->min_point_world.z - AABB->max_point_world.z);
     float back = (other_AABB->max_point_world.z - AABB->min_point_world.z);
-    glm::vec3 v = glm::vec3(abs(left) < abs(right) ? left : right, abs(up) < abs(down) ? up : down, abs(front) < abs(back) ? front : back);
+    glm::vec3 v = glm::vec3(std::abs(left) < std::abs(right) ? left : right, std::abs(up) < std::abs(down) ? up : down, std::abs(front) < std::abs(back) ? front : back);
 
-    if (abs(v.x) <= abs(v.y) && abs(v.x) <= abs(v.z)) {
+    if (std::abs(v.x) <= std::abs(v.y) && std::abs(v.x) <= std::abs(v.z)) {
         v.y = 0.f;
         v.z = 0.f;
         AABB->collison = v.x > 0.f ? 1 : -1;
     }
-    else if (abs(v.y) <= abs(v.x) && abs(v.y) <= abs(v.z)) {
+    else if (std::abs(v.y) <= std::abs(v.x) && std::abs(v.y) <= std::abs(v.z)) {
         v.x = 0.f;
         v.z = 0.f;
         AABB->collison = v.y > 0.f ? 2 : -2;
@@ -630,6 +704,42 @@ void InstanceManager::updateBuffer(Node* p) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders)
+    : Node(prefab->prefab_scene_graph->root->name + "_inst") {
+    this->prefab = prefab;
+    AABB = new BoundingBox(transform.getModelMatrix());
+    set_prefab_colliders(prefab->prefab_scene_graph->root);
+    colliders.push_back(AABB);
+}
+
+void PrefabInstance::set_prefab_colliders(Node* node)
+{
+    if (node->AABB) {
+        BoundingBox* new_collider = new BoundingBox(node->transform.getModelMatrix(), node->AABB->min_point_local, node->AABB->max_point_local);
+        new_collider->transformWithOffsetAABB(transform.getModelMatrix());
+        prefab_colliders.push_back(new_collider);
+        AABB->max_point_local = glm::max(AABB->max_point_local, new_collider->max_point_world);
+        AABB->min_point_local = glm::min(AABB->min_point_local, new_collider->min_point_world);
+    }
+    for (Node* child : node->children) {
+        set_prefab_colliders(child);
+    }
+}
+
+void PrefabInstance::updateSelfAndChild(bool controlDirty)
+{
+
+    controlDirty = controlDirty || transform.isDirty();
+
+    if (controlDirty) {
+        transform.computeModelMatrix();
+        AABB->transformAABB(transform.getModelMatrix());
+        for (auto& collider : prefab_colliders) {
+            collider->transformWithOffsetAABB(transform.getModelMatrix());
+        }
+    }
+
+}
 void PrefabInstance::drawSelfAndChild()
 {
     if (in_frustrum) {
@@ -649,4 +759,96 @@ void PrefabInstance::drawSelfAndChild()
     }
     
     
+}
+
+Light::Light(std::shared_ptr<Model> model, std::string nameOfNode, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
+
+    no_textures = true;
+
+    glGenTextures(1, &depthMap);
+    glBindTexture(GL_TEXTURE_2D, depthMap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+        SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
+
+DirectionalLight::DirectionalLight(std::shared_ptr<Model> model, std::string nameOfNode, glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+    : Light(model, nameOfNode, ambient, diffuse, specular), direction(direction) {
+    updateMatrix();
+}
+
+void DirectionalLight::render(unsigned int depthMapFBO, Shader& shader)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    shader.use();
+    updateMatrix();
+    shader.setMat4("view_projection", view_projection);
+
+}
+
+PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, float quadratic, float linear, float constant, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+    : Light(model, nameOfNode, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
+
+    glGenTextures(1, &depthMapBack);
+    glBindTexture(GL_TEXTURE_2D, depthMapBack);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+        SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
+
+void PointLight::render(unsigned int depthMapFBO, Shader& shader)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    shader.use();
+    updateMatrix();
+    shader.setMat4("view_projection", view_projection);
+
+}
+
+void PointLight::renderBack(unsigned int depthMapFBO, Shader& shader)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMapBack, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    shader.use();
+    updateMatrix();
+    shader.setMat4("view_projection", view_projection_back);
+
+}
+
+void PointLight::updateMatrix()
+{
+    view = glm::lookAt(transform.getGlobalPosition() + glm::vec3(0.0f, 0.5f, 0.0f), transform.getGlobalPosition() + glm::vec3(0.0f, -2.0f, 0.0f), glm::vec3(0.f, 0.f, 1.f));
+    view_back = glm::lookAt(transform.getGlobalPosition() + glm::vec3(0.0f, -0.5f, 0.0f), transform.getGlobalPosition() + glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.f, 0.f, -1.f));
+
+    projection = glm::perspective(glm::radians(170.f), 1.f, 0.5f, 40.f);
+    view_projection = projection * view;
+    view_projection_back = projection * view_back;
+}
+
+Prefab::Prefab(std::string name, PrefabType prefab_type)
+{
+    //this->prefab_scene_graph = make_shared<SceneGraph>();
+    this->prefab_scene_graph = new SceneGraph();
+    this->prefab_scene_graph->root->name = name;
+    this->prefab_type = prefab_type;
+    prefab_scene_graph->directional_lights.push_back(new DirectionalLight(nullptr, "editor_light"));
+    prefab_scene_graph->directional_light_number++;
+    //prefab_scene_graph->addDirectionalLight();
 }

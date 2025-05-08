@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Basic/Shader.h"
+#include "../config.h"
 #include "../Basic/Model.h"
 
 struct UV {

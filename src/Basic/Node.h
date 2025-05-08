@@ -3,23 +3,21 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "../config.h"
+
 #include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/mat4x4.hpp>
 
 #include <list>
 #include <array>
 #include <memory>
-
-#include "../Component/BoundingBox.h"
-#include "../Component/CameraGlobals.h"
-#include "Model.h"
-#include "Animator.h"
-
 #include <set>
-#include "../Grid.h"
+
+class BoundingBox;
+class Model;
+class ResourceManager;
+class Grid;
+class Shader;
 
 struct Ray {
 	glm::vec3 origin;
@@ -185,6 +183,8 @@ public:
 
 };
 
+class Animator;
+
 class Node {
 
 public:
@@ -200,7 +200,7 @@ public:
     glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     // Node model
-    shared_ptr<Model> pModel = nullptr;
+    std::shared_ptr<Model> pModel = nullptr;
 
     // Node transformation
     Transform transform;
@@ -240,40 +240,9 @@ public:
     }
 
     // Model
-    Node(shared_ptr<Model> model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ model } {
-        name = nameOfNode;
-        id = _id;
-        no_textures = false;
+    Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f));
 
-        if (model && model->mode._Equal("plane")) {
-			max_point = glm::vec3(0.5f, 0.0f, 0.5f);
-			min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
-
-        }
-
-        if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
-        else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
-
-        //this->no_textures = no_textures;
-        vector_of_colliders.push_back(AABB);
-    }
-
-    Node(shared_ptr<Model> model, std::string nameOfNode, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f)) : pModel{ model } {
-        name = nameOfNode;
-        id = _id;
-        no_textures = false;
-        
-        if (model && model->mode._Equal("plane")) {
-            max_point = glm::vec3(0.5f, 0.0f, 0.5f);
-            min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
-
-        }
-
-        if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
-        else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
-
-        //this->no_textures = no_textures;
-    }
+    Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f));
 
     // DESTRUCTOR
 
@@ -305,18 +274,7 @@ public:
         return result;
     }
 
-	void checkIfInFrustrum() {
-        if (AABB) {
-            in_frustrum = camera->isInFrustrum(AABB);
-        }
-        else {
-            in_frustrum = true;
-        }
-		
-		for (auto& child : children) {
-			child->checkIfInFrustrum();
-		}
-	}
+    void checkIfInFrustrum();
 
     void collectAllChildren(std::set<Node*>& out) {
         for (Node* child : children) {
@@ -364,7 +322,7 @@ public:
     int max_size = 1000;
     unsigned int buffer;
 
-    InstanceManager(shared_ptr<Model> model, std::string nameOfNode, int id = 0, int max_size = 1000) : Node(nameOfNode, id), max_size(max_size) {
+    InstanceManager(std::shared_ptr<Model> model, std::string nameOfNode, int id = 0, int max_size = 1000) : Node(nameOfNode, id), max_size(max_size) {
         pModel = model;
         AABB = nullptr;
         prepareBuffer();
@@ -409,19 +367,7 @@ public:
 
     unsigned int depthMap = 0;
 
-    Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f)) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
-        
-		no_textures = true;
-
-        glGenTextures(1, &depthMap);
-        glBindTexture(GL_TEXTURE_2D, depthMap);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-            SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }
+    Light(std::shared_ptr<Model> model, std::string nameOfNode, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
 
 };
 
@@ -435,22 +381,10 @@ public:
         view_projection = glm::mat4(1.f);
     }*/
 
-    DirectionalLight(shared_ptr<Model> model, std::string nameOfNode, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
-        : Light(model, nameOfNode, ambient, diffuse, specular), direction(direction) {
-        updateMatrix();
-    }
+    DirectionalLight(std::shared_ptr<Model> model, std::string nameOfNode, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
+       
 
-    void render(unsigned int depthMapFBO, Shader& shader) {
-        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
-        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        shader.use();
-        updateMatrix();
-        shader.setMat4("view_projection", view_projection);
-
-    }
+    void render(unsigned int depthMapFBO, Shader& shader);
 
     void updateMatrix() {
         view = glm::lookAt(transform.getGlobalPosition(), transform.getGlobalPosition() + direction, glm::vec3(0.f, 1.f, 0.f));
@@ -477,51 +411,14 @@ public:
 
     //PointLight() : Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
 
-    PointLight(shared_ptr<Model> model, std::string nameOfNode, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
-        : Light(model, nameOfNode, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
+    PointLight(std::shared_ptr<Model> model, std::string nameOfNode, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
+        
 
-        glGenTextures(1, &depthMapBack);
-        glBindTexture(GL_TEXTURE_2D, depthMapBack);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-            SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }
+    void render(unsigned int depthMapFBO, Shader& shader);
 
-    void render(unsigned int depthMapFBO, Shader& shader) {
-        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
-        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        shader.use();
-        updateMatrix();
-        shader.setMat4("view_projection", view_projection);
+    void renderBack(unsigned int depthMapFBO, Shader& shader);
 
-    }
-
-    void renderBack(unsigned int depthMapFBO, Shader& shader) {
-        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMapBack, 0);
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
-        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        shader.use();
-        updateMatrix();
-        shader.setMat4("view_projection", view_projection_back);
-
-    }
-
-    void updateMatrix() {
-        view = glm::lookAt(transform.getGlobalPosition() + glm::vec3(0.0f, 0.5f, 0.0f), transform.getGlobalPosition() + glm::vec3(0.0f, -2.0f, 0.0f), glm::vec3(0.f, 0.f, 1.f));
-        view_back = glm::lookAt(transform.getGlobalPosition() + glm::vec3(0.0f, -0.5f, 0.0f), transform.getGlobalPosition() + glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.f, 0.f, -1.f));
-
-        projection = glm::perspective(glm::radians(170.f), 1.f, 0.5f, 40.f);
-        view_projection = projection * view;
-        view_projection_back = projection * view_back;
-    }
+    void updateMatrix();
 
     glm::mat4& getMatrix() {
         updateMatrix();
@@ -550,21 +447,7 @@ public:
 
     
 
-    SceneGraph() {
-
-        root = new Node("root", 0);
-		grid = new Grid();
-        grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
-        grid->Update();
-		root->scene_graph = this;
-        marked_object = nullptr;
-        new_marked_object = nullptr;
-        size++;
-        
-        glGenFramebuffers(1, &depthMapFBO);
-
-
-    }
+    SceneGraph();
 
     ~SceneGraph() {
 
@@ -603,57 +486,21 @@ public:
     SceneGraph* prefab_scene_graph;
 	PrefabType prefab_type;
 
-	Prefab(std::string name = "Prefab", PrefabType prefab_type = HORIZONTAL_RIGHT) {
-		//this->prefab_scene_graph = make_shared<SceneGraph>();
-		this->prefab_scene_graph = new SceneGraph();
-		this->prefab_scene_graph->root->name = name;
-		this->prefab_type = prefab_type;
-        prefab_scene_graph->directional_lights.push_back(new DirectionalLight(nullptr, "editor_light"));
-        prefab_scene_graph->directional_light_number++;
-        //prefab_scene_graph->addDirectionalLight();
-	}
+    Prefab(std::string name = "Prefab", PrefabType prefab_type = HORIZONTAL_RIGHT);
 
 
 };
 
 class PrefabInstance : public Node {
 public:
-    shared_ptr<Prefab> prefab;
+    std::shared_ptr<Prefab> prefab;
 	std::vector<BoundingBox*> prefab_colliders;
 
-    PrefabInstance(shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders) : Node(prefab->prefab_scene_graph->root->name + "_inst") {
-        this->prefab = prefab;
-        AABB = new BoundingBox(transform.getModelMatrix());
-        set_prefab_colliders(prefab->prefab_scene_graph->root);
-        colliders.push_back(AABB);
-    }
+    PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders);
 
-    void set_prefab_colliders(Node* node) {
-        if (node->AABB) {
-			BoundingBox* new_collider = new BoundingBox(node->transform.getModelMatrix(), node->AABB->min_point_local, node->AABB->max_point_local);
-            new_collider->transformWithOffsetAABB(transform.getModelMatrix());
-			prefab_colliders.push_back(new_collider);
-            AABB->max_point_local = max(AABB->max_point_local, new_collider->max_point_world);
-            AABB->min_point_local = min(AABB->min_point_local, new_collider->min_point_world);
-        }
-		for (Node* child : node->children) {
-			set_prefab_colliders(child);
-		}
-    }
+    void set_prefab_colliders(Node* node);
 
-	void updateSelfAndChild(bool controlDirty) override {
-
-		controlDirty = controlDirty || transform.isDirty();
-
-		if (controlDirty) {
-			transform.computeModelMatrix();
-            AABB->transformAABB(transform.getModelMatrix());
-            for (auto& collider : prefab_colliders) {
-				collider->transformWithOffsetAABB(transform.getModelMatrix());
-            }
-		}
-		
-	}
+    void updateSelfAndChild(bool controlDirty) override;
 
     void drawSelfAndChild() override;
 };
