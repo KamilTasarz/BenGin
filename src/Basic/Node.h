@@ -398,9 +398,9 @@ public:
 
     unsigned int depthMap = 0;
 
-    Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f)) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
+    Light(shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f)) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
         
-        is_shining = true;
+        is_shining = _is_shining;
 		no_textures = true;
 
         glGenTextures(1, &depthMap);
@@ -441,8 +441,8 @@ public:
         view_projection = glm::mat4(1.f);
     }*/
 
-    DirectionalLight(shared_ptr<Model> model, std::string nameOfNode, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
-        : Light(model, nameOfNode, ambient, diffuse, specular), direction(direction) {
+    DirectionalLight(shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
+        : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), direction(direction) {
         updateMatrix();
     }
 
@@ -487,8 +487,8 @@ public:
 
     //PointLight() : Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
 
-    PointLight(shared_ptr<Model> model, std::string nameOfNode, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
-        : Light(model, nameOfNode, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
+    PointLight(shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f))
+        : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
 
         glGenTextures(1, &depthMapBack);
         glBindTexture(GL_TEXTURE_2D, depthMapBack);
@@ -622,7 +622,7 @@ public:
 		this->prefab_scene_graph = new SceneGraph();
 		this->prefab_scene_graph->root->name = name;
 		this->prefab_type = prefab_type;
-        prefab_scene_graph->directional_lights.push_back(new DirectionalLight(nullptr, "editor_light"));
+        prefab_scene_graph->directional_lights.push_back(new DirectionalLight(nullptr, "editor_light", true));
         prefab_scene_graph->directional_light_number++;
         //prefab_scene_graph->addDirectionalLight();
 	}

@@ -460,7 +460,7 @@ int main() {
                 if (sceneGraph->marked_object != nullptr) {
                     if (dynamic_cast<DirectionalLight*>(sceneGraph->marked_object)) {
                         DirectionalLight* temp = dynamic_cast<DirectionalLight*>(sceneGraph->marked_object);
-                        DirectionalLight* newNode = new DirectionalLight(temp->pModel, temp->getName(),
+                        DirectionalLight* newNode = new DirectionalLight(temp->pModel, temp->getName(), temp->is_shining,
                             temp->getDirection(), temp->getAmbient(), temp->getDiffuse(), temp->getSpecular());
                         newNode->transform.setLocalPosition(temp->transform.getLocalPosition());
                         newNode->transform.setLocalRotation(temp->transform.getLocalRotation());
@@ -469,7 +469,7 @@ int main() {
                     }
                     else if (dynamic_cast<PointLight*>(sceneGraph->marked_object)) {
                         PointLight* temp = dynamic_cast<PointLight*>(sceneGraph->marked_object);
-                        PointLight* newNode = new PointLight(temp->pModel, temp->getName(),
+                        PointLight* newNode = new PointLight(temp->pModel, temp->getName(), temp->is_shining,
                             temp->quadratic, temp->linear, temp->constant, temp->getAmbient(), temp->getDiffuse(), temp->getSpecular());
                         newNode->transform.setLocalPosition(temp->transform.getLocalPosition());
                         newNode->transform.setLocalRotation(temp->transform.getLocalRotation());
@@ -899,12 +899,12 @@ void previewDisplay()
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_DRAG")) {
             int id = *(int*)payload->Data;
             if (id == 30) {
-                DirectionalLight* newNode = new DirectionalLight(ResourceManager::Instance().getModel(6), "dir_light");
+                DirectionalLight* newNode = new DirectionalLight(ResourceManager::Instance().getModel(6), "dir_light", true);
                 newNode->transform.setLocalPosition({0.f, 0.f, 0.f});
                 sceneGraph->addDirectionalLight(newNode);
             }
             else if (id == 31) {
-                PointLight* newNode = new PointLight(ResourceManager::Instance().getModel(6), "point_light", 0.032f, 0.09f);
+                PointLight* newNode = new PointLight(ResourceManager::Instance().getModel(6), "point_light", true, 0.032f, 0.09f);
                 newNode->transform.setLocalPosition({0.f, 0.f, 0.f});
                 sceneGraph->addPointLight(newNode);
             }
