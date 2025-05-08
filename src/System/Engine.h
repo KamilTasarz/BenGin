@@ -4,6 +4,7 @@
 #define ENGINE_H
 
 #include "Editor.h"
+#include "Game.h"
 
 class Window;
 
@@ -13,6 +14,7 @@ private:
 
 public:
 	Editor* editor;
+	Game* game;
 	Window* window;
 
 	Engine() = default;

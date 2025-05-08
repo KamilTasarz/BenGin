@@ -153,8 +153,10 @@
     <ClCompile Include="src\Input\Input.cpp" />
     <ClCompile Include="src\Input\InputManager.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\System\Component.cpp" />
     <ClCompile Include="src\System\Editor.cpp" />
     <ClCompile Include="src\System\Engine.cpp" />
+    <ClCompile Include="src\System\Game.cpp" />
     <ClCompile Include="src\System\Serialization.cpp" />
     <ClCompile Include="src\System\Window.cpp" />
   </ItemGroup>
@@ -208,8 +210,10 @@
     <ClInclude Include="src\Input\InputKey.h" />
     <ClInclude Include="src\Input\InputManager.h" />
     <ClInclude Include="src\ResourceManager.h" />
+    <ClInclude Include="src\System\Component.h" />
     <ClInclude Include="src\System\Editor.h" />
     <ClInclude Include="src\System\Engine.h" />
+    <ClInclude Include="src\System\Game.h" />
     <ClInclude Include="src\System\Serialization.h" />
     <ClInclude Include="src\System\ServiceLocator.h" />
     <ClInclude Include="src\System\Window.h" />
@@ -238,6 +242,8 @@
     <None Include="res\shaders\triangle.vert" />
     <None Include="res\shaders\text.frag" />
     <None Include="res\shaders\text.vert" />
+    <None Include="res\shaders\vhs.frag" />
+    <None Include="res\shaders\vhs.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />

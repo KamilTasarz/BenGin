@@ -386,6 +386,7 @@ void Node::drawSelfAndChild() {
         }
 
         if (pModel->mode.empty()) {
+            
             pModel->Draw(*ResourceManager::Instance().shader);
 
             glStencilMask(0x00);

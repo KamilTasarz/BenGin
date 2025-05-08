@@ -18,16 +18,24 @@ void Engine::init()
 	editor = new Editor(prefabs);
 	editor->init();
 
-	camera->setAABB();
+	game = new Game(prefabs);
+	game->init();
+
+	//camera->setAABB();
 }
 
 void Engine::run()
 {
-	editor->run();
+	game->run();
 }
 
 void Engine::shutdown()
 {
 	editor->shutdown();
+	game->shutdown();
+
 	ServiceLocator::shutdownServices();
+
+	delete editor;
+	delete game;
 }

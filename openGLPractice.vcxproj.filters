@@ -35,6 +35,8 @@
     <ClCompile Include="src\System\Engine.cpp" />
     <ClCompile Include="src\System\Window.cpp" />
     <ClCompile Include="src\System\Serialization.cpp" />
+    <ClCompile Include="src\System\Game.cpp" />
+    <ClCompile Include="src\System\Component.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -94,6 +96,8 @@
     <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\System\Editor.h" />
     <ClInclude Include="src\System\Engine.h" />
+    <ClInclude Include="src\System\Game.h" />
+    <ClInclude Include="src\System\Component.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
@@ -116,6 +120,8 @@
     <None Include="res\shaders\grid.vert" />
     <None Include="res\shaders\grid.frag" />
     <None Include="res\shaders\tile.vert" />
+    <None Include="res\shaders\vhs.frag" />
+    <None Include="res\shaders\vhs.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />
