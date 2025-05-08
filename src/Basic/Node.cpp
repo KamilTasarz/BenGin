@@ -168,25 +168,41 @@ void SceneGraph::setLights(Shader* shader) {
     shader->setVec3("cameraPosition", camera->cameraPos);
     int i = 0;
     for (auto& point_light : point_lights) {
+
         string index = to_string(i);
 		glm::vec3 light_pos = point_light->transform.getGlobalPosition();
         shader->setFloat("point_lights[" + index + "].constant", point_light->constant);
         shader->setFloat("point_lights[" + index + "].linear", point_light->linear);
         shader->setFloat("point_lights[" + index + "].quadratic", point_light->quadratic);
         shader->setVec3("point_lights[" + index + "].position", light_pos);
-        shader->setVec3("point_lights[" + index + "].ambient", point_light->ambient);
-        shader->setVec3("point_lights[" + index + "].diffuse", point_light->diffuse);
-        shader->setVec3("point_lights[" + index + "].specular", point_light->specular);
+        if (point_light->is_shining == true) {
+            shader->setVec3("point_lights[" + index + "].ambient", point_light->ambient);
+            shader->setVec3("point_lights[" + index + "].diffuse", point_light->diffuse);
+            shader->setVec3("point_lights[" + index + "].specular", point_light->specular);
+        }
+        else {
+            shader->setVec3("point_lights[" + index + "].ambient", glm::vec3({ 0.f, 0.f, 0.f }));
+            shader->setVec3("point_lights[" + index + "].diffuse", glm::vec3({ 0.f, 0.f, 0.f }));
+            shader->setVec3("point_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
+        }
         i++;
         
     }
     i = 0;
+
     for (auto& dir_light : directional_lights) {
         string index = to_string(i);
         shader->setVec3("directional_lights[" + index + "].direction", dir_light->direction);
-        shader->setVec3("directional_lights[" + index + "].ambient", dir_light->ambient);
-        shader->setVec3("directional_lights[" + index + "].diffuse", dir_light->diffuse);
-        shader->setVec3("directional_lights[" + index + "].specular", dir_light->specular);
+        if (dir_light->is_shining == true) {
+            shader->setVec3("directional_lights[" + index + "].ambient", dir_light->ambient);
+            shader->setVec3("directional_lights[" + index + "].diffuse", dir_light->diffuse);
+            shader->setVec3("directional_lights[" + index + "].specular", dir_light->specular);
+        }
+        else {
+            shader->setVec3("directional_lights[" + index + "].ambient", glm::vec3({ 0.f, 0.f, 0.f }));
+            shader->setVec3("directional_lights[" + index + "].diffuse", glm::vec3({ 0.f, 0.f, 0.f }));
+            shader->setVec3("directional_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
+        }
         glActiveTexture(GL_TEXTURE3 + i);
         glBindTexture(GL_TEXTURE_2D, dir_light->depthMap);
         

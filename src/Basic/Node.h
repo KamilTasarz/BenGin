@@ -383,6 +383,9 @@ const unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
 class Light : public Node {
 public:
 
+    // Debug
+    bool is_shining;
+
     // Colors
     glm::vec3 ambient;
     glm::vec3 diffuse;
@@ -397,6 +400,7 @@ public:
 
     Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f)) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
         
+        is_shining = true;
 		no_textures = true;
 
         glGenTextures(1, &depthMap);
@@ -419,6 +423,10 @@ public:
 
     glm::vec3 getSpecular() {
         return specular;
+    }
+
+    void setShining(bool flag) {
+        is_shining = flag;
     }
 
 };
@@ -592,6 +600,7 @@ public:
     void forcedUpdate();
     void setLights(Shader* shader);
     void mark(Ray ray);
+
 };
 
 enum PrefabType {

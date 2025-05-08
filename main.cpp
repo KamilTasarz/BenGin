@@ -92,7 +92,7 @@ Player *player;
 
 Text* text;
 Background* background;
-Sprite *sprite, *sprite2, *sprite3, *icon, *eye_icon, *eye_slashed_icon, *dir_light_icon, *point_light_icon;
+Sprite *sprite, *sprite2, *sprite3, *icon, *eye_icon, *eye_slashed_icon, *dir_light_icon, *point_light_icon, *switch_off, *switch_on;
 
 //std::vector<Model> models;
 
@@ -149,6 +149,8 @@ int main() {
 	eye_slashed_icon = new Sprite(1920.f, 1080.f, "res/sprites/eye_slashed.png", 0.f, 0.f, 1.f);
     dir_light_icon = new Sprite(1920.f, 1080.f, "res/sprites/dir_light_icon.png", 0.f, 0.f, 1.f);
     point_light_icon = new Sprite(1920.f, 1080.f, "res/sprites/point_light_icon.png", 0.f, 0.f, 1.f);
+    switch_off = new Sprite(1920.f, 1080.f, "res/sprites/switch_off.png", 0.f, 0.f, 1.f);
+    switch_on = new Sprite(1920.f, 1080.f, "res/sprites/switch_on.png", 0.f, 0.f, 1.f);
 
     //rootNode = new Node("root");
 
@@ -726,6 +728,7 @@ void DrawNodeBlock(Node* node, int depth)
     if (!node) return;
 
     float eye_offset = 40.f;
+    float switch_offset = 65.f;
 
     Node* selectedNode = node->scene_graph->marked_object;
 
@@ -736,7 +739,12 @@ void DrawNodeBlock(Node* node, int depth)
     ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 	
     ImVec2 itemPos = ImVec2(cursorPos.x + depth * indentSize, cursorPos.y);
-    ImVec2 itemSize = ImVec2(ImGui::GetContentRegionAvail().x - depth * indentSize - eye_offset, lineHeight);
+    ImVec2 itemSize;
+    
+    if(dynamic_cast<PointLight*>(node) || dynamic_cast<DirectionalLight*>(node))
+        itemSize = ImVec2(ImGui::GetContentRegionAvail().x - depth * indentSize - switch_offset, lineHeight);
+    else
+        itemSize = ImVec2(ImGui::GetContentRegionAvail().x - depth * indentSize - eye_offset, lineHeight);
 
     // Niewidzialny przycisk dla kliknięcia
     ImGui::SetCursorScreenPos(itemPos);
@@ -766,13 +774,28 @@ void DrawNodeBlock(Node* node, int depth)
     
 
     ImTextureID icon = node->is_visible ? eye_icon->sprite_id : eye_slashed_icon->sprite_id;
+    ImTextureID switch_icon;
+    if (dynamic_cast<PointLight*>(node) || dynamic_cast<DirectionalLight*>(node)) {
+        Light* temp = dynamic_cast<Light*>(node);
+        switch_icon = temp->is_shining ? switch_on->sprite_id : switch_off->sprite_id;
+    }
 
     ImVec2 icon_size = ImVec2(lineHeight, lineHeight);
     std::string img_id = "##eye_" + node->name;
+    std::string img2_id = "##switch_" + node->name;
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
     //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0)); 
     //ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+
+    if (dynamic_cast<Light*>(node)) {
+        Light* temp = dynamic_cast<Light*>(node);
+        if (ImGui::ImageButton(img2_id.c_str(), switch_icon, icon_size)) {
+            temp->is_shining = !temp->is_shining;
+        }
+    }
+    
+    ImGui::SameLine();
 
     if (ImGui::ImageButton(img_id.c_str(), icon, icon_size)) {
         node->is_visible = !node->is_visible;
