@@ -286,6 +286,8 @@ public:
 
     Node* getChildById(int id);
 
+    Node* clone(std::string instance_name);
+
     std::set<Node*> getAllChildren() {
         std::set<Node*> result;
         collectAllChildren(result);
@@ -305,7 +307,7 @@ public:
     void mark(Ray rayWorld, float& marked_depth);
 
     // Forcing an update of self and children even if there were no changes
-    void forceUpdateSelfAndChild();
+    void virtual forceUpdateSelfAndChild();
 
     // This will update if there were changes only (checks the dirty flag)
     void virtual updateSelfAndChild(bool controlDirty);
@@ -316,7 +318,7 @@ public:
 	// Draw self and children for prefabs -> computing model matrix
     void virtual drawSelfAndChild(Transform &parent);
 
-    void updateComponents(float deltaTime);
+    void virtual updateComponents(float deltaTime);
 
     void drawShadows(Shader& shader);
 
@@ -506,21 +508,33 @@ public:
 
     Prefab(std::string name = "Prefab", PrefabType prefab_type = HORIZONTAL_RIGHT);
 
-
+    Node* clone(std::string instance_name, SceneGraph *scene_graph);
 };
 
 class PrefabInstance : public Node {
 public:
     std::shared_ptr<Prefab> prefab;
-	std::vector<BoundingBox*> prefab_colliders;
+	Node* prefab_root;
+
+
 
     PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders);
+
+	~PrefabInstance() {
+		delete prefab_root;
+	}
 
     void set_prefab_colliders(Node* node);
 
     void updateSelfAndChild(bool controlDirty) override;
 
+	void updateComponents(float deltaTime) override;
+
+	void forceUpdateSelfAndChild() override;
+
     void drawSelfAndChild() override;
+
+
 };
 
 #endif // !NODE_H

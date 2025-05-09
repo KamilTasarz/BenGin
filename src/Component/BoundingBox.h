@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef BOUNDING_BOX_H
 #define BOUNDING_BOX_H
@@ -51,6 +51,17 @@ public:
 	void draw(Shader& shader);
 	void setBuffers();
 	
+	BoundingBox* clone(Node* new_owner) const {
+		BoundingBox* box_copy = new BoundingBox(this->model, new_owner, this->min_point_local, this->max_point_local);
+
+		// Skopiuj dane z oryginalnej AABB do nowej (nie trzeba kopiować VAO/VBO – setBuffers() już działa w konstruktorze)
+		box_copy->min_point_world = this->min_point_world;
+		box_copy->max_point_world = this->max_point_world;
+		box_copy->collison = this->collison;
+
+		return box_copy;
+	}
+
 };
 
 #endif

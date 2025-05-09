@@ -22,6 +22,9 @@ void PhysicsSystem::updateCollisions()
 
 	std::set<std::pair<BoundingBox*, BoundingBox*>> testedPairs;
 
+	//zmienić na zrobienie listy coliderów z rigdibody i listy coliderów wszystkich (tez z rigidbody)
+	// -> zmniejszenie kolizji + tylko rigidbody ma tak naprawde fizyke
+
 	for (auto& collider1 : colliders) {
 		for (auto& collider2 : colliders) {
 			if (collider1 == collider2) continue;

@@ -39,7 +39,7 @@ uniform int is_light;
 uniform int point_light_number;
 uniform int directional_light_number;
 
-uniform PointLight point_lights[10];
+uniform PointLight point_lights[100];
 uniform DirectionLight directional_lights[10];
 
 uniform sampler2D texture_diffuse1;

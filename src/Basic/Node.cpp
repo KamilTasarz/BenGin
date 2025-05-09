@@ -13,6 +13,8 @@
 #include "../ResourceManager.h"
 #include "../System/Tag.h"
 
+#include "../System/Rigidbody.h"
+#include "../Gameplay/ScriptFactory.h"
 
 using namespace std;
 
@@ -77,15 +79,19 @@ void SceneGraph::deleteChild(Node* p)
 
 
 void SceneGraph::addPointLight(PointLight* p) {
-    addChild(p);
-    point_lights.push_back(p);
-    point_light_number++;
+    if (!root->getChildByName(p->name)) {
+        addChild(p);
+        point_lights.push_back(p);
+        point_light_number++;
+    }
 }
 
 void SceneGraph::addDirectionalLight(DirectionalLight* p) {
-    addChild(p);
-    directional_lights.push_back(p);
-    directional_light_number++;
+    if (!root->getChildByName(p->name)) {
+        addChild(p);
+        directional_lights.push_back(p);
+        directional_light_number++;
+    }
 }
 
 void SceneGraph::addPointLight(PointLight* p, std::string name) {
@@ -315,6 +321,70 @@ Node* Node::getChildById(int id) {
     }
     return nullptr;
 }
+
+Node* Node::clone(std::string instance_name) {
+
+    Node* copy = nullptr;
+
+    // Tworzymy nowego Node'a na podstawie bieżących danych
+    if (!dynamic_cast<PointLight*>(this) && !dynamic_cast<DirectionalLight*>(this)) {
+        copy = new Node(this->name + "_" + instance_name, this->id);
+
+        //^ zapewnić kopie instancji prefabów ^
+
+        copy->color = this->color;
+        copy->transform = this->transform;
+        copy->scene_graph = this->scene_graph;  // zakładamy, że jest współdzielony (lub ustawiany później)
+
+        // Model - zakładamy, że można go współdzielić
+        copy->pModel = this->pModel;
+
+        // AABB - głęboka kopia
+        if (this->AABB) {
+            copy->AABB = this->AABB->clone(copy);
+        }
+
+        // Animator - głęboka kopia (jeśli nie jest współdzielony)
+        if (this->animator)
+            copy->animator = new Animator(*this->animator);
+
+        // Przeniesienie ustawień widoczności i stanu
+        copy->is_visible = this->is_visible;
+        copy->in_frustrum = this->in_frustrum;
+        copy->is_marked = this->is_marked;
+        copy->no_textures = this->no_textures;
+
+        // Layer i Tag — kopiujemy weak_ptr
+        copy->layer = this->layer;
+        copy->tag = this->tag;
+
+        // Komponenty — głęboka kopia
+        std::vector<std::string> scripts = ScriptFactory::instance().getScriptNames();
+        for (auto& comp : this->components) {
+            if (comp->name == "Rigidbody") {
+                Rigidbody* rigidbody = dynamic_cast<Rigidbody*>(comp.get());
+                copy->addComponent(std::make_unique<Rigidbody>(rigidbody->mass, rigidbody->gravity, rigidbody->is_static));
+            }
+            else {
+
+                copy->addComponent(ScriptFactory::instance().create(comp->name));
+            }
+        }
+
+        // Dzieci — rekurencyjna kopia
+        for (Node* child : this->children) {
+            Node* child_copy = child->clone(instance_name);
+            if (child_copy)
+                copy->addChild(child_copy);  // Ustawia parent i dodaje do zbioru
+        }
+    }
+    
+
+    
+
+    return copy;
+}
+
 
 void Node::checkIfInFrustrum(std::vector<BoundingBox*>& colliders) {
     if (AABB) {
@@ -763,14 +833,16 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<Bound
     AABB = new BoundingBox(transform.getModelMatrix(), this);
     set_prefab_colliders(prefab->prefab_scene_graph->root);
     colliders.push_back(AABB);
+    if (scene_graph) {
+        prefab_root = prefab->clone(this->name, scene_graph);
+    }
 }
 
 void PrefabInstance::set_prefab_colliders(Node* node)
 {
     if (node->AABB) {
         BoundingBox* new_collider = new BoundingBox(node->transform.getModelMatrix(), this, node->AABB->min_point_local, node->AABB->max_point_local);
-        new_collider->transformWithOffsetAABB(transform.getModelMatrix());
-        prefab_colliders.push_back(new_collider);
+
         AABB->max_point_local = glm::max(AABB->max_point_local, new_collider->max_point_world);
         AABB->min_point_local = glm::min(AABB->min_point_local, new_collider->min_point_world);
     }
@@ -781,31 +853,63 @@ void PrefabInstance::set_prefab_colliders(Node* node)
 
 void PrefabInstance::updateSelfAndChild(bool controlDirty)
 {
+    if (scene_graph && !prefab_root) {
+        prefab_root = prefab->clone(this->name, scene_graph);
+		prefab_root->transform.setLocalPosition(transform.getLocalPosition());
+		prefab_root->transform.setLocalRotation(transform.getLocalRotation());
+		prefab_root->transform.setLocalScale(transform.getLocalScale());
+    }
+
 
     controlDirty = controlDirty || transform.isDirty();
 
     if (controlDirty) {
-        transform.computeModelMatrix();
-        AABB->transformAABB(transform.getModelMatrix());
-        for (auto& collider : prefab_colliders) {
-            collider->transformWithOffsetAABB(transform.getModelMatrix());
-        }
-    }
+        /*transform.computeModelMatrix();
+        AABB->transformAABB(transform.getModelMatrix());*/
 
+		//AABB->transformAABB(transform.getModelMatrix());
+		forceUpdateSelfAndChild();
+        prefab_root->transform.setLocalPosition(transform.getGlobalPosition());
+        prefab_root->transform.setLocalRotation(transform.getLocalRotation());
+        prefab_root->transform.setLocalScale(transform.getLocalScale());
+        prefab_root->updateSelfAndChild(true);
+    }
+    
+}
+void PrefabInstance::updateComponents(float deltaTime)
+{
+    if (in_frustrum && prefab_root) {
+		prefab_root->updateComponents(deltaTime);
+    }
+}
+void PrefabInstance::forceUpdateSelfAndChild()
+{
+    
+   /* prefab_root->transform.setLocalPosition(transform.getLocalPosition());
+    prefab_root->transform.setLocalRotation(transform.getLocalRotation());
+    prefab_root->transform.setLocalScale(transform.getLocalScale());*/
+    
+    //prefab_root->transform.computeModelMatrix(transform.getModelMatrix());
+    
+
+    if (parent) {
+        transform.computeModelMatrix(parent->transform.getModelMatrix());
+    }
+    else {
+        transform.computeModelMatrix();
+    }
+    if (AABB != nullptr) {
+        AABB->transformAABB(transform.getModelMatrix());
+    }
 }
 void PrefabInstance::drawSelfAndChild()
 {
     if (in_frustrum) {
-        prefab->prefab_scene_graph->root->drawSelfAndChild(transform);
+        prefab_root->drawSelfAndChild();
 
         if (scene_graph->is_editing) {
             ResourceManager::Instance().shader_outline->use();
-            glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
-            ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
-            for (auto& collider : prefab_colliders) {
-                collider->draw(*ResourceManager::Instance().shader_outline);
-            }
-            dynamic_color = glm::vec3(0.f, 0.6f, 0.6f);
+            glm::vec3 dynamic_color = glm::vec3(0.f, 0.6f, 0.6f);
             ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
             AABB->draw(*ResourceManager::Instance().shader_outline);
         }
@@ -904,4 +1008,21 @@ Prefab::Prefab(std::string name, PrefabType prefab_type)
     prefab_scene_graph->directional_lights.push_back(new DirectionalLight(nullptr, "editor_light"));
     prefab_scene_graph->directional_light_number++;
     //prefab_scene_graph->addDirectionalLight();
+}
+
+Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph)
+{
+	Node* copy = prefab_scene_graph->root->clone(instance_name);
+
+    for (auto& light : prefab_scene_graph->point_lights) {
+		PointLight* new_light = new PointLight(light->pModel, light->name + "_" + instance_name, light->quadratic, light->linear, light->constant,
+            light->ambient, light->diffuse, light->specular);
+
+		new_light->scene_graph = scene_graph;
+		new_light->transform.setLocalPosition(light->transform.getLocalPosition());
+		new_light->transform.computeModelMatrix();
+		scene_graph->addPointLight(new_light);
+		//new_light->parent = copy;
+    }
+    return copy;
 }
