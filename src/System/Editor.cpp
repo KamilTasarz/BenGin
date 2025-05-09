@@ -26,6 +26,7 @@
 #include "../Grid.h"
 #include "../Gameplay/ScriptFactory.h"
 #include "../System/PhysicsSystem.h"
+#include "../System/Rigidbody.h"
 
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -486,8 +487,8 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         ImGuiWindowFlags_NoSavedSettings;
 
 
-    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Once);
+    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Once);
 
     ImGui::Begin("Operations", nullptr, window_flags);
 
@@ -512,6 +513,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         std::vector<const char*> items;
 
 		items.push_back("Script");
+		items.push_back("Rigidbody");
 
         if (ImGui::Combo("Choose Component", &current_component, items.data(), items.size())) {
 
@@ -521,18 +523,40 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         for (auto& s : scripts) {
             scripts_names.push_back(s.c_str());
         }
+
+
+
         if (current_component == 0) {
             
 
             if (ImGui::Combo("Choose Script", &current_script, scripts_names.data(), scripts_names.size())) {
 
             }
-        }
+		}
+		else if (current_component == 1) {
+			ImGui::InputFloat("Mass", &mass);
+			ImGui::InputFloat("Gravity", &gravity);
+			ImGui::Checkbox("Static", &is_static);
+		}
 
 		if (ImGui::Button("ADD_COMPONENT", ImVec2(100, 24))) {
-			if (current_component == 0) {
-				sceneGraph->marked_object->addComponent(ScriptFactory::instance().create(scripts[current_script]));
-			}
+
+			bool canAdd = true;
+            for (auto& comp : sceneGraph->marked_object->components) {
+                
+                if (comp->name._Equal(items[current_component]) || (current_component == 0 && comp->name._Equal(scripts_names[current_script]))) {
+					canAdd = false;
+                }
+            }
+            if (canAdd) {
+                if (current_component == 0) {
+                    sceneGraph->marked_object->addComponent(ScriptFactory::instance().create(scripts[current_script]));
+				}
+                else if (current_component == 1) {
+                    sceneGraph->marked_object->addComponent(std::make_unique<Rigidbody>(mass, gravity, is_static));
+                }
+            }
+			
 		}
     }
 
@@ -810,10 +834,11 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
         ImGui::PopItemWidth();
 
         for (auto component = preview_node->components.begin(); component != preview_node->components.end(); ) {
+            
             ImGui::Text((*component)->name.c_str());
 
             ImGui::SameLine();
-
+			ImGui::PushID((*component)->name.c_str());
             if (ImGui::Button("-")) {
                 
                 preview_node->deleteComponent(component);
@@ -822,6 +847,7 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
             else {
                 ++component;
             }
+			ImGui::PopID();
         }
     }
     else {

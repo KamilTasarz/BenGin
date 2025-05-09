@@ -28,7 +28,7 @@ bool BoundingBox::isBoundingBoxIntersects(const BoundingBox& other_bounding_box)
          other_bounding_box.min_point_world.z < max_point_world.z && other_bounding_box.max_point_world.z > min_point_world.z;
 }
 
-void BoundingBox::separate(const BoundingBox* other_AABB)
+void BoundingBox::separate(const BoundingBox* other_AABB, float separation_mulitplier)
 {
     
 
@@ -58,7 +58,7 @@ void BoundingBox::separate(const BoundingBox* other_AABB)
 
     
 
-    node->transform.setLocalPosition(node->transform.getLocalPosition() + v);
+    node->transform.setLocalPosition(node->transform.getLocalPosition() + v * separation_mulitplier);
     //forceUpdateSelfAndChild();
     
 }

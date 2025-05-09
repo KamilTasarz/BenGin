@@ -3,6 +3,7 @@
 #include "../Component/BoundingBox.h"
 #include "../Component/CameraGlobals.h"
 #include "../System/Component.h"
+#include "../System/Rigidbody.h"
 
 PhysicsSystem& PhysicsSystem::instance() {
     static PhysicsSystem instance;
@@ -36,12 +37,39 @@ void PhysicsSystem::updateCollisions()
 			testedPairs.insert(pair);
 
 			if (collider1->isBoundingBoxIntersects(*collider2)) {
-				collider1->separate(collider2);
 
-				for (auto& comp : collider1->node->components)
+				bool first = false, second = false;
+				for (auto& comp : collider1->node->components) {
 					comp->onCollision(collider2->node);
-				for (auto& comp : collider2->node->components)
+					if (comp->name._Equal("Rigidbody")) {
+						first = !dynamic_cast<Rigidbody*>(comp.get())->is_static;
+					}
+				}
+				for (auto& comp : collider2->node->components) {
 					comp->onCollision(collider1->node);
+					if (comp->name._Equal("Rigidbody")) {
+						second = !dynamic_cast<Rigidbody*>(comp.get())->is_static;
+					}
+				}
+
+				if (first) {
+					float sep = 1.f;
+					if (second) {
+						sep = 0.5f;
+						collider2->separate(collider1, sep);
+					}
+					collider1->separate(collider2, sep);
+				}
+				else if (second) {
+
+					float sep = 1.f;
+					if (first) {
+						sep = 0.5f;
+						collider1->separate(collider2, sep);
+					}
+					collider2->separate(collider1, sep);
+				}
+				
 			}
 		}
 	}

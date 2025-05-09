@@ -1,16 +1,223 @@
 {
     "camera": {
-        "Pitch": -16.500045776367188,
-        "Yaw": 273.1986999511719,
-        "mode": 2,
+        "Pitch": 0.0,
+        "Yaw": 90.0,
+        "mode": 1,
         "position": {
-            "x": 9.765722274780273,
-            "y": 14.81507396697998,
-            "z": 36.04320526123047
+            "x": 0.0,
+            "y": 2.0,
+            "z": 10.0
         }
     },
     "scene": {
         "children": [
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": -1,
+                "name": "room_1_inst",
+                "no_textures": true,
+                "position": {
+                    "x": 35.247222900390625,
+                    "y": 0.0,
+                    "z": 8.820759773254395
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_1"
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "PrefabInstance"
+            },
+            {
+                "components": [
+                    {
+                        "name": "PlayerController"
+                    }
+                ],
+                "id": 0,
+                "is_visible": true,
+                "model.id": 9,
+                "name": "entity_2",
+                "no_textures": false,
+                "position": {
+                    "x": 24.499990463256836,
+                    "y": -10.004800796508789,
+                    "z": 4.008225440979004
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Node"
+            },
+            {
+                "components": [
+                    {
+                        "name": "PlayerController"
+                    }
+                ],
+                "id": 0,
+                "is_visible": true,
+                "model.id": 4,
+                "name": "entity_1",
+                "no_textures": false,
+                "position": {
+                    "x": 145.29966735839844,
+                    "y": -5.587935447692871e-09,
+                    "z": 5.840406894683838
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Node"
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 4,
+                "name": "entity",
+                "no_textures": false,
+                "position": {
+                    "x": 0.0,
+                    "y": 5.771875381469727,
+                    "z": 3.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Node"
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 6,
+                "name": "light_copy",
+                "no_textures": true,
+                "point_light": {
+                    "ambient": {
+                        "x": 0.20000000298023224,
+                        "y": 0.20000000298023224,
+                        "z": 0.20000000298023224
+                    },
+                    "constant": 1.0,
+                    "diffuse": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    },
+                    "linear": 0.09000000357627869,
+                    "quadratic": 0.03200000151991844,
+                    "specular": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    }
+                },
+                "position": {
+                    "x": 5.374999046325684,
+                    "y": 2.216658353805542,
+                    "z": -4.612642288208008
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "PointLight"
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": -1,
+                "name": "room_1_inst_2",
+                "no_textures": true,
+                "position": {
+                    "x": 34.5,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_1"
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "PrefabInstance"
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": -1,
+                "name": "room_1_inst_1",
+                "no_textures": true,
+                "position": {
+                    "x": -7.79999303817749,
+                    "y": 0.0,
+                    "z": 2.812391757965088
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_1"
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "PrefabInstance"
+            },
             {
                 "id": 0,
                 "is_visible": true,
@@ -100,208 +307,6 @@
                     "z": 1.0
                 },
                 "type": "DirectionalLight"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": -1,
-                "name": "room_1_inst_1",
-                "no_textures": true,
-                "position": {
-                    "x": -37.5,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_1"
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "PrefabInstance"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": 6,
-                "name": "light_copy",
-                "no_textures": true,
-                "point_light": {
-                    "ambient": {
-                        "x": 0.20000000298023224,
-                        "y": 0.20000000298023224,
-                        "z": 0.20000000298023224
-                    },
-                    "constant": 1.0,
-                    "diffuse": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    },
-                    "linear": 0.09000000357627869,
-                    "quadratic": 0.03200000151991844,
-                    "specular": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    }
-                },
-                "position": {
-                    "x": 5.374999046325684,
-                    "y": 2.216658353805542,
-                    "z": -4.612642288208008
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "PointLight"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": -1,
-                "name": "room_1_inst_2",
-                "no_textures": true,
-                "position": {
-                    "x": 35.247222900390625,
-                    "y": 0.0,
-                    "z": 8.820759773254395
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_1"
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "PrefabInstance"
-            },
-            {
-                "components": [
-                    {
-                        "name": "PlayerController"
-                    }
-                ],
-                "id": 0,
-                "is_visible": true,
-                "model.id": 4,
-                "name": "entity_1",
-                "no_textures": false,
-                "position": {
-                    "x": 26.800065994262695,
-                    "y": -5.587935447692871e-09,
-                    "z": 5.840406894683838
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "Node"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": 9,
-                "name": "entity_2",
-                "no_textures": false,
-                "position": {
-                    "x": -0.7999998927116394,
-                    "y": 0.0,
-                    "z": 4.008225440979004
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "Node"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": 4,
-                "name": "entity",
-                "no_textures": false,
-                "position": {
-                    "x": 0.0,
-                    "y": 5.771875381469727,
-                    "z": 3.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "Node"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": -1,
-                "name": "room_1_inst",
-                "no_textures": true,
-                "position": {
-                    "x": 34.5,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_1"
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "PrefabInstance"
             }
         ],
         "id": 0,

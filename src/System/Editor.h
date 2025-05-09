@@ -38,10 +38,11 @@ private:
 	bool isHUD = false, isInPreview = false, pressed_add = false, scene_editor = true, is_initialized = false;
 
 
-	bool isSnapped = false;
+	bool isSnapped = false, is_static = true;
 	glm::vec3 lastSnapOffset;
 	glm::vec3 snapedPosition;
 
+	float mass = 1.f, gravity = 1.f;
 	
 	int current_prefab = 0, current_opt1 = 0, current_opt2 = 0, direction = 0;
 	int current_component = 0, current_script = 0;

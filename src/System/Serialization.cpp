@@ -10,6 +10,7 @@
 #include "../Gameplay/Script.h"
 #include "../Gameplay/ScriptFactory.h"
 #include "../System/Component.h"
+#include "../System/Rigidbody.h"
 
 //using namespace std;
 
@@ -166,7 +167,20 @@ json save_node(Node* node) {
 	for (auto& component : node->components) {
 		json componentJson;
 		componentJson["name"] = component->name;
+		if (component->name._Equal("Rigidbody")) {
+			json rigidbodyJson;
+			Rigidbody* rigidbody = dynamic_cast<Rigidbody*>(component.get());
+			rigidbodyJson["mass"] = rigidbody->mass;
+			rigidbodyJson["gravity"] = rigidbody->gravity;
+			rigidbodyJson["is_static"] = rigidbody->is_static;
+
+			componentJson["properties"] = rigidbodyJson;
+		}
+		
+		
 		componentsData.push_back(componentJson);
+
+
 	}
 	if (!componentsData.empty()) {
 		j["components"] = componentsData;
@@ -354,7 +368,15 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 			for (auto& component : j["components"]) {
 				std::string component_name = component["name"];
 				
-				node->addComponent(ScriptFactory::instance().create(component_name));
+				if (component_name._Equal("Rigidbody")) {
+					json rigidbodyJson = component["properties"];
+					node->addComponent(std::make_unique<Rigidbody>(rigidbodyJson["mass"], rigidbodyJson["gravity"], rigidbodyJson["is_static"]));
+				} else {
+					node->addComponent(ScriptFactory::instance().create(component_name));
+				}
+
+
+				
 				
 			}
 		}
@@ -467,8 +489,13 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			for (auto& component : j["components"]) {
 				std::string component_name = component["name"];
 
-				node->addComponent(ScriptFactory::instance().create(component_name));
-
+				if (component_name._Equal("Rigidbody")) {
+					json rigidbodyJson = component["properties"];
+					node->addComponent(std::make_unique<Rigidbody>(rigidbodyJson["mass"], rigidbodyJson["gravity"], rigidbodyJson["is_static"]));
+				}
+				else {
+					node->addComponent(ScriptFactory::instance().create(component_name));
+				}
 			}
 		}
 
