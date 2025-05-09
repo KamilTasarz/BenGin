@@ -41,4 +41,8 @@ void PlayerController::onCollision(Node* other)
 {
 	std::cout << "PlayerController::onCollision::" << owner->name << std::endl;
 	std::cout << "PlayerController::onCollision(other)::" << other->name << std::endl;
+
+	if (other->getTagName() == "Wall") {
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 0.5f, 0.f));
+	}
 }

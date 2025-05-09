@@ -567,6 +567,17 @@ void Node::drawShadows(Shader& shader) {
     }
 }
 
+Node::Node(std::string nameOfNode, int _id) {
+    pModel = nullptr;
+    name = nameOfNode;
+    id = _id;
+    AABB = nullptr;
+    no_textures = true;
+
+    layer = TagLayerManager::Instance().getLayer("Default");
+    tag = TagLayerManager::Instance().getTag("Default");
+}
+
 Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id, glm::vec3 min_point, glm::vec3 max_point) : pModel{ model } {
     name = nameOfNode;
     id = _id;
@@ -577,6 +588,9 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<Bou
         min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
 
     }
+
+	layer = TagLayerManager::Instance().getLayer("Default");
+	tag = TagLayerManager::Instance().getTag("Default");
 
     if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), this, model->min_points, model->max_points);
     else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);
@@ -595,6 +609,9 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
         min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
 
     }
+
+    layer = TagLayerManager::Instance().getLayer("Default");
+    tag = TagLayerManager::Instance().getTag("Default");
 
     if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), this, model->min_points, model->max_points);
     else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);

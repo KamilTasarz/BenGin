@@ -672,6 +672,36 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
     }
 
     ImGui::Separator();
+
+	ImGui::InputText("Tag name: ", tag_name, 128);
+
+    if (ImGui::Button("Add tag", ImVec2(100, 24))) {
+        if (!TagLayerManager::Instance().getTag(tag_name)) {
+			TagLayerManager::Instance().addTag(tag_name);
+        }
+    }
+
+    if (ImGui::Button("Delete tag", ImVec2(100, 24))) {
+        if (TagLayerManager::Instance().getTag(tag_name)) {
+            TagLayerManager::Instance().removeTag(tag_name);
+        }
+    }
+
+    ImGui::InputText("Layer name: ", layer_name, 128);
+
+    if (ImGui::Button("Add layer", ImVec2(100, 24))) {
+        if (!TagLayerManager::Instance().getLayer(layer_name)) {
+            TagLayerManager::Instance().addLayer(layer_name);
+        }
+    }
+
+    if (ImGui::Button("Delete layer", ImVec2(100, 24))) {
+        if (TagLayerManager::Instance().getLayer(layer_name)) {
+            TagLayerManager::Instance().removeLayer(layer_name);
+        }
+    }
+
+
     ImGui::End();
 }
 

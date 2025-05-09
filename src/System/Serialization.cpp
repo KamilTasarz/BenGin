@@ -11,6 +11,7 @@
 #include "../Gameplay/ScriptFactory.h"
 #include "../System/Component.h"
 #include "../System/Rigidbody.h"
+#include "../System/Tag.h"
 
 //using namespace std;
 
@@ -53,6 +54,8 @@ int saveScene(const std::string& filename, SceneGraph*& scene) {
 	//}
 
 	//sceneData["models"] = modelData;
+
+	
 
 	json cameraData;
 	cameraData["position"] = vec3_to_json(camera->cameraPos);
@@ -149,6 +152,10 @@ json save_node(Node* node) {
 	}
 
 	j["name"] = node->name;
+	
+	j["tag"] = node->getTagName();
+	j["layer"] = node->getLayerName();
+
 	j["id"] = node->id;
 	j["position"] = vec3_to_json(node->transform.getLocalPosition());
 	j["rotation"] = quat_to_json(node->transform.getLocalRotation());
@@ -244,6 +251,8 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 
 
 	}*/
+
+
 
 	scene = new SceneGraph();
 
@@ -363,6 +372,8 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 		node->transform.setLocalPosition(json_to_vec3(j["position"]));
 		node->transform.setLocalRotation(json_to_quat(j["rotation"]));
 		node->transform.setLocalScale(json_to_vec3(j["scale"]));
+		node->setTag(TagLayerManager::Instance().getTag(j["tag"]));
+		node->setLayer(TagLayerManager::Instance().getLayer(j["layer"]));
 
 		if (j.contains("components")) {
 			for (auto& component : j["components"]) {
@@ -484,6 +495,8 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 		node->transform.setLocalPosition(json_to_vec3(j["position"]));
 		node->transform.setLocalRotation(json_to_quat(j["rotation"]));
 		node->transform.setLocalScale(json_to_vec3(j["scale"]));
+		node->setTag(TagLayerManager::Instance().getTag(j["tag"]));
+		node->setLayer(TagLayerManager::Instance().getLayer(j["layer"]));
 
 		if (j.contains("components")) {
 			for (auto& component : j["components"]) {
@@ -608,6 +621,73 @@ void savePrefab(std::shared_ptr<Prefab>& prefab)
 		file << json_prefab.dump(4);
 		file.close();
 	}
+
+}
+
+void loadTagLayers()
+{
+	std::string filename = "res/scene/tags_layers.json";
+
+	std::ifstream file(filename);
+	if (!file) {
+		std::cerr << "Błąd: Nie można otworzyć pliku JSON!\n";
+	}
+	else {
+		json sceneData;
+		file >> sceneData;
+		file.close();
+
+		json layerData = sceneData["layers"];
+
+		for (json layer : layerData) {
+			std::string layerName = layer["name"];
+			TagLayerManager::Instance().addLayer(layerName);
+		}
+
+		json tagData = sceneData["tags"];
+
+		for (json tag : tagData) {
+			std::string tagName = tag["name"];
+			TagLayerManager::Instance().addTag(tagName);
+		}
+	}
+
+	// add default tag
+	TagLayerManager::Instance().addTag("Default");
+
+	
+	// add default layer
+	TagLayerManager::Instance().addLayer("Default");
+}
+
+void saveTagLayers()
+{
+	std::string filename = "res/scene/tags_layers.json";
+	json sceneData;
+	json tagData;
+	for (auto& tag : TagLayerManager::Instance().getTags()) {
+		json tagJson;
+		tagJson["name"] = tag->name;
+		tagData.push_back(tagJson);
+	}
+	sceneData["tags"] = tagData;
+	json layerData;
+	for (auto& layer : TagLayerManager::Instance().getLayers()) {
+		json layerJson;
+		layerJson["name"] = layer->name;
+		layerData.push_back(layerJson);
+	}
+	sceneData["layers"] = layerData;
+
+
+
+	std::ofstream file(filename);
+	if (!file.is_open()) {
+		std::cerr << "Error opening file for writing: " << filename << std::endl;
+		return;
+	}
+	file << sceneData.dump(4); // Pretty print with 4 spaces
+	file.close();
 
 }
 

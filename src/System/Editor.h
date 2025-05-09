@@ -33,6 +33,8 @@ private:
 	SceneGraph* sceneGraph;
 	SceneGraph* editor_sceneGraph;
 
+	char tag_name[128], layer_name[128];
+
 	unsigned int framebuffer, colorTexture, depthRenderbuffer;
 
 	bool isHUD = false, isInPreview = false, pressed_add = false, scene_editor = true, is_initialized = false;

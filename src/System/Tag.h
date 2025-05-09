@@ -50,9 +50,15 @@ public:
 	}
 
 	void addLayer(std::string name) {
+		if (getLayer(name) != nullptr) {
+			return;
+		}
 		layers.push_back(std::make_shared<Layer>(name));
 	}
 	void addTag(std::string name) {
+		if (getTag(name) != nullptr) {
+			return;
+		}
 		tags.push_back(std::make_shared<Tag>(name));
 	}
 	void removeLayer(std::string name) {

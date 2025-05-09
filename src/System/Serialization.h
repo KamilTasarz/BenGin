@@ -29,5 +29,7 @@ std::shared_ptr<Prefab> getPrefab(std::vector<std::shared_ptr<Prefab>>& prefabs,
 Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name);
 void savePrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs);
 void savePrefab(std::shared_ptr<Prefab>& prefab);
+void loadTagLayers();
+void saveTagLayers();
 
 #endif // !SERIALIZATION_H

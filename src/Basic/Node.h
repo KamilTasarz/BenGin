@@ -243,13 +243,7 @@ public:
     // ----------- CONSTRUCTORS -----------
 
     // No model
-    Node(std::string nameOfNode, int _id = 0) {
-        pModel = nullptr;
-        name = nameOfNode;
-        id = _id;
-        AABB = nullptr;
-        no_textures = true;
-    }
+    Node(std::string nameOfNode, int _id = 0);
 
     // Model
     Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f));
@@ -278,10 +272,10 @@ public:
 
     void increaseCount();
 
-	void setLayer(std::weak_ptr<Layer> layer) {
+	void setLayer(std::shared_ptr<Layer> layer) {
 		this->layer = layer;
 	}
-	void setTag(std::weak_ptr<Tag> tag) {
+	void setTag(std::shared_ptr<Tag> tag) {
 		this->tag = tag;
 	}
     std::string getTagName();

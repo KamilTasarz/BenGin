@@ -16,6 +16,7 @@ void Engine::init()
 
 	ResourceManager::Instance().init();
 
+	loadTagLayers();
 	loadPrefabs(prefabs);
 
 	editor = new Editor(prefabs);
@@ -34,6 +35,8 @@ void Engine::run()
 
 void Engine::shutdown()
 {
+
+	saveTagLayers();
 	editor->shutdown();
 	game->shutdown();
 
