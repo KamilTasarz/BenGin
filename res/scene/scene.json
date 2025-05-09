@@ -1,125 +1,16 @@
 {
     "camera": {
-        "Pitch": 0.0,
-        "Yaw": 90.0,
-        "mode": 1,
+        "Pitch": -18.800004959106445,
+        "Yaw": -80.99984741210938,
+        "mode": 2,
         "position": {
-            "x": 0.0,
-            "y": 2.0,
-            "z": 10.0
+            "x": 18.949817657470703,
+            "y": 7.308126449584961,
+            "z": 33.308624267578125
         }
     },
     "scene": {
         "children": [
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": -1,
-                "name": "room_1_inst",
-                "no_textures": true,
-                "position": {
-                    "x": 35.247222900390625,
-                    "y": 0.0,
-                    "z": 8.820759773254395
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_1"
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "PrefabInstance"
-            },
-            {
-                "components": [
-                    {
-                        "name": "PlayerController"
-                    }
-                ],
-                "id": 0,
-                "is_visible": true,
-                "model.id": 9,
-                "name": "entity_2",
-                "no_textures": false,
-                "position": {
-                    "x": 24.499990463256836,
-                    "y": -10.004800796508789,
-                    "z": 4.008225440979004
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "Node"
-            },
-            {
-                "components": [
-                    {
-                        "name": "PlayerController"
-                    }
-                ],
-                "id": 0,
-                "is_visible": true,
-                "model.id": 4,
-                "name": "entity_1",
-                "no_textures": false,
-                "position": {
-                    "x": 145.29966735839844,
-                    "y": -5.587935447692871e-09,
-                    "z": 5.840406894683838
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "Node"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": 4,
-                "name": "entity",
-                "no_textures": false,
-                "position": {
-                    "x": 0.0,
-                    "y": 5.771875381469727,
-                    "z": 3.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "Node"
-            },
             {
                 "id": 0,
                 "is_visible": true,
@@ -165,10 +56,138 @@
                 "type": "PointLight"
             },
             {
+                "components": [
+                    {
+                        "name": "PlayerController"
+                    }
+                ],
+                "id": 0,
+                "is_visible": true,
+                "model.id": 9,
+                "name": "entity_2",
+                "no_textures": false,
+                "position": {
+                    "x": 24.499990463256836,
+                    "y": -10.004800796508789,
+                    "z": 4.008225440979004
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Node"
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 4,
+                "name": "entity",
+                "no_textures": false,
+                "position": {
+                    "x": 0.0,
+                    "y": 5.771875381469727,
+                    "z": 3.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Node"
+            },
+            {
+                "components": [
+                    {
+                        "name": "PlayerController"
+                    }
+                ],
+                "id": 0,
+                "is_visible": true,
+                "model.id": 4,
+                "name": "entity_1",
+                "no_textures": false,
+                "position": {
+                    "x": 145.29966735839844,
+                    "y": -5.587935447692871e-09,
+                    "z": 5.840406894683838
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Node"
+            },
+            {
+                "directional_light": {
+                    "ambient": {
+                        "x": 0.20000000298023224,
+                        "y": 0.20000000298023224,
+                        "z": 0.20000000298023224
+                    },
+                    "diffuse": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    },
+                    "direction": {
+                        "x": -1.0,
+                        "y": -1.0,
+                        "z": 0.0
+                    },
+                    "specular": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    }
+                },
+                "id": 0,
+                "is_visible": true,
+                "model.id": 6,
+                "name": "dir_light",
+                "no_textures": true,
+                "position": {
+                    "x": 65.10369873046875,
+                    "y": 4.334654808044434,
+                    "z": 8.685544967651367
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "DirectionalLight"
+            },
+            {
                 "id": 0,
                 "is_visible": true,
                 "model.id": -1,
-                "name": "room_1_inst_2",
+                "name": "room_1_inst_1",
                 "no_textures": true,
                 "position": {
                     "x": 34.5,
@@ -195,12 +214,39 @@
                 "id": 0,
                 "is_visible": true,
                 "model.id": -1,
-                "name": "room_1_inst_1",
+                "name": "room_1_inst_2",
                 "no_textures": true,
                 "position": {
                     "x": -7.79999303817749,
                     "y": 0.0,
                     "z": 2.812391757965088
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_1"
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "PrefabInstance"
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": -1,
+                "name": "room_1_inst",
+                "no_textures": true,
+                "position": {
+                    "x": 35.247222900390625,
+                    "y": 0.0,
+                    "z": 8.820759773254395
                 },
                 "prefab_instance": {
                     "prefab_name": "room_1"
@@ -261,52 +307,6 @@
                     "z": 1.0
                 },
                 "type": "PointLight"
-            },
-            {
-                "directional_light": {
-                    "ambient": {
-                        "x": 0.20000000298023224,
-                        "y": 0.20000000298023224,
-                        "z": 0.20000000298023224
-                    },
-                    "diffuse": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    },
-                    "direction": {
-                        "x": -1.0,
-                        "y": -1.0,
-                        "z": 0.0
-                    },
-                    "specular": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    }
-                },
-                "id": 0,
-                "is_visible": true,
-                "model.id": 6,
-                "name": "dir_light",
-                "no_textures": true,
-                "position": {
-                    "x": 65.10369873046875,
-                    "y": 4.334654808044434,
-                    "z": 8.685544967651367
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "DirectionalLight"
             }
         ],
         "id": 0,

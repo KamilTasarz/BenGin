@@ -27,6 +27,7 @@
 #include "../Gameplay/ScriptFactory.h"
 #include "../System/PhysicsSystem.h"
 #include "../System/Rigidbody.h"
+#include "../System/Tag.h"
 
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -832,6 +833,47 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
             ImGui::EndCombo();
         }
         ImGui::PopItemWidth();
+
+		ImGui::Separator();
+
+		ImGui::Text("Tag: ");
+		ImGui::SameLine();
+
+		std::vector<const char*> items;
+
+        int current_tag = 0, i = 0;
+
+        for (auto& s : TagLayerManager::Instance().getTags()) {
+            
+			items.push_back(s->name.c_str());
+			if (preview_node->getTagName() == s->name) {
+				current_tag = i;
+			}
+            i++;
+        }
+
+        if (ImGui::Combo("Tag", &current_tag, items.data(), items.size())) {
+			preview_node->setTag(TagLayerManager::Instance().getTag(items[current_tag]));
+        }
+
+		items.clear();
+
+        current_tag = 0, i = 0;
+
+        for (auto& s : TagLayerManager::Instance().getLayers()) {
+
+            items.push_back(s->name.c_str());
+            if (preview_node->getLayerName() == s->name) {
+                current_tag = i;
+            }
+            i++;
+        }
+
+        if (ImGui::Combo("Layer", &current_tag, items.data(), items.size())) {
+            preview_node->setLayer(TagLayerManager::Instance().getLayer(items[current_tag]));
+        }
+
+		ImGui::Separator();
 
         for (auto component = preview_node->components.begin(); component != preview_node->components.end(); ) {
             

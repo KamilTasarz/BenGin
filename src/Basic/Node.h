@@ -14,12 +14,16 @@
 #include <set>
 
 #include "../System/Component.h"
+//#include "../System/Tag.h"
 
 class BoundingBox;
 class Model;
 class ResourceManager;
 class Grid;
 class Shader;
+class Tag;
+class Layer;
+
 //class Component;
 
 struct Ray {
@@ -233,6 +237,9 @@ public:
 
 	std::list<std::unique_ptr<Component>> components;
 
+	std::weak_ptr<Layer> layer;
+	std::weak_ptr<Tag> tag;
+
     // ----------- CONSTRUCTORS -----------
 
     // No model
@@ -270,6 +277,15 @@ public:
     void deleteComponent(std::list<std::unique_ptr<Component>>::iterator& it);
 
     void increaseCount();
+
+	void setLayer(std::weak_ptr<Layer> layer) {
+		this->layer = layer;
+	}
+	void setTag(std::weak_ptr<Tag> tag) {
+		this->tag = tag;
+	}
+    std::string getTagName();
+    std::string getLayerName();
 
     // Get child by its name
     Node* getChildByName(const std::string& name);

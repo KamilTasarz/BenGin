@@ -11,7 +11,7 @@
 #include "../Grid.h"
 
 #include "../ResourceManager.h"
-
+#include "../System/Tag.h"
 
 
 using namespace std;
@@ -274,10 +274,21 @@ void Node::increaseCount() {
     scene_graph->size++;
 }
 
+std::string Node::getTagName()
+{
+	
+    return tag.lock()->name;
+}
+
+std::string Node::getLayerName()
+{
+    return layer.lock()->name;
+}
+
 // Get child by its name
 Node* Node::getChildByName(const std::string& name) {
     for (auto& child : children) {
-        if (child->name._Equal(name)) {
+        if (child->name == name) {
             return child;
         }
 
@@ -561,7 +572,7 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<Bou
     id = _id;
     no_textures = false;
 
-    if (model && model->mode._Equal("plane")) {
+    if (model && model->mode == "plane") {
         max_point = glm::vec3(0.5f, 0.0f, 0.5f);
         min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
 
@@ -579,7 +590,7 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
     id = _id;
     no_textures = false;
 
-    if (model && model->mode._Equal("plane")) {
+    if (model && model->mode == "plane") {
         max_point = glm::vec3(0.5f, 0.0f, 0.5f);
         min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
 

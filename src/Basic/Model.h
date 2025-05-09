@@ -535,7 +535,7 @@ public:
 
     Model(const char** texture_names, short texture_number, int id, string mode = "cube") : id(id) {
         this->mode = mode;
-        if (mode._Equal("cube")) {
+        if (mode == "cube") {
             loadCube(texture_names, texture_number);
         }
         else {
