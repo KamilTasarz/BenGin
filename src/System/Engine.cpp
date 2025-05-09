@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "ServiceLocator.h"
 #include "Window.h"
+#include "PhysicsSystem.h"
 #include "../Input/InputManager.h"
 #include "../System/Serialization.h"
 #include "../ResourceManager.h"
@@ -10,6 +11,8 @@ void Engine::init()
 {
 	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.1.2");
 	ServiceLocator::provide(window);
+	
+	PhysicsSystem::instance();
 
 	ResourceManager::Instance().init();
 

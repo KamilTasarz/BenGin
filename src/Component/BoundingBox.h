@@ -10,6 +10,7 @@ struct SnapResult {
 	glm::vec3 snapOffset = glm::vec3(0.f);
 };
 
+class Node;
 
 class BoundingBox {
 
@@ -24,20 +25,23 @@ public:
 	//unsigned int VAO, VBO;
 	glm::mat4 model;
 
+	Node* node = nullptr;
+
 	short collison = 0;
 
-	BoundingBox(const glm::mat4& model, glm::vec3 min_point = glm::vec3(-1.f), glm::vec3 max_point = glm::vec3(1.f)) {
+	BoundingBox(const glm::mat4& model, Node* _node, glm::vec3 min_point = glm::vec3(-1.f), glm::vec3 max_point = glm::vec3(1.f)) {
 		min_point_local = min_point;
 		max_point_local = max_point;
 		transformAABB(model);
 		this->model = glm::mat4(model);
+		node = _node;
 		setBuffers();
 	}
 
 	bool isRayIntersects(glm::vec3 direction, glm::vec3 origin, float &t) const; // t - parameter
 	bool isBoundingBoxIntersects(const BoundingBox& other_bounding_box) const;
 	
-
+	void separate(const BoundingBox* other_AABB);
 
 	SnapResult trySnapToWallsX(const BoundingBox& other, float snapThreshold);
 	SnapResult trySnapToWallsY(const BoundingBox& other, float snapThreshold);

@@ -1,5 +1,7 @@
 ﻿#include "BoundingBox.h"
 
+#include "../Basic/Node.h"
+
 bool BoundingBox::isRayIntersects(glm::vec3 direction, glm::vec3 origin, float& t) const
 {
     // p(t) = p0 + v * t  -->  t = (p(t) - p0) / v
@@ -25,6 +27,42 @@ bool BoundingBox::isBoundingBoxIntersects(const BoundingBox& other_bounding_box)
          other_bounding_box.min_point_world.y < max_point_world.y && other_bounding_box.max_point_world.y > min_point_world.y &&
          other_bounding_box.min_point_world.z < max_point_world.z && other_bounding_box.max_point_world.z > min_point_world.z;
 }
+
+void BoundingBox::separate(const BoundingBox* other_AABB)
+{
+    
+
+    float left = (other_AABB->min_point_world.x - max_point_world.x);
+    float right = (other_AABB->max_point_world.x - min_point_world.x);
+    float up = (other_AABB->min_point_world.y - max_point_world.y);
+    float down = (other_AABB->max_point_world.y - min_point_world.y);
+    float front = (other_AABB->min_point_world.z - max_point_world.z);
+    float back = (other_AABB->max_point_world.z - min_point_world.z);
+    glm::vec3 v = glm::vec3(std::abs(left) < std::abs(right) ? left : right, std::abs(up) < std::abs(down) ? up : down, std::abs(front) < std::abs(back) ? front : back);
+
+    if (std::abs(v.x) <= std::abs(v.y) && std::abs(v.x) <= std::abs(v.z)) {
+        v.y = 0.f;
+        v.z = 0.f;
+        collison = v.x > 0.f ? 1 : -1;
+    }
+    else if (std::abs(v.y) <= std::abs(v.x) && std::abs(v.y) <= std::abs(v.z)) {
+        v.x = 0.f;
+        v.z = 0.f;
+        collison = v.y > 0.f ? 2 : -2;
+    }
+    else {
+        v.x = 0.f;
+        v.y = 0.f;
+        collison = v.z > 0.f ? 3 : -3;
+    }
+
+    
+
+    node->transform.setLocalPosition(node->transform.getLocalPosition() + v);
+    //forceUpdateSelfAndChild();
+    
+}
+
 
 SnapResult BoundingBox::trySnapToWallsX(const BoundingBox& other, float snapThreshold) {
     SnapResult result;

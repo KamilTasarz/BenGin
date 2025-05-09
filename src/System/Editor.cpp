@@ -25,6 +25,7 @@
 #include "../Component/Camera.h"
 #include "../Grid.h"
 #include "../Gameplay/ScriptFactory.h"
+#include "../System/PhysicsSystem.h"
 
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -1009,7 +1010,11 @@ void Editor::update(float deltaTime) {
     }
 
     // Zaznaczanie obiektów myszką
-    sceneGraph->root->checkIfInFrustrum();
+    //sceneGraph->root->checkIfInFrustrum();
+
+    PhysicsSystem::instance().updateColliders(sceneGraph);
+    PhysicsSystem::instance().updateCollisions();
+
     sceneGraph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));
 
     if (ServiceLocator::getWindow()->mouse_pressed && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL)) {

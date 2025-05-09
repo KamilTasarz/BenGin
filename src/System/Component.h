@@ -28,5 +28,14 @@ public:
 
     // Wywoływane na końcu, przed usunięciem
     virtual void onEnd() {}
+
+	virtual ~Component() {
+		onDetach();
+	}
+
+	// Wywoływane, gdy następuje kolizja z innym obiektem
+	virtual void onCollision(Node* other) {
+		
+	}
 };
 

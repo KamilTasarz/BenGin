@@ -8,14 +8,16 @@ public:
     PlayerController() = default;
     virtual ~PlayerController() = default;
 
-    virtual void onAttach(Node* owner) override;
+    void onAttach(Node* owner) override;
 
-    virtual void onDetach() override;
+    void onDetach() override;
 
     void onStart() override;
 
     void onUpdate(float deltaTime) override;
 
     void onEnd() override;
+
+    void onCollision(Node* other) override;
 };
 

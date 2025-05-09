@@ -305,16 +305,19 @@ Node* Node::getChildById(int id) {
     return nullptr;
 }
 
-void Node::checkIfInFrustrum() {
+void Node::checkIfInFrustrum(std::vector<BoundingBox*>& colliders) {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
+        if (in_frustrum) {
+			colliders.push_back(AABB);
+        }
     }
     else {
         in_frustrum = true;
     }
 
     for (auto& child : children) {
-        child->checkIfInFrustrum();
+        child->checkIfInFrustrum(colliders);
     }
 }
 
@@ -564,8 +567,8 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<Bou
 
     }
 
-    if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
-    else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+    if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), this, model->min_points, model->max_points);
+    else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);
 
     //this->no_textures = no_textures;
     vector_of_colliders.push_back(AABB);
@@ -582,13 +585,13 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
 
     }
 
-    if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), model->min_points, model->max_points);
-    else AABB = new BoundingBox(transform.getModelMatrix(), min_point, max_point);
+    if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), this, model->min_points, model->max_points);
+    else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);
 
     //this->no_textures = no_textures;
 }
 
-void Node::separate(const BoundingBox* other_AABB) {
+/*void Node::separate(const BoundingBox* other_AABB) {
 
     float left = (other_AABB->min_point_world.x - AABB->max_point_world.x);
     float right = (other_AABB->max_point_world.x - AABB->min_point_world.x);
@@ -618,7 +621,7 @@ void Node::separate(const BoundingBox* other_AABB) {
 
     transform.setLocalPosition(transform.getLocalPosition() + v);
     forceUpdateSelfAndChild();
-}
+*/
 
 const Transform& Node::getTransform() {
     return transform;
@@ -729,7 +732,7 @@ void InstanceManager::updateBuffer(Node* p) {
 PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders)
     : Node(prefab->prefab_scene_graph->root->name + "_inst") {
     this->prefab = prefab;
-    AABB = new BoundingBox(transform.getModelMatrix());
+    AABB = new BoundingBox(transform.getModelMatrix(), this);
     set_prefab_colliders(prefab->prefab_scene_graph->root);
     colliders.push_back(AABB);
 }
@@ -737,7 +740,7 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<Bound
 void PrefabInstance::set_prefab_colliders(Node* node)
 {
     if (node->AABB) {
-        BoundingBox* new_collider = new BoundingBox(node->transform.getModelMatrix(), node->AABB->min_point_local, node->AABB->max_point_local);
+        BoundingBox* new_collider = new BoundingBox(node->transform.getModelMatrix(), this, node->AABB->min_point_local, node->AABB->max_point_local);
         new_collider->transformWithOffsetAABB(transform.getModelMatrix());
         prefab_colliders.push_back(new_collider);
         AABB->max_point_local = glm::max(AABB->max_point_local, new_collider->max_point_world);

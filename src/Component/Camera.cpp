@@ -28,7 +28,7 @@ void Camera::setAABB()
     float width = height * AspectRatio;
     //glm::vec3 halfExtents = glm::vec3(width / 2, height / 2, FarPlane / 2);
 
-    AABB = new BoundingBox(glm::mat4(1), cameraPos - glm::vec3(width / 2, height / 2, cameraPos.z), cameraPos + glm::vec3(width / 2, height / 2, -cameraPos.z - FarPlane));
+    AABB = new BoundingBox(glm::mat4(1), nullptr, cameraPos - glm::vec3(width / 2, height / 2, cameraPos.z), cameraPos + glm::vec3(width / 2, height / 2, -cameraPos.z - FarPlane));
 
 }
 

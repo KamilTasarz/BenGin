@@ -6,6 +6,7 @@
 #include "../Component/BoundingBox.h"
 #include "../Component/CameraGlobals.h"
 #include "../ResourceManager.h"
+#include "../System/PhysicsSystem.h"
 
 void Game::input()
 {
@@ -54,6 +55,9 @@ void Game::update(float deltaTime)
 
     // Scena
     //sceneGraph->root->checkIfInFrustrum();
+
+	PhysicsSystem::instance().updateColliders(sceneGraph);
+	PhysicsSystem::instance().updateCollisions();
     sceneGraph->update(deltaTime);
 
     // HUD

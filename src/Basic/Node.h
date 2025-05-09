@@ -282,7 +282,7 @@ public:
         return result;
     }
 
-    void checkIfInFrustrum();
+    void checkIfInFrustrum(std::vector<BoundingBox*>& colliders);
 
     void collectAllChildren(std::set<Node*>& out) {
         for (Node* child : children) {
@@ -318,7 +318,7 @@ public:
         this->name = new_name;
     }
 
-    void separate(const BoundingBox* other_AABB);
+    //void separate(const BoundingBox* other_AABB);
 
     const Transform& getTransform();
 

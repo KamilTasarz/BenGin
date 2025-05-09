@@ -36,3 +36,9 @@ void PlayerController::onUpdate(float deltaTime)
 void PlayerController::onEnd()
 {
 }
+
+void PlayerController::onCollision(Node* other)
+{
+	std::cout << "PlayerController::onCollision::" << owner->name << std::endl;
+	std::cout << "PlayerController::onCollision(other)::" << other->name << std::endl;
+}
