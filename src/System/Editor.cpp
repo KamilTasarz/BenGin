@@ -516,10 +516,14 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
 
         }
         std::vector<std::string> scripts = ScriptFactory::instance().getScriptNames();
+        std::vector<const char*> scripts_names;
+        for (auto& s : scripts) {
+            scripts_names.push_back(s.c_str());
+        }
         if (current_component == 0) {
             
 
-            if (ImGui::Combo("Choose Script", &current_script, scripts.data()->c_str(), scripts.size())) {
+            if (ImGui::Combo("Choose Script", &current_script, scripts_names.data(), scripts_names.size())) {
 
             }
         }

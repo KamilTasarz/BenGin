@@ -7,7 +7,9 @@
 #include "../Light.h"
 #include "../ResourceManager.h"
 #include "../Basic/Model.h"
-
+#include "../Gameplay/Script.h"
+#include "../Gameplay/ScriptFactory.h"
+#include "../System/Component.h"
 
 //using namespace std;
 
@@ -159,6 +161,17 @@ json save_node(Node* node) {
 	else {
 		j["model.id"] = -1;
 	}
+
+	json componentsData;
+	for (auto& component : node->components) {
+		json componentJson;
+		componentJson["name"] = component->name;
+		componentsData.push_back(componentJson);
+	}
+	if (!componentsData.empty()) {
+		j["components"] = componentsData;
+	}
+	
 
 	// Rekurencyjnie zapisujemy dzieci
 	for (Node* child : node->children) {
@@ -337,6 +350,15 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 		node->transform.setLocalRotation(json_to_quat(j["rotation"]));
 		node->transform.setLocalScale(json_to_vec3(j["scale"]));
 
+		if (j.contains("components")) {
+			for (auto& component : j["components"]) {
+				std::string component_name = component["name"];
+				
+				node->addComponent(ScriptFactory::instance().create(component_name));
+				
+			}
+		}
+
 
 		// Rekurencyjnie zapisujemy dzieci
 		for (json j : j["children"]) {
@@ -441,6 +463,14 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 		node->transform.setLocalRotation(json_to_quat(j["rotation"]));
 		node->transform.setLocalScale(json_to_vec3(j["scale"]));
 
+		if (j.contains("components")) {
+			for (auto& component : j["components"]) {
+				std::string component_name = component["name"];
+
+				node->addComponent(ScriptFactory::instance().create(component_name));
+
+			}
+		}
 
 		// Rekurencyjnie zapisujemy dzieci
 		for (json j : j["children"]) {

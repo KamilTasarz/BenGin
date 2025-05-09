@@ -22,11 +22,11 @@ void PlayerController::onUpdate(float deltaTime)
 	glm::vec3 position = owner->transform.getLocalPosition();
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		position.x += 0.1f;
+		position.x -= 0.1f;
 	}
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		position.x -= 0.1f;
+		position.x += 0.1f;
 	}
 
 	owner->transform.setLocalPosition(position);
