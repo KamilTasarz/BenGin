@@ -13,11 +13,14 @@
 #include <memory>
 #include <set>
 
+#include "../System/Component.h"
+
 class BoundingBox;
 class Model;
 class ResourceManager;
 class Grid;
 class Shader;
+//class Component;
 
 struct Ray {
 	glm::vec3 origin;
@@ -228,6 +231,8 @@ public:
 
 	Animator* animator = nullptr; // Animator for the model
 
+	std::list<std::unique_ptr<Component>> components;
+
     // ----------- CONSTRUCTORS -----------
 
     // No model
@@ -260,6 +265,9 @@ public:
 
     // Add child
     void virtual addChild(Node* p);
+
+    void addComponent(std::unique_ptr<Component> component);
+    void deleteComponent(std::list<std::unique_ptr<Component>>::iterator& it);
 
     void increaseCount();
 
@@ -298,7 +306,7 @@ public:
 	// Draw self and children for prefabs -> computing model matrix
     void virtual drawSelfAndChild(Transform &parent);
 
-    void updateAnimation(float deltaTime);
+    void updateComponents(float deltaTime);
 
     void drawShadows(Shader& shader);
 

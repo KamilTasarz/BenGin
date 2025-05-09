@@ -1,5 +1,7 @@
 ﻿#include "Editor.h"
 
+#include <memory>
+
 #include "../Basic/Shader.h"
 #include "../Basic/Model.h"
 #include "../Basic/Animator.h"
@@ -22,6 +24,7 @@
 #include "../Component/CameraGlobals.h"
 #include "../Component/Camera.h"
 #include "../Grid.h"
+#include "../Gameplay/ScriptFactory.h"
 
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -504,7 +507,29 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
     }
 
 
+    if (sceneGraph->marked_object) {
+        std::vector<const char*> items;
 
+		items.push_back("Script");
+
+        if (ImGui::Combo("Choose Component", &current_component, items.data(), items.size())) {
+
+        }
+        std::vector<std::string> scripts = ScriptFactory::instance().getScriptNames();
+        if (current_component == 0) {
+            
+
+            if (ImGui::Combo("Choose Script", &current_script, scripts.data()->c_str(), scripts.size())) {
+
+            }
+        }
+
+		if (ImGui::Button("ADD_COMPONENT", ImVec2(100, 24))) {
+			if (current_component == 0) {
+				sceneGraph->marked_object->addComponent(ScriptFactory::instance().create(scripts[current_script]));
+			}
+		}
+    }
 
 
     std::vector<const char*> items;
@@ -779,6 +804,20 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
         }
         ImGui::PopItemWidth();
 
+        for (auto component = preview_node->components.begin(); component != preview_node->components.end(); ) {
+            ImGui::Text((*component)->name.c_str());
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("-")) {
+                
+                preview_node->deleteComponent(component);
+                component = preview_node->components.begin();
+            }
+            else {
+                ++component;
+            }
+        }
     }
     else {
 

@@ -12,6 +12,8 @@
 
 #include "../ResourceManager.h"
 
+
+
 using namespace std;
 
 SceneGraph::SceneGraph()
@@ -162,8 +164,10 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
 }
 
 void SceneGraph::update(float delta_time) {
+    
+    //if (is_editing)
+        root->updateComponents(delta_time);
     root->updateSelfAndChild(false);
-    root->updateAnimation(delta_time);
 }
 
 
@@ -252,6 +256,18 @@ void Node::addChild(Node* p) {
     p->scene_graph = scene_graph; // Set this as the created child's parent
     p->parent = this; // Set this as the created child's parent
     increaseCount();
+}
+
+void Node::addComponent(std::unique_ptr<Component> component) {
+    
+    component->onAttach(this);
+    components.push_back(std::move(component));
+    
+}
+
+void Node::deleteComponent(std::list<std::unique_ptr<Component>>::iterator& it) {
+    (*it)->onDetach();  
+    it = components.erase(it);
 }
 
 void Node::increaseCount() {
@@ -503,12 +519,17 @@ void Node::drawSelfAndChild(Transform& parent)
     }
 }
 
-void Node::updateAnimation(float deltaTime) {
+void Node::updateComponents(float deltaTime) {
     if (animator != nullptr) {
         animator->updateAnimation(deltaTime);
     }
+
+	for (auto&& component : components) {
+		component->onUpdate(deltaTime);
+	}
+
     for (auto&& child : children) {
-        child->updateAnimation(deltaTime);
+        child->updateComponents(deltaTime);
     }
 }
 

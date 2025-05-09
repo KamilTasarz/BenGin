@@ -21,12 +21,12 @@ void Engine::init()
 	game = new Game(prefabs);
 	game->init();
 
-	//camera->setAABB();
+	camera->setAABB();
 }
 
 void Engine::run()
 {
-	game->run();
+	editor->run();
 }
 
 void Engine::shutdown()

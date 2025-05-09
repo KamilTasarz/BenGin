@@ -16,6 +16,9 @@ public:
 	std::unordered_map<InputKey, InputDeviceState> getMouseState(int index) { return _mouse_state; }
 	std::unordered_map<InputKey, InputDeviceState> getGamepadState(int index) { return _gamepad_states[index]; }
 
+	float getKeyState(int index) { return _keyboard_state[keyToInputKey(index)].value; }
+	//InputDeviceState getMouseState(int index) { return _mouse_state; }
+
 	void updateKeyboardState(int key, float value);
 	void updateMouseState(int button, float value);
 
