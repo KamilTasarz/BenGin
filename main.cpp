@@ -14,6 +14,8 @@ CHCIALEM TU TYLKO SPRECYZOWAC ZE JEBAC FREETYPE
 
 */
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "src/Basic/Shader.h"
 #include "src/Basic/Model.h"
 #include "src/Basic/Animator.h"
@@ -1426,17 +1428,20 @@ void propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float x, floa
         ImGui::Text("Position: "); ImGui::SameLine();
         ImGui::PushID("pos");
         ImGui::PushItemWidth(field_width);
-        if (ImGui::InputFloat("X##pos", &position_buffer.x, 0.0f, 0.0f, "%.3f")) {
+        ImGui::Text("X"); ImGui::SameLine();
+        if (ImGui::InputFloat("##posX", &position_buffer.x, 0.0f, 0.0f, "%.3f")) {
             T.setLocalPosition(position_buffer);
         }
         ImGui::PopItemWidth(); ImGui::SameLine();
         ImGui::PushItemWidth(field_width);
-        if (ImGui::InputFloat("Y##pos", &position_buffer.y, 0.0f, 0.0f, "%.3f")) {
+        ImGui::Text("Y"); ImGui::SameLine();
+        if (ImGui::InputFloat("##posY", &position_buffer.y, 0.0f, 0.0f, "%.3f")) {
             T.setLocalPosition(position_buffer);
         }
         ImGui::PopItemWidth(); ImGui::SameLine();
         ImGui::PushItemWidth(field_width);
-        if (ImGui::InputFloat("Z##pos", &position_buffer.z, 0.0f, 0.0f, "%.3f")) {
+        ImGui::Text("Z"); ImGui::SameLine();
+        if (ImGui::InputFloat("##posZ", &position_buffer.z, 0.0f, 0.0f, "%.3f")) {
             T.setLocalPosition(position_buffer);
         }
         ImGui::PopItemWidth();
@@ -1521,6 +1526,61 @@ void propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float x, floa
             ImGui::EndCombo();
         }
         ImGui::PopItemWidth();
+
+        if (dynamic_cast<Light*>(preview_node)) {
+            
+            Light* temp = dynamic_cast<Light*>(preview_node);
+
+            ImGui::Separator();
+            ImGui::Text("Light Properties");
+
+            ImGui::ColorEdit3("Ambient", glm::value_ptr(temp->ambient));
+            ImGui::ColorEdit3("Diffuse", glm::value_ptr(temp->diffuse));
+            ImGui::ColorEdit3("Specular", glm::value_ptr(temp->specular));
+
+            if (dynamic_cast<DirectionalLight*>(preview_node)) {
+
+                DirectionalLight* temp = dynamic_cast<DirectionalLight*>(preview_node);
+                ImGui::Separator();
+
+                ImGui::Text("Directional Light Properties");
+                ImGui::DragFloat3("Direction##direction", glm::value_ptr(temp->direction), 0.1f, -1.f, 1.f, "%.1f");
+
+            }
+            else if (dynamic_cast<PointLight*>(preview_node)) {
+            
+                PointLight* temp = dynamic_cast<PointLight*>(preview_node);
+                ImGui::Separator();
+
+                ImGui::Text("Point Light Properties");
+
+                ImGui::PushID("quad");
+
+                ImGui::PushItemWidth(field_width);
+                ImGui::DragFloat("Quadratic##q", &temp->quadratic, 0.001f, 0.001f, 1.0f);
+                ImGui::PopItemWidth();
+
+                ImGui::PopID();
+
+                ImGui::PushID("lin");
+
+                ImGui::PushItemWidth(field_width);
+                ImGui::DragFloat("Linear##l", &temp->linear, 0.001f, 0.001f, 1.0f);
+                ImGui::PopItemWidth();
+
+                ImGui::PopID();
+                
+                ImGui::PushID("const");
+
+                ImGui::PushItemWidth(field_width);
+                ImGui::DragFloat("Constant##c", &temp->constant, 0.001f, 0.f, 1.0f);
+                ImGui::PopItemWidth();
+
+                ImGui::PopID();
+
+            }
+
+        }
 
     }
     else {

@@ -386,6 +386,8 @@ public:
     // Debug
     bool is_shining;
 
+    float intensity;
+
     // Colors
     glm::vec3 ambient;
     glm::vec3 diffuse;
@@ -402,6 +404,7 @@ public:
         
         is_shining = _is_shining;
 		no_textures = true;
+        intensity = 1.0f;
 
         glGenTextures(1, &depthMap);
         glBindTexture(GL_TEXTURE_2D, depthMap);
