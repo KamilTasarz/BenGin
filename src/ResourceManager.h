@@ -44,6 +44,7 @@ private:
         shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
         shader_text = new Shader(vertexPath_text, fragmentPath_text);
         shader_background = new Shader(vertexPath_text, fragmentPath_background);
+        shader_particle = new Shader(vertexPath_particle, fragmentPath_particle);
     }
     ~ResourceManager() {
         delete shader;
@@ -55,6 +56,7 @@ private:
         delete shader_shadow;
         delete shader_text;
         delete shader_background;
+        delete shader_particle;
     }
 
 
@@ -71,6 +73,8 @@ private:
     const char* vertexPath_text = "res/shaders/text.vert";
     const char* fragmentPath_text = "res/shaders/text.frag";
     const char* fragmentPath_background = "res/shaders/background.frag";
+    const char* vertexPath_particle = "res/shaders/particle.vert";
+    const char* fragmentPath_particle = "res/shaders/particle.frag";
 
 
 
@@ -85,6 +89,7 @@ public:
     Shader* shader_shadow;
     Shader* shader_text;
     Shader* shader_background;
+    Shader* shader_particle;
 
 	static ResourceManager& Instance() {
 		static ResourceManager instance;

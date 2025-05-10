@@ -669,3 +669,46 @@ void PrefabInstance::drawSelfAndChild()
         collider->draw(*ResourceManager::Instance().shader_outline);
     }*/
 }
+
+// ====PARTICLE EMITTER====
+
+ParticleEmitter::ParticleEmitter(Texture _texture, unsigned int _particle_number) : Node("ParticleEmitter", 99)
+{
+    this->shader = ResourceManager::Instance().shader_particle;
+    this->init();
+}
+
+void ParticleEmitter::init() {
+
+    // set up mesh and attribute properties
+    unsigned int VBO;
+
+    float quadVertices[] = {
+        // positions        // texCoords
+        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f,  1.0f, 0.0f,
+
+        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f, 0.0f,  1.0f, 0.0f,
+         0.5f,  0.5f, 0.0f,  1.0f, 1.0f
+    };
+
+    glGenVertexArrays(1, &this->VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(this->VAO);
+    // fill mesh buffer
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+    // set mesh attributes
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glBindVertexArray(0);
+
+    // create this->amount default particle instances
+    for (unsigned int i = 0; i < this->particle_number; ++i)
+        this->particles.push_back(Particle());
+
+}

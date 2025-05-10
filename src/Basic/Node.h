@@ -18,6 +18,8 @@
 #include "Model.h"
 #include "Animator.h"
 
+#include "../Particles/Particle.h"
+
 #include <set>
 #include "../Grid.h"
 
@@ -669,6 +671,35 @@ public:
 	}*/
 
     void drawSelfAndChild() override;
+};
+
+class ParticleEmitter : public Node {
+
+public:
+
+    unsigned int VAO;
+
+    unsigned int quadVBO, instanceVBO;
+
+    std::vector<Particle> particles;
+    std::vector<ParticleInstanceData> particle_instances_data;
+    unsigned int particle_number;
+
+    Texture texture;
+    Shader* shader;
+
+    // Constructor
+    ParticleEmitter(Texture _texture, unsigned int _particle_number);
+
+    void init();
+
+    void update(float dt, Node& node, unsigned int new_particles, glm::vec3 offset = glm::vec3({0.f}));
+    void draw();
+    
+    void respawnParticle(Particle& particle, Node& node, glm::vec3 offset = glm::vec3({ 0.f }));
+
+    unsigned int firstUnusedParticle();
+
 };
 
 #endif // !NODE_H

@@ -33,6 +33,7 @@
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\Particles\Particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -92,6 +93,7 @@
     <ClInclude Include="Editor.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="src\ResourceManager.h" />
+    <ClInclude Include="src\Particles\Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
@@ -114,6 +116,8 @@
     <None Include="res\shaders\grid.vert" />
     <None Include="res\shaders\grid.frag" />
     <None Include="res\shaders\tile.vert" />
+    <None Include="res\shaders\particle.frag" />
+    <None Include="res\shaders\particle.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />
