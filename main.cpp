@@ -95,9 +95,13 @@ Player *player;
 Text* text;
 Background* background;
 Sprite *sprite, *sprite2, *sprite3, *icon, *eye_icon, *eye_slashed_icon, *dir_light_icon, *point_light_icon, *switch_off, *switch_on;
+Texture _texture;
 
 //std::vector<Model> models;
 
+std::string save_path = "res/scene/saved_states/save_";
+int saved_buffer[5];
+int current_save_pointer = 0;
 
 int previewX = WINDOW_WIDTH / 6;
 int previewY = 0;
@@ -132,6 +136,10 @@ int main() {
     ServiceLocator::provide(_window);
     
     auto* window = ServiceLocator::getWindow();
+
+    _texture.id = 10;
+    _texture.path = "res/stone.jpg";
+    _texture.type = "diffuse";
 
     // --- //
 
@@ -189,6 +197,10 @@ int main() {
     sceneGraph = editor_sceneGraph;
 
     ResourceManager::Instance().init();
+
+    ParticleEmitter* ziom = new ParticleEmitter(_texture, 100);
+
+    sceneGraph->addChild(ziom);
 
     /*Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
     Model Kmodel("res/models/kutasiarz/The_Thing.obj", 1);
@@ -414,7 +426,7 @@ int main() {
         // Audio control section (just temporarily hardcoded)
         audioEngine.Update();
 
-
+        ziom->update(deltaTime, sceneGraph->marked_object);
 
         //if (glfwGetKey(window->window, GLFW_KEY_1) == GLFW_PRESS) {
         //    audioEngine.stopSound(current_track_id);

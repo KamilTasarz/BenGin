@@ -83,6 +83,10 @@ void SceneGraph::addDirectionalLight(DirectionalLight* p, std::string name) {
     directional_light_number++;
 }
 
+void SceneGraph::addParticleEmitter(ParticleEmitter* p) {
+    addChild(p);
+}
+
 
 void SceneGraph::setShaders() {
 
@@ -672,16 +676,13 @@ void PrefabInstance::drawSelfAndChild()
 
 // ====PARTICLE EMITTER====
 
-ParticleEmitter::ParticleEmitter(Texture _texture, unsigned int _particle_number) : Node("ParticleEmitter", 99)
+ParticleEmitter::ParticleEmitter(Texture _texture, unsigned int _particle_number) : Node("ParticleEmitter", 99), texture(_texture), particle_number(_particle_number)
 {
     this->shader = ResourceManager::Instance().shader_particle;
     this->init();
 }
 
 void ParticleEmitter::init() {
-
-    // set up mesh and attribute properties
-    unsigned int VBO;
 
     float quadVertices[] = {
         // positions        // texCoords
@@ -695,20 +696,132 @@ void ParticleEmitter::init() {
     };
 
     glGenVertexArrays(1, &this->VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(this->VAO);
-    // fill mesh buffer
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    //glGenBuffers(1, &VBO);
+    glGenBuffers(1, &this->quadVBO);
+    glGenBuffers(1, &this->instanceVBO);
+
+    glBindVertexArray(VAO);
+
+    // quad geometry
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-    // set mesh attributes
+
+    // position (vec3)
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+
+    // texCoords (vec2)
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    // instancing attributes
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, particle_number * sizeof(ParticleInstanceData), nullptr, GL_DYNAMIC_DRAW);
+
+    glEnableVertexAttribArray(2); // instance position
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(ParticleInstanceData), (void*)0);
+    glVertexAttribDivisor(2, 1);
+
+    glEnableVertexAttribArray(3); // instance color
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(ParticleInstanceData), (void*)(sizeof(glm::vec3)));
+    glVertexAttribDivisor(3, 1);
+
     glBindVertexArray(0);
 
-    // create this->amount default particle instances
-    for (unsigned int i = 0; i < this->particle_number; ++i)
-        this->particles.push_back(Particle());
+    particles.resize(particle_number);
+    particle_instances_data.resize(particle_number);
 
+    // create this->particle_number default particle instances
+    /*for (unsigned int i = 0; i < this->particle_number; ++i)
+        this->particles.push_back(Particle());*/
+
+}
+
+void ParticleEmitter::update(float dt, Node& node, unsigned int new_particles, glm::vec3 offset) {
+    
+    // Add new particles
+    for (unsigned int i = 0; i < new_particles; ++i) {
+        int unused_particle = firstUnusedParticle();
+        this->respawnParticle(this->particles[unused_particle], node, offset);
+    }
+
+    // Update all particles
+    for (unsigned int i = 0; this->particle_number; ++i) {
+        Particle& p = this->particles[i];
+        p.life -= dt;
+
+        if (p.life > 0.f) {
+            p.position -= p.velocity * dt;
+        }
+    }
+
+}
+
+void ParticleEmitter::draw(const glm::mat4& view, const glm::mat4& projection) {
+
+    updateInstanceBuffer();
+
+    shader->use();
+    shader->setMat4("view", view);
+    shader->setMat4("projection", projection);
+
+    // TO-DO: texture logic //
+
+    glBindVertexArray(VAO);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, particle_number);
+    glBindVertexArray(0);
+
+}
+
+void ParticleEmitter::updateInstanceBuffer() {
+
+    for (unsigned int i = 0; i < particle_number; ++i) {
+        Particle& p = particles[i];
+        ParticleInstanceData& inst = particle_instances_data[i];
+
+        if (p.life > 0.0f) {
+            inst.position = p.position;
+            float alpha = std::clamp(p.life, 0.0f, 1.0f);
+            inst.color = glm::vec4(1.0f, 1.0f, 1.0f, alpha);
+        }
+        else {
+            inst.color = glm::vec4(0.0f);
+        }
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, particle_number * sizeof(ParticleInstanceData), particle_instances_data.data());
+
+}
+
+void ParticleEmitter::respawnParticle(Particle& particle, Node& node, glm::vec3 offset) {
+
+    float spread = 0.5f;
+    glm::vec3 random(
+        ((rand() % 100) - 50) / 100.0f * spread,
+        ((rand() % 100) - 50) / 100.0f * spread,
+        ((rand() % 100) - 50) / 100.0f * spread
+    );
+
+    particle.position = node.getTransform().getGlobalPosition() + random + offset;
+    particle.velocity = glm::vec3(0.0f, 1.0f, 0.0f);
+    particle.life = 1.0f;
+
+}
+
+unsigned int ParticleEmitter::firstUnusedParticle() {
+    for (unsigned int i = last_used_particle; i < particle_number; ++i) {
+        if (particles[i].life <= 0.0f) {
+            last_used_particle = i;
+            return i;
+        }
+    }
+    for (unsigned int i = 0; i < last_used_particle; ++i) {
+        if (particles[i].life <= 0.0f) {
+            last_used_particle = i;
+            return i;
+        }
+    }
+    last_used_particle = 0;
+    return 0;
 }

@@ -597,6 +597,7 @@ public:
     void addDirectionalLight(DirectionalLight* p);
     void addPointLight(PointLight* p, std::string name);
     void addDirectionalLight(DirectionalLight* p, std::string name);
+    void addParticleEmitter(ParticleEmitter* p);
     void setShaders();
     void draw(float width, float height, unsigned int framebuffer);
     void drawMarkedObject();
@@ -684,6 +685,7 @@ public:
     std::vector<Particle> particles;
     std::vector<ParticleInstanceData> particle_instances_data;
     unsigned int particle_number;
+    unsigned int last_used_particle;
 
     Texture texture;
     Shader* shader;
@@ -694,8 +696,10 @@ public:
     void init();
 
     void update(float dt, Node& node, unsigned int new_particles, glm::vec3 offset = glm::vec3({0.f}));
-    void draw();
+    void draw(const glm::mat4& view, const glm::mat4& projection);
     
+    void updateInstanceBuffer();
+
     void respawnParticle(Particle& particle, Node& node, glm::vec3 offset = glm::vec3({ 0.f }));
 
     unsigned int firstUnusedParticle();
