@@ -124,8 +124,6 @@ void SceneGraph::setShaders() {
 
 void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
 
-    
-
     for (auto& dir_light : directional_lights) {
         dir_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -732,12 +730,16 @@ void ParticleEmitter::init() {
     particle_instances_data.resize(particle_number);
 
     // create this->particle_number default particle instances
-    /*for (unsigned int i = 0; i < this->particle_number; ++i)
-        this->particles.push_back(Particle());*/
+    for (unsigned int i = 0; i < this->particle_number; ++i) {
+        this->particles[i].life = 0.f;
+        this->particle_instances_data[i].color = glm::vec4(0.0f);
+        this->particle_instances_data[i].position = glm::vec4(0.0f);
+    }
+    //last_used_particle = 0;
 
 }
 
-void ParticleEmitter::update(float dt, Node& node, unsigned int new_particles, glm::vec3 offset) {
+void ParticleEmitter::update(float dt, Node* node, unsigned int new_particles, glm::vec3 offset) {
     
     // Add new particles
     for (unsigned int i = 0; i < new_particles; ++i) {
@@ -746,7 +748,7 @@ void ParticleEmitter::update(float dt, Node& node, unsigned int new_particles, g
     }
 
     // Update all particles
-    for (unsigned int i = 0; this->particle_number; ++i) {
+    for (unsigned int i = 0; i < this->particle_number; ++i) {
         Particle& p = this->particles[i];
         p.life -= dt;
 
@@ -759,6 +761,10 @@ void ParticleEmitter::update(float dt, Node& node, unsigned int new_particles, g
 
 void ParticleEmitter::draw(const glm::mat4& view, const glm::mat4& projection) {
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
     updateInstanceBuffer();
 
     shader->use();
@@ -767,9 +773,15 @@ void ParticleEmitter::draw(const glm::mat4& view, const glm::mat4& projection) {
 
     // TO-DO: texture logic //
 
+    unsigned int aliveCount = 0;
+    for (auto& p : particles)
+        if (p.life > 0.0f) ++aliveCount;
+
     glBindVertexArray(VAO);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, particle_number);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, aliveCount);
     glBindVertexArray(0);
+
+    
 
 }
 
@@ -794,18 +806,18 @@ void ParticleEmitter::updateInstanceBuffer() {
 
 }
 
-void ParticleEmitter::respawnParticle(Particle& particle, Node& node, glm::vec3 offset) {
+void ParticleEmitter::respawnParticle(Particle& particle, Node* node, glm::vec3 offset) {
 
-    float spread = 0.5f;
+    float spread = 3.5f;
     glm::vec3 random(
         ((rand() % 100) - 50) / 100.0f * spread,
         ((rand() % 100) - 50) / 100.0f * spread,
         ((rand() % 100) - 50) / 100.0f * spread
     );
 
-    particle.position = node.getTransform().getGlobalPosition() + random + offset;
-    particle.velocity = glm::vec3(0.0f, 1.0f, 0.0f);
-    particle.life = 1.0f;
+    particle.position = node->getTransform().getGlobalPosition() + random + offset;
+    particle.velocity = glm::vec3(0.0f, 0.1f, 0.0f);
+    particle.life = 20.0f;
 
 }
 

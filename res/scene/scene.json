@@ -1,49 +1,29 @@
 {
     "camera": {
-        "Pitch": -25.299972534179688,
-        "Yaw": -98.19879150390625,
-        "mode": 2,
+        "Pitch": -13.80002212524414,
+        "Yaw": -80.89666748046875,
+        "mode": 0,
         "position": {
-            "x": 40.43539047241211,
-            "y": 31.954084396362305,
-            "z": 48.11011505126953
+            "x": 1.0718532800674438,
+            "y": -1.1602219343185425,
+            "z": 1.9158051013946533
         }
     },
     "scene": {
         "children": [
             {
-                "directional_light": {
-                    "ambient": {
-                        "x": 0.47058820724487305,
-                        "y": 0.3621683716773987,
-                        "z": 0.3621683716773987
-                    },
-                    "diffuse": {
-                        "x": 1.0,
-                        "y": 0.37254899740219116,
-                        "z": 0.37254899740219116
-                    },
-                    "direction": {
-                        "x": -0.10000000149011612,
-                        "y": -1.0,
-                        "z": -1.0
-                    },
-                    "is_shining": false,
-                    "specular": {
-                        "x": 0.0,
-                        "y": 0.029412031173706055,
-                        "z": 1.0
-                    }
-                },
                 "id": 0,
-                "is_visible": false,
-                "model.id": 6,
-                "name": "dir_light",
+                "is_visible": true,
+                "model.id": -1,
+                "name": "room_1_inst_1",
                 "no_textures": true,
                 "position": {
-                    "x": 37.003440856933594,
-                    "y": 17.8654842376709,
-                    "z": 10.203760147094727
+                    "x": 37.845558166503906,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_1"
                 },
                 "rotation": {
                     "w": 1.0,
@@ -56,7 +36,79 @@
                     "y": 1.0,
                     "z": 1.0
                 },
-                "type": "DirectionalLight"
+                "type": "PrefabInstance"
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": -1,
+                "name": "room_1_inst",
+                "no_textures": true,
+                "position": {
+                    "x": 0.05988121032714844,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_1"
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "PrefabInstance"
+            },
+            {
+                "id": 0,
+                "is_visible": true,
+                "model.id": 6,
+                "name": "light",
+                "no_textures": true,
+                "point_light": {
+                    "ambient": {
+                        "x": 0.8382352590560913,
+                        "y": 0.16025085747241974,
+                        "z": 0.4593619108200073
+                    },
+                    "constant": 1.0,
+                    "diffuse": {
+                        "x": 0.4325259327888489,
+                        "y": 0.81620192527771,
+                        "z": 0.8823529481887817
+                    },
+                    "is_shining": true,
+                    "linear": 0.0010000000474974513,
+                    "quadratic": 0.01899999938905239,
+                    "specular": {
+                        "x": 0.1377633810043335,
+                        "y": 0.08938869088888168,
+                        "z": 0.9117646813392639
+                    }
+                },
+                "position": {
+                    "x": 51.376705169677734,
+                    "y": 15.170534133911133,
+                    "z": 3.2269325256347656
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "PointLight"
             },
             {
                 "id": 0,
@@ -104,63 +156,38 @@
                 "type": "PointLight"
             },
             {
-                "id": 0,
-                "is_visible": true,
-                "model.id": 6,
-                "name": "light",
-                "no_textures": true,
-                "point_light": {
+                "directional_light": {
                     "ambient": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
+                        "x": 0.47058820724487305,
+                        "y": 0.3621683716773987,
+                        "z": 0.3621683716773987
                     },
-                    "constant": 1.0,
                     "diffuse": {
-                        "x": 0.9754902124404907,
-                        "y": 0.922046422958374,
-                        "z": 0.06694543361663818
+                        "x": 1.0,
+                        "y": 0.37254899740219116,
+                        "z": 0.37254899740219116
                     },
-                    "is_shining": true,
-                    "linear": 0.0010000000474974513,
-                    "quadratic": 0.01899999938905239,
+                    "direction": {
+                        "x": -0.10000000149011612,
+                        "y": -1.0,
+                        "z": -1.0
+                    },
+                    "is_shining": false,
                     "specular": {
-                        "x": 0.37254899740219116,
-                        "y": 1.0,
-                        "z": 0.4094579219818115
+                        "x": 0.0,
+                        "y": 0.029412031173706055,
+                        "z": 1.0
                     }
                 },
-                "position": {
-                    "x": 51.376705169677734,
-                    "y": 15.170534133911133,
-                    "z": 10.340100288391113
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "PointLight"
-            },
-            {
                 "id": 0,
-                "is_visible": true,
-                "model.id": -1,
-                "name": "room_1_inst_1",
+                "is_visible": false,
+                "model.id": 6,
+                "name": "dir_light",
                 "no_textures": true,
                 "position": {
-                    "x": 0.05988121032714844,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_1"
+                    "x": 37.003440856933594,
+                    "y": 17.8654842376709,
+                    "z": 10.203760147094727
                 },
                 "rotation": {
                     "w": 1.0,
@@ -173,34 +200,7 @@
                     "y": 1.0,
                     "z": 1.0
                 },
-                "type": "PrefabInstance"
-            },
-            {
-                "id": 0,
-                "is_visible": true,
-                "model.id": -1,
-                "name": "room_1_inst",
-                "no_textures": true,
-                "position": {
-                    "x": 37.845558166503906,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_1"
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "type": "PrefabInstance"
+                "type": "DirectionalLight"
             }
         ],
         "id": 0,

@@ -13,7 +13,7 @@ uniform mat4 view;
 
 void main()
 {
-    float scale = 10.0f;
+    float scale = 0.008f;
     vec3 worldPos = instancePosition + aPosition * scale;
 
     TexCoords = aTexCoords;

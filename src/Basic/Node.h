@@ -545,6 +545,7 @@ public:
 };
 
 class PrefabInstance;
+class ParticleEmitter;
 
 class SceneGraph {
 public:
@@ -695,12 +696,12 @@ public:
 
     void init();
 
-    void update(float dt, Node& node, unsigned int new_particles, glm::vec3 offset = glm::vec3({0.f}));
+    void update(float dt, Node* node, unsigned int new_particles, glm::vec3 offset = glm::vec3({0.f}));
     void draw(const glm::mat4& view, const glm::mat4& projection);
     
     void updateInstanceBuffer();
 
-    void respawnParticle(Particle& particle, Node& node, glm::vec3 offset = glm::vec3({ 0.f }));
+    void respawnParticle(Particle& particle, Node* node, glm::vec3 offset = glm::vec3({ 0.f }));
 
     unsigned int firstUnusedParticle();
 

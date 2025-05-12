@@ -137,8 +137,8 @@ int main() {
     
     auto* window = ServiceLocator::getWindow();
 
-    _texture.id = 10;
-    _texture.path = "res/stone.jpg";
+    _texture.id = textureFromFile("res/textures/snowflake.png");
+    _texture.path = "res/textures/snowflake.png";
     _texture.type = "diffuse";
 
     // --- //
@@ -198,8 +198,8 @@ int main() {
 
     ResourceManager::Instance().init();
 
-    ParticleEmitter* ziom = new ParticleEmitter(_texture, 100);
-
+    ParticleEmitter* ziom = new ParticleEmitter(_texture, 20000);
+    //ziom->transform.setLocalScale({ 0.1f, .1f, .1f });
     sceneGraph->addChild(ziom);
 
     /*Model Tmodel("res/models/nanosuit2/nanosuit2.obj", 0);
@@ -426,7 +426,7 @@ int main() {
         // Audio control section (just temporarily hardcoded)
         audioEngine.Update();
 
-        ziom->update(deltaTime, sceneGraph->marked_object);
+        ziom->update(deltaTime, sceneGraph->root, 100);
 
         //if (glfwGetKey(window->window, GLFW_KEY_1) == GLFW_PRESS) {
         //    audioEngine.stopSound(current_track_id);
@@ -596,6 +596,7 @@ int main() {
 
         sceneGraph->draw(previewWidth, previewHeight, framebuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        ziom->draw(camera->GetView(), camera->GetProjection());
         sceneGraph->drawMarkedObject();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         // == outline ==
@@ -615,9 +616,6 @@ int main() {
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
-
-
-
    
         // ---------------------
 
