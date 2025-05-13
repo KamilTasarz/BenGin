@@ -5,6 +5,9 @@
 class Rigidbody : public Component
 {
 public:
+	float velocityX;
+	float targetVelocityX;
+	float velocityY;
 	float mass;
 	float gravity;
 	bool is_static;
@@ -16,5 +19,6 @@ public:
 	void onDetach() override;
 	void onUpdate(float deltaTime) override;
 	void onCollision(Node* other) override;
+	void onStayCollision(Node* other) override;
 };
 

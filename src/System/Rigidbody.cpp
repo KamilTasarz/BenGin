@@ -22,17 +22,33 @@ void Rigidbody::onDetach()
 
 void Rigidbody::onUpdate(float deltaTime)
 {
-	if (is_static) {
-		return;
-	}
-	if (owner->transform.getLocalPosition().y > -10.f) {
-		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, - mass * gravity * deltaTime, 0.f));
-	}
-	else {
-		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 0.f, 0.f));
-	}
+    if (is_static) {
+        return;
+    }
+
+    float smoothingFactor = 10.0f;
+    velocityX = glm::mix(velocityX, targetVelocityX, smoothingFactor * deltaTime);
+
+    velocityY += gravity * deltaTime;
+    if (velocityY < -20.f) {
+		velocityY = -20.f;
+    }
+
+    glm::vec3 position = owner->transform.getLocalPosition();
+    position += glm::vec3(velocityX * deltaTime, velocityY * deltaTime, 0.f);
+
+    owner->transform.setLocalPosition(position);
 }
+
 
 void Rigidbody::onCollision(Node* other)
 {
+	
+}
+
+void Rigidbody::onStayCollision(Node* other)
+{
+    if (other->getLayerName() == "Floor") {
+        velocityY = 0.f;
+    }
 }
