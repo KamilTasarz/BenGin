@@ -826,6 +826,10 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
         ImGui::Separator();
 
+        ImGui::Checkbox("Physic collider active:", &preview_node->is_physic_active);
+        ImGui::Checkbox("Logic collider active:", &preview_node->is_logic_active);
+
+        ImGui::Separator();
         // Parent and reparent section
 
         // Get viable parent options

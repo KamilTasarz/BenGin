@@ -162,6 +162,8 @@ json save_node(Node* node) {
 	j["scale"] = vec3_to_json(node->transform.getLocalScale());
 	j["no_textures"] = node->no_textures;
 	j["is_visible"] = node->is_visible;
+	j["is_logic_active"] = node->is_logic_active;
+	j["is_physic_active"] = node->is_physic_active;
 	if (node->pModel) {
 		j["model.id"] = node->pModel->id;
 
@@ -338,6 +340,15 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 	int id = j["id"];
 	bool no_textures = j["no_textures"];
 	bool is_visible = j["is_visible"];
+
+	bool is_logic_active = false;
+	bool is_phys_active = true;
+
+	if (j.contains("is_logic_active"))
+		is_logic_active = j["is_logic_active"];
+	if (j.contains("is_physic_active"))
+		is_phys_active = j["is_physic_active"];
+
 	std::string name = j["name"];
 	std::string type = j["type"];
 
@@ -410,7 +421,8 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 			return nullptr;
 		}
 		node->is_visible = is_visible;
-
+		node->is_logic_active = is_logic_active;
+		node->is_physic_active = is_phys_active;
 		node->transform.setLocalPosition(json_to_vec3(j["position"]));
 		node->transform.setLocalRotation(json_to_quat(j["rotation"]));
 		node->transform.setLocalScale(json_to_vec3(j["scale"]));
@@ -515,6 +527,14 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 	std::string name = j["name"];
 	std::string type = j["type"];
 
+	bool is_logic_active = false;
+	bool is_phys_active = true;
+
+	if (j.contains("is_logic_active"))
+		is_logic_active = j["is_logic_active"];
+	if (j.contains("is_physic_active"))
+		is_phys_active = j["is_physic_active"];
+
 	if (name._Equal(_name)) {
 		scene->root->transform.setLocalPosition(json_to_vec3(j["position"]));
 		scene->root->transform.setLocalRotation(json_to_quat(j["rotation"]));
@@ -573,7 +593,8 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			return nullptr;
 		}
 		node->is_visible = is_visible;
-
+		node->is_logic_active = is_logic_active;
+		node->is_physic_active = is_phys_active;
 		node->transform.setLocalPosition(json_to_vec3(j["position"]));
 		node->transform.setLocalRotation(json_to_quat(j["rotation"]));
 		node->transform.setLocalScale(json_to_vec3(j["scale"]));

@@ -14,10 +14,7 @@ void PhysicsSystem::updateColliders(SceneGraph* scene_graph)
 {
 	colliders.clear();
 	colliders_RigidBody.clear();
-	colliders_logic.clear();
-	colliders_RigidBody_logic.clear();
 	scene_graph->root->checkIfInFrustrum(colliders, colliders_RigidBody);
-	scene_graph->root->checkIfInFrustrumLogic(colliders_logic, colliders_RigidBody_logic);
 	//std::cout << colliders.size() << " " << colliders_RigidBody.size() << std::endl;
 }
 
@@ -34,7 +31,7 @@ void PhysicsSystem::updateCollisions()
 	for (auto& collider1 : colliders_RigidBody) {
 		
 		for (auto& collider2 : colliders) {
-			if (collider1 == collider2) continue;
+			if (collider1->node == collider2->node) continue;
 
 			BoundingBox* first = (collider1 < collider2) ? collider1 : collider2;
 			BoundingBox* second = (collider1 < collider2) ? collider2 : collider1;
@@ -52,10 +49,22 @@ void PhysicsSystem::updateCollisions()
 
 				if (collider1->current_collisons.find(collider2) == collider1->current_collisons.end()) {
 					for (auto& comp : collider1->node->components) {
-						comp->onCollision(collider2->node);
+						if (!collider1->is_logic) 
+						{
+							comp->onCollision(collider2->node);
+						}
+						else {
+							comp->onCollisionLogic(collider2->node);
+						}
 					}
 					for (auto& comp : collider2->node->components) {
-						comp->onCollision(collider1->node);
+						if (!collider2->is_logic)
+						{
+							comp->onCollision(collider1->node);
+						}
+						else {
+							comp->onCollisionLogic(collider1->node);
+						}
 					}
 					collider1->current_collisons.insert(collider2);
 					collider2->current_collisons.insert(collider1);
@@ -63,15 +72,29 @@ void PhysicsSystem::updateCollisions()
 
 				bool first = false, second = false;
 				for (auto& comp : collider1->node->components) {
-					comp->onStayCollision(collider2->node);
+					if (!collider1->is_logic)
+					{
+						comp->onStayCollision(collider2->node);
+					}
+					else {
+						comp->onStayCollisionLogic(collider2->node);
+					}
+					
 					if (comp->name._Equal("Rigidbody")) {
-						first = !dynamic_cast<Rigidbody*>(comp.get())->is_static;
+						first = !dynamic_cast<Rigidbody*>(comp.get())->is_static && !collider1->is_logic;
 					}
 				}
 				for (auto& comp : collider2->node->components) {
-					comp->onStayCollision(collider1->node);
+					if (!collider2->is_logic)
+					{
+						comp->onStayCollision(collider1->node);
+					}
+					else {
+						comp->onStayCollisionLogic(collider1->node);
+					}
+					
 					if (comp->name._Equal("Rigidbody")) {
-						second = !dynamic_cast<Rigidbody*>(comp.get())->is_static;
+						second = !dynamic_cast<Rigidbody*>(comp.get())->is_static && !collider2->is_logic;
 					}
 				}
 
@@ -99,71 +122,29 @@ void PhysicsSystem::updateCollisions()
 					collider1->current_collisons.erase(collider2);
 					collider2->current_collisons.erase(collider1);
 					for (auto& comp : collider1->node->components) {
-						comp->onExitCollision(collider2->node);
+						if (!collider1->is_logic)
+						{
+							comp->onExitCollision(collider2->node);
+						}
+						else {
+							comp->onExitCollisionLogic(collider2->node);
+						}
 					}
 					for (auto& comp : collider2->node->components) {
-						comp->onExitCollision(collider1->node);
+						
+						if (!collider2->is_logic)
+						{
+							comp->onExitCollision(collider1->node);
+						}
+						else {
+							comp->onExitCollisionLogic(collider1->node);
+						}
 					}
 				}
 			}
 		}
 	}
 
-	testedPairs.clear();
-
-	for (auto& collider1 : colliders_RigidBody_logic) {
-
-		for (auto& collider2 : colliders_logic) {
-			if (collider1 == collider2) continue;
-
-			BoundingBox* first = (collider1 < collider2) ? collider1 : collider2;
-			BoundingBox* second = (collider1 < collider2) ? collider2 : collider1;
-
-			std::pair<BoundingBox*, BoundingBox*> pair = { first, second };
-
-			// pomiń, jeśli już było
-			if (testedPairs.find(pair) != testedPairs.end()) continue;
-
-			testedPairs.insert(pair);
-
-			counter++;
-
-			if (collider1->isBoundingBoxIntersects(*collider2)) {
-
-				if (collider1->current_collisons.find(collider2) == collider1->current_collisons.end()) {
-					for (auto& comp : collider1->node->components) {
-						comp->onCollisionLogic(collider2->node);
-					}
-					for (auto& comp : collider2->node->components) {
-						comp->onCollisionLogic(collider1->node);
-					}
-					collider1->current_collisons.insert(collider2);
-					collider2->current_collisons.insert(collider1);
-				}
-
-				for (auto& comp : collider1->node->components) {
-					comp->onStayCollisionLogic(collider2->node);
-				}
-				for (auto& comp : collider2->node->components) {
-					comp->onStayCollisionLogic(collider1->node);
-				}
-
-
-			}
-			else {
-				if (collider1->current_collisons.find(collider2) != collider1->current_collisons.end()) {
-					collider1->current_collisons.erase(collider2);
-					collider2->current_collisons.erase(collider1);
-					for (auto& comp : collider1->node->components) {
-						comp->onExitCollisionLogic(collider2->node);
-					}
-					for (auto& comp : collider2->node->components) {
-						comp->onExitCollisionLogic(collider1->node);
-					}
-				}
-			}
-		}
-	}
 
 	//std::cout << "Sprawdzono: " << counter << std::endl;
 }

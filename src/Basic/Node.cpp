@@ -427,9 +427,11 @@ void Node::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<B
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
         if (in_frustrum) {
-			colliders.push_back(AABB);
+			if (is_physic_active) colliders.push_back(AABB);
+            if (is_logic_active) colliders.push_back(AABB_logic);
             if (has_RB) {
-				colliders_RB.push_back(AABB);
+                if (is_physic_active) colliders_RB.push_back(AABB);
+                if (is_logic_active) colliders_RB.push_back(AABB_logic);
             }
         }
     }
@@ -489,7 +491,9 @@ void Node::forceUpdateSelfAndChild() {
     if (AABB != nullptr) {
         AABB->transformAABB(transform.getModelMatrix());
     }
-
+    if (AABB_logic != nullptr) {
+        AABB_logic->transformAABB(transform.getModelMatrix());
+    }
 }
 
 // This will update if there were changes only (checks the dirty flag)
@@ -724,6 +728,7 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<Bou
     else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);
 
 	AABB_logic = AABB->clone(this);
+    AABB_logic->is_logic = true;
 
     //this->no_textures = no_textures;
     vector_of_colliders.push_back(AABB);
@@ -747,6 +752,7 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
     else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);
 
     AABB_logic = AABB->clone(this);
+    AABB_logic->is_logic = true;
 
     //this->no_textures = no_textures;
 }
@@ -971,6 +977,9 @@ void PrefabInstance::forceUpdateSelfAndChild()
     if (AABB != nullptr) {
         AABB->transformAABB(transform.getModelMatrix());
     }
+    if (AABB_logic != nullptr) {
+        AABB_logic->transformAABB(transform.getModelMatrix());
+    }
 }
 void PrefabInstance::drawSelfAndChild()
 {
@@ -995,11 +1004,14 @@ void PrefabInstance::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std
         if (in_frustrum) {
             for (auto& child : prefab_root->getAllChildren()) {
                 child->in_frustrum = true;
-                if (child->AABB) {
+                if (child->AABB && child->is_physic_active) {
                     if (child->has_RB) colliders_RB.push_back(child->AABB);
                     colliders.push_back(child->AABB);
                 }
-                
+                if (child->AABB_logic && child->is_logic_active) {
+                    if (child->has_RB) colliders_RB.push_back(child->AABB_logic);
+                    colliders.push_back(child->AABB_logic);
+                }
             }
         }
         else {

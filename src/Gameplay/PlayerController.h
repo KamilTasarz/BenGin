@@ -33,6 +33,8 @@ public:
     void onExitCollision(Node* other) override;
 
     void onCollisionLogic(Node* other) override;
+    void onStayCollisionLogic(Node* other) override;
+    void onExitCollisionLogic(Node* other) override;
 
     std::vector<Variable*> getFields() const override { 
         static Variable speedVar = getField_speed();

@@ -30,6 +30,8 @@ public:
 
 	std::unordered_set<BoundingBox*> current_collisons;
 
+	bool is_logic = false;
+
 	short collison = 0;
 
 	BoundingBox(const glm::mat4& model, Node* _node, glm::vec3 min_point = glm::vec3(-1.f), glm::vec3 max_point = glm::vec3(1.f)) {
