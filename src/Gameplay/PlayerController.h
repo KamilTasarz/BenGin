@@ -12,6 +12,7 @@ public:
 
     VARIABLE(float, speed);
     VARIABLE(Node*, doors);
+    VARIABLE(int, id);
     
 
     PlayerController() = default;
@@ -33,7 +34,8 @@ public:
     std::vector<Variable*> getFields() const override { 
         static Variable speedVar = getField_speed();
         static Variable doorsVar = getField_doors();
-        return { &speedVar, &doorsVar };
+        static Variable idVar = getField_id();
+        return { &speedVar, &doorsVar, &idVar };
     }
 };
 

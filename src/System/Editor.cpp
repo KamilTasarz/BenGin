@@ -944,7 +944,7 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                             ImGui::SameLine();
                             ImGui::DragInt(field->name.c_str(), i);
                         }
-                        else if (field->type == "std::string") {
+                        else if (field->type == "string") {
                             std::string* s = reinterpret_cast<std::string*>(ptr);
                             char* buffer = new char[128];
                             ImGui::Text(field->name.c_str());
@@ -1190,6 +1190,8 @@ void Editor::update(float deltaTime) {
 
     PhysicsSystem::instance().updateColliders(sceneGraph);
     PhysicsSystem::instance().updateCollisions();
+
+    
 
     sceneGraph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));
 

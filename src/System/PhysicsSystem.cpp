@@ -15,7 +15,7 @@ void PhysicsSystem::updateColliders(SceneGraph* scene_graph)
 	colliders.clear();
 	colliders_RigidBody.clear();
 	scene_graph->root->checkIfInFrustrum(colliders, colliders_RigidBody);
-	
+	//std::cout << colliders.size() << " " << colliders_RigidBody.size() << std::endl;
 }
 
 void PhysicsSystem::updateCollisions()

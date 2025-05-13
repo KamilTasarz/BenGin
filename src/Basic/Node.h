@@ -226,7 +226,8 @@ public:
 
     // Visibility
 	bool is_visible = true;
-	bool in_frustrum = true;
+	bool in_frustrum = true;    
+	bool has_RB = false;    
 
     bool is_marked = false;
 
@@ -241,6 +242,8 @@ public:
 	std::weak_ptr<Layer> layer;
 	std::weak_ptr<Tag> tag;
 
+
+
     // ----------- CONSTRUCTORS -----------
 
     // No model
@@ -253,12 +256,7 @@ public:
 
     // DESTRUCTOR
 
-    ~Node() {
-        for (auto& child : children) {
-            delete child;
-        }
-        delete AABB;
-    }
+    ~Node();
 
     // Change color
     void changeColor(glm::vec4 newColor) {
@@ -295,7 +293,7 @@ public:
         return result;
     }
 
-    void checkIfInFrustrum(std::vector<BoundingBox*>& colliders);
+    virtual void checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB);
 
     void collectAllChildren(std::set<Node*>& out) {
         for (Node* child : children) {
@@ -535,7 +533,7 @@ public:
 
     void drawSelfAndChild() override;
 
-
+    void checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB) override;
 };
 
 #endif // !NODE_H

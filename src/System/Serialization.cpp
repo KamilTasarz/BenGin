@@ -195,7 +195,7 @@ json save_node(Node* node) {
 					fieldJson["name"] = field->name;
 					fieldJson["value"] = *f;
 				}
-				else if (field->type == "int") {
+				else if (field->type == "string") {
 					std::string* s = reinterpret_cast<std::string*>(ptr);
 					fieldJson["field_type"] = "string";
 					fieldJson["name"] = field->name;

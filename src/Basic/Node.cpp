@@ -266,6 +266,8 @@ void Node::addChild(Node* p) {
 
 void Node::addComponent(std::unique_ptr<Component> component) {
     
+    if (component->name == "Rigidbody") has_RB = true;
+
     component->onAttach(this);
     components.push_back(std::move(component));
     
@@ -273,6 +275,7 @@ void Node::addComponent(std::unique_ptr<Component> component) {
 
 void Node::deleteComponent(std::list<std::unique_ptr<Component>>::iterator& it) {
     (*it)->onDetach();  
+	if ((*it)->name == "Rigidbody") has_RB = false;
     it = components.erase(it);
 }
 
@@ -359,15 +362,48 @@ Node* Node::clone(std::string instance_name) {
         copy->tag = this->tag;
 
         // Komponenty — głęboka kopia
-        std::vector<std::string> scripts = ScriptFactory::instance().getScriptNames();
+        //std::vector<std::string> scripts = ScriptFactory::instance().getScriptNames();
         for (auto& comp : this->components) {
             if (comp->name == "Rigidbody") {
                 Rigidbody* rigidbody = dynamic_cast<Rigidbody*>(comp.get());
                 copy->addComponent(std::make_unique<Rigidbody>(rigidbody->mass, rigidbody->gravity, rigidbody->is_static));
             }
             else {
+                Script* script = dynamic_cast<Script*>(comp.get());
+                std::unique_ptr<Script> new_script = ScriptFactory::instance().create(comp->name);
 
-                copy->addComponent(ScriptFactory::instance().create(comp->name));
+                for (auto& var : script->getFields()) {
+                    for (auto& v : new_script->getFields()) {
+
+                        if (var->name == v->name && var->type == v->type) {
+                            void* ptr = reinterpret_cast<char*>(script) + v->offset;
+                            void* new_ptr = reinterpret_cast<char*>(new_script.get()) + v->offset;
+
+                            if (var->type == "float") {
+                                float* f = reinterpret_cast<float*>(new_ptr);
+                                float* _f = reinterpret_cast<float*>(ptr);
+                                *f = *_f;
+                            } else if (var->type == "int") {
+                                int* i = reinterpret_cast<int*>(new_ptr);
+                                int* _i = reinterpret_cast<int*>(ptr);
+                                *i = *_i;
+                            }
+                            else if (var->type == "Node*") {
+                                Node** n = reinterpret_cast<Node**>(new_ptr);
+                                Node** _n = reinterpret_cast<Node**>(ptr);
+                                *n = *_n;
+                            }
+                            
+                            
+
+                            break;
+                        }
+
+                    }
+                }
+
+                copy->addComponent(std::move(new_script));
+
             }
         }
 
@@ -386,11 +422,14 @@ Node* Node::clone(std::string instance_name) {
 }
 
 
-void Node::checkIfInFrustrum(std::vector<BoundingBox*>& colliders) {
+void Node::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB) {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
         if (in_frustrum) {
 			colliders.push_back(AABB);
+            if (has_RB) {
+				colliders_RB.push_back(AABB);
+            }
         }
     }
     else {
@@ -398,7 +437,7 @@ void Node::checkIfInFrustrum(std::vector<BoundingBox*>& colliders) {
     }
 
     for (auto& child : children) {
-        child->checkIfInFrustrum(colliders);
+        child->checkIfInFrustrum(colliders, colliders_RB);
     }
 }
 
@@ -694,6 +733,14 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
     //this->no_textures = no_textures;
 }
 
+Node::~Node()
+{
+    for (auto& child : children) {
+        delete child;
+    }
+    delete AABB;
+}
+
 /*void Node::separate(const BoundingBox* other_AABB) {
 
     float left = (other_AABB->min_point_world.x - AABB->max_point_world.x);
@@ -921,6 +968,31 @@ void PrefabInstance::drawSelfAndChild()
     }
     
     
+}
+
+void PrefabInstance::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB)
+{
+    if (AABB) {
+        in_frustrum = camera->isInFrustrum(AABB);
+        if (in_frustrum) {
+            for (auto& child : prefab_root->getAllChildren()) {
+                child->in_frustrum = true;
+                if (child->AABB) {
+                    if (child->has_RB) colliders_RB.push_back(child->AABB);
+                    colliders.push_back(child->AABB);
+                }
+                
+            }
+        }
+        else {
+            for (auto& child : prefab_root->getAllChildren()) {
+                child->in_frustrum = false;
+            }
+        }
+    }
+    else {
+        in_frustrum = true;
+    }
 }
 
 Light::Light(std::shared_ptr<Model> model, std::string nameOfNode, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
