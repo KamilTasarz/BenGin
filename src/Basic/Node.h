@@ -294,6 +294,7 @@ public:
     }
 
     virtual void checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB);
+    virtual void checkIfInFrustrumLogic(std::vector<BoundingBox*>& colliders_logic, std::vector<BoundingBox*>& colliders_RB_logic);
 
     void collectAllChildren(std::set<Node*>& out) {
         for (Node* child : children) {

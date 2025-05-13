@@ -19,11 +19,11 @@ void Engine::init()
 	loadTagLayers();
 	loadPrefabs(prefabs);
 
-	editor = new Editor(prefabs);
-	editor->init();
-
 	game = new Game(prefabs);
 	game->init();
+
+	editor = new Editor(prefabs);
+	editor->init();
 
 	camera->setAABB();
 }

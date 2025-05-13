@@ -14,7 +14,10 @@ void PhysicsSystem::updateColliders(SceneGraph* scene_graph)
 {
 	colliders.clear();
 	colliders_RigidBody.clear();
+	colliders_logic.clear();
+	colliders_RigidBody_logic.clear();
 	scene_graph->root->checkIfInFrustrum(colliders, colliders_RigidBody);
+	scene_graph->root->checkIfInFrustrumLogic(colliders_logic, colliders_RigidBody_logic);
 	//std::cout << colliders.size() << " " << colliders_RigidBody.size() << std::endl;
 }
 
@@ -100,6 +103,62 @@ void PhysicsSystem::updateCollisions()
 					}
 					for (auto& comp : collider2->node->components) {
 						comp->onExitCollision(collider1->node);
+					}
+				}
+			}
+		}
+	}
+
+	testedPairs.clear();
+
+	for (auto& collider1 : colliders_RigidBody_logic) {
+
+		for (auto& collider2 : colliders_logic) {
+			if (collider1 == collider2) continue;
+
+			BoundingBox* first = (collider1 < collider2) ? collider1 : collider2;
+			BoundingBox* second = (collider1 < collider2) ? collider2 : collider1;
+
+			std::pair<BoundingBox*, BoundingBox*> pair = { first, second };
+
+			// pomiń, jeśli już było
+			if (testedPairs.find(pair) != testedPairs.end()) continue;
+
+			testedPairs.insert(pair);
+
+			counter++;
+
+			if (collider1->isBoundingBoxIntersects(*collider2)) {
+
+				if (collider1->current_collisons.find(collider2) == collider1->current_collisons.end()) {
+					for (auto& comp : collider1->node->components) {
+						comp->onCollisionLogic(collider2->node);
+					}
+					for (auto& comp : collider2->node->components) {
+						comp->onCollisionLogic(collider1->node);
+					}
+					collider1->current_collisons.insert(collider2);
+					collider2->current_collisons.insert(collider1);
+				}
+
+				for (auto& comp : collider1->node->components) {
+					comp->onStayCollisionLogic(collider2->node);
+				}
+				for (auto& comp : collider2->node->components) {
+					comp->onStayCollisionLogic(collider1->node);
+				}
+
+
+			}
+			else {
+				if (collider1->current_collisons.find(collider2) != collider1->current_collisons.end()) {
+					collider1->current_collisons.erase(collider2);
+					collider2->current_collisons.erase(collider1);
+					for (auto& comp : collider1->node->components) {
+						comp->onExitCollisionLogic(collider2->node);
+					}
+					for (auto& comp : collider2->node->components) {
+						comp->onExitCollisionLogic(collider1->node);
 					}
 				}
 			}

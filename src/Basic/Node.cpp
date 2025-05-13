@@ -442,6 +442,23 @@ void Node::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<B
     }
 }
 
+void Node::checkIfInFrustrumLogic(std::vector<BoundingBox*>& colliders_logic, std::vector<BoundingBox*>& colliders_RB_logic)
+{
+    if (AABB_logic) {
+        
+        if (in_frustrum) {
+            colliders_logic.push_back(AABB_logic);
+            if (has_RB) {
+                colliders_RB_logic.push_back(AABB_logic);
+            }
+        }
+    }
+
+    for (auto& child : children) {
+        child->checkIfInFrustrumLogic(colliders_logic, colliders_RB_logic);
+    }
+}
+
 void Node::mark(Ray rayWorld, float& marked_depth) {
 
     for (auto&& child : children) {

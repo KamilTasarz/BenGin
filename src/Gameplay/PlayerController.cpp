@@ -65,4 +65,5 @@ void PlayerController::onExitCollision(Node* other)
 
 void PlayerController::onCollisionLogic(Node* other)
 {
+	std::cout << "logiczna" << std::endl;
 }
