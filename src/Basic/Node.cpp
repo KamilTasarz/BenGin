@@ -770,6 +770,9 @@ void ParticleEmitter::draw(const glm::mat4& view, const glm::mat4& projection) {
     shader->use();
     shader->setMat4("view", view);
     shader->setMat4("projection", projection);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, this->texture.id);
+    shader->setInt("sprite", 0);
 
     // TO-DO: texture logic //
 
@@ -808,7 +811,10 @@ void ParticleEmitter::updateInstanceBuffer() {
 
 void ParticleEmitter::respawnParticle(Particle& particle, Node* node, glm::vec3 offset) {
 
-    float spread = 3.5f;
+    // float spread = 3.5f;
+    float spread = 1.5f;
+
+
     glm::vec3 random(
         ((rand() % 100) - 50) / 100.0f * spread,
         ((rand() % 100) - 50) / 100.0f * spread,
@@ -816,8 +822,10 @@ void ParticleEmitter::respawnParticle(Particle& particle, Node* node, glm::vec3 
     );
 
     particle.position = node->getTransform().getGlobalPosition() + random + offset;
-    particle.velocity = glm::vec3(0.0f, 0.1f, 0.0f);
-    particle.life = 20.0f;
+    //particle.velocity = glm::vec3(0.0f, 0.1f, 0.0f);
+    particle.velocity = glm::vec3(0.0f, 0.5f, 0.0f);
+    //particle.life = 20.0f;
+    particle.life = 3.0f;
 
 }
 

@@ -137,8 +137,10 @@ int main() {
     
     auto* window = ServiceLocator::getWindow();
 
-    _texture.id = textureFromFile("res/textures/snowflake.png");
-    _texture.path = "res/textures/snowflake.png";
+    //_texture.id = textureFromFile("res/textures/snowflake.png");
+    _texture.id = textureFromFile("res/textures/raindrop.png");
+    //_texture.path = "res/textures/snowflake.png";
+    _texture.path = "res/textures/raindrop.png";
     _texture.type = "diffuse";
 
     // --- //
@@ -198,7 +200,8 @@ int main() {
 
     ResourceManager::Instance().init();
 
-    ParticleEmitter* ziom = new ParticleEmitter(_texture, 20000);
+    ParticleEmitter* ziom = new ParticleEmitter(_texture, 50000);
+    //ParticleEmitter* ziom = new ParticleEmitter(_texture, 20000);
     //ziom->transform.setLocalScale({ 0.1f, .1f, .1f });
     sceneGraph->addChild(ziom);
 
@@ -426,7 +429,8 @@ int main() {
         // Audio control section (just temporarily hardcoded)
         audioEngine.Update();
 
-        ziom->update(deltaTime, sceneGraph->root, 100);
+        //ziom->update(deltaTime, sceneGraph->root, 100);
+        ziom->update(deltaTime, sceneGraph->root, 400);
 
         //if (glfwGetKey(window->window, GLFW_KEY_1) == GLFW_PRESS) {
         //    audioEngine.stopSound(current_track_id);

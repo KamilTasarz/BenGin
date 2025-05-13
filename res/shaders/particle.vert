@@ -13,9 +13,10 @@ uniform mat4 view;
 
 void main()
 {
-    float scale = 0.008f;
+    float scale = 0.01f;
     vec3 worldPos = instancePosition + aPosition * scale;
 
+    // TexCoords = aTexCoords.xx;
     TexCoords = aTexCoords;
     ParticleColor = instanceColor;
     gl_Position = projection * view * vec4(worldPos, 1.0);
