@@ -940,20 +940,20 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                             float* f = reinterpret_cast<float*>(ptr);
                             ImGui::Text(field->name.c_str());
                             ImGui::SameLine();
-                            ImGui::DragFloat(field->name.c_str(), f, 0.1f);
+                            ImGui::DragFloat(("##" + field->name).c_str(), f, 0.1f);
                         }
                         else if (field->type == "int") {
                             int* i = reinterpret_cast<int*>(ptr);
                             ImGui::Text(field->name.c_str());
                             ImGui::SameLine();
-                            ImGui::DragInt(field->name.c_str(), i);
+                            ImGui::DragInt(("##" + field->name).c_str(), i);
                         }
                         else if (field->type == "string") {
                             std::string* s = reinterpret_cast<std::string*>(ptr);
                             char* buffer = new char[128];
                             ImGui::Text(field->name.c_str());
                             ImGui::SameLine();
-                            ImGui::InputText(field->name.c_str(), buffer, 128);
+                            ImGui::InputText(("##" + field->name).c_str(), buffer, 128);
                             *s = std::string(buffer);
                             delete[] buffer;
                         }
@@ -992,6 +992,36 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                     }
 
 
+                
+                }
+                else if (component->get()->name == "Rigidbody") {
+					Rigidbody* rb = dynamic_cast<Rigidbody*>(component->get());
+
+                    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+                    int depth = 10.f;
+                    
+
+                    ImVec2 fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+
+                    ImGui::SetCursorScreenPos(fieldPos);
+
+					ImGui::Text("Mass: ");
+					ImGui::SameLine();
+					ImGui::DragFloat("##mass", &rb->mass, 0.1f);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(fieldPos);
+
+					ImGui::Text("Gravity: ");
+					ImGui::SameLine();
+					ImGui::DragFloat("##gravity", &rb->gravity, 0.1f);
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(fieldPos);
+					ImGui::Text("Static: ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##static", &rb->is_static);
                 }
 
 
