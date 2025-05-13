@@ -14,7 +14,7 @@
 #include "../System/Tag.h"
 
 //using namespace std;
-
+std::vector<std::pair<Node*, std::pair<std::string, std::string>>> script_nodes;
 
 Model& getModelById(std::vector<Model>& models, int id) {
 	for (auto& model : models) {
@@ -182,6 +182,46 @@ json save_node(Node* node) {
 			rigidbodyJson["is_static"] = rigidbody->is_static;
 
 			componentJson["properties"] = rigidbodyJson;
+		} else if (dynamic_cast<Script*>(component.get())) {
+			json variablesJson;
+			Script* script = dynamic_cast<Script*>(component.get());
+			for (const auto& field : script->getFields()) {
+				json fieldJson;
+				void* ptr = reinterpret_cast<char*>(script) + field->offset;
+
+				if (field->type == "float") {
+					float* f = reinterpret_cast<float*>(ptr);
+					fieldJson["field_type"] = "float";
+					fieldJson["name"] = field->name;
+					fieldJson["value"] = *f;
+				}
+				else if (field->type == "int") {
+					std::string* s = reinterpret_cast<std::string*>(ptr);
+					fieldJson["field_type"] = "string";
+					fieldJson["name"] = field->name;
+					fieldJson["value"] = *s;
+				}
+				else if (field->type == "int") {
+					int* i = reinterpret_cast<int*>(ptr);
+					fieldJson["field_type"] = "int";
+					fieldJson["name"] = field->name;
+					fieldJson["value"] = *i;
+				}
+				else if (field->type == "Node*") {
+					Node** n = reinterpret_cast<Node**>(ptr);
+					fieldJson["field_type"] = "Node*";
+					fieldJson["name"] = field->name;
+					if (*n) {
+						fieldJson["value"] = (*n)->name;
+					}
+					else {
+						fieldJson["value"] = "null";
+					}
+				}
+
+				variablesJson.push_back(fieldJson);
+			}
+			componentJson["variables"] = variablesJson;
 		}
 		
 		
@@ -257,6 +297,8 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 	scene = new SceneGraph();
 
 	load_node(sceneData["scene"], colliders, prefabs, scene);
+
+	loadComponents(sceneData["scene"], scene->root, scene);
 
 	//json playerData = sceneData["player"];
 
@@ -375,7 +417,7 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 		node->setTag(TagLayerManager::Instance().getTag(j["tag"]));
 		node->setLayer(TagLayerManager::Instance().getLayer(j["layer"]));
 
-		if (j.contains("components")) {
+		/*if (j.contains("components")) {
 			for (auto& component : j["components"]) {
 				std::string component_name = component["name"];
 				
@@ -383,14 +425,54 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 					json rigidbodyJson = component["properties"];
 					node->addComponent(std::make_unique<Rigidbody>(rigidbodyJson["mass"], rigidbodyJson["gravity"], rigidbodyJson["is_static"]));
 				} else {
-					node->addComponent(ScriptFactory::instance().create(component_name));
+					std::unique_ptr <Component> _component = ScriptFactory::instance().create(component_name);
+					json variablesJson = component["variables"];
+					Script* script = dynamic_cast<Script*>(_component.get());
+					for (json fieldJson : variablesJson) {
+						
+						std::string field_name = fieldJson["name"];
+						std::string field_type = fieldJson["field_type"];
+
+						for (const auto& field : script->getFields()) {
+							if (field.name == field_name && field.type == field_type) {
+								void* ptr = reinterpret_cast<char*>(script) + field.offset;
+								if (field.type == "float") {
+									float* f = reinterpret_cast<float*>(ptr);
+									*f = fieldJson["value"];
+								}
+								else if (field.type == "int") {
+									std::string* s = reinterpret_cast<std::string*>(ptr);
+									*s = fieldJson["value"];
+								}
+								else if (field.type == "int") {
+									int* i = reinterpret_cast<int*>(ptr);
+									*i = fieldJson["value"];
+								}
+								else if (field.type == "Node*") {
+									std::string node_in_script = fieldJson["value"];
+									script_nodes.push_back(std::make_pair(node, std::make_pair(field.name, node_in_script)));
+									
+
+								}
+							}
+						}
+
+						
+
+						
+
+						
+					}
+
+
+					node->addComponent(std::move(_component));
 				}
 
 
 				
 				
 			}
-		}
+		}*/
 
 
 		// Rekurencyjnie zapisujemy dzieci
@@ -498,7 +580,7 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 		node->setTag(TagLayerManager::Instance().getTag(j["tag"]));
 		node->setLayer(TagLayerManager::Instance().getLayer(j["layer"]));
 
-		if (j.contains("components")) {
+		/*if (j.contains("components")) {
 			for (auto& component : j["components"]) {
 				std::string component_name = component["name"];
 
@@ -510,7 +592,7 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 					node->addComponent(ScriptFactory::instance().create(component_name));
 				}
 			}
-		}
+		}*/
 
 		// Rekurencyjnie zapisujemy dzieci
 		for (json j : j["children"]) {
@@ -557,11 +639,90 @@ std::shared_ptr<Prefab> loadPrefab(const std::string& filename)
 		prefab->prefab_scene_graph->root->name = name;
 		load_prefab_node(prefab_data, prefab->prefab_scene_graph, name);
 
-
+		loadComponents(prefab_data, prefab->prefab_scene_graph->root, prefab->prefab_scene_graph);
 	}
 
 
 	return prefab;
+}
+
+void loadComponents(json& j, Node* node, SceneGraph* scene)
+{
+
+
+	if (j.contains("components")) {
+		for (auto& component : j["components"]) {
+			std::string component_name = component["name"];
+
+			if (component_name._Equal("Rigidbody")) {
+				json rigidbodyJson = component["properties"];
+				node->addComponent(std::make_unique<Rigidbody>(rigidbodyJson["mass"], rigidbodyJson["gravity"], rigidbodyJson["is_static"]));
+			}
+			else {
+				std::unique_ptr <Component> _component = ScriptFactory::instance().create(component_name);
+				json variablesJson = component["variables"];
+				Script* script = dynamic_cast<Script*>(_component.get());
+				for (json fieldJson : variablesJson) {
+
+					std::string field_name = fieldJson["name"];
+					std::string field_type = fieldJson["field_type"];
+
+					for (auto& field : script->getFields()) {
+						if (field->name == field_name && field->type == field_type) {
+							void* ptr = reinterpret_cast<char*>(script) + field->offset;
+							if (field->type == "float") {
+								float* f = reinterpret_cast<float*>(ptr);
+								*f = fieldJson["value"].get<float>();
+								std::cout << field->name << " " << *f << endl;
+							}
+							else if (field->type == "std::string") {
+								std::string* s = reinterpret_cast<std::string*>(ptr);
+								*s = fieldJson["value"];
+							}
+							else if (field->type == "int") {
+								int* i = reinterpret_cast<int*>(ptr);
+								*i = fieldJson["value"].get<int>();
+							}
+							else if (field->type == "Node*") {
+								std::string node_in_script = fieldJson["value"];
+								if (node_in_script == "null") {
+									continue;
+								}
+								else {
+									Node** n = reinterpret_cast<Node**>(ptr);
+									Node* found = scene->root->getChildByName(node_in_script);
+									*n = found;
+								}
+							}
+						}
+					}
+				}
+				node->addComponent(std::move(_component));
+				for (auto& com : node->components) {
+					Script* addedScript = dynamic_cast<Script*>(com.get());
+					if (addedScript) {
+						for (const auto& field : addedScript->getFields()) {
+							void* ptr = reinterpret_cast<char*>(addedScript) + field->offset;
+							if (field->type == "float") {
+								std::cout << field->name << ": " << *reinterpret_cast<float*>(ptr) << std::endl;
+							}
+						}
+					}
+					
+				}
+				
+			}
+
+
+
+
+		}
+	}
+
+	for (json _j : j["children"]) {
+		Node* child = scene->root->getChildByName(_j["name"]);
+		loadComponents(_j, child, scene);
+	}
 }
 
 void loadPrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs) {

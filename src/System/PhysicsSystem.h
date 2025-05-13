@@ -9,6 +9,7 @@ class PhysicsSystem
 {
 private:
     std::vector<BoundingBox*> colliders;
+    std::vector<BoundingBox*> colliders_RigidBody;
 public:
     static PhysicsSystem& instance();
     

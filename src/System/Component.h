@@ -38,5 +38,25 @@ public:
 	virtual void onCollision(Node* other) {
 		
 	}
+
+	virtual void onCollisionLogic(Node* other) {
+		
+	}
+
+	virtual void onStayCollision(Node* other) {
+
+	}
+
+	virtual void onStayCollisionLogic(Node* other) {
+
+	}
+
+	virtual void onExitCollision(Node* other) {
+
+	}
+
+	virtual void onExitCollisionLogic(Node* other) {
+
+	}
 };
 

@@ -232,6 +232,7 @@ public:
 
     //Hitbox
     BoundingBox *AABB;
+    BoundingBox *AABB_logic;
 
 	Animator* animator = nullptr; // Animator for the model
 

@@ -1,0 +1,4 @@
+// Pliki wskazówek ułatwiają interpretowanie identyfikatorów programu Visual C++ w środowisku Visual Studio IDE
+// takich jak nazwy funkcji i makr.
+// Aby uzyskać więcej informacji, zobacz https://go.microsoft.com/fwlink/?linkid=865984
+#define VARIABLE(type, name) type name; static Variable getField_##name() { return { #name, #type, offsetof(SelfType, name) }; }

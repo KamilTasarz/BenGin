@@ -2,9 +2,18 @@
 
 #include "Script.h"
 
+
+
 class PlayerController : public Script
 {
 public:
+
+    using SelfType = PlayerController;
+
+    VARIABLE(float, speed);
+    VARIABLE(Node*, doors);
+    
+
     PlayerController() = default;
     virtual ~PlayerController() = default;
 
@@ -19,5 +28,12 @@ public:
     void onEnd() override;
 
     void onCollision(Node* other) override;
+    void onCollisionLogic(Node* other) override;
+
+    std::vector<Variable*> getFields() const override { 
+        static Variable speedVar = getField_speed();
+        static Variable doorsVar = getField_doors();
+        return { &speedVar, &doorsVar };
+    }
 };
 

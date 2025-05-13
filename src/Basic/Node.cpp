@@ -642,6 +642,7 @@ Node::Node(std::string nameOfNode, int _id) {
     name = nameOfNode;
     id = _id;
     AABB = nullptr;
+    AABB_logic = nullptr;
     no_textures = true;
 
     layer = TagLayerManager::Instance().getLayer("Default");
@@ -665,6 +666,8 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<Bou
     if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), this, model->min_points, model->max_points);
     else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);
 
+	AABB_logic = AABB->clone(this);
+
     //this->no_textures = no_textures;
     vector_of_colliders.push_back(AABB);
 }
@@ -685,6 +688,8 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
 
     if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), this, model->min_points, model->max_points);
     else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);
+
+    AABB_logic = AABB->clone(this);
 
     //this->no_textures = no_textures;
 }

@@ -13,6 +13,7 @@ class Model;
 
 using json = nlohmann::json;
 
+void loadComponents(json& j, Node* node, SceneGraph* scene);
 void loadPrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs);
 std::shared_ptr<Prefab> loadPrefab(const std::string& filename);
 Model& getModelById(std::vector<Model>& models, int id);

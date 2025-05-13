@@ -917,9 +917,87 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                 component = preview_node->components.begin();
             }
             else {
+
+                Script* script = dynamic_cast<Script*>(component->get());
+
+                //jeśli jest pochodną Skryptu
+                if (script) {
+
+                    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+                    int depth = 10.f, _i = 0;
+                    for (Variable* field : script->getFields()) {
+
+                        ImVec2 fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y + _i * 20.f);
+
+                        ImGui::SetCursorScreenPos(fieldPos);
+                        _i++;
+                        void* ptr = reinterpret_cast<char*>(script) + field->offset;
+                        if (field->type == "float") {
+                            float* f = reinterpret_cast<float*>(ptr);
+                            ImGui::Text(field->name.c_str());
+                            ImGui::SameLine();
+                            ImGui::DragFloat(field->name.c_str(), f, 0.1f);
+                        }
+                        else if (field->type == "int") {
+                            int* i = reinterpret_cast<int*>(ptr);
+                            ImGui::Text(field->name.c_str());
+                            ImGui::SameLine();
+                            ImGui::DragInt(field->name.c_str(), i);
+                        }
+                        else if (field->type == "std::string") {
+                            std::string* s = reinterpret_cast<std::string*>(ptr);
+                            char* buffer = new char[128];
+                            ImGui::Text(field->name.c_str());
+                            ImGui::SameLine();
+                            ImGui::InputText(field->name.c_str(), buffer, 128);
+                            *s = std::string(buffer);
+                            delete[] buffer;
+                        }
+                        else if (field->type == "Node*") {
+                            Node** n = reinterpret_cast<Node**>(ptr);
+                            ImGui::Text(field->name.c_str());
+                            ImGui::SameLine();
+                            ImGui::PushItemWidth(-1);
+
+
+
+                            if (ImGui::BeginCombo("##NodeCombo", (*n) ? (*n)->getName().c_str() : "brak")) {
+
+                                bool is_none_selected = (*n == nullptr);
+                                if (ImGui::Selectable("<brak>", is_none_selected)) {
+                                    *n = nullptr;
+                                }
+
+                                if (is_none_selected)
+                                    ImGui::SetItemDefaultFocus();
+
+                                for (Node* potential_parent : parent_options) {
+                                    bool is_sel = (*n == potential_parent);
+                                    if (ImGui::Selectable(potential_parent->getName().c_str(), is_sel)) {
+                                        *n = potential_parent;
+                                    }
+                                    if (is_sel)
+                                        ImGui::SetItemDefaultFocus();
+                                }
+                                ImGui::EndCombo();
+                            }
+                            ImGui::PopItemWidth();
+                        }
+
+
+                    }
+
+
+                }
+
+
+                
+            }
+            if (component != preview_node->components.end()) {
                 ++component;
             }
-			ImGui::PopID();
+            
+            ImGui::PopID();
         }
     }
     else {

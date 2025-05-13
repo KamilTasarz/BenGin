@@ -6,6 +6,8 @@ REGISTER_SCRIPT(PlayerController);
 
 void PlayerController::onAttach(Node* owner)
 {
+	//speed = 5.f;
+	//doors = nullptr;
 	this->owner = owner;
 	std::cout << "PlayerController::onAttach::" << owner->name << std::endl;
 }
@@ -30,6 +32,10 @@ void PlayerController::onUpdate(float deltaTime)
 	}
 
 	owner->transform.setLocalPosition(position);
+
+	if (doors) std::cout << "doors::" << doors->name << std::endl;
+	if (speed > 6.f) std::cout << "speed::" << speed << std::endl;
+
 }
 
 
@@ -45,4 +51,8 @@ void PlayerController::onCollision(Node* other)
 	if (other->getTagName() == "Wall") {
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 0.5f, 0.f));
 	}
+}
+
+void PlayerController::onCollisionLogic(Node* other)
+{
 }

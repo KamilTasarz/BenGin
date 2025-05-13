@@ -13,7 +13,8 @@ PhysicsSystem& PhysicsSystem::instance() {
 void PhysicsSystem::updateColliders(SceneGraph* scene_graph)
 {
 	colliders.clear();
-	scene_graph->root->checkIfInFrustrum(colliders);
+	colliders_RigidBody.clear();
+	scene_graph->root->checkIfInFrustrum(colliders, colliders_RigidBody);
 	
 }
 
@@ -25,7 +26,8 @@ void PhysicsSystem::updateCollisions()
 	//zmienić na zrobienie listy coliderów z rigdibody i listy coliderów wszystkich (tez z rigidbody)
 	// -> zmniejszenie kolizji + tylko rigidbody ma tak naprawde fizyke
 
-	for (auto& collider1 : colliders) {
+	for (auto& collider1 : colliders_RigidBody) {
+		
 		for (auto& collider2 : colliders) {
 			if (collider1 == collider2) continue;
 
