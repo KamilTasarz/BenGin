@@ -106,7 +106,7 @@ void PhysicsSystem::updateCollisions()
 					}
 					collider1->separate(collider2, sep);
 				}
-				else if (second) {
+				/*else if (second) {
 
 					float sep = 1.f;
 					if (first) {
@@ -114,7 +114,7 @@ void PhysicsSystem::updateCollisions()
 						collider1->separate(collider2, sep);
 					}
 					collider2->separate(collider1, sep);
-				}
+				}*/
 				
 			}
 			else {
