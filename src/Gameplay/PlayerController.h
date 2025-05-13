@@ -29,6 +29,9 @@ public:
     void onEnd() override;
 
     void onCollision(Node* other) override;
+    void onStayCollision(Node* other) override;
+    void onExitCollision(Node* other) override;
+
     void onCollisionLogic(Node* other) override;
 
     std::vector<Variable*> getFields() const override { 

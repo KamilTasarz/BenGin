@@ -4,6 +4,7 @@
 #define BOUNDING_BOX_H
 
 #include "../Basic/Shader.h"
+#include <unordered_set>
 
 struct SnapResult {
 	bool shouldSnap = false;
@@ -27,7 +28,7 @@ public:
 
 	Node* node = nullptr;
 
-	
+	std::unordered_set<BoundingBox*> current_collisons;
 
 	short collison = 0;
 

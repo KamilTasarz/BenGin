@@ -23,6 +23,8 @@ void PhysicsSystem::updateCollisions()
 
 	std::set<std::pair<BoundingBox*, BoundingBox*>> testedPairs;
 
+	int counter = 0;
+
 	//zmienić na zrobienie listy coliderów z rigdibody i listy coliderów wszystkich (tez z rigidbody)
 	// -> zmniejszenie kolizji + tylko rigidbody ma tak naprawde fizyke
 
@@ -41,17 +43,30 @@ void PhysicsSystem::updateCollisions()
 
 			testedPairs.insert(pair);
 
+			counter++;
+
 			if (collider1->isBoundingBoxIntersects(*collider2)) {
+
+				if (collider1->current_collisons.find(collider2) == collider1->current_collisons.end()) {
+					for (auto& comp : collider1->node->components) {
+						comp->onCollision(collider2->node);
+					}
+					for (auto& comp : collider2->node->components) {
+						comp->onCollision(collider1->node);
+					}
+					collider1->current_collisons.insert(collider2);
+					collider2->current_collisons.insert(collider1);
+				}
 
 				bool first = false, second = false;
 				for (auto& comp : collider1->node->components) {
-					comp->onCollision(collider2->node);
+					comp->onStayCollision(collider2->node);
 					if (comp->name._Equal("Rigidbody")) {
 						first = !dynamic_cast<Rigidbody*>(comp.get())->is_static;
 					}
 				}
 				for (auto& comp : collider2->node->components) {
-					comp->onCollision(collider1->node);
+					comp->onStayCollision(collider1->node);
 					if (comp->name._Equal("Rigidbody")) {
 						second = !dynamic_cast<Rigidbody*>(comp.get())->is_static;
 					}
@@ -76,6 +91,20 @@ void PhysicsSystem::updateCollisions()
 				}
 				
 			}
+			else {
+				if (collider1->current_collisons.find(collider2) != collider1->current_collisons.end()) {
+					collider1->current_collisons.erase(collider2);
+					collider2->current_collisons.erase(collider1);
+					for (auto& comp : collider1->node->components) {
+						comp->onExitCollision(collider2->node);
+					}
+					for (auto& comp : collider2->node->components) {
+						comp->onExitCollision(collider1->node);
+					}
+				}
+			}
 		}
 	}
+
+	//std::cout << "Sprawdzono: " << counter << std::endl;
 }

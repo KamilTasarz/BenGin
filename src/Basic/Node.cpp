@@ -276,6 +276,7 @@ void Node::addComponent(std::unique_ptr<Component> component) {
 void Node::deleteComponent(std::list<std::unique_ptr<Component>>::iterator& it) {
     (*it)->onDetach();  
 	if ((*it)->name == "Rigidbody") has_RB = false;
+    
     it = components.erase(it);
 }
 

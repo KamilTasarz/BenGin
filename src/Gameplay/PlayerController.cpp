@@ -33,8 +33,8 @@ void PlayerController::onUpdate(float deltaTime)
 
 	owner->transform.setLocalPosition(position);
 
-	if (doors) std::cout << "doors::" << doors->name << std::endl;
-	if (speed > 6.f) std::cout << "speed::" << speed << std::endl;
+	//if (doors) std::cout << "doors::" << doors->name << std::endl;
+	//if (speed > 6.f) std::cout << "speed::" << speed << std::endl;
 
 }
 
@@ -45,12 +45,22 @@ void PlayerController::onEnd()
 
 void PlayerController::onCollision(Node* other)
 {
-	std::cout << "PlayerController::onCollision::" << owner->name << std::endl;
-	std::cout << "PlayerController::onCollision(other)::" << other->name << std::endl;
+	std::cout << "PlayerController::onEnterCollision::" << owner->name << std::endl;
+}
+
+void PlayerController::onStayCollision(Node* other)
+{
+	std::cout << "PlayerController::onStayCollision::" << owner->name << std::endl;
+	std::cout << "PlayerController::onStayCollision(other)::" << other->name << std::endl;
 
 	if (other->getTagName() == "Wall") {
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 0.5f, 0.f));
 	}
+}
+
+void PlayerController::onExitCollision(Node* other)
+{
+	std::cout << "PlayerController::onExitCollision::" << owner->name << std::endl;
 }
 
 void PlayerController::onCollisionLogic(Node* other)
