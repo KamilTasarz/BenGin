@@ -40,10 +40,17 @@ void Rigidbody::onUpdate(float deltaTime)
     owner->transform.setLocalPosition(position);
 }
 
-
+// collission with another rigidbody
 void Rigidbody::onCollision(Node* other)
 {
-	
+    Rigidbody* rb = other->getComponent<Rigidbody>();
+
+    if (!rb) return;
+
+    float averageVelocity = (velocityX * mass + rb->velocityX * rb->mass) / (mass + rb->mass);
+
+    velocityX = averageVelocity;
+    rb->velocityX = averageVelocity;
 }
 
 void Rigidbody::onStayCollision(Node* other)
@@ -51,4 +58,13 @@ void Rigidbody::onStayCollision(Node* other)
     if (other->getLayerName() == "Floor") {
         velocityY = 0.f;
     }
+}
+
+void Rigidbody::onExitCollision(Node* other)
+{
+    Rigidbody* rb = other->getComponent<Rigidbody>();
+
+    if (!rb) return;
+
+	rb->targetVelocityX = 0.f;
 }
