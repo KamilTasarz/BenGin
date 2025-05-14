@@ -28,15 +28,8 @@ void PlayerController::onUpdate(float deltaTime)
 
 	if (!rb) return;
 
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		rb->targetVelocityX = -speed;
-	}
-	else if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		rb->targetVelocityX = speed;
-	}
-	else {
-		rb->targetVelocityX = 0.f;
-	}
+	rb->targetVelocityX = ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS) - (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS)) * speed;
+
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		std::cout << "Gracz probuje skoczyc" << std::endl;
