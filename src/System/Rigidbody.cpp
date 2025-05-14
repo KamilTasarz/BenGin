@@ -2,11 +2,12 @@
 
 #include "../Basic/Node.h"
 
-Rigidbody::Rigidbody(float mass, float gravity, bool isStatic)
+Rigidbody::Rigidbody(float mass, float gravity, bool isStatic, bool useGravity)
 {
 	this->mass = mass;
 	this->gravity = gravity;
 	this->is_static = isStatic;
+	this->useGravity = useGravity;
 	name = "Rigidbody";
 }
 
@@ -29,7 +30,14 @@ void Rigidbody::onUpdate(float deltaTime)
     float smoothingFactor = 10.0f;
     velocityX = glm::mix(velocityX, targetVelocityX, smoothingFactor * deltaTime);
 
-    velocityY += gravity * deltaTime;
+	
+	if (useGravity) {
+		velocityY += gravity * deltaTime;
+	}
+	else {
+		velocityY = glm::mix(velocityY, targetVelocityY, smoothingFactor * deltaTime);
+	}
+
     if (velocityY < -20.f) {
 		velocityY = -20.f;
     }
@@ -47,10 +55,28 @@ void Rigidbody::onCollision(Node* other)
 
     if (!rb) return;
 
-    float averageVelocity = (velocityX * mass + rb->velocityX * rb->mass) / (mass + rb->mass);
+    float averageVelocityX = (velocityX * mass + rb->velocityX * rb->mass) / (mass + rb->mass);
+	float averageVelocityY = (velocityY * mass + rb->velocityY * rb->mass) / (mass + rb->mass);
 
-    velocityX = averageVelocity;
-    rb->velocityX = averageVelocity;
+    velocityX = averageVelocityX;
+    rb->velocityX = averageVelocityX;
+
+	velocityY = averageVelocityY;
+	rb->velocityY = averageVelocityY;
+
+	/*float massSum = mass + rb->mass;
+	float massRatio = mass / massSum;
+
+	targetVelocityX *= massRatio;*/
+
+	//// Apply friction
+	//float friction = 0.5f;
+	//velocityX *= (1.f - friction);
+	//rb->velocityX *= (1.f - friction);
+	//// Apply restitution
+	//float restitution = 0.5f;
+	//velocityY *= -restitution;
+	//rb->velocityY *= -restitution;
 }
 
 void Rigidbody::onStayCollision(Node* other)

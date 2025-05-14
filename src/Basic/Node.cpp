@@ -286,8 +286,8 @@ void Node::increaseCount() {
 
 std::string Node::getTagName()
 {
-	
-    return tag.lock()->name;
+    auto lockedTag = tag.lock();
+    return lockedTag ? lockedTag->name : "";
 }
 
 std::string Node::getLayerName()
