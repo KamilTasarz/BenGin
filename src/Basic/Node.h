@@ -23,6 +23,10 @@ class Grid;
 class Shader;
 class Tag;
 class Layer;
+class ParticleEmitter;
+struct Particle;    
+struct ParticleInstanceData;
+
 
 //class Component;
 
@@ -378,6 +382,8 @@ const unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
 class Light : public Node {
 public:
 
+    bool is_shining;
+
     // Colors
     glm::vec3 ambient;
     glm::vec3 diffuse;
@@ -390,8 +396,11 @@ public:
 
     unsigned int depthMap = 0;
 
-    Light(std::shared_ptr<Model> model, std::string nameOfNode, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
+    Light(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
 
+    void setShining(bool flag) {
+        is_shining = flag;
+    }
 };
 
 class DirectionalLight : public Light {
@@ -404,7 +413,7 @@ public:
         view_projection = glm::mat4(1.f);
     }*/
 
-    DirectionalLight(std::shared_ptr<Model> model, std::string nameOfNode, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
+    DirectionalLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
        
 
     void render(unsigned int depthMapFBO, Shader& shader);
@@ -434,7 +443,7 @@ public:
 
     //PointLight() : Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
 
-    PointLight(std::shared_ptr<Model> model, std::string nameOfNode, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
+    PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
         
 
     void render(unsigned int depthMapFBO, Shader& shader);
@@ -481,6 +490,8 @@ public:
     void addChild(Node* p);
     void addChild(Node* p, std::string name);
 	void deleteChild(Node* p);
+    void deletePointLight(PointLight* p);
+    void deleteDirectionalLight(DirectionalLight* p);
     void addPointLight(PointLight* p);
     void addDirectionalLight(DirectionalLight* p);
     void addPointLight(PointLight* p, std::string name);
@@ -488,7 +499,7 @@ public:
     void setShaders();
     void draw(float width, float height, unsigned int framebuffer);
     void drawMarkedObject();
-    
+    void addParticleEmitter(ParticleEmitter* p);
     void update(float delta_time);
     void forcedUpdate();
     void setLights(Shader* shader);
@@ -538,6 +549,40 @@ public:
     void drawSelfAndChild() override;
 
     void checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB) override;
+};
+
+struct Texture;
+
+class ParticleEmitter : public Node {
+
+public:
+
+    unsigned int VAO;
+
+    unsigned int quadVBO, instanceVBO;
+
+    std::vector<Particle> particles;
+    std::vector<ParticleInstanceData> particle_instances_data;
+    unsigned int particle_number;
+    unsigned int last_used_particle;
+
+	unsigned int texture_id;
+    Shader* shader;
+
+    // Constructor
+    ParticleEmitter(unsigned int _texture, unsigned int _particle_number);
+
+    void init();
+
+    void update(float dt, Node* node, unsigned int new_particles, glm::vec3 offset = glm::vec3({ 0.f }));
+    void draw(const glm::mat4& view, const glm::mat4& projection);
+
+    void updateInstanceBuffer();
+
+    void respawnParticle(Particle& particle, Node* node, glm::vec3 offset = glm::vec3({ 0.f }));
+
+    unsigned int firstUnusedParticle();
+
 };
 
 #endif // !NODE_H

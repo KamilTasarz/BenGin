@@ -5,6 +5,7 @@
 #include "../Component/BoundingBox.h"
 #include "../Component/CameraGlobals.h"
 #include "Model.h"
+#include "Mesh.h"
 #include "Animator.h"
 #include "../Basic/Shader.h"
 
@@ -15,6 +16,7 @@
 
 #include "../System/Rigidbody.h"
 #include "../Gameplay/ScriptFactory.h"
+#include "../Particle/Particle.h"
 
 using namespace std;
 
@@ -77,6 +79,20 @@ void SceneGraph::deleteChild(Node* p)
     }
 }
 
+void SceneGraph::deletePointLight(PointLight* p) {
+    auto it = std::find(point_lights.begin(), point_lights.end(), p);
+    point_lights.erase(it);
+    point_light_number--;
+    deleteChild(p);
+}
+
+void SceneGraph::deleteDirectionalLight(DirectionalLight* p) {
+    auto it = std::find(directional_lights.begin(), directional_lights.end(), p);
+    directional_lights.erase(it);
+    directional_light_number--;
+    deleteChild(p);
+}
+
 
 void SceneGraph::addPointLight(PointLight* p) {
     if (!root->getChildByName(p->name)) {
@@ -106,6 +122,9 @@ void SceneGraph::addDirectionalLight(DirectionalLight* p, std::string name) {
     directional_light_number++;
 }
 
+void SceneGraph::addParticleEmitter(ParticleEmitter* p) {
+    addChild(p);
+}
 
 void SceneGraph::setShaders() {
 
@@ -199,9 +218,16 @@ void SceneGraph::setLights(Shader* shader) {
         shader->setFloat("point_lights[" + index + "].linear", point_light->linear);
         shader->setFloat("point_lights[" + index + "].quadratic", point_light->quadratic);
         shader->setVec3("point_lights[" + index + "].position", light_pos);
-        shader->setVec3("point_lights[" + index + "].ambient", point_light->ambient);
-        shader->setVec3("point_lights[" + index + "].diffuse", point_light->diffuse);
-        shader->setVec3("point_lights[" + index + "].specular", point_light->specular);
+        if (point_light->is_shining == true) {
+            shader->setVec3("point_lights[" + index + "].ambient", point_light->ambient);
+            shader->setVec3("point_lights[" + index + "].diffuse", point_light->diffuse);
+            shader->setVec3("point_lights[" + index + "].specular", point_light->specular);
+        }
+        else {
+            shader->setVec3("point_lights[" + index + "].ambient", glm::vec3({ 0.f, 0.f, 0.f }));
+            shader->setVec3("point_lights[" + index + "].diffuse", glm::vec3({ 0.f, 0.f, 0.f }));
+            shader->setVec3("point_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
+        }
         i++;
         
     }
@@ -209,9 +235,16 @@ void SceneGraph::setLights(Shader* shader) {
     for (auto& dir_light : directional_lights) {
         string index = to_string(i);
         shader->setVec3("directional_lights[" + index + "].direction", dir_light->direction);
-        shader->setVec3("directional_lights[" + index + "].ambient", dir_light->ambient);
-        shader->setVec3("directional_lights[" + index + "].diffuse", dir_light->diffuse);
-        shader->setVec3("directional_lights[" + index + "].specular", dir_light->specular);
+        if (dir_light->is_shining == true) {
+            shader->setVec3("directional_lights[" + index + "].ambient", dir_light->ambient);
+            shader->setVec3("directional_lights[" + index + "].diffuse", dir_light->diffuse);
+            shader->setVec3("directional_lights[" + index + "].specular", dir_light->specular);
+        }
+        else {
+            shader->setVec3("directional_lights[" + index + "].ambient", glm::vec3({ 0.f, 0.f, 0.f }));
+            shader->setVec3("directional_lights[" + index + "].diffuse", glm::vec3({ 0.f, 0.f, 0.f }));
+            shader->setVec3("directional_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
+        }
         glActiveTexture(GL_TEXTURE3 + i);
         glBindTexture(GL_TEXTURE_2D, dir_light->depthMap);
         
@@ -1025,9 +1058,11 @@ void PrefabInstance::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std
     }
 }
 
-Light::Light(std::shared_ptr<Model> model, std::string nameOfNode, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
+Light::Light(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
 
     no_textures = true;
+
+	is_shining = _is_shining;
 
     glGenTextures(1, &depthMap);
     glBindTexture(GL_TEXTURE_2D, depthMap);
@@ -1039,8 +1074,8 @@ Light::Light(std::shared_ptr<Model> model, std::string nameOfNode, glm::vec3 amb
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
-DirectionalLight::DirectionalLight(std::shared_ptr<Model> model, std::string nameOfNode, glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
-    : Light(model, nameOfNode, ambient, diffuse, specular), direction(direction) {
+DirectionalLight::DirectionalLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+    : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), direction(direction) {
     updateMatrix();
 }
 
@@ -1057,8 +1092,8 @@ void DirectionalLight::render(unsigned int depthMapFBO, Shader& shader)
 
 }
 
-PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, float quadratic, float linear, float constant, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
-    : Light(model, nameOfNode, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
+PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+    : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
 
     glGenTextures(1, &depthMapBack);
     glBindTexture(GL_TEXTURE_2D, depthMapBack);
@@ -1112,7 +1147,7 @@ Prefab::Prefab(std::string name, PrefabType prefab_type)
     this->prefab_scene_graph = new SceneGraph();
     this->prefab_scene_graph->root->name = name;
     this->prefab_type = prefab_type;
-    prefab_scene_graph->directional_lights.push_back(new DirectionalLight(nullptr, "editor_light"));
+    prefab_scene_graph->directional_lights.push_back(new DirectionalLight(nullptr, "editor_light", true));
     prefab_scene_graph->directional_light_number++;
     //prefab_scene_graph->addDirectionalLight();
 }
@@ -1122,7 +1157,7 @@ Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph)
 	Node* copy = prefab_scene_graph->root->clone(instance_name);
 
     for (auto& light : prefab_scene_graph->point_lights) {
-		PointLight* new_light = new PointLight(light->pModel, light->name + "_" + instance_name, light->quadratic, light->linear, light->constant,
+		PointLight* new_light = new PointLight(light->pModel, light->name + "_" + instance_name, light->is_shining, light->quadratic, light->linear, light->constant,
             light->ambient, light->diffuse, light->specular);
 
 		new_light->scene_graph = scene_graph;
@@ -1132,4 +1167,180 @@ Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph)
 		//new_light->parent = copy;
     }
     return copy;
+}
+
+
+// ====PARTICLE EMITTER====
+
+ParticleEmitter::ParticleEmitter(unsigned int _texture_id, unsigned int _particle_number) : Node("ParticleEmitter", 99), particle_number(_particle_number)
+{
+    this->shader = ResourceManager::Instance().shader_particle;
+	texture_id = _texture_id;     
+    this->init();
+}
+
+void ParticleEmitter::init() {
+
+    float quadVertices[] = {
+        // positions        // texCoords
+        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f,  1.0f, 0.0f,
+
+        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f, 0.0f,  1.0f, 0.0f,
+         0.5f,  0.5f, 0.0f,  1.0f, 1.0f
+    };
+
+    glGenVertexArrays(1, &this->VAO);
+    //glGenBuffers(1, &VBO);
+    glGenBuffers(1, &this->quadVBO);
+    glGenBuffers(1, &this->instanceVBO);
+
+    glBindVertexArray(VAO);
+
+    // quad geometry
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+
+    // position (vec3)
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+
+    // texCoords (vec2)
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    // instancing attributes
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, particle_number * sizeof(ParticleInstanceData), nullptr, GL_DYNAMIC_DRAW);
+
+    glEnableVertexAttribArray(2); // instance position
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(ParticleInstanceData), (void*)0);
+    glVertexAttribDivisor(2, 1);
+
+    glEnableVertexAttribArray(3); // instance color
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(ParticleInstanceData), (void*)(sizeof(glm::vec3)));
+    glVertexAttribDivisor(3, 1);
+
+    glBindVertexArray(0);
+
+    particles.resize(particle_number);
+    particle_instances_data.resize(particle_number);
+
+    // create this->particle_number default particle instances
+    for (unsigned int i = 0; i < this->particle_number; ++i) {
+        this->particles[i].life = 0.f;
+        this->particle_instances_data[i].color = glm::vec4(0.0f);
+        this->particle_instances_data[i].position = glm::vec4(0.0f);
+    }
+    //last_used_particle = 0;
+
+}
+
+void ParticleEmitter::update(float dt, Node* node, unsigned int new_particles, glm::vec3 offset) {
+
+    // Add new particles
+    for (unsigned int i = 0; i < new_particles; ++i) {
+        int unused_particle = firstUnusedParticle();
+        this->respawnParticle(this->particles[unused_particle], node, offset);
+    }
+
+    // Update all particles
+    for (unsigned int i = 0; i < this->particle_number; ++i) {
+        Particle& p = this->particles[i];
+        p.life -= dt;
+
+        if (p.life > 0.f) {
+            p.position -= p.velocity * dt;
+        }
+    }
+
+}
+
+void ParticleEmitter::draw(const glm::mat4& view, const glm::mat4& projection) {
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    updateInstanceBuffer();
+
+    shader->use();
+    shader->setMat4("view", view);
+    shader->setMat4("projection", projection);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    shader->setInt("sprite", 0);
+
+    // TO-DO: texture logic //
+
+    unsigned int aliveCount = 0;
+    for (auto& p : particles)
+        if (p.life > 0.0f) ++aliveCount;
+
+    glBindVertexArray(VAO);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, aliveCount);
+    glBindVertexArray(0);
+
+
+
+}
+
+void ParticleEmitter::updateInstanceBuffer() {
+
+    for (unsigned int i = 0; i < particle_number; ++i) {
+        Particle& p = particles[i];
+        ParticleInstanceData& inst = particle_instances_data[i];
+
+        if (p.life > 0.0f) {
+            inst.position = p.position;
+            float alpha = std::clamp(p.life, 0.0f, 1.0f);
+            inst.color = glm::vec4(1.0f, 1.0f, 1.0f, alpha);
+        }
+        else {
+            inst.color = glm::vec4(0.0f);
+        }
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, particle_number * sizeof(ParticleInstanceData), particle_instances_data.data());
+
+}
+
+void ParticleEmitter::respawnParticle(Particle& particle, Node* node, glm::vec3 offset) {
+
+    // float spread = 3.5f;
+    float spread = 1.5f;
+
+
+    glm::vec3 random(
+        ((rand() % 100) - 50) / 100.0f * spread,
+        ((rand() % 100) - 50) / 100.0f * spread,
+        ((rand() % 100) - 50) / 100.0f * spread
+    );
+
+    particle.position = node->getTransform().getGlobalPosition() + random + offset;
+    //particle.velocity = glm::vec3(0.0f, 0.1f, 0.0f);
+    particle.velocity = glm::vec3(0.0f, 0.5f, 0.0f);
+    //particle.life = 20.0f;
+    particle.life = 3.0f;
+
+}
+
+unsigned int ParticleEmitter::firstUnusedParticle() {
+    for (unsigned int i = last_used_particle; i < particle_number; ++i) {
+        if (particles[i].life <= 0.0f) {
+            last_used_particle = i;
+            return i;
+        }
+    }
+    for (unsigned int i = 0; i < last_used_particle; ++i) {
+        if (particles[i].life <= 0.0f) {
+            last_used_particle = i;
+            return i;
+        }
+    }
+    last_used_particle = 0;
+    return 0;
 }

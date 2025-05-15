@@ -125,6 +125,7 @@ json save_node(Node* node) {
 		directionalLightData["specular"] = vec3_to_json(directional_lights->specular);
 		directionalLightData["diffuse"] = vec3_to_json(directional_lights->diffuse);
 		directionalLightData["direction"] = vec3_to_json(directional_lights->direction);
+		directionalLightData["is_shining"] = directional_lights->is_shining;
 		j["directional_light"] = directionalLightData;
 	}
 	else if (dynamic_cast<PointLight*>(node)) {
@@ -137,6 +138,7 @@ json save_node(Node* node) {
 		pointLightData["constant"] = point_lights->constant;
 		pointLightData["linear"] = point_lights->linear;
 		pointLightData["quadratic"] = point_lights->quadratic;
+		pointLightData["is_shining"] = point_lights->is_shining;
 		j["point_light"] = pointLightData;
 	}
 	else if (dynamic_cast<PrefabInstance*>(node)) {
@@ -399,14 +401,24 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 			float constant = j["point_light"]["constant"];
 			float linear = j["point_light"]["linear"];
 			float quadratic = j["point_light"]["quadratic"];
-			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, quadratic, linear, constant, ambient, diffuse, specular);
+
+			bool is_shining = true;
+			if (j["point_light"].contains("is_shining")) {
+				is_shining = j["point_light"]["is_shining"];
+			}
+
+			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, is_shining, quadratic, linear, constant, ambient, diffuse, specular);
 		}
 		else if (type._Equal("DirectionalLight")) {
 			glm::vec3 ambient = json_to_vec3(j["directional_light"]["ambient"]);
 			glm::vec3 specular = json_to_vec3(j["directional_light"]["specular"]);
 			glm::vec3 diffuse = json_to_vec3(j["directional_light"]["diffuse"]);
 			glm::vec3 direction = json_to_vec3(j["directional_light"]["direction"]);
-			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, direction, ambient, diffuse, specular);
+			bool is_shining = true;
+			if (j["point_light"].contains("is_shining")) {
+				is_shining = j["point_light"]["is_shining"];
+			}
+			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, is_shining, direction, ambient, diffuse, specular);
 		}
 		else if (type._Equal("PrefabInstance")) {
 			std::string prefab_name = j["prefab_instance"]["prefab_name"];
@@ -579,14 +591,22 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			float constant = j["point_light"]["constant"];
 			float linear = j["point_light"]["linear"];
 			float quadratic = j["point_light"]["quadratic"];
-			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, quadratic, linear, constant, ambient, diffuse, specular);
+			bool is_shining = true;
+			if (j["point_light"].contains("is_shining")) {
+				is_shining = j["point_light"]["is_shining"];
+			}
+			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, is_shining, quadratic, linear, constant, ambient, diffuse, specular);
 		}
 		else if (type._Equal("DirectionalLight")) {
 			glm::vec3 ambient = json_to_vec3(j["directional_light"]["ambient"]);
 			glm::vec3 specular = json_to_vec3(j["directional_light"]["specular"]);
 			glm::vec3 diffuse = json_to_vec3(j["directional_light"]["diffuse"]);
 			glm::vec3 direction = json_to_vec3(j["directional_light"]["direction"]);
-			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, direction, ambient, diffuse, specular);
+			bool is_shining = true;
+			if (j["point_light"].contains("is_shining")) {
+				is_shining = j["point_light"]["is_shining"];
+			}
+			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, is_shining, direction, ambient, diffuse, specular);
 		}
 		else {
 			std::cerr << "Unknown node type: " << type << std::endl;

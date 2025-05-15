@@ -37,6 +37,10 @@ Editor::Editor(std::vector<std::shared_ptr<Prefab>>& prefabsref) : prefabs(prefa
     icon = new Sprite(1920.f, 1080.f, "res/sprites/icon.png", 0.f, 0.f, 1.f);
     eye_icon = new Sprite(1920.f, 1080.f, "res/sprites/eye.png", 0.f, 0.f, 1.f);
     eye_slashed_icon = new Sprite(1920.f, 1080.f, "res/sprites/eye_slashed.png", 0.f, 0.f, 1.f);
+    dir_light_icon = new Sprite(1920.f, 1080.f, "res/sprites/dir_light_icon.png", 0.f, 0.f, 1.f);
+    point_light_icon = new Sprite(1920.f, 1080.f, "res/sprites/point_light_icon.png", 0.f, 0.f, 1.f);
+    switch_off = new Sprite(1920.f, 1080.f, "res/sprites/switch_off.png", 0.f, 0.f, 1.f);
+    switch_on = new Sprite(1920.f, 1080.f, "res/sprites/switch_on.png", 0.f, 0.f, 1.f);
 
     previewX = WINDOW_WIDTH / 6;
     previewY = 0;
@@ -146,13 +150,28 @@ void Editor::DrawNodeBlock(Node* node, int depth)
 
 
     ImTextureID icon = node->is_visible ? eye_icon->sprite_id : eye_slashed_icon->sprite_id;
+    ImTextureID switch_icon;
+    if (dynamic_cast<PointLight*>(node) || dynamic_cast<DirectionalLight*>(node)) {
+        Light* temp = dynamic_cast<Light*>(node);
+        switch_icon = temp->is_shining ? switch_on->sprite_id : switch_off->sprite_id;
+    }
 
     ImVec2 icon_size = ImVec2(lineHeight, lineHeight);
     std::string img_id = "##eye_" + node->name;
+    std::string img2_id = "##switch_" + node->name;
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
     //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0)); 
     //ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+
+    if (dynamic_cast<Light*>(node)) {
+        Light* temp = dynamic_cast<Light*>(node);
+        if (ImGui::ImageButton(img2_id.c_str(), switch_icon, icon_size)) {
+            temp->is_shining = !temp->is_shining;
+        }
+    }
+
+    ImGui::SameLine();
 
     if (ImGui::ImageButton(img_id.c_str(), icon, icon_size)) {
         node->is_visible = !node->is_visible;
@@ -472,6 +491,62 @@ void Editor::assetBarDisplay(float x, float y, float width, float height) {
 
         ImGui::NextColumn();
         ImGui::PopID();
+    }
+
+    // Directional light
+
+    {
+
+        std::shared_ptr<ViewLight> temp = ResourceManager::Instance().getLight(30);
+
+        ImGui::PushID(temp->id);
+
+        ImTextureID _icon = dir_light_icon->sprite_id;
+        string name = temp->type;
+
+        if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)_icon, ImVec2(thumbnailSize, thumbnailSize))) {
+            // (opcjonalne: obsługa kliknięcia na asset)
+        }
+
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+            ImGui::SetDragDropPayload("ASSET_DRAG", &temp->id, sizeof(temp->id));
+            ImGui::Text("Dragging %s", name.c_str());
+            ImGui::EndDragDropSource();
+        }
+
+        ImGui::TextWrapped(name.c_str());
+
+        ImGui::NextColumn();
+        ImGui::PopID();
+
+    }
+
+    // Point light
+
+    {
+
+        std::shared_ptr<ViewLight> temp = ResourceManager::Instance().getLight(31);
+
+        ImGui::PushID(temp->id);
+
+        ImTextureID _icon = point_light_icon->sprite_id;
+        string name = temp->type;
+
+        if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)_icon, ImVec2(thumbnailSize, thumbnailSize))) {
+            // (opcjonalne: obsługa kliknięcia na asset)
+        }
+
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+            ImGui::SetDragDropPayload("ASSET_DRAG", &temp->id, sizeof(temp->id));
+            ImGui::Text("Dragging %s", name.c_str());
+            ImGui::EndDragDropSource();
+        }
+
+        ImGui::TextWrapped(name.c_str());
+
+        ImGui::NextColumn();
+        ImGui::PopID();
+
     }
 
     ImGui::Columns(1);
@@ -909,6 +984,66 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
 		ImGui::Separator();
 
+        if (dynamic_cast<Light*>(preview_node)) {
+
+            Light* temp = dynamic_cast<Light*>(preview_node);
+
+            ImGui::Separator();
+            ImGui::Text("Light Properties");
+
+            ImGui::ColorEdit3("Ambient", glm::value_ptr(temp->ambient));
+            ImGui::ColorEdit3("Diffuse", glm::value_ptr(temp->diffuse));
+            ImGui::ColorEdit3("Specular", glm::value_ptr(temp->specular));
+
+            if (dynamic_cast<DirectionalLight*>(preview_node)) {
+
+                DirectionalLight* temp = dynamic_cast<DirectionalLight*>(preview_node);
+                ImGui::Separator();
+
+                ImGui::Text("Directional Light Properties");
+                ImGui::DragFloat3("Direction##direction", glm::value_ptr(temp->direction), 0.1f, -1.f, 1.f, "%.1f");
+
+            }
+            else if (dynamic_cast<PointLight*>(preview_node)) {
+
+                PointLight* temp = dynamic_cast<PointLight*>(preview_node);
+                ImGui::Separator();
+
+                ImGui::Text("Point Light Properties");
+
+                ImGui::PushID("quad");
+
+                ImGui::PushItemWidth(field_width);
+                ImGui::DragFloat("Quadratic##q", &temp->quadratic, 0.001f, 0.001f, 1.0f);
+                ImGui::PopItemWidth();
+
+                ImGui::PopID();
+
+                ImGui::PushID("lin");
+
+                ImGui::PushItemWidth(field_width);
+                ImGui::DragFloat("Linear##l", &temp->linear, 0.001f, 0.001f, 1.0f);
+                ImGui::PopItemWidth();
+
+                ImGui::PopID();
+
+                ImGui::PushID("const");
+
+                ImGui::PushItemWidth(field_width);
+                ImGui::DragFloat("Constant##c", &temp->constant, 0.001f, 0.f, 1.0f);
+                ImGui::PopItemWidth();
+
+                ImGui::PopID();
+
+            }
+
+        }
+
+
+
+
+		ImGui::Separator();
+
         for (auto component = preview_node->components.begin(); component != preview_node->components.end(); ) {
             
             ImGui::Text((*component)->name.c_str());
@@ -1087,6 +1222,18 @@ void Editor::init()
     glEnable(GL_STENCIL_TEST);
     glEnable(GL_DEPTH_TEST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    Texture _texture;
+
+    _texture.id = textureFromFile("res/textures/raindrop.png");
+    //_texture.path = "res/textures/snowflake.png";
+    _texture.path = "res/textures/raindrop.png";
+    _texture.type = "diffuse";
+
+    ParticleEmitter* ziom = new ParticleEmitter(_texture.id, 10000);
+    //ParticleEmitter* ziom = new ParticleEmitter(_texture, 20000);
+    //ziom->transform.setLocalScale({ 0.1f, .1f, .1f });
+    editor_sceneGraph->addChild(ziom);
+
 }
 
 void Editor::run() {
@@ -1212,6 +1359,13 @@ void Editor::update(float deltaTime) {
     // Scena
     sceneGraph->update(deltaTime);
 
+    //ziom->update(deltaTime, sceneGraph->root, 100);
+
+	ParticleEmitter* emitter = dynamic_cast<ParticleEmitter*>(sceneGraph->root->getChildByName("ParticleEmitter"));
+
+    if (emitter)  emitter->update(deltaTime, sceneGraph->root, 400);
+
+  
     // HUD
     if (isHUD) {
         //background->update(deltaTime);
@@ -1250,6 +1404,11 @@ void Editor::draw() {
 
     sceneGraph->draw(previewWidth, previewHeight, framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    ParticleEmitter* emitter = dynamic_cast<ParticleEmitter*>(sceneGraph->root->getChildByName("ParticleEmitter"));
+
+    if (emitter)  emitter->draw(camera->GetView(), camera->GetProjection());
+
     sceneGraph->drawMarkedObject();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

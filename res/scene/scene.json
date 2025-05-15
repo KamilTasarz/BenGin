@@ -12,21 +12,18 @@
     "scene": {
         "children": [
             {
-                "id": 0,
+                "id": 99,
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
                 "layer": "Default",
                 "model.id": -1,
-                "name": "room_1_inst",
+                "name": "ParticleEmitter_1",
                 "no_textures": true,
                 "position": {
                     "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_1"
                 },
                 "rotation": {
                     "w": 1.0,
@@ -40,7 +37,84 @@
                     "z": 1.0
                 },
                 "tag": "Default",
-                "type": "PrefabInstance"
+                "type": "Node"
+            },
+            {
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "ParticleEmitter",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 6,
+                "name": "light",
+                "no_textures": true,
+                "point_light": {
+                    "ambient": {
+                        "x": 0.20000000298023224,
+                        "y": 0.20000000298023224,
+                        "z": 0.20000000298023224
+                    },
+                    "constant": 1.0,
+                    "diffuse": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    },
+                    "is_shining": false,
+                    "linear": 0.09000000357627869,
+                    "quadratic": 0.03200000151991844,
+                    "specular": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    }
+                },
+                "position": {
+                    "x": 0.28773820400238037,
+                    "y": 9.865952491760254,
+                    "z": 2.472525119781494
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "PointLight"
             },
             {
                 "id": 0,
@@ -63,6 +137,7 @@
                         "y": 0.800000011920929,
                         "z": 0.800000011920929
                     },
+                    "is_shining": false,
                     "linear": 0.09000000357627869,
                     "quadratic": 0.03200000151991844,
                     "specular": {
@@ -111,6 +186,7 @@
                         "y": 0.800000011920929,
                         "z": 0.800000011920929
                     },
+                    "is_shining": false,
                     "linear": 0.09000000357627869,
                     "quadratic": 0.03200000151991844,
                     "specular": {
@@ -123,54 +199,6 @@
                     "x": 13.689380645751953,
                     "y": 2.7769968509674072,
                     "z": 0.4220360219478607
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "PointLight"
-            },
-            {
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 6,
-                "name": "light",
-                "no_textures": true,
-                "point_light": {
-                    "ambient": {
-                        "x": 0.20000000298023224,
-                        "y": 0.20000000298023224,
-                        "z": 0.20000000298023224
-                    },
-                    "constant": 1.0,
-                    "diffuse": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    },
-                    "linear": 0.09000000357627869,
-                    "quadratic": 0.03200000151991844,
-                    "specular": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    }
-                },
-                "position": {
-                    "x": 0.28773820400238037,
-                    "y": 9.865952491760254,
-                    "z": 2.472525119781494
                 },
                 "rotation": {
                     "w": 1.0,
@@ -203,6 +231,7 @@
                         "y": -1.0,
                         "z": 0.0
                     },
+                    "is_shining": true,
                     "specular": {
                         "x": 0.800000011920929,
                         "y": 0.800000011920929,
@@ -235,6 +264,37 @@
                 },
                 "tag": "Default",
                 "type": "DirectionalLight"
+            },
+            {
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "room_1_inst",
+                "no_textures": true,
+                "position": {
+                    "x": 5.531476020812988,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_1"
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "PrefabInstance"
             }
         ],
         "id": 0,

@@ -20,6 +20,12 @@ namespace fs = std::filesystem;
 
 using json = nlohmann::json;
 
+
+struct ViewLight {
+    unsigned int id;
+    std::string type;
+};
+
 class ResourceManager
 {
 private:
@@ -29,6 +35,8 @@ private:
 	std::unordered_map<unsigned int, std::shared_ptr<Texture>> textures;
     //sprite z wyszukiwaniem po nazwie
     //std::unordered_map<std::string, std::shared_ptr<Sprite>> sprites;
+    //swiatla z unikalnym id logicznym
+    std::unordered_map<unsigned int, std::shared_ptr<ViewLight>> lights;
 
     ResourceManager() {
         shader = new Shader(vertexPath, fragmentPath);
@@ -41,6 +49,7 @@ private:
         shader_text = new Shader(vertexPath_text, fragmentPath_text);
         shader_background = new Shader(vertexPath_text, fragmentPath_background);
         shader_vhs = new Shader(vertexPath_vhs, fragmentPath_vhs);
+        shader_particle = new Shader(vertexPath_particle, fragmentPath_particle);
     }
     ~ResourceManager() {
         delete shader;
@@ -53,6 +62,7 @@ private:
         delete shader_text;
         delete shader_background;
         delete shader_vhs;
+        delete shader_particle;
     }
 
 
@@ -71,7 +81,8 @@ private:
     const char* fragmentPath_background = "res/shaders/background.frag";
     const char* fragmentPath_vhs = "res/shaders/vhs.frag";
     const char* vertexPath_vhs = "res/shaders/vhs.vert";
-
+    const char* vertexPath_particle = "res/shaders/particle.vert";
+    const char* fragmentPath_particle = "res/shaders/particle.frag";
 
 
 public:
@@ -86,6 +97,7 @@ public:
     Shader* shader_text;
     Shader* shader_background;
     Shader* shader_vhs;
+    Shader* shader_particle;
 
 	static ResourceManager& Instance() {
 		static ResourceManager instance;
@@ -100,9 +112,10 @@ public:
 	std::shared_ptr<Model> getModel(unsigned int id);
 	std::unordered_map<unsigned int, std::shared_ptr<Model>> getModels();
 	std::unordered_map<unsigned int, std::shared_ptr<Texture>> getTextures();
+    std::unordered_map<unsigned int, std::shared_ptr<ViewLight>> getLights();
 	std::shared_ptr<Texture> getTexture(unsigned int id);
 	//std::shared_ptr<Sprite> getSprite(const std::string& name);
-
+    std::shared_ptr<ViewLight> getLight(unsigned int id);
 
 };
 
