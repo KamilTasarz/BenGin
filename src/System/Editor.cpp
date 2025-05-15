@@ -318,136 +318,181 @@ void Editor::RenderGuizmo()
 
     // IMGUIZMO
     Node* modified_object = sceneGraph->marked_object;
-    if (modified_object != nullptr) {
 
-        //io = ImGui::GetIO();
+    if (!AABB_changing) {
 
-        ImGuizmo::SetOrthographic(camera->mode == FRONT_ORTO); // If we want to change between perspective and orthographic it's added just in case
-        ImGuizmo::SetDrawlist(); // Draw to the current window
+        if (modified_object != nullptr) {
 
-        //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
-        ImGuizmo::SetRect(previewX, previewY, previewWidth, previewHeight);
+            //io = ImGui::GetIO();
 
-        // Camera matrices for rendering ImGuizmo
-        glm::mat4 _view = camera->GetView();
-        glm::mat4 _projection = camera->GetProjection();
+            ImGuizmo::SetOrthographic(camera->mode == FRONT_ORTO); // If we want to change between perspective and orthographic it's added just in case
+            ImGuizmo::SetDrawlist(); // Draw to the current window
 
-        // Getting marked object transform
-        auto& _transform = modified_object->getTransform();
-        glm::mat4 _model_matrix = _transform.getModelMatrix();
+            //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+            ImGuizmo::SetRect(previewX, previewY, previewWidth, previewHeight);
 
-        glm::dvec3 lastPos = _transform.getLocalPosition();
+            // Camera matrices for rendering ImGuizmo
+            glm::mat4 _view = camera->GetView();
+            glm::mat4 _projection = camera->GetProjection();
 
-        bool useSnap = ImGui::IsKeyDown(ImGuiKey_LeftShift);
+            // Getting marked object transform
+            auto& _transform = modified_object->getTransform();
+            glm::mat4 _model_matrix = _transform.getModelMatrix();
 
-        float snap[3] = { 0.5f, 0.5f, 0.5f };
-        ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
-            currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix), nullptr, useSnap ? snap : nullptr);
+            glm::dvec3 lastPos = _transform.getLocalPosition();
 
-        if (ImGuizmo::IsUsing()) {
-            /*SnapResult result;
-            for (auto& collider : colliders) {
-                if (modified_object->AABB != collider) {
-                     SnapResult tempX, tempY, tempZ;
-                     tempX = modified_object->AABB->trySnapToWallsX(*collider, 0.5f);
-                     tempY = modified_object->AABB->trySnapToWallsY(*collider, 0.5f);
-                     tempZ = modified_object->AABB->trySnapToWallsZ(*collider, 0.5f);
-                     result.shouldSnap = tempX.shouldSnap || tempY.shouldSnap || tempZ.shouldSnap;
+            bool useSnap = ImGui::IsKeyDown(ImGuiKey_LeftShift);
 
-                     if (result.shouldSnap) {
-                         result.snapOffset = tempX.snapOffset + tempY.snapOffset + tempZ.snapOffset;
-                         break;
-                     }
-                }
-            }*/
+            float snap[3] = { 0.5f, 0.5f, 0.5f };
+            ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
+                currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix), nullptr, useSnap ? snap : nullptr);
 
+            if (ImGuizmo::IsUsing()) {
+                /*SnapResult result;
+                for (auto& collider : colliders) {
+                    if (modified_object->AABB != collider) {
+                         SnapResult tempX, tempY, tempZ;
+                         tempX = modified_object->AABB->trySnapToWallsX(*collider, 0.5f);
+                         tempY = modified_object->AABB->trySnapToWallsY(*collider, 0.5f);
+                         tempZ = modified_object->AABB->trySnapToWallsZ(*collider, 0.5f);
+                         result.shouldSnap = tempX.shouldSnap || tempY.shouldSnap || tempZ.shouldSnap;
 
-
-
-
-            if (modified_object->parent) {
-                // w celu otrzymania loklalnych transformacji
-                _model_matrix = glm::inverse(modified_object->parent->transform.getModelMatrix()) * _model_matrix;
-            }
-
-
-            glm::vec3 translation, scale, skew;
-            glm::vec4 perspective;
-            glm::quat rotation;
-            //ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(_model_matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
-            glm::decompose(_model_matrix, scale, rotation, translation, skew, perspective);
-
-
-
-
-            /*if (result.shouldSnap && !isSnapped) {
-                translation += result.snapOffset;
-                lastSnapOffset = result.snapOffset;
-                snapedPosition = translation;
-                isSnapped = true;
-            }
-            else if (isSnapped) {
-                glm::vec3 currentOffset = translation - snapedPosition;
-                if (glm::length(currentOffset - lastSnapOffset) > 0.5f) {
-                    isSnapped = false;
-                }
-            }*/
-
-
-            /*if (isGridSnap) {
-                glm::dvec3 delta = (glm::dvec3)translation - lastPos;
-                int axis = getDominantAxis(delta);
-
-                // 2. pobierz aktywną krawędź AABB
-                if (axis >= 0) {
-                    float edge = sceneGraph->marked_object->AABB->min_point_world[axis];
-
-                    // 3. snap
-                    double snapValue = 1.0;
-                    float snapped = round(edge / snapValue) * snapValue;
-                    /*snapped.x = round(edge.x / snapValue) * snapValue;
-                    snapped.y = round(edge.y / snapValue) * snapValue;
-                    snapped.z = round(edge.z / snapValue) * snapValue;
-                    float offset = snapped - edge;
-
-                    if (std::abs(offset) < 0.2) {
-                        glm::dvec3 snapVec(0.0);
-                        snapVec[axis] = offset;
-                        translation += snapVec;
+                         if (result.shouldSnap) {
+                             result.snapOffset = tempX.snapOffset + tempY.snapOffset + tempZ.snapOffset;
+                             break;
+                         }
                     }
+                }*/
+
+
+
+
+
+                if (modified_object->parent) {
+                    // w celu otrzymania loklalnych transformacji
+                    _model_matrix = glm::inverse(modified_object->parent->transform.getModelMatrix()) * _model_matrix;
                 }
-            }*/
+
+
+                glm::vec3 translation, scale, skew;
+                glm::vec4 perspective;
+                glm::quat rotation;
+                //ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(_model_matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
+                glm::decompose(_model_matrix, scale, rotation, translation, skew, perspective);
 
 
 
 
-
-            if (currentOperation == ImGuizmo::OPERATION::TRANSLATE) {
-                modified_object->transform.setLocalPosition(translation);
-            }
-            else if (currentOperation == ImGuizmo::OPERATION::ROTATE) {
-                modified_object->transform.setLocalRotation(rotation);
-            }
-            else if (currentOperation == ImGuizmo::OPERATION::SCALE) {
-                if (uniformScale) {
-                    if (scale.x != scale.y && scale.x != scale.z) {
-                        scale.y = scale.x;
-                        scale.z = scale.x;
-                    }
-                    else if (scale.y != scale.z && scale.y != scale.x) {
-                        scale.x = scale.y;
-                        scale.z = scale.y;
-                    }
-                    else {
-                        scale.x = scale.z;
-                        scale.y = scale.z;
-                    }
+                /*if (result.shouldSnap && !isSnapped) {
+                    translation += result.snapOffset;
+                    lastSnapOffset = result.snapOffset;
+                    snapedPosition = translation;
+                    isSnapped = true;
                 }
-                modified_object->transform.setLocalScale(scale);
+                else if (isSnapped) {
+                    glm::vec3 currentOffset = translation - snapedPosition;
+                    if (glm::length(currentOffset - lastSnapOffset) > 0.5f) {
+                        isSnapped = false;
+                    }
+                }*/
+
+
+                /*if (isGridSnap) {
+                    glm::dvec3 delta = (glm::dvec3)translation - lastPos;
+                    int axis = getDominantAxis(delta);
+
+                    // 2. pobierz aktywną krawędź AABB
+                    if (axis >= 0) {
+                        float edge = sceneGraph->marked_object->AABB->min_point_world[axis];
+
+                        // 3. snap
+                        double snapValue = 1.0;
+                        float snapped = round(edge / snapValue) * snapValue;
+                        /*snapped.x = round(edge.x / snapValue) * snapValue;
+                        snapped.y = round(edge.y / snapValue) * snapValue;
+                        snapped.z = round(edge.z / snapValue) * snapValue;
+                        float offset = snapped - edge;
+
+                        if (std::abs(offset) < 0.2) {
+                            glm::dvec3 snapVec(0.0);
+                            snapVec[axis] = offset;
+                            translation += snapVec;
+                        }
+                    }
+                }*/
+
+
+
+
+
+                if (currentOperation == ImGuizmo::OPERATION::TRANSLATE) {
+                    modified_object->transform.setLocalPosition(translation);
+                }
+                else if (currentOperation == ImGuizmo::OPERATION::ROTATE) {
+                    modified_object->transform.setLocalRotation(rotation);
+                }
+                else if (currentOperation == ImGuizmo::OPERATION::SCALE) {
+                    if (uniformScale) {
+                        if (scale.x != scale.y && scale.x != scale.z) {
+                            scale.y = scale.x;
+                            scale.z = scale.x;
+                        }
+                        else if (scale.y != scale.z && scale.y != scale.x) {
+                            scale.x = scale.y;
+                            scale.z = scale.y;
+                        }
+                        else {
+                            scale.x = scale.z;
+                            scale.y = scale.z;
+                        }
+                    }
+                    modified_object->transform.setLocalScale(scale);
+                }
+            }
+            modified_object->updateSelfAndChild(true);
+
+        }
+    }
+    else {
+		
+
+
+        if (local_point && modified_object) {
+            glm::mat4 modelMatrix = modified_object->transform.getModelMatrix();
+            glm::vec3 world_pos = glm::vec3(modelMatrix * glm::vec4(*local_point, 1.0f));
+
+            glm::mat4 gizmo_matrix = glm::translate(glm::mat4(1.0f), world_pos);
+            ImGuizmo::SetDrawlist();
+            ImGuizmo::SetRect(previewX, previewY, previewWidth, previewHeight);
+
+            // Camera matrices for rendering ImGuizmo
+            glm::mat4 _view = camera->GetView();
+            glm::mat4 _projection = camera->GetProjection();
+
+
+            bool useSnap = ImGui::IsKeyDown(ImGuiKey_LeftShift);
+
+            float snap[3] = { 0.5f, 0.5f, 0.5f };
+            bool changed = ImGuizmo::Manipulate(glm::value_ptr(_view), glm::value_ptr(_projection),
+                ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(gizmo_matrix), nullptr, useSnap ? snap : nullptr);
+
+
+            // Jeśli ruszono:
+            if (changed) {
+                glm::vec3 translation, rotation, scale;
+                ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(gizmo_matrix),
+                    glm::value_ptr(translation),
+                    glm::value_ptr(rotation),
+                    glm::value_ptr(scale));
+
+                // Odwrócenie modelMatrix żeby wrócić do przestrzeni lokalnej:
+                glm::mat4 inverseModel = glm::inverse(modelMatrix);
+                *local_point = glm::vec3(inverseModel * glm::vec4(translation, 1.0f));
+
+
+
             }
         }
-        modified_object->updateSelfAndChild(true);
-
     }
 
 
@@ -1065,10 +1110,56 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
         }
 
+        ImGui::Separator();
 
+		ImGui::Text("Physical Collider: ");
 
+        ImGui::Checkbox("Change AABB: ", &AABB_changing);
 
+        ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+        int depth = 10.f;
+        ImVec2 fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y + 20.f);
+        ImGui::SetCursorScreenPos(fieldPos);
+        ImGui::InputFloat3("##Min_phys", glm::value_ptr(preview_node->AABB->min_point_local));
+        ImGui::SameLine();
+        if (ImGui::Button("Min_phys_button")) {
+            local_point = &preview_node->AABB->min_point_local;
+        }
+        cursorPos = ImGui::GetCursorScreenPos();
+        fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y + 20.f);
+        ImGui::SetCursorScreenPos(fieldPos);
+        ImGui::InputFloat3("##Max_phys", glm::value_ptr(preview_node->AABB->max_point_local));
+        ImGui::SameLine();
+        if (ImGui::Button("Max_phys_button")) {
+            local_point = &preview_node->AABB->max_point_local;
+        }
+		
+        if (preview_node->AABB_logic) {
+            ImGui::Text("Logic Collider: ");
+
+            cursorPos = ImGui::GetCursorScreenPos();
+            fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y + 20.f);
+            ImGui::SetCursorScreenPos(fieldPos);
+            ImGui::InputFloat3("##Min_logic", glm::value_ptr(preview_node->AABB_logic->min_point_local));
+            ImGui::SameLine();
+            if (ImGui::Button("Min_logic_button")) {
+                local_point = &preview_node->AABB_logic->min_point_local;
+            }
+            cursorPos = ImGui::GetCursorScreenPos();
+            fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y + 20.f);
+            ImGui::InputFloat3("##Max_logic", glm::value_ptr(preview_node->AABB_logic->max_point_local));
+            ImGui::SameLine();
+            if (ImGui::Button("Max_logic_button")) {
+                local_point = &preview_node->AABB_logic->max_point_local;
+            }
+
+        }
+        preview_node->forceUpdateSelfAndChild();
 		ImGui::Separator();
+
+        if (!AABB_changing) {
+			local_point = nullptr;
+        }
 
         for (auto component = preview_node->components.begin(); component != preview_node->components.end(); ) {
             

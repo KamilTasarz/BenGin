@@ -37,8 +37,8 @@ private:
 
 	unsigned int framebuffer, colorTexture, depthRenderbuffer;
 
-	bool isHUD = false, isInPreview = false, pressed_add = false, scene_editor = true, is_initialized = false;
-
+	bool isHUD = false, isInPreview = false, pressed_add = false, scene_editor = true, is_initialized = false, AABB_changing = false;
+	glm::vec3* local_point;
 
 	bool isSnapped = false, is_static = true;
 	glm::vec3 lastSnapOffset;

@@ -635,8 +635,11 @@ void Node::drawSelfAndChild() {
         if (scene_graph->is_editing) {
             AABB->draw(*ResourceManager::Instance().shader_outline);
         }
-        
-
+        dynamic_color = glm::vec3(0.f, 0.8f, 0.f);
+        ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+        if (scene_graph->is_editing && AABB_logic) {
+            AABB_logic->draw(*ResourceManager::Instance().shader_outline);
+        }
     }
 
     if (is_visible) {
@@ -994,10 +997,9 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<Bound
 void PrefabInstance::set_prefab_colliders(Node* node)
 {
     if (node->AABB) {
-        BoundingBox* new_collider = new BoundingBox(node->transform.getModelMatrix(), this, node->AABB->min_point_local, node->AABB->max_point_local);
 
-        AABB->max_point_local = glm::max(AABB->max_point_local, new_collider->max_point_world);
-        AABB->min_point_local = glm::min(AABB->min_point_local, new_collider->min_point_world);
+        AABB->max_point_local = glm::max(AABB->max_point_local, node->AABB->max_point_world);
+        AABB->min_point_local = glm::min(AABB->min_point_local, node->AABB->min_point_world);
     }
     for (Node* child : node->children) {
         set_prefab_colliders(child);
@@ -1007,10 +1009,13 @@ void PrefabInstance::set_prefab_colliders(Node* node)
 void PrefabInstance::updateSelf()
 {
     delete prefab_root;
+    delete AABB;
+	AABB = new BoundingBox(transform.getModelMatrix(), this);
 	prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
 	updateSelfAndChild(true);
     set_prefab_colliders(prefab->prefab_scene_graph->root);
+	forceUpdateSelfAndChild();
 }
 
 void PrefabInstance::updateSelfAndChild(bool controlDirty)

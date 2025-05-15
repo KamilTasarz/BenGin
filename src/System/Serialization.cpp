@@ -159,7 +159,19 @@ json save_node(Node* node) {
 	
 	j["tag"] = node->getTagName();
 	j["layer"] = node->getLayerName();
+	if (node->AABB) {
+		if (node->pModel && (node->pModel->min_points != node->AABB->min_point_local || node->pModel->max_points != node->AABB->max_point_local)) {
+			j["AABB_min"] = vec3_to_json(node->AABB->min_point_local);
+			j["AABB_max"] = vec3_to_json(node->AABB->max_point_local);
+		}
+	}
 
+	if (node->AABB_logic) {
+		if (node->pModel && (node->pModel->min_points != node->AABB_logic->min_point_local || node->pModel->max_points != node->AABB_logic->max_point_local)) {
+			j["AABB_logic_min"] = vec3_to_json(node->AABB_logic->min_point_local);
+			j["AABB_logic_max"] = vec3_to_json(node->AABB_logic->max_point_local);
+		}
+	}
 	j["id"] = node->id;
 	j["position"] = vec3_to_json(node->transform.getLocalPosition());
 	j["rotation"] = quat_to_json(node->transform.getLocalRotation());
@@ -387,6 +399,9 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 		}
 	}
 	else {
+
+
+
 		if (type._Equal("Node")) {
 
 			if (model_id != -1) {
@@ -401,6 +416,17 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 			else {
 				node = new Node(name);
 			}
+
+			if (j.contains("AABB_min")) {
+				node->AABB->min_point_local = json_to_vec3(j["AABB_min"]);
+				node->AABB->max_point_local = json_to_vec3(j["AABB_max"]);
+
+			}
+			if (j.contains("AABB_logic_min")) {
+				node->AABB_logic->min_point_local = json_to_vec3(j["AABB_logic_min"]);
+				node->AABB_logic->max_point_local = json_to_vec3(j["AABB_logic_max"]);
+			}
+
 		}
 		else if (type._Equal("PointLight")) {
 			glm::vec3 ambient = json_to_vec3(j["point_light"]["ambient"]);
@@ -414,6 +440,8 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 			if (j["point_light"].contains("is_shining")) {
 				is_shining = j["point_light"]["is_shining"];
 			}
+
+			
 
 			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, is_shining, quadratic, linear, constant, ambient, diffuse, specular);
 		}
@@ -448,6 +476,8 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 		node->transform.setLocalScale(json_to_vec3(j["scale"]));
 		node->setTag(TagLayerManager::Instance().getTag(j["tag"]));
 		node->setLayer(TagLayerManager::Instance().getLayer(j["layer"]));
+
+
 
 		/*if (j.contains("components")) {
 			for (auto& component : j["components"]) {
@@ -600,6 +630,15 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			}
 			else {
 				node = new Node(name);
+			}
+			if (j.contains("AABB_min")) {
+				node->AABB->min_point_local = json_to_vec3(j["AABB_min"]);
+				node->AABB->max_point_local = json_to_vec3(j["AABB_max"]);
+
+			}
+			if (j.contains("AABB_logic_min")) {
+				node->AABB_logic->min_point_local = json_to_vec3(j["AABB_logic_min"]);
+				node->AABB_logic->max_point_local = json_to_vec3(j["AABB_logic_max"]);
 			}
 		}
 		else if (type._Equal("PointLight")) {
