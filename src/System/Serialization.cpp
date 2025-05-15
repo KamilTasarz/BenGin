@@ -120,6 +120,7 @@ json save_node(Node* node) {
 	if (dynamic_cast<DirectionalLight*>(node)) {
 		j["type"] = "DirectionalLight";
 		DirectionalLight* directional_lights = dynamic_cast<DirectionalLight*>(node);
+		if (directional_lights->from_prefab) return json();
 		json directionalLightData;
 		directionalLightData["ambient"] = vec3_to_json(directional_lights->ambient);
 		directionalLightData["specular"] = vec3_to_json(directional_lights->specular);
@@ -131,6 +132,7 @@ json save_node(Node* node) {
 	else if (dynamic_cast<PointLight*>(node)) {
 		j["type"] = "PointLight";
 		PointLight* point_lights = dynamic_cast<PointLight*>(node);
+		if (point_lights->from_prefab) return json();
 		json pointLightData;
 		pointLightData["ambient"] = vec3_to_json(point_lights->ambient);
 		pointLightData["specular"] = vec3_to_json(point_lights->specular);
@@ -424,7 +426,7 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 			std::string prefab_name = j["prefab_instance"]["prefab_name"];
 			std::shared_ptr<Prefab> prefab = getPrefab(prefabs, prefab_name);
 			if (prefab) {
-				node = new PrefabInstance(prefab, colliders);
+				node = new PrefabInstance(prefab, colliders, scene);
 			}
 
 		}
@@ -500,18 +502,28 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 
 
 		// Rekurencyjnie zapisujemy dzieci
-		for (json j : j["children"]) {
-			Node* child = load_node(j, colliders, prefabs, scene);
+		for (json _j : j["children"]) {
+			Node* child = load_node(_j, colliders, prefabs, scene);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
-				scene->addPointLight(point_light, node->name);
+				//scene->addPointLight(point_light, node->name);
+				node->scene_graph = scene;
+				node->addChild(point_light);
+				scene->point_lights.push_back(point_light);
+				scene->point_light_number++;
 			}
 			else if (dynamic_cast<DirectionalLight*>(child)) {
 				DirectionalLight* directional_light = dynamic_cast<DirectionalLight*>(child);
-				scene->addDirectionalLight(directional_light, node->name);
+				//scene->addDirectionalLight(directional_light, node->name);
+				node->scene_graph = scene;
+				node->addChild(directional_light);
+				scene->directional_lights.push_back(directional_light);
+				scene->directional_light_number++;
 			}
 			else {
-				scene->addChild(child, node->name);
+				//scene->addChild(child, node->name);
+				node->scene_graph = scene;
+				node->addChild(child);
 			}
 
 

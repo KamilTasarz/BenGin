@@ -263,7 +263,7 @@ public:
 
     // DESTRUCTOR
 
-    ~Node();
+    virtual ~Node();
 
     // Change color
     void changeColor(glm::vec4 newColor) {
@@ -327,7 +327,7 @@ public:
 
     void virtual updateComponents(float deltaTime);
 
-    void drawShadows(Shader& shader);
+    void virtual drawShadows(Shader& shader);
 
     std::string getName() {
         return name;
@@ -382,6 +382,7 @@ const unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
 class Light : public Node {
 public:
 
+    bool from_prefab = false;
     bool is_shining;
 
     // Colors
@@ -397,6 +398,8 @@ public:
     unsigned int depthMap = 0;
 
     Light(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
+
+	//virtual ~Light();
 
     void setShining(bool flag) {
         is_shining = flag;
@@ -414,14 +417,14 @@ public:
     }*/
 
     DirectionalLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
-       
+    ~DirectionalLight() override;
 
     void render(unsigned int depthMapFBO, Shader& shader);
 
     void updateMatrix() {
         view = glm::lookAt(transform.getGlobalPosition(), transform.getGlobalPosition() + direction, glm::vec3(0.f, 1.f, 0.f));
-        float size = 15.f;
-        projection = glm::ortho(-size, size, -size, size, 1.5f, 25.f);
+        float size = 60.f;
+        projection = glm::ortho(-size, size, -size, size, 1.5f, 50.f);
         view_projection = projection * view;
     }
 
@@ -444,7 +447,7 @@ public:
     //PointLight() : Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
 
     PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
-        
+    ~PointLight() override;
 
     void render(unsigned int depthMapFBO, Shader& shader);
 
@@ -489,6 +492,7 @@ public:
     void unmark();
     void addChild(Node* p);
     void addChild(Node* p, std::string name);
+    void addChild(Node* p, Node* parent);
 	void deleteChild(Node* p);
     void deletePointLight(PointLight* p);
     void deleteDirectionalLight(DirectionalLight* p);
@@ -513,16 +517,21 @@ enum PrefabType {
 	HORIZONTAL_RIGHT    
 };
 
+class PrefabInstance;
+
 class Prefab {
 
 public:
     //shared_ptr<SceneGraph> prefab_scene_graph;
     SceneGraph* prefab_scene_graph;
 	PrefabType prefab_type;
+	std::vector<PrefabInstance*> prefab_instances;
 
     Prefab(std::string name = "Prefab", PrefabType prefab_type = HORIZONTAL_RIGHT);
 
     Node* clone(std::string instance_name, SceneGraph *scene_graph);
+
+    void notifyInstances();
 };
 
 class PrefabInstance : public Node {
@@ -532,13 +541,15 @@ public:
 
 
 
-    PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders);
+    PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders, SceneGraph* _scene_graph);
 
 	~PrefabInstance() {
 		delete prefab_root;
 	}
 
     void set_prefab_colliders(Node* node);
+
+    void updateSelf();
 
     void updateSelfAndChild(bool controlDirty) override;
 
@@ -547,6 +558,8 @@ public:
 	void forceUpdateSelfAndChild() override;
 
     void drawSelfAndChild() override;
+
+	void drawShadows(Shader& shader) override;
 
     void checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB) override;
 };

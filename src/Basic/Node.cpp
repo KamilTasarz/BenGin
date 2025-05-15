@@ -66,6 +66,20 @@ void SceneGraph::addChild(Node* p, std::string name) {
     }
 }
 
+void SceneGraph::addChild(Node* p, Node* parent) {
+    
+    if (parent != nullptr) {
+        int i = 1;
+        string name = p->name;
+        while (root->getChildByName(p->name)) {
+
+            p->name = name + "_" + to_string(i);
+            i++;
+        }
+        parent->addChild(p);
+    }
+}
+
 void SceneGraph::deleteChild(Node* p)
 {
     Node* parent = p->parent;
@@ -95,29 +109,33 @@ void SceneGraph::deleteDirectionalLight(DirectionalLight* p) {
 
 
 void SceneGraph::addPointLight(PointLight* p) {
-    if (!root->getChildByName(p->name)) {
+    if (!p->from_prefab)
         addChild(p);
-        point_lights.push_back(p);
-        point_light_number++;
-    }
+    point_lights.push_back(p);
+    point_light_number++;
+    
 }
 
 void SceneGraph::addDirectionalLight(DirectionalLight* p) {
-    if (!root->getChildByName(p->name)) {
+    if (!p->from_prefab)
         addChild(p);
-        directional_lights.push_back(p);
-        directional_light_number++;
-    }
+        
+    directional_lights.push_back(p);
+    directional_light_number++;
+    
 }
 
 void SceneGraph::addPointLight(PointLight* p, std::string name) {
-    addChild(p, name);
+    
+    if (!p->from_prefab)
+        addChild(p, name);
     point_lights.push_back(p);
     point_light_number++;
 }
 
 void SceneGraph::addDirectionalLight(DirectionalLight* p, std::string name) {
-    addChild(p, name);
+    if (!p->from_prefab)
+        addChild(p, name);
     directional_lights.push_back(p);
     directional_light_number++;
 }
@@ -165,10 +183,12 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
     
 
     for (auto& dir_light : directional_lights) {
-        dir_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        root->drawShadows(*ResourceManager::Instance().shader_shadow);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        if (dir_light->is_shining) {
+            dir_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow);
+            glClear(GL_DEPTH_BUFFER_BIT);
+            root->drawShadows(*ResourceManager::Instance().shader_shadow);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -212,24 +232,26 @@ void SceneGraph::setLights(Shader* shader) {
     shader->setVec3("cameraPosition", camera->cameraPos);
     int i = 0;
     for (auto& point_light : point_lights) {
-        string index = to_string(i);
-		glm::vec3 light_pos = point_light->transform.getGlobalPosition();
-        shader->setFloat("point_lights[" + index + "].constant", point_light->constant);
-        shader->setFloat("point_lights[" + index + "].linear", point_light->linear);
-        shader->setFloat("point_lights[" + index + "].quadratic", point_light->quadratic);
-        shader->setVec3("point_lights[" + index + "].position", light_pos);
-        if (point_light->is_shining == true) {
-            shader->setVec3("point_lights[" + index + "].ambient", point_light->ambient);
-            shader->setVec3("point_lights[" + index + "].diffuse", point_light->diffuse);
-            shader->setVec3("point_lights[" + index + "].specular", point_light->specular);
+        if (point_light->in_frustrum) {
+            string index = to_string(i);
+            glm::vec3 light_pos = point_light->transform.getGlobalPosition();
+            shader->setFloat("point_lights[" + index + "].constant", point_light->constant);
+            shader->setFloat("point_lights[" + index + "].linear", point_light->linear);
+            shader->setFloat("point_lights[" + index + "].quadratic", point_light->quadratic);
+            shader->setVec3("point_lights[" + index + "].position", light_pos);
+            if (point_light->is_shining == true) {
+                shader->setVec3("point_lights[" + index + "].ambient", point_light->ambient);
+                shader->setVec3("point_lights[" + index + "].diffuse", point_light->diffuse);
+                shader->setVec3("point_lights[" + index + "].specular", point_light->specular);
+            }
+            else {
+                shader->setVec3("point_lights[" + index + "].ambient", glm::vec3({ 0.f, 0.f, 0.f }));
+                shader->setVec3("point_lights[" + index + "].diffuse", glm::vec3({ 0.f, 0.f, 0.f }));
+                shader->setVec3("point_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
+            }
+            i++;
         }
-        else {
-            shader->setVec3("point_lights[" + index + "].ambient", glm::vec3({ 0.f, 0.f, 0.f }));
-            shader->setVec3("point_lights[" + index + "].diffuse", glm::vec3({ 0.f, 0.f, 0.f }));
-            shader->setVec3("point_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
-        }
-        i++;
-        
+        if (i >= 100) break;
     }
     i = 0;
     for (auto& dir_light : directional_lights) {
@@ -239,12 +261,15 @@ void SceneGraph::setLights(Shader* shader) {
             shader->setVec3("directional_lights[" + index + "].ambient", dir_light->ambient);
             shader->setVec3("directional_lights[" + index + "].diffuse", dir_light->diffuse);
             shader->setVec3("directional_lights[" + index + "].specular", dir_light->specular);
+            shader->setInt("useShadows", 1);
         }
         else {
             shader->setVec3("directional_lights[" + index + "].ambient", glm::vec3({ 0.f, 0.f, 0.f }));
             shader->setVec3("directional_lights[" + index + "].diffuse", glm::vec3({ 0.f, 0.f, 0.f }));
             shader->setVec3("directional_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
+            shader->setInt("useShadows", 0);
         }
+        
         glActiveTexture(GL_TEXTURE3 + i);
         glBindTexture(GL_TEXTURE_2D, dir_light->depthMap);
         
@@ -544,7 +569,7 @@ void  Node::updateSelfAndChild(bool controlDirty) {
 
     }
 
-    for (auto&& child : children)
+    for (auto& child : children)
     {
         child->updateSelfAndChild(controlDirty);
     }
@@ -702,17 +727,17 @@ void Node::updateComponents(float deltaTime) {
         animator->updateAnimation(deltaTime);
     }
 
-	for (auto&& component : components) {
+	for (auto& component : components) {
 		component->onUpdate(deltaTime);
 	}
 
-    for (auto&& child : children) {
+    for (auto& child : children) {
         child->updateComponents(deltaTime);
     }
 }
 
 void Node::drawShadows(Shader& shader) {
-    if (pModel) {
+    if (pModel && in_frustrum) {
 
         shader.use();
         shader.setMat4("model", transform.getModelMatrix());
@@ -792,10 +817,23 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
 
 Node::~Node()
 {
-    for (auto& child : children) {
+    delete AABB;
+    AABB = nullptr;
+
+    delete AABB_logic;
+    AABB_logic = nullptr;
+
+    delete animator;
+    animator = nullptr;
+
+
+
+    for (Node* child : children) {
+        
         delete child;
     }
-    delete AABB;
+
+    children.clear();
 }
 
 /*void Node::separate(const BoundingBox* other_AABB) {
@@ -936,15 +974,21 @@ void InstanceManager::updateBuffer(Node* p) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders)
+PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders, SceneGraph* _scene_graph)
     : Node(prefab->prefab_scene_graph->root->name + "_inst") {
     this->prefab = prefab;
     AABB = new BoundingBox(transform.getModelMatrix(), this);
+
+	scene_graph = _scene_graph;
+    
+    prefab->prefab_instances.push_back(this);
+
     set_prefab_colliders(prefab->prefab_scene_graph->root);
     colliders.push_back(AABB);
-    if (scene_graph) {
-        prefab_root = prefab->clone(this->name, scene_graph);
-    }
+    //if (scene_graph) {
+    prefab_root = prefab->clone(this->name, scene_graph);
+    prefab_root->parent = this;
+    //}
 }
 
 void PrefabInstance::set_prefab_colliders(Node* node)
@@ -958,6 +1002,15 @@ void PrefabInstance::set_prefab_colliders(Node* node)
     for (Node* child : node->children) {
         set_prefab_colliders(child);
     }
+}
+
+void PrefabInstance::updateSelf()
+{
+    delete prefab_root;
+	prefab_root = prefab->clone(this->name, scene_graph);
+    prefab_root->parent = this;
+	updateSelfAndChild(true);
+    set_prefab_colliders(prefab->prefab_scene_graph->root);
 }
 
 void PrefabInstance::updateSelfAndChild(bool controlDirty)
@@ -978,11 +1031,12 @@ void PrefabInstance::updateSelfAndChild(bool controlDirty)
 
 		//AABB->transformAABB(transform.getModelMatrix());
 		forceUpdateSelfAndChild();
-        prefab_root->transform.setLocalPosition(transform.getGlobalPosition());
-        prefab_root->transform.setLocalRotation(transform.getLocalRotation());
-        prefab_root->transform.setLocalScale(transform.getLocalScale());
-        prefab_root->updateSelfAndChild(true);
+        //prefab_root->transform.setLocalPosition(transform.getGlobalPosition());
+        //prefab_root->transform.setLocalRotation(transform.getLocalRotation());
+        //prefab_root->transform.setLocalScale(transform.getLocalScale());
+        
     }
+    prefab_root->updateSelfAndChild(controlDirty);
     
 }
 void PrefabInstance::updateComponents(float deltaTime)
@@ -1028,6 +1082,13 @@ void PrefabInstance::drawSelfAndChild()
     }
     
     
+}
+
+void PrefabInstance::drawShadows(Shader& shader)
+{
+	if (in_frustrum) {
+		prefab_root->drawShadows(shader);
+	}
 }
 
 void PrefabInstance::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB)
@@ -1079,6 +1140,13 @@ DirectionalLight::DirectionalLight(std::shared_ptr<Model> model, std::string nam
     updateMatrix();
 }
 
+DirectionalLight::~DirectionalLight()
+{
+    scene_graph->directional_lights.remove(this);
+	scene_graph->directional_light_number--;
+    glDeleteTextures(1, &depthMap);
+}
+
 void DirectionalLight::render(unsigned int depthMapFBO, Shader& shader)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
@@ -1103,6 +1171,14 @@ PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, boo
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
+
+PointLight::~PointLight()
+{
+    scene_graph->point_lights.remove(this);
+	scene_graph->point_light_number--;
+    glDeleteTextures(1, &depthMap);
+    glDeleteTextures(1, &depthMapBack);
 }
 
 void PointLight::render(unsigned int depthMapFBO, Shader& shader)
@@ -1159,7 +1235,9 @@ Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph)
     for (auto& light : prefab_scene_graph->point_lights) {
 		PointLight* new_light = new PointLight(light->pModel, light->name + "_" + instance_name, light->is_shining, light->quadratic, light->linear, light->constant,
             light->ambient, light->diffuse, light->specular);
-
+        new_light->from_prefab = true;
+        new_light->parent = copy;
+		copy->addChild(new_light);
 		new_light->scene_graph = scene_graph;
 		new_light->transform.setLocalPosition(light->transform.getLocalPosition());
 		new_light->transform.computeModelMatrix();
@@ -1167,6 +1245,20 @@ Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph)
 		//new_light->parent = copy;
     }
     return copy;
+}
+
+void Prefab::notifyInstances()
+{
+    for (auto it = prefab_instances.begin(); it != prefab_instances.end();) {
+        if (*it) {
+			(*it)->updateSelf();
+			//(*it)->forceUpdateSelfAndChild();
+			++it;
+		}
+		else {
+			it = prefab_instances.erase(it);
+        }
+    }
 }
 
 

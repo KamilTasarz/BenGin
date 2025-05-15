@@ -42,6 +42,8 @@ uniform int directional_light_number;
 uniform PointLight point_lights[100];
 uniform DirectionLight directional_lights[10];
 
+uniform int useShadows;
+
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 uniform sampler2D shadow_map1;
@@ -120,6 +122,9 @@ mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light) {
 }
 
 float calulateShadow(vec4 position_from_light_perpective, sampler2D map) {
+    
+    if (useShadows == 0) return 1.f;
+
     vec3 position = position_from_light_perpective.xyz / position_from_light_perpective.w;
     position = position * 0.5f + 0.5f;
     

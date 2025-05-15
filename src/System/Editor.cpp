@@ -200,8 +200,18 @@ void Editor::DrawNodeBlock(Node* node, int depth)
     }
 
     if (node == sceneGraph->root && sceneGraph->to_delete) {
-        sceneGraph->deleteChild(sceneGraph->to_delete);
-        sceneGraph->to_delete = nullptr;
+        if (dynamic_cast<DirectionalLight*>(sceneGraph->to_delete)) {
+            sceneGraph->deleteDirectionalLight(dynamic_cast<DirectionalLight*>(sceneGraph->to_delete));
+            sceneGraph->to_delete = nullptr;
+        }
+        else if (dynamic_cast<PointLight*>(sceneGraph->to_delete)) {
+            sceneGraph->deletePointLight(dynamic_cast<PointLight*>(sceneGraph->to_delete));
+            sceneGraph->to_delete = nullptr;
+        }
+        else {
+            sceneGraph->deleteChild(sceneGraph->to_delete);
+            sceneGraph->to_delete = nullptr;
+        }
     }
 }
 
@@ -264,12 +274,23 @@ void Editor::previewDisplay()
     if (ImGui::BeginDragDropTarget()) {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_DRAG")) {
             int id = *(int*)payload->Data;
-            //Model
-            Node* p = new Node(ResourceManager::Instance().getModel(id), "entity", colliders);
+            if (id == 30) {
+                DirectionalLight* newNode = new DirectionalLight(ResourceManager::Instance().getModel(6), "dir_light", true);
+                newNode->transform.setLocalPosition({ 0.f, 0.f, 0.f });
+                sceneGraph->addDirectionalLight(newNode);
+            }
+            else if (id == 31) {
+                PointLight* newNode = new PointLight(ResourceManager::Instance().getModel(6), "point_light", true, 0.032f, 0.09f);
+                newNode->transform.setLocalPosition({ 0.f, 0.f, 0.f });
+                sceneGraph->addPointLight(newNode);
+            }
+            else {
+                //Model
+                Node* p = new Node(ResourceManager::Instance().getModel(id), "entity", colliders);
 
-
-            sceneGraph->addChild(p);
-            sceneGraph->marked_object = p;
+                sceneGraph->addChild(p);
+                sceneGraph->marked_object = p;
+            }
         }
         ImGui::EndDragDropTarget();
     }
@@ -584,6 +605,10 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         sceneGraph->is_editing = !sceneGraph->is_editing;
     }
 
+    if (ImGui::Button("ADD_EMPTY_NODE", ImVec2(100, 24))) {
+		sceneGraph->addChild(new Node("empty_node"));
+		sceneGraph->marked_object = sceneGraph->root->getChildByName("entity");
+    }
 
     if (sceneGraph->marked_object) {
         std::vector<const char*> items;
@@ -649,24 +674,21 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         items.push_back("<none>");
     }
 
-
-    // wyświetl combo box tylko jeśli jest coś do wyboru
-    if (ImGui::Combo("Choose prefab", &current_prefab, items.data(), items.size())) {
-        if (current_prefab == size) {
-            std::cout << "Wybrano: brak\n";
-        }
-        else {
-            std::cout << "Wybrano: " << items[current_prefab] << "\n";
-        }
-    }
-
-    
-
     if (scene_editor) {
+
+        // wyświetl combo box tylko jeśli jest coś do wyboru
+        if (ImGui::Combo("Choose prefab", &current_prefab, items.data(), items.size())) {
+            if (current_prefab == size) {
+                std::cout << "Wybrano: brak\n";
+            }
+            else {
+                std::cout << "Wybrano: " << items[current_prefab] << "\n";
+            }
+        }
 
         if (ImGui::Button("ADD_PREFAB_INSTANCE", ImVec2(100, 24))) {
             if (size > 0) {
-                Node* inst = new PrefabInstance(prefabs[current_prefab], colliders);
+                Node* inst = new PrefabInstance(prefabs[current_prefab], colliders, sceneGraph);
                 sceneGraph->addChild(inst);
                 sceneGraph->marked_object = inst;
             }
@@ -741,6 +763,10 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
     }
     else {
         if (ImGui::Button("RETURN", ImVec2(100, 24))) {
+            
+			Prefab prefab = *prefabs[current_prefab];
+			prefab.notifyInstances();
+
             scene_editor = !scene_editor;
             
         }
@@ -1229,10 +1255,10 @@ void Editor::init()
     _texture.path = "res/textures/raindrop.png";
     _texture.type = "diffuse";
 
-    ParticleEmitter* ziom = new ParticleEmitter(_texture.id, 10000);
+    //ParticleEmitter* ziom = new ParticleEmitter(_texture.id, 10000);
     //ParticleEmitter* ziom = new ParticleEmitter(_texture, 20000);
     //ziom->transform.setLocalScale({ 0.1f, .1f, .1f });
-    editor_sceneGraph->addChild(ziom);
+    //editor_sceneGraph->addChild(ziom);
 
 }
 
@@ -1315,10 +1341,31 @@ void Editor::input()
     if (glfwGetKey(window->window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
         if (!pressed_add) {
             if (sceneGraph->marked_object != nullptr) {
-                Node* newNode = new Node(sceneGraph->marked_object->pModel, sceneGraph->marked_object->getName(), colliders, sceneGraph->marked_object->id);
-                newNode->transform = sceneGraph->marked_object->transform; // zakładam przeciążenie operatora =
-                sceneGraph->addChild(newNode);
-                sceneGraph->marked_object = newNode;
+                if (dynamic_cast<DirectionalLight*>(sceneGraph->marked_object)) {
+                    DirectionalLight* temp = dynamic_cast<DirectionalLight*>(sceneGraph->marked_object);
+                    DirectionalLight* newNode = new DirectionalLight(temp->pModel, temp->getName() + "_copy", temp->is_shining,
+                        temp->direction, temp->ambient, temp->diffuse, temp->specular);
+                    newNode->transform.setLocalPosition(temp->transform.getLocalPosition());
+                    newNode->transform.setLocalRotation(temp->transform.getLocalRotation());
+                    newNode->transform.setLocalScale(temp->transform.getLocalScale());
+                    sceneGraph->addDirectionalLight(newNode);
+                }
+                else if (dynamic_cast<PointLight*>(sceneGraph->marked_object)) {
+                    PointLight* temp = dynamic_cast<PointLight*>(sceneGraph->marked_object);
+                    PointLight* newNode = new PointLight(temp->pModel, temp->getName() + "_copy", temp->is_shining,
+                        temp->quadratic, temp->linear, temp->constant, temp->ambient, temp->diffuse, temp->specular);
+                    newNode->transform.setLocalPosition(temp->transform.getLocalPosition());
+                    newNode->transform.setLocalRotation(temp->transform.getLocalRotation());
+                    newNode->transform.setLocalScale(temp->transform.getLocalScale());
+                    sceneGraph->addPointLight(newNode);
+                }
+                else {
+                    Node* newNode = sceneGraph->marked_object->clone("clone");
+                    newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition() + glm::vec3(1.f, 0.f, 0.f));
+
+                    sceneGraph->addChild(newNode);
+                    sceneGraph->marked_object = newNode;
+                }
             }
         }
         pressed_add = true;
@@ -1356,6 +1403,9 @@ void Editor::update(float deltaTime) {
     // Kamera
     camera->ProcessKeyboard(deltaTime, direction);
 
+    PhysicsSystem::instance().updateColliders(sceneGraph);
+    PhysicsSystem::instance().updateCollisions();
+
     // Scena
     sceneGraph->update(deltaTime);
 
@@ -1376,8 +1426,7 @@ void Editor::update(float deltaTime) {
     // Zaznaczanie obiektów myszką
     //sceneGraph->root->checkIfInFrustrum();
 
-    PhysicsSystem::instance().updateColliders(sceneGraph);
-    PhysicsSystem::instance().updateCollisions();
+
 
     
 
