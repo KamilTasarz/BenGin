@@ -213,6 +213,12 @@ json save_node(Node* node) {
 					fieldJson["name"] = field->name;
 					fieldJson["value"] = *i;
 				}
+				else if (field->type == "bool") {
+					bool* b = reinterpret_cast<bool*>(ptr);
+					fieldJson["field_type"] = "bool";
+					fieldJson["name"] = field->name;
+					fieldJson["value"] = *b;
+				}
 				else if (field->type == "Node*") {
 					Node** n = reinterpret_cast<Node**>(ptr);
 					fieldJson["field_type"] = "Node*";
@@ -735,6 +741,10 @@ void loadComponents(json& j, Node* node, SceneGraph* scene)
 							else if (field->type == "int") {
 								int* i = reinterpret_cast<int*>(ptr);
 								*i = fieldJson["value"].get<int>();
+							}
+							else if (field->type == "bool") {
+								bool* b = reinterpret_cast<bool*>(ptr);
+								*b = fieldJson["value"].get<bool>();
 							}
 							else if (field->type == "Node*") {
 								std::string node_in_script = fieldJson["value"];

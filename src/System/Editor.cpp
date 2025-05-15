@@ -1109,6 +1109,12 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                             ImGui::SameLine();
                             ImGui::DragInt(("##" + field->name).c_str(), i);
                         }
+                        else if (field->type == "bool") {
+                            bool* b = reinterpret_cast<bool*>(ptr);
+                            ImGui::Text(field->name.c_str());
+                            ImGui::SameLine();
+                            ImGui::Checkbox(("##" + field->name).c_str(), b);
+                        }
                         else if (field->type == "string") {
                             std::string* s = reinterpret_cast<std::string*>(ptr);
                             char* buffer = new char[128];
@@ -1124,9 +1130,9 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                             ImGui::SameLine();
                             ImGui::PushItemWidth(-1);
 
+                            std::string combo_id = "##NodeCombo_" + field->name;
 
-
-                            if (ImGui::BeginCombo("##NodeCombo", (*n) ? (*n)->getName().c_str() : "brak")) {
+                            if (ImGui::BeginCombo(combo_id.c_str() , (*n) ? (*n)->getName().c_str() : "brak")) {
 
                                 bool is_none_selected = (*n == nullptr);
                                 if (ImGui::Selectable("<brak>", is_none_selected)) {
