@@ -4,29 +4,46 @@
         "Yaw": -91.89971160888672,
         "mode": 3,
         "position": {
-            "x": 53.0567626953125,
-            "y": 7.643566131591797,
-            "z": 48.29020309448242
+            "x": 0.0,
+            "y": 0.0,
+            "z": 50.04999923706055
         }
     },
     "scene": {
         "children": [
             {
+                "components": [
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": 0.0,
+                            "is_static": false,
+                            "mass": 1.0
+                        }
+                    },
+                    {
+                        "name": "Scale",
+                        "variables": [
+                            {
+                                "field_type": "Node*",
+                                "name": "secondScale",
+                                "value": "right_platform"
+                            }
+                        ]
+                    }
+                ],
                 "id": 0,
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "room_2_inst",
-                "no_textures": true,
+                "layer": "Floor",
+                "model.id": 5,
+                "name": "left_platform",
+                "no_textures": false,
                 "position": {
-                    "x": 50.0,
-                    "y": 0.0,
+                    "x": 32.383575439453125,
+                    "y": 5.2476091384887695,
                     "z": 0.0
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_2"
                 },
                 "rotation": {
                     "w": 1.0,
@@ -35,12 +52,12 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 1.0,
+                    "x": 4.0,
                     "y": 1.0,
                     "z": 1.0
                 },
                 "tag": "Default",
-                "type": "PrefabInstance"
+                "type": "Node"
             },
             {
                 "id": 0,
@@ -49,10 +66,10 @@
                 "is_visible": true,
                 "layer": "Floor",
                 "model.id": 5,
-                "name": "entity",
+                "name": "right_platform",
                 "no_textures": false,
                 "position": {
-                    "x": 42.223968505859375,
+                    "x": 42.19577407836914,
                     "y": 3.426908493041992,
                     "z": 0.0
                 },
@@ -115,8 +132,8 @@
                 "name": "player",
                 "no_textures": false,
                 "position": {
-                    "x": 50.14124298095703,
-                    "y": 12.5,
+                    "x": 47.95291519165039,
+                    "y": -290.1668395996094,
                     "z": 0.0
                 },
                 "rotation": {
@@ -131,54 +148,6 @@
                     "z": 1.0
                 },
                 "tag": "Player",
-                "type": "Node"
-            },
-            {
-                "components": [
-                    {
-                        "name": "Rigidbody",
-                        "properties": {
-                            "gravity": 0.0,
-                            "is_static": false,
-                            "mass": 1.0
-                        }
-                    },
-                    {
-                        "name": "Scale",
-                        "variables": [
-                            {
-                                "field_type": "Node*",
-                                "name": "secondScale",
-                                "value": "entity"
-                            }
-                        ]
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 5,
-                "name": "entity_1",
-                "no_textures": false,
-                "position": {
-                    "x": 55.720703125,
-                    "y": 11.240104675292969,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 4.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
                 "type": "Node"
             },
             {
@@ -202,7 +171,7 @@
                 "no_textures": false,
                 "position": {
                     "x": 57.98261642456055,
-                    "y": -19745.49609375,
+                    "y": -24202.1796875,
                     "z": 0.5
                 },
                 "rotation": {
@@ -225,8 +194,39 @@
                 "is_physic_active": true,
                 "is_visible": true,
                 "layer": "Default",
+                "model.id": -1,
+                "name": "room_1_inst",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_1"
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "PrefabInstance"
+            },
+            {
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
                 "model.id": 6,
-                "name": "light_copy_room_1_inst",
+                "name": "light_room_1_inst",
                 "no_textures": true,
                 "point_light": {
                     "ambient": {
@@ -249,9 +249,9 @@
                     }
                 },
                 "position": {
-                    "x": 21.37504768371582,
-                    "y": 2.216658353805542,
-                    "z": 1.1435046195983887
+                    "x": 13.689380645751953,
+                    "y": 2.7769968509674072,
+                    "z": 0.4220360219478607
                 },
                 "rotation": {
                     "w": 1.0,
@@ -322,7 +322,7 @@
                 "is_visible": true,
                 "layer": "Default",
                 "model.id": 6,
-                "name": "light_room_1_inst",
+                "name": "light_copy_room_1_inst",
                 "no_textures": true,
                 "point_light": {
                     "ambient": {
@@ -345,9 +345,9 @@
                     }
                 },
                 "position": {
-                    "x": 13.689380645751953,
-                    "y": 2.7769968509674072,
-                    "z": 0.4220360219478607
+                    "x": 21.37504768371582,
+                    "y": 2.216658353805542,
+                    "z": 1.1435046195983887
                 },
                 "rotation": {
                     "w": 1.0,
@@ -420,15 +420,15 @@
                 "is_visible": true,
                 "layer": "Default",
                 "model.id": -1,
-                "name": "room_1_inst",
+                "name": "room_2_inst",
                 "no_textures": true,
                 "position": {
-                    "x": 0.0,
+                    "x": 50.0,
                     "y": 0.0,
                     "z": 0.0
                 },
                 "prefab_instance": {
-                    "prefab_name": "room_1"
+                    "prefab_name": "room_2"
                 },
                 "rotation": {
                     "w": 1.0,
