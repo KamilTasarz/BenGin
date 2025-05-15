@@ -300,6 +300,16 @@ public:
         return result;
     }
 
+    template <typename T>
+    T* getComponent() {
+        for (auto& comp : components) {
+            if (T* casted = dynamic_cast<T*>(comp.get())) {
+                return casted;
+            }
+        }
+        return nullptr;
+    }
+
     virtual void checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB);
     virtual void checkIfInFrustrumLogic(std::vector<BoundingBox*>& colliders_logic, std::vector<BoundingBox*>& colliders_RB_logic);
 

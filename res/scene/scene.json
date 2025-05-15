@@ -1,16 +1,78 @@
 {
     "camera": {
-        "Pitch": -19.199975967407227,
-        "Yaw": -83.0001220703125,
+        "Pitch": -9.199945449829102,
+        "Yaw": -88.09954071044922,
         "mode": 2,
         "position": {
-            "x": 3.7187681198120117,
-            "y": 9.085335731506348,
-            "z": 17.35513687133789
+            "x": 28.421335220336914,
+            "y": 27.04347038269043,
+            "z": 72.05304718017578
         }
     },
     "scene": {
         "children": [
+            {
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "room_2_inst",
+                "no_textures": true,
+                "position": {
+                    "x": 56.30110168457031,
+                    "y": -5.130719184875488,
+                    "z": 0.0
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_2"
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "PrefabInstance"
+            },
+            {
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "room_1_inst",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_1"
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "PrefabInstance"
+            },
             {
                 "directional_light": {
                     "ambient": {
@@ -63,37 +125,39 @@
                 "type": "DirectionalLight"
             },
             {
-                "children": [
+                "components": [
                     {
-                        "id": 0,
-                        "is_logic_active": false,
-                        "is_physic_active": true,
-                        "is_visible": true,
-                        "layer": "Default",
-                        "model.id": -1,
-                        "name": "room_1_inst",
-                        "no_textures": true,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "prefab_instance": {
-                            "prefab_name": "room_1"
-                        },
-                        "rotation": {
-                            "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        },
-                        "tag": "Default",
-                        "type": "PrefabInstance"
+                        "name": "PlayerController",
+                        "variables": [
+                            {
+                                "field_type": "float",
+                                "name": "speed",
+                                "value": 10.0
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "jumpForce",
+                                "value": 14.899999618530273
+                            },
+                            {
+                                "field_type": "Node*",
+                                "name": "doors",
+                                "value": "null"
+                            },
+                            {
+                                "field_type": "int",
+                                "name": "id",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": -25.0,
+                            "is_static": false,
+                            "mass": 1.0
+                        }
                     }
                 ],
                 "id": 0,
@@ -101,13 +165,176 @@
                 "is_physic_active": true,
                 "is_visible": true,
                 "layer": "Default",
-                "model.id": -1,
-                "name": "empty_node",
-                "no_textures": true,
+                "model.id": 7,
+                "name": "player",
+                "no_textures": false,
                 "position": {
-                    "x": -4.711000442504883,
-                    "y": 1.951874017715454,
+                    "x": 41.906036376953125,
+                    "y": 5.227847576141357,
                     "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 2.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Player",
+                "type": "Node"
+            },
+            {
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 5,
+                "name": "right_platform",
+                "no_textures": false,
+                "position": {
+                    "x": 42.19577407836914,
+                    "y": 4.223685264587402,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 4.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "components": [
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": 0.0,
+                            "is_static": false,
+                            "mass": 1.0
+                        }
+                    },
+                    {
+                        "name": "Scale",
+                        "variables": [
+                            {
+                                "field_type": "Node*",
+                                "name": "secondScale",
+                                "value": "right_platform"
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 5,
+                "name": "left_platform",
+                "no_textures": false,
+                "position": {
+                    "x": 32.44525146484375,
+                    "y": 4.41715669631958,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 4.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "components": [
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": -25.0,
+                            "is_static": false,
+                            "mass": 100.0
+                        }
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 7,
+                "name": "box",
+                "no_textures": false,
+                "position": {
+                    "x": 57.98261642456055,
+                    "y": -28213.919921875,
+                    "z": 0.5
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.5,
+                    "y": 1.5,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 6,
+                "name": "light_room_1_inst",
+                "no_textures": true,
+                "point_light": {
+                    "ambient": {
+                        "x": 0.20000000298023224,
+                        "y": 0.20000000298023224,
+                        "z": 0.20000000298023224
+                    },
+                    "constant": 1.0,
+                    "diffuse": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    },
+                    "is_shining": true,
+                    "linear": 0.09000000357627869,
+                    "quadratic": 0.03200000151991844,
+                    "specular": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    }
+                },
+                "position": {
+                    "x": 13.689380645751953,
+                    "y": 2.7769968509674072,
+                    "z": 0.4220360219478607
                 },
                 "rotation": {
                     "w": 1.0,
@@ -121,7 +348,7 @@
                     "z": 1.0
                 },
                 "tag": "Default",
-                "type": "Node"
+                "type": "PointLight"
             }
         ],
         "id": 0,
