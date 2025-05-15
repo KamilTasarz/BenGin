@@ -68,9 +68,9 @@ void PlayerController::onStayCollision(Node* other)
 		isGrounded = false;
 	}
 
-	//if (other->getTagName() == "Wall") {
-	//	owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 0.5f, 0.f));
-	//}
+	if (other->getTagName() == "Wall") {
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 0.5f, 0.f));
+	}
 }
 
 void PlayerController::onExitCollision(Node* other)

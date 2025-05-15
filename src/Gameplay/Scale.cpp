@@ -14,7 +14,7 @@ void Scale::onAttach(Node* owner)
 	rb = owner->getComponent<Rigidbody>();
 
 	startPos1 = owner->transform.getLocalPosition();
-	if (secondScale != NULL) startPos2 = secondScale->transform.getLocalPosition();
+	startPos2 = secondScale->transform.getLocalPosition();
 }
 
 void Scale::onDetach()
@@ -33,10 +33,7 @@ void Scale::onStart()
 
 void Scale::onUpdate(float deltaTime)
 {
-	if (secondScale == NULL) return;
-	else if (startPos2 == glm::vec3(0.f)) startPos2 = secondScale->transform.getLocalPosition();
-
-	if (!isPlayerOn && !moveHorizontally && returnToPosition) {
+	if (!isPlayerOn) {
 		glm::vec3 position1 = owner->transform.getLocalPosition();
 		glm::vec3 newPosition = GameMath::MoveTowards(position1, startPos1, 1.f * deltaTime);
 		owner->transform.setLocalPosition(newPosition);
@@ -46,24 +43,14 @@ void Scale::onUpdate(float deltaTime)
 		secondScale->transform.setLocalPosition(newPosition2);
 	}
 	else {
-		if (moveHorizontally) {
-			glm::vec3 position1 = owner->transform.getLocalPosition();
-			//owner->transform.setLocalPosition(position1 - glm::vec3(0.f, 2.f * deltaTime, 0.f));
+		owner->getComponent<Rigidbody>()->velocityY = 0.f;
 
-			float offset = startPos1.x - position1.x;
+		glm::vec3 position1 = owner->transform.getLocalPosition();
+		owner->transform.setLocalPosition(position1 - glm::vec3(0.f, 2.f * deltaTime, 0.f));
 
-			secondScale->transform.setLocalPosition(startPos2 + glm::vec3(offset, 0.f, 0.f));
-		}
-		else {
-			owner->getComponent<Rigidbody>()->velocityY = 0.f;
+		float offset = startPos1.y - position1.y;
 
-			glm::vec3 position1 = owner->transform.getLocalPosition();
-			owner->transform.setLocalPosition(position1 - glm::vec3(0.f, 2.f * deltaTime, 0.f));
-
-			float offset = startPos1.y - position1.y;
-
-			secondScale->transform.setLocalPosition(startPos2 + glm::vec3(0.f, offset, 0.f));
-		}
+		secondScale->transform.setLocalPosition(startPos2 + glm::vec3(0.f, offset, 0.f));
 	}
 
 	if (timer > 0.f) {
@@ -73,14 +60,6 @@ void Scale::onUpdate(float deltaTime)
 			isPlayerOn = false;
 		}
 	}
-
-	// draw line between pins and platforms
-	//glm::vec3 leftPinPos = leftPin->transform.getLocalPosition();
-	//glm::vec3 rightPinPos = rightPin->transform.getLocalPosition();
-	//glm::vec3 leftPlatformPos = owner->transform.getLocalPosition();
-	//glm::vec3 rightPlatformPos = secondScale->transform.getLocalPosition();
-
-	//TODO: draw line
 }
 
 void Scale::onEnd()
