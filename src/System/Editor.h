@@ -46,7 +46,7 @@ private:
 
 	float mass = 1.f, gravity = 1.f;
 	
-	int current_prefab = 0, current_opt1 = 0, current_opt2 = 0, direction = 0;
+	int current_prefab = 0, current_opt1 = 0, current_opt2 = 0, direction = 0, prefab_inst_to_add = 0;
 	int current_component = 0, current_script = 0;
 
 	std::vector<BoundingBox*> colliders;

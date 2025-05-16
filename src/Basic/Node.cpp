@@ -384,7 +384,7 @@ Node* Node::getChildById(int id) {
     return nullptr;
 }
 
-Node* Node::clone(std::string instance_name) {
+Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
 
     Node* copy = nullptr;
 
@@ -396,7 +396,11 @@ Node* Node::clone(std::string instance_name) {
 
         copy->color = this->color;
         copy->transform = this->transform;
-        copy->scene_graph = this->scene_graph;  // zakładamy, że jest współdzielony (lub ustawiany później)
+		if (new_scene_graph)
+			copy->scene_graph = new_scene_graph;
+		else
+			copy->scene_graph = this->scene_graph;  // zakładamy, że jest współdzielony (lub ustawiany później)
+        //copy->scene_graph = this->scene_graph;  // zakładamy, że jest współdzielony (lub ustawiany później)
 
         // Model - zakładamy, że można go współdzielić
         copy->pModel = this->pModel;
@@ -468,9 +472,12 @@ Node* Node::clone(std::string instance_name) {
 
         // Dzieci — rekurencyjna kopia
         for (Node* child : this->children) {
-            Node* child_copy = child->clone(instance_name);
-            if (child_copy)
+            Node* child_copy = child->clone(instance_name, new_scene_graph);
+            if (child_copy) {
                 copy->addChild(child_copy);  // Ustawia parent i dodaje do zbioru
+                
+            }
+
         }
     }
     
@@ -1233,20 +1240,22 @@ Prefab::Prefab(std::string name, PrefabType prefab_type)
     //prefab_scene_graph->addDirectionalLight();
 }
 
-Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph)
+Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph, bool light_copy)
 {
-	Node* copy = prefab_scene_graph->root->clone(instance_name);
-
+	Node* copy = prefab_scene_graph->root->clone(instance_name, scene_graph);
+    /*copy->scene_graph = scene_graph;*/
     for (auto& light : prefab_scene_graph->point_lights) {
 		PointLight* new_light = new PointLight(light->pModel, light->name + "_" + instance_name, light->is_shining, light->quadratic, light->linear, light->constant,
             light->ambient, light->diffuse, light->specular);
-        new_light->from_prefab = true;
+        new_light->from_prefab = !light_copy;
         new_light->parent = copy;
 		copy->addChild(new_light);
 		new_light->scene_graph = scene_graph;
-		new_light->transform.setLocalPosition(light->transform.getLocalPosition());
+		new_light->transform.setLocalPosition(light->transform.getGlobalPosition());
 		new_light->transform.computeModelMatrix();
-		scene_graph->addPointLight(new_light);
+		//scene_graph->addPointLight(new_light);
+        scene_graph->point_lights.push_back(new_light);
+        scene_graph->point_light_number++;
 		//new_light->parent = copy;
     }
     return copy;

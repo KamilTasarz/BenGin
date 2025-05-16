@@ -292,7 +292,7 @@ public:
 
     Node* getChildById(int id);
 
-    Node* clone(std::string instance_name);
+    Node* clone(std::string instance_name, SceneGraph* new_scene_graph = nullptr);
 
     std::set<Node*> getAllChildren() {
         std::set<Node*> result;
@@ -539,7 +539,7 @@ public:
 
     Prefab(std::string name = "Prefab", PrefabType prefab_type = HORIZONTAL_RIGHT);
 
-    Node* clone(std::string instance_name, SceneGraph *scene_graph);
+    Node* clone(std::string instance_name, SceneGraph *scene_graph, bool light_copy = false);
 
     void notifyInstances();
 };

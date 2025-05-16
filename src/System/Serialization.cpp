@@ -697,14 +697,24 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			Node* child = load_prefab_node(j, scene, _name);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
-				scene->addPointLight(point_light, node->name);
+				//scene->addPointLight(point_light, node->name);
+				node->scene_graph = scene;
+				node->addChild(point_light);
+				scene->point_lights.push_back(point_light);
+				scene->point_light_number++;
 			}
 			else if (dynamic_cast<DirectionalLight*>(child)) {
 				DirectionalLight* directional_light = dynamic_cast<DirectionalLight*>(child);
-				scene->addDirectionalLight(directional_light, node->name);
+				//scene->addDirectionalLight(directional_light, node->name);
+				node->scene_graph = scene;
+				node->addChild(directional_light);
+				scene->directional_lights.push_back(directional_light);
+				scene->directional_light_number++;
 			}
 			else {
-				scene->addChild(child, node->name);
+				//scene->addChild(child, node->name);
+				node->scene_graph = scene;
+				node->addChild(child);
 			}
 
 
@@ -822,7 +832,8 @@ void loadComponents(json& j, Node* node, SceneGraph* scene)
 	}
 
 	for (json _j : j["children"]) {
-		Node* child = scene->root->getChildByName(_j["name"]);
+		std::string _name = _j["name"];
+		Node* child = scene->root->getChildByName(_name);
 		loadComponents(_j, child, scene);
 	}
 }

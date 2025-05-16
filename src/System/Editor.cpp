@@ -633,24 +633,24 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
     ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Once);
 
     ImGui::Begin("Operations", nullptr, window_flags);
+    ImGui::PushItemWidth(150);
 
-
-    if (ImGui::Button("ORTO", ImVec2(100, 24))) {
+    if (ImGui::Button("ORTO", ImVec2(150, 24))) {
         camera->mode != FRONT_ORTO ? camera->changeMode(FRONT_ORTO) : camera->changeMode(FREE);
         sceneGraph->grid->gridType = camera->mode == FRONT_ORTO ? GRID_XY : GRID_XZ;
         sceneGraph->grid->Update();
     }
-    
+    ImGui::SameLine();
 
-    if (ImGui::Button("SAVE", ImVec2(100, 24))) {
+    if (ImGui::Button("SAVE", ImVec2(150, 24))) {
         saveScene("res/scene/scene.json", sceneGraph);
     }
-
-    if (ImGui::Button("EDITING_VIEW", ImVec2(100, 24))) {
+    ImGui::SameLine();
+    if (ImGui::Button("EDITING_VIEW", ImVec2(150, 24))) {
         sceneGraph->is_editing = !sceneGraph->is_editing;
     }
-
-    if (ImGui::Button("ADD_EMPTY_NODE", ImVec2(100, 24))) {
+    ImGui::Separator();
+    if (ImGui::Button("ADD_EMPTY_NODE", ImVec2(150, 24))) {
 		sceneGraph->addChild(new Node("empty_node"));
 		sceneGraph->marked_object = sceneGraph->root->getChildByName("entity");
     }
@@ -685,7 +685,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
 			ImGui::Checkbox("Static", &is_static);
 		}
 
-		if (ImGui::Button("ADD_COMPONENT", ImVec2(100, 24))) {
+		if (ImGui::Button("ADD_COMPONENT", ImVec2(150, 24))) {
 
 			bool canAdd = true;
             for (auto& comp : sceneGraph->marked_object->components) {
@@ -731,7 +731,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
             }
         }
 
-        if (ImGui::Button("ADD_PREFAB_INSTANCE", ImVec2(100, 24))) {
+        if (ImGui::Button("ADD_PREFAB_INSTANCE", ImVec2(150, 24))) {
             if (size > 0) {
                 Node* inst = new PrefabInstance(prefabs[current_prefab], colliders, sceneGraph);
                 sceneGraph->addChild(inst);
@@ -747,7 +747,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         if (ImGui::Combo("Choose direction", &current_opt1, opt1, 2)) {
 
         }
-        ImGui::SameLine();
+        
 
         const char* opt2[2];
 
@@ -765,7 +765,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         }
 
 
-        if (ImGui::Button("CREATE_PREFAB", ImVec2(100, 24))) {
+        if (ImGui::Button("CREATE_PREFAB", ImVec2(150, 24))) {
 
             PrefabType type;
             if (current_opt1 == 0) {
@@ -802,12 +802,34 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
 
         }
 
-        if (ImGui::Button("EDIT_PREFAB", ImVec2(100, 24))) {
+        if (ImGui::Button("EDIT_PREFAB", ImVec2(150, 24))) {
             scene_editor = !scene_editor;
         }
     }
     else {
-        if (ImGui::Button("RETURN", ImVec2(100, 24))) {
+
+
+        // wyświetl combo box tylko jeśli jest coś do wyboru
+        if (ImGui::Combo("Choose prefab", &prefab_inst_to_add, items.data(), items.size())) {
+            if (current_prefab == size) {
+                std::cout << "Wybrano: brak\n";
+            }
+            else {
+                std::cout << "Wybrano: " << items[prefab_inst_to_add] << "\n";
+            }
+        }
+
+        if (ImGui::Button("ADD_PUZZLE_COPY", ImVec2(150, 24))) {
+            if (size > 0) {
+                std::string name = prefabs[prefab_inst_to_add]->prefab_scene_graph->root->name + "_new";
+				Node* inst = prefabs[prefab_inst_to_add]->clone(name, sceneGraph, true);
+                sceneGraph->addChild(inst);
+                sceneGraph->marked_object = inst;
+            }
+
+        }
+
+        if (ImGui::Button("RETURN", ImVec2(150, 24))) {
             
 			Prefab prefab = *prefabs[current_prefab];
 			prefab.notifyInstances();
@@ -821,13 +843,13 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
 
 	ImGui::InputText("Tag name: ", tag_name, 128);
 
-    if (ImGui::Button("Add tag", ImVec2(100, 24))) {
+    if (ImGui::Button("Add tag", ImVec2(150, 24))) {
         if (!TagLayerManager::Instance().getTag(tag_name)) {
 			TagLayerManager::Instance().addTag(tag_name);
         }
     }
 
-    if (ImGui::Button("Delete tag", ImVec2(100, 24))) {
+    if (ImGui::Button("Delete tag", ImVec2(150, 24))) {
         if (TagLayerManager::Instance().getTag(tag_name)) {
             TagLayerManager::Instance().removeTag(tag_name);
         }
@@ -835,13 +857,13 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
 
     ImGui::InputText("Layer name: ", layer_name, 128);
 
-    if (ImGui::Button("Add layer", ImVec2(100, 24))) {
+    if (ImGui::Button("Add layer", ImVec2(150, 24))) {
         if (!TagLayerManager::Instance().getLayer(layer_name)) {
             TagLayerManager::Instance().addLayer(layer_name);
         }
     }
 
-    if (ImGui::Button("Delete layer", ImVec2(100, 24))) {
+    if (ImGui::Button("Delete layer", ImVec2(150, 24))) {
         if (TagLayerManager::Instance().getLayer(layer_name)) {
             TagLayerManager::Instance().removeLayer(layer_name);
         }
@@ -1119,21 +1141,24 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
         ImVec2 cursorPos = ImGui::GetCursorScreenPos();
         int depth = 10.f;
         ImVec2 fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y + 20.f);
-        ImGui::SetCursorScreenPos(fieldPos);
-        ImGui::InputFloat3("##Min_phys", glm::value_ptr(preview_node->AABB->min_point_local));
-        ImGui::SameLine();
-        if (ImGui::Button("Min_phys_button")) {
-            local_point = &preview_node->AABB->min_point_local;
+
+        if (preview_node->AABB) {
+
+            ImGui::SetCursorScreenPos(fieldPos);
+            ImGui::InputFloat3("##Min_phys", glm::value_ptr(preview_node->AABB->min_point_local));
+            ImGui::SameLine();
+            if (ImGui::Button("Min_phys_button")) {
+                local_point = &preview_node->AABB->min_point_local;
+            }
+            cursorPos = ImGui::GetCursorScreenPos();
+            fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y + 20.f);
+            ImGui::SetCursorScreenPos(fieldPos);
+            ImGui::InputFloat3("##Max_phys", glm::value_ptr(preview_node->AABB->max_point_local));
+            ImGui::SameLine();
+            if (ImGui::Button("Max_phys_button")) {
+                local_point = &preview_node->AABB->max_point_local;
+            }
         }
-        cursorPos = ImGui::GetCursorScreenPos();
-        fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y + 20.f);
-        ImGui::SetCursorScreenPos(fieldPos);
-        ImGui::InputFloat3("##Max_phys", glm::value_ptr(preview_node->AABB->max_point_local));
-        ImGui::SameLine();
-        if (ImGui::Button("Max_phys_button")) {
-            local_point = &preview_node->AABB->max_point_local;
-        }
-		
         if (preview_node->AABB_logic) {
             ImGui::Text("Logic Collider: ");
 
@@ -1373,6 +1398,10 @@ void Editor::run() {
             ServiceLocator::getWindow()->deltaTime = currentFrame - ServiceLocator::getWindow()->lastFrame;
             ServiceLocator::getWindow()->lastFrame = currentFrame;
 
+            if (ServiceLocator::getWindow()->deltaTime > 0.25f) {
+                ServiceLocator::getWindow()->deltaTime = 0.0f; // lub pominąć update
+            }
+
             frames++;
             fps_timer += ServiceLocator::getWindow()->deltaTime;
             if (fps_timer >= 1.0f) {
@@ -1457,7 +1486,7 @@ void Editor::input()
                     sceneGraph->addPointLight(newNode);
                 }
                 else {
-                    Node* newNode = sceneGraph->marked_object->clone("clone");
+                    Node* newNode = sceneGraph->marked_object->clone("clone", sceneGraph);
                     newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition() + glm::vec3(1.f, 0.f, 0.f));
 
                     sceneGraph->addChild(newNode);
