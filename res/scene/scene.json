@@ -12,185 +12,6 @@
     "scene": {
         "children": [
             {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 5,
-                "name": "right_platform",
-                "no_textures": false,
-                "position": {
-                    "x": -22.0,
-                    "y": 7.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 4.0,
-                    "y": 1.0,
-                    "z": 2.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 4,
-                "name": "door",
-                "no_textures": false,
-                "position": {
-                    "x": 12.5,
-                    "y": 2.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 3.0,
-                    "z": 2.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.125,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.25,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "components": [
-                    {
-                        "name": "Rigidbody",
-                        "properties": {
-                            "gravity": 0.0,
-                            "is_static": false,
-                            "mass": 1.0
-                        }
-                    },
-                    {
-                        "name": "Scale",
-                        "variables": [
-                            {
-                                "field_type": "Node*",
-                                "name": "secondScale",
-                                "value": "right_platform"
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "moveHorizontally",
-                                "value": false
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "returnToPosition",
-                                "value": true
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "setStartPos",
-                                "value": false
-                            }
-                        ]
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 5,
-                "name": "left_platform",
-                "no_textures": false,
-                "position": {
-                    "x": -17.0,
-                    "y": 7.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 4.0,
-                    "y": 1.0,
-                    "z": 2.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
                 "children": [
                     {
                         "components": [
@@ -269,9 +90,9 @@
                     "z": 0.0
                 },
                 "rotation": {
-                    "w": -0.8321535587310791,
+                    "w": 0.21636535227298737,
                     "x": 0.0,
-                    "y": -0.5530821084976196,
+                    "y": -0.9754613041877747,
                     "z": 0.0
                 },
                 "scale": {
@@ -346,7 +167,284 @@
                 },
                 "scale": {
                     "x": 2.0,
-                    "y": 0.800000011920929,
+                    "y": 0.4000000059604645,
+                    "z": 2.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": 0.0,
+                            "is_static": false,
+                            "mass": 1.0
+                        }
+                    },
+                    {
+                        "name": "Scale",
+                        "variables": [
+                            {
+                                "field_type": "Node*",
+                                "name": "secondScale",
+                                "value": "right_platform"
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "moveHorizontally",
+                                "value": false
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "returnToPosition",
+                                "value": true
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "setStartPos",
+                                "value": false
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 5,
+                "name": "left_platform",
+                "no_textures": false,
+                "position": {
+                    "x": -17.0,
+                    "y": 7.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 4.0,
+                    "y": 1.0,
+                    "z": 2.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": -25.0,
+                            "is_static": false,
+                            "mass": 100.0
+                        }
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 7,
+                "name": "box",
+                "no_textures": false,
+                "position": {
+                    "x": 6.841428756713867,
+                    "y": 1104.0745849609375,
+                    "z": 2.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.5,
+                    "y": 1.5,
+                    "z": 1.0
+                },
+                "tag": "Box",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "PlayerController",
+                        "variables": [
+                            {
+                                "field_type": "float",
+                                "name": "speed",
+                                "value": 10.0
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "jumpForce",
+                                "value": 17.0
+                            },
+                            {
+                                "field_type": "Node*",
+                                "name": "doors",
+                                "value": "null"
+                            },
+                            {
+                                "field_type": "int",
+                                "name": "id",
+                                "value": 0
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "isGravityFlipped",
+                                "value": false
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": -32.0,
+                            "is_static": false,
+                            "mass": 1.0
+                        }
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 7,
+                "name": "player",
+                "no_textures": false,
+                "position": {
+                    "x": -12.095464706420898,
+                    "y": 1201.81787109375,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 2.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Player",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 4,
+                "name": "door",
+                "no_textures": false,
+                "position": {
+                    "x": 12.5,
+                    "y": 2.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 3.0,
                     "z": 2.0
                 },
                 "tag": "Default",
@@ -431,9 +529,9 @@
                     "z": 0.0
                 },
                 "rotation": {
-                    "w": -0.985977053642273,
+                    "w": -0.5059625506401062,
                     "x": 0.0,
-                    "y": 0.16182036697864532,
+                    "y": -0.8615767955780029,
                     "z": 0.0
                 },
                 "scale": {
@@ -442,64 +540,6 @@
                     "z": 1.0
                 },
                 "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "components": [
-                    {
-                        "name": "Rigidbody",
-                        "properties": {
-                            "gravity": -25.0,
-                            "is_static": false,
-                            "mass": 100.0
-                        }
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 7,
-                "name": "box",
-                "no_textures": false,
-                "position": {
-                    "x": 0.0,
-                    "y": 1.248992681503296,
-                    "z": 0.5000004768371582
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.5,
-                    "y": 1.5,
-                    "z": 1.0
-                },
-                "tag": "Box",
                 "type": "Node"
             },
             {
@@ -593,57 +633,17 @@
                     "y": -0.5,
                     "z": -0.5
                 },
-                "components": [
-                    {
-                        "name": "PlayerController",
-                        "variables": [
-                            {
-                                "field_type": "float",
-                                "name": "speed",
-                                "value": 10.0
-                            },
-                            {
-                                "field_type": "float",
-                                "name": "jumpForce",
-                                "value": 17.0
-                            },
-                            {
-                                "field_type": "Node*",
-                                "name": "doors",
-                                "value": "null"
-                            },
-                            {
-                                "field_type": "int",
-                                "name": "id",
-                                "value": 0
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "isGravityFlipped",
-                                "value": false
-                            }
-                        ]
-                    },
-                    {
-                        "name": "Rigidbody",
-                        "properties": {
-                            "gravity": -32.0,
-                            "is_static": false,
-                            "mass": 1.0
-                        }
-                    }
-                ],
                 "id": 0,
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Default",
-                "model.id": 7,
-                "name": "player",
+                "layer": "Floor",
+                "model.id": 5,
+                "name": "right_platform",
                 "no_textures": false,
                 "position": {
-                    "x": -10.480578422546387,
-                    "y": 4.998710632324219,
+                    "x": -22.0,
+                    "y": 7.0,
                     "z": 0.0
                 },
                 "rotation": {
@@ -653,11 +653,11 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 2.0,
+                    "x": 4.0,
                     "y": 1.0,
-                    "z": 1.0
+                    "z": 2.0
                 },
-                "tag": "Player",
+                "tag": "Default",
                 "type": "Node"
             },
             {
