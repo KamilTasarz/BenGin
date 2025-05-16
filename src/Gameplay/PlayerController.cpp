@@ -36,7 +36,7 @@ void PlayerController::onUpdate(float deltaTime)
 
 		if (isGrounded) {
 			{
-				rb->velocityY = jumpForce;
+				isGravityFlipped ? rb->velocityY = -jumpForce : jumpForce;
 				isGrounded = false;
 				isJumping = true;
 			}
@@ -62,7 +62,7 @@ void PlayerController::onStayCollision(Node* other)
 
 	if (other->getLayerName() == "Floor") {
 		isGrounded = true;
-		velocityY = 0.f;
+		//velocityY = 0.f;
 	}
 	else {
 		isGrounded = false;
@@ -82,9 +82,9 @@ void PlayerController::onExitCollision(Node* other)
 	}
 }
 
-void PlayerController::Jump()
-{
-	velocityY = jumpForce;
-	isGrounded = false;
-	isJumping = true;
-}
+//void PlayerController::Jump()
+//{
+//	velocityY = jumpForce;
+//	isGrounded = false;
+//	isJumping = true;
+//}

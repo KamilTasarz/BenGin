@@ -98,7 +98,7 @@ void PhysicsSystem::updateCollisions()
 					}
 				}
 
-				if (first) {
+				if (first && !collider2->is_logic) {
 					float sep = 1.f;
 					if (second) {
 						sep = 0.5f;

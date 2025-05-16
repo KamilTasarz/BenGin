@@ -11,16 +11,17 @@ public:
 	VARIABLE(Node*, secondScale);
 	//VARIABLE(Node*, leftPin);
 	//VARIABLE(Node*, rightPin);
-	//VARIABLE(bool, moveHorizontally);
-	//VARIABLE(bool, returnToPosition);
+	VARIABLE(bool, moveHorizontally);
+	VARIABLE(bool, returnToPosition);
+	VARIABLE(bool, setStartPos);
 
 	Rigidbody* rb;
 	glm::vec3 startPos1;
 	glm::vec3 startPos2;
 	bool isPlayerOn = false;
 	float timer = 0.f;
-	bool moveHorizontally = false;
-	bool returnToPosition = true;
+	//bool moveHorizontally = false;
+	//bool returnToPosition = true;
 
 
 	Scale() = default;
@@ -38,9 +39,10 @@ public:
 		static Variable secondScaleVar = getField_secondScale();
 		//static Variable leftPinVar = getField_leftPin();
 		//static Variable rightPinVar = getField_rightPin();
-		//static Variable moveHorizontallyVar = getField_moveHorizontally();
-		//static Variable returnToPositionVar = getField_returnToPosition();
-		return { &secondScaleVar, /*&leftPinVar, &rightPinVar , &moveHorizontallyVar, &returnToPositionVar */ };
+		static Variable moveHorizontallyVar = getField_moveHorizontally();
+		static Variable returnToPositionVar = getField_returnToPosition();
+		static Variable setStartPosVar = getField_setStartPos();
+		return { &secondScaleVar, /*&leftPinVar, &rightPinVar,*/  &moveHorizontallyVar, &returnToPositionVar, &setStartPosVar };
 	}
 };
 

@@ -1,6 +1,8 @@
 #include "Virus.h"
 #include "../Basic/Node.h"
 #include "RegisterScript.h"
+#include "PlayerController.h"
+#include "../System/Rigidbody.h"
 
 REGISTER_SCRIPT(Virus);
 
@@ -39,8 +41,10 @@ void Virus::onEnd()
 
 void Virus::onCollisionLogic(Node* other)
 {
-	std::cout << "Ser podniesiony - " << owner->name << std::endl;
-	ApplyEffect(other);
+	if (other->getTagName() == "Player") {
+		std::cout << "Ser podniesiony - " << owner->name << std::endl;
+		ApplyEffect(other);
+	}
 }
 
 void Virus::ApplyEffect(Node* target)
@@ -53,15 +57,23 @@ void Virus::ApplyEffect(Node* target)
 
 void Virus::VirusEffect(Node* target)
 {
-	if (type == virusType::BLUE) {
+	PlayerController* player = target->getComponent<PlayerController>();
+
+	if (/*type == "blue"*/ blue) {
 		// Apply blue virus effect
 		target->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+
+		player->isGravityFlipped = false;
+		target->getComponent<Rigidbody>()->gravity = -25.f;
 	}
-	else if (type == virusType::GREEN) {
+	else if (/*type == "green"*/ green) {
 		// Apply green virus effect
 		target->changeColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+		player->isGravityFlipped = true;
+		target->getComponent<Rigidbody>()->gravity = 25.f;
 	}
-	else if (type == virusType::BLACK) {
+	else if (/*type == "black"*/ black) {
 		// Apply black virus effect
 		target->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}

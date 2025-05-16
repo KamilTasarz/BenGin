@@ -29,14 +29,21 @@ void Scale::onStart()
 
 	startPos1 = owner->transform.getLocalPosition();
 	startPos2 = secondScale->transform.getLocalPosition();
-	//returnToPosition = true;
-	//moveHorizontally = false;
+	returnToPosition = true;
+	moveHorizontally = false;
+	isPlayerOn = false;
 }
 
 void Scale::onUpdate(float deltaTime)
 {
 	if (secondScale == NULL) return;
 	else if (startPos2 == glm::vec3(0.f)) startPos2 = secondScale->transform.getLocalPosition();
+
+	if (setStartPos) {
+		startPos1 = owner->transform.getLocalPosition();
+		startPos2 = secondScale->transform.getLocalPosition();
+		setStartPos = false;
+	}
 
 	if (!isPlayerOn && !moveHorizontally && returnToPosition) {
 		glm::vec3 position1 = owner->transform.getLocalPosition();
@@ -56,7 +63,7 @@ void Scale::onUpdate(float deltaTime)
 
 			secondScale->transform.setLocalPosition(startPos2 + glm::vec3(offset, 0.f, 0.f));
 		}
-		else {
+		else if (isPlayerOn) {
 			owner->getComponent<Rigidbody>()->velocityY = 0.f;
 
 			glm::vec3 position1 = owner->transform.getLocalPosition();
@@ -75,6 +82,8 @@ void Scale::onUpdate(float deltaTime)
 			isPlayerOn = false;
 		}
 	}
+
+
 
 	// draw line between pins and platforms
 	//glm::vec3 leftPinPos = leftPin->transform.getLocalPosition();
@@ -99,6 +108,6 @@ void Scale::onStayCollision(Node* other)
 void Scale::onExitCollision(Node* other)
 {
 	if (other->getTagName() == "Player") {
-		timer = 0.2f;
+		timer = 0.1f;
 	}
 }

@@ -13,12 +13,14 @@ public:
     VARIABLE(Node*, doors);
     VARIABLE(Node*, mouse);
     VARIABLE(int, id);
+	VARIABLE(bool, isGravityFlipped);
     
-	float velocityX = 0.0f;
-    float velocityY = 0.0f;
-    float gravity = -20.f;
+	//float velocityX = 0.0f;
+    //float velocityY = 0.0f;
+    //float gravity = -20.f;
 	bool isGrounded = false;
     bool isJumping = false;
+    //bool isGravityFlipped = false;
 
 
     PlayerController() = default;
@@ -45,8 +47,9 @@ public:
         static Variable jumpForceVar = getField_jumpForce();
         static Variable doorsVar = getField_doors();
         static Variable idVar = getField_id();
+		static Variable isGravityFlippedVar = getField_isGravityFlipped();
 
-        return { &speedVar, &jumpForceVar, &doorsVar, &idVar };
+        return { &speedVar, &jumpForceVar, &doorsVar, &idVar, &isGravityFlippedVar };
     }
 };
 
