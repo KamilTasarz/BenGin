@@ -266,7 +266,7 @@ json save_node(Node* node) {
 	return j;
 }
 
-int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vector<BoundingBox*>& colliders) {
+int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::shared_ptr<Prefab>>& prefabs) {
 
 	std::ifstream file(filename);
 	if (!file) {
@@ -320,7 +320,7 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 
 	scene = new SceneGraph();
 
-	load_node(sceneData["scene"], colliders, prefabs, scene);
+	load_node(sceneData["scene"], prefabs, scene);
 
 	loadComponents(sceneData["scene"], scene->root, scene);
 
@@ -353,7 +353,7 @@ std::shared_ptr<Prefab> getPrefab(std::vector<std::shared_ptr<Prefab>>& prefabs,
 	return nullptr;
 }
 
-Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::shared_ptr<Prefab>>& prefabs, SceneGraph*& scene) {
+Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, SceneGraph*& scene) {
 	Node* node = nullptr;
 
 
@@ -381,7 +381,7 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 		scene->root->is_visible = is_visible;
 		for (json j : j["children"]) {
 
-			Node* child = load_node(j, colliders, prefabs, scene);
+			Node* child = load_node(j, prefabs, scene);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
 				scene->addPointLight(point_light);
@@ -410,7 +410,7 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 					node = new Node(model, name, id);
 				}
 				else {
-					node = new Node(model, name, colliders, id);
+					node = new Node(model, name, id);
 				}
 			}
 			else {
@@ -460,7 +460,7 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 			std::string prefab_name = j["prefab_instance"]["prefab_name"];
 			std::shared_ptr<Prefab> prefab = getPrefab(prefabs, prefab_name);
 			if (prefab) {
-				node = new PrefabInstance(prefab, colliders, scene);
+				node = new PrefabInstance(prefab, scene);
 			}
 
 		}
@@ -539,7 +539,7 @@ Node* load_node(json& j, std::vector<BoundingBox*>& colliders, std::vector<std::
 
 		// Rekurencyjnie zapisujemy dzieci
 		for (json _j : j["children"]) {
-			Node* child = load_node(_j, colliders, prefabs, scene);
+			Node* child = load_node(_j, prefabs, scene);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
 				//scene->addPointLight(point_light, node->name);

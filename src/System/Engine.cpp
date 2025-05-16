@@ -6,7 +6,7 @@
 #include "../System/Serialization.h"
 #include "../ResourceManager.h"
 #include "../Component/CameraGlobals.h"
-
+#include "PrefabRegistry.h"
 
 
 
@@ -22,6 +22,8 @@ void Engine::init()
 
 	loadTagLayers();
 	loadPrefabs(prefabs);
+
+	PrefabRegistry::Init(&prefabs);
 
 	game = new Game(prefabs);
 	//game->init();

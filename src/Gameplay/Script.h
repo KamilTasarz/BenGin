@@ -2,6 +2,7 @@
 
 #include "../System/Component.h"
 #include "../System/ServiceLocator.h"
+#include "../System/PrefabRegistry.h"
 
 struct Variable
 {

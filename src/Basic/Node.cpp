@@ -749,6 +749,18 @@ void Node::updateComponents(float deltaTime) {
     }
 }
 
+void Node::createComponents()
+{
+   
+    for (auto& component : components) {
+        component->onStart();
+    }
+
+    for (auto& child : children) {
+        child->createComponents();
+    }
+}
+
 void Node::drawShadows(Shader& shader) {
     if (pModel && in_frustrum) {
 
@@ -781,7 +793,7 @@ Node::Node(std::string nameOfNode, int _id) {
     tag = TagLayerManager::Instance().getTag("Default");
 }
 
-Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id, glm::vec3 min_point, glm::vec3 max_point) : pModel{ model } {
+Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::vec3 min_point, glm::vec3 max_point) : pModel{ model } {
     name = nameOfNode;
     id = _id;
     no_textures = false;
@@ -802,31 +814,31 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<Bou
     AABB_logic->is_logic = true;
 
     //this->no_textures = no_textures;
-    vector_of_colliders.push_back(AABB);
+    
 }
 
-Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::vec3 min_point, glm::vec3 max_point) : pModel{ model } {
-    name = nameOfNode;
-    id = _id;
-    no_textures = false;
-
-    if (model && model->mode == "plane") {
-        max_point = glm::vec3(0.5f, 0.0f, 0.5f);
-        min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
-
-    }
-
-    layer = TagLayerManager::Instance().getLayer("Default");
-    tag = TagLayerManager::Instance().getTag("Default");
-
-    if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), this, model->min_points, model->max_points);
-    else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);
-
-    AABB_logic = AABB->clone(this);
-    AABB_logic->is_logic = true;
-
-    //this->no_textures = no_textures;
-}
+//Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::vec3 min_point, glm::vec3 max_point) : pModel{ model } {
+//    name = nameOfNode;
+//    id = _id;
+//    no_textures = false;
+//
+//    if (model && model->mode == "plane") {
+//        max_point = glm::vec3(0.5f, 0.0f, 0.5f);
+//        min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
+//
+//    }
+//
+//    layer = TagLayerManager::Instance().getLayer("Default");
+//    tag = TagLayerManager::Instance().getTag("Default");
+//
+//    if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), this, model->min_points, model->max_points);
+//    else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);
+//
+//    AABB_logic = AABB->clone(this);
+//    AABB_logic->is_logic = true;
+//
+//    //this->no_textures = no_textures;
+//}
 
 Node::~Node()
 {
@@ -987,7 +999,7 @@ void InstanceManager::updateBuffer(Node* p) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders, SceneGraph* _scene_graph)
+PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph)
     : Node(prefab->prefab_scene_graph->root->name + "_inst") {
     this->prefab = prefab;
     AABB = new BoundingBox(transform.getModelMatrix(), this);
@@ -997,7 +1009,7 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<Bound
     prefab->prefab_instances.push_back(this);
 
     set_prefab_colliders(prefab->prefab_scene_graph->root);
-    colliders.push_back(AABB);
+    
     //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
@@ -1059,6 +1071,12 @@ void PrefabInstance::updateComponents(float deltaTime)
     if (in_frustrum && prefab_root) {
 		prefab_root->updateComponents(deltaTime);
     }
+}
+void PrefabInstance::createComponents()
+{
+	if (in_frustrum && prefab_root) {
+		prefab_root->createComponents();
+	}
 }
 void PrefabInstance::forceUpdateSelfAndChild()
 {
