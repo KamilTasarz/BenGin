@@ -39,7 +39,7 @@ void Virus::onEnd()
 {
 }
 
-void Virus::onCollisionLogic(Node* other)
+void Virus::onCollision(Node* other)
 {
 	if (other->getTagName() == "Player") {
 		std::cout << "Ser podniesiony - " << owner->name << std::endl;
