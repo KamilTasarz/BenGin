@@ -16,7 +16,7 @@
 class ServiceLocator {
 
 public:
-
+	
 	static inline InputManager* getInputManager() { return _input_manager.get(); }
 	static inline Window* getWindow() { return _window.get(); }
 	//static inline PhysicsSystem* getPhysicsSystem() { return _system.get(); }

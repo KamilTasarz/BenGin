@@ -30,6 +30,7 @@ private:
 	void draw();
 	void update(float deltaTime);
 public:
+	bool play = true;
 	Game(std::vector<std::shared_ptr<Prefab>>& prefabsref);
 
 	void init();

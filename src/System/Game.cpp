@@ -13,6 +13,14 @@ void Game::input()
     if (ServiceLocator::getInputManager()) {
         ServiceLocator::getInputManager()->processInput();
     }
+
+    auto* window = ServiceLocator::getWindow();
+
+    if (glfwGetKey(window->window, GLFW_KEY_TAB) == GLFW_PRESS) {
+        //engine_work = false;
+        //glfwSetWindowShouldClose(window->window, true);
+        play = false;
+    }
 }
 void Game::draw()
 {
@@ -88,10 +96,10 @@ void Game::init()
 	sceneGraph->is_editing = false;
 
 	camera->Pitch = 0.0f;
-	camera->Yaw = 90.0f;
+	camera->Yaw = -90.0f;
 	camera->setPosition(glm::vec3(0.f, 0.f, 0.f));
     glm::vec3 origin = glm::vec3(0.f);
-	camera->setObjectToFollow(sceneGraph->root, origin);
+	camera->setObjectToFollow(sceneGraph->root->getChildByName("player"), origin);
 	camera->changeMode(FOLLOWING);
 	
 
@@ -152,11 +160,15 @@ void Game::run()
 {
 	if (!is_initialized)
 		init();
-	while (!glfwWindowShouldClose(ServiceLocator::getWindow()->window)) {
+	while (!glfwWindowShouldClose(ServiceLocator::getWindow()->window) && play) {
         
         GLfloat currentFrame = glfwGetTime();
         ServiceLocator::getWindow()->deltaTime = currentFrame - ServiceLocator::getWindow()->lastFrame;
         ServiceLocator::getWindow()->lastFrame = currentFrame;
+
+        if (ServiceLocator::getWindow()->deltaTime > 0.25f) {
+            ServiceLocator::getWindow()->deltaTime = 0.0f;
+        }
 
         input();
         update(ServiceLocator::getWindow()->deltaTime);
@@ -165,11 +177,13 @@ void Game::run()
         ServiceLocator::getWindow()->updateWindow();
 
 	}
+
+    if (glfwWindowShouldClose(ServiceLocator::getWindow()->window)) engine_work = false;
 }
 void Game::shutdown()
 {
     glDeleteTextures(1, &colorTexture);
     glDeleteRenderbuffers(1, &depthRenderbuffer);
     glDeleteFramebuffers(1, &framebuffer);
-    glfwTerminate();
+    //glfwTerminate();
 }

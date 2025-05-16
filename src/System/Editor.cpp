@@ -650,6 +650,11 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         sceneGraph->is_editing = !sceneGraph->is_editing;
     }
     ImGui::Separator();
+    if (ImGui::Button("PLAY", ImVec2(150, 24))) {
+        play = true;
+        //glfwSetWindowShouldClose(ServiceLocator::getWindow()->window, true);
+    }
+    ImGui::Separator();
     if (ImGui::Button("ADD_EMPTY_NODE", ImVec2(150, 24))) {
 		sceneGraph->addChild(new Node("empty_node"));
 		sceneGraph->marked_object = sceneGraph->root->getChildByName("entity");
@@ -1329,13 +1334,17 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
 void Editor::init()
 {
-	is_initialized = true;
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(ServiceLocator::getWindow()->window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+    is_initialized = true;
+    IMGUI_CHECKVERSION();                          // (1) wersja ImGui
+    ImGui::CreateContext();                        // (2) tworzy globalny kontekst
+    ImGuiIO& io = ImGui::GetIO(); (void)io;        // (3) dostęp do konfiguracji
+    ImGui::StyleColorsDark();                      // (4) styl
+
+    ImGui_ImplGlfw_InitForOpenGL(
+        ServiceLocator::getWindow()->window, true  // (5) backend platformy
+    );
+    ImGui_ImplOpenGL3_Init("#version 330");        // (6) backend renderera
+
 
     loadScene("res/scene/scene.json", editor_sceneGraph, prefabs, colliders);
 
@@ -1388,7 +1397,7 @@ void Editor::run() {
     if (!is_initialized) {
         init();
     }
-    while (!glfwWindowShouldClose(ServiceLocator::getWindow()->window)) {
+    while (!glfwWindowShouldClose(ServiceLocator::getWindow()->window) && !play) {
         
             sceneGraph = (scene_editor || prefabs.empty())
                 ? editor_sceneGraph
@@ -1399,7 +1408,7 @@ void Editor::run() {
             ServiceLocator::getWindow()->lastFrame = currentFrame;
 
             if (ServiceLocator::getWindow()->deltaTime > 0.25f) {
-                ServiceLocator::getWindow()->deltaTime = 0.0f; // lub pominąć update
+                ServiceLocator::getWindow()->deltaTime = 0.0f;
             }
 
             frames++;
@@ -1418,6 +1427,7 @@ void Editor::run() {
         
 
     }
+    if (glfwWindowShouldClose(ServiceLocator::getWindow()->window)) engine_work = false;
 }
 
 void Editor::shutdown()
@@ -1428,12 +1438,14 @@ void Editor::shutdown()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+
+
 	glDeleteTextures(1, &colorTexture);
 	glDeleteRenderbuffers(1, &depthRenderbuffer);
 	glDeleteFramebuffers(1, &framebuffer);
 	//audioEngine.Shutdown();
 	//audioEngine.Release();
-	glfwTerminate();
+	//glfwTerminate();
 }
 
 // private
@@ -1447,8 +1459,11 @@ void Editor::input()
 
     changeMouse(window->window);
 
-    if (glfwGetKey(window->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+
+    if (glfwGetKey(window->window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        engine_work = false;
         glfwSetWindowShouldClose(window->window, true);
+    }
 
     ServiceLocator::getWindow()->mouse_pressed = glfwGetMouseButton(window->window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS;
 
@@ -1529,8 +1544,7 @@ void Editor::update(float deltaTime) {
     // Kamera
     camera->ProcessKeyboard(deltaTime, direction);
 
-    PhysicsSystem::instance().updateColliders(sceneGraph);
-    PhysicsSystem::instance().updateCollisions();
+    
 
     // Scena
     sceneGraph->update(deltaTime);
