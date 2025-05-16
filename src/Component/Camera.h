@@ -101,6 +101,8 @@ public:
 
     void setObjectToFollow(Node* object, glm::vec3& origin);
 
+    void setOffsetToFollowingObject(glm::vec3& offset);
+
     void changeMode(CameraMode mode);
 	bool isInFrustrum(BoundingBox* AABB);
 };

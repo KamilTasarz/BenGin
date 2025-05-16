@@ -688,6 +688,9 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
 			ImGui::InputFloat("Mass", &mass);
 			ImGui::InputFloat("Gravity", &gravity);
 			ImGui::Checkbox("Static", &is_static);
+			ImGui::Checkbox("Lock Position X", &lockPositionX);
+			ImGui::Checkbox("Lock Position Y", &lockPositionY);
+			ImGui::Checkbox("Lock Position Z", &lockPositionZ);
 		}
 
 		if (ImGui::Button("ADD_COMPONENT", ImVec2(150, 24))) {
@@ -704,7 +707,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
                     sceneGraph->marked_object->addComponent(ScriptFactory::instance().create(scripts[current_script]));
 				}
                 else if (current_component == 1) {
-                    sceneGraph->marked_object->addComponent(std::make_unique<Rigidbody>(mass, gravity, is_static));
+                    sceneGraph->marked_object->addComponent(std::make_unique<Rigidbody>(mass, gravity, is_static, lockPositionX, lockPositionY, lockPositionZ));
                 }
             }
 			
@@ -1284,32 +1287,58 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                 }
                 else if (component->get()->name == "Rigidbody") {
 					Rigidbody* rb = dynamic_cast<Rigidbody*>(component->get());
-
-                    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-                    int depth = 10.f;
                     
+                    int depth = 10.f;
 
+                    // Mass
+                    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
                     ImVec2 fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
 
                     ImGui::SetCursorScreenPos(fieldPos);
-
 					ImGui::Text("Mass: ");
 					ImGui::SameLine();
 					ImGui::DragFloat("##mass", &rb->mass, 0.1f);
 
+                    // Gravity
                     cursorPos = ImGui::GetCursorScreenPos();
                     fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                    ImGui::SetCursorScreenPos(fieldPos);
 
+                    ImGui::SetCursorScreenPos(fieldPos);
 					ImGui::Text("Gravity: ");
 					ImGui::SameLine();
 					ImGui::DragFloat("##gravity", &rb->gravity, 0.1f);
+
+                    // Static
                     cursorPos = ImGui::GetCursorScreenPos();
                     fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
                     ImGui::SetCursorScreenPos(fieldPos);
 					ImGui::Text("Static: ");
 					ImGui::SameLine();
 					ImGui::Checkbox("##static", &rb->is_static);
+
+                    // Lock position X
+					cursorPos = ImGui::GetCursorScreenPos();
+					fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+					ImGui::SetCursorScreenPos(fieldPos);
+					ImGui::Text("Lock position X: ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##lockPositionX", &rb->lockPositionX);
+
+					// Lock position Y
+					cursorPos = ImGui::GetCursorScreenPos();
+					fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+					ImGui::SetCursorScreenPos(fieldPos);
+					ImGui::Text("Lock position Y: ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##lockPositionY", &rb->lockPositionY);
+
+					// Lock position Z
+					cursorPos = ImGui::GetCursorScreenPos();
+					fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+					ImGui::SetCursorScreenPos(fieldPos);
+					ImGui::Text("Lock position Z: ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##lockPositionZ", &rb->lockPositionZ);   
                 }
 
 

@@ -292,6 +292,8 @@ public:
 
     Node* getChildById(int id);
 
+	Node* getChildByTag(std::string tag);
+
     Node* clone(std::string instance_name, SceneGraph* new_scene_graph = nullptr);
 
     std::set<Node*> getAllChildren() {

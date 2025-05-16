@@ -25,6 +25,8 @@ void Scale::onDetach()
 
 void Scale::onStart()
 {
+	std::cout << "start szalek -----------------------------------------------------------" << std::endl;
+	
 	rb = owner->getComponent<Rigidbody>();
 
 	startPos1 = owner->transform.getLocalPosition();

@@ -139,6 +139,10 @@ void Camera::setObjectToFollow(Node* object, glm::vec3& origin)
 	origin_point = origin;
 }
 
+void Camera::setOffsetToFollowingObject(glm::vec3& offset) {
+    camera_following_offset = offset;
+}
+
 void Camera::changeMode(CameraMode mode)
 {
     if (this->mode == FRONT_ORTO) cameraPos = oldCameraPos;

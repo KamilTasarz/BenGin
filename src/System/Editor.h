@@ -40,7 +40,7 @@ private:
 	bool isHUD = false, isInPreview = false, pressed_add = false, scene_editor = true, is_initialized = false, AABB_changing = false;
 	glm::vec3* local_point;
 
-	bool isSnapped = false, is_static = true;
+	bool isSnapped = false, is_static = true, lockPositionX = false, lockPositionY = false, lockPositionZ = false;
 	glm::vec3 lastSnapOffset;
 	glm::vec3 snapedPosition;
 

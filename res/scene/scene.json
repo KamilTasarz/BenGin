@@ -1,12 +1,12 @@
 {
     "camera": {
-        "Pitch": -6.499868869781494,
-        "Yaw": -91.29981231689453,
+        "Pitch": -8.399860382080078,
+        "Yaw": -86.79975128173828,
         "mode": 2,
         "position": {
-            "x": -1.6868925094604492,
-            "y": 10.860639572143555,
-            "z": 32.2694206237793
+            "x": -12.797039985656738,
+            "y": 10.466217994689941,
+            "z": 28.954177856445313
         }
     },
     "scene": {
@@ -81,76 +81,6 @@
                 },
                 "tag": "Default",
                 "type": "DirectionalLight"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 25.0,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "components": [
-                    {
-                        "name": "Fan",
-                        "variables": [
-                            {
-                                "field_type": "float",
-                                "name": "verticalPower",
-                                "value": 0.699999988079071
-                            },
-                            {
-                                "field_type": "float",
-                                "name": "horizontalPower",
-                                "value": 0.0
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "isActive",
-                                "value": false
-                            }
-                        ]
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": true,
-                "is_physic_active": false,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 3,
-                "name": "fan",
-                "no_textures": false,
-                "position": {
-                    "x": 19.0,
-                    "y": 0.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 5.0,
-                    "y": 0.30000001192092896,
-                    "z": 2.9000000953674316
-                },
-                "tag": "Default",
-                "type": "Node"
             },
             {
                 "AABB_logic_max": {
@@ -243,27 +173,17 @@
                     "y": -0.5,
                     "z": -0.5
                 },
-                "components": [
-                    {
-                        "name": "Rigidbody",
-                        "properties": {
-                            "gravity": -25.0,
-                            "is_static": false,
-                            "mass": 100.0
-                        }
-                    }
-                ],
                 "id": 0,
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
                 "layer": "Floor",
-                "model.id": 7,
-                "name": "box",
+                "model.id": 5,
+                "name": "right_platform",
                 "no_textures": false,
                 "position": {
-                    "x": -5.658571243286133,
-                    "y": 1.0,
+                    "x": -22.0,
+                    "y": 8.0,
                     "z": 0.0
                 },
                 "rotation": {
@@ -273,11 +193,59 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 1.5,
-                    "y": 1.5,
-                    "z": 1.0
+                    "x": 4.0,
+                    "y": 1.0,
+                    "z": 2.0
                 },
-                "tag": "Box",
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 4,
+                "name": "door",
+                "no_textures": false,
+                "position": {
+                    "x": 12.5,
+                    "y": 2.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 3.0,
+                    "z": 2.0
+                },
+                "tag": "Default",
                 "type": "Node"
             },
             {
@@ -366,54 +334,6 @@
                     "z": 1.0
                 },
                 "tag": "Player",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 5,
-                "name": "right_platform",
-                "no_textures": false,
-                "position": {
-                    "x": -22.0,
-                    "y": 7.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 4.0,
-                    "y": 1.0,
-                    "z": 2.0
-                },
-                "tag": "Default",
                 "type": "Node"
             },
             {
@@ -531,14 +451,6 @@
                 },
                 "components": [
                     {
-                        "name": "Rigidbody",
-                        "properties": {
-                            "gravity": 0.0,
-                            "is_static": false,
-                            "mass": 1.0
-                        }
-                    },
-                    {
                         "name": "Scale",
                         "variables": [
                             {
@@ -562,6 +474,14 @@
                                 "value": false
                             }
                         ]
+                    },
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": 0.0,
+                            "is_static": false,
+                            "mass": 1.0
+                        }
                     }
                 ],
                 "id": 0,
@@ -574,7 +494,7 @@
                 "no_textures": false,
                 "position": {
                     "x": -17.0,
-                    "y": 7.0,
+                    "y": 5.5,
                     "z": 0.0
                 },
                 "rotation": {
@@ -586,54 +506,6 @@
                 "scale": {
                     "x": 4.0,
                     "y": 1.0,
-                    "z": 2.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 4,
-                "name": "door",
-                "no_textures": false,
-                "position": {
-                    "x": 12.5,
-                    "y": 2.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 3.0,
                     "z": 2.0
                 },
                 "tag": "Default",
@@ -721,6 +593,189 @@
                     "w": 0.21636535227298737,
                     "x": 0.0,
                     "y": -0.9754613041877747,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 25.0,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "Fan",
+                        "variables": [
+                            {
+                                "field_type": "float",
+                                "name": "verticalPower",
+                                "value": 0.699999988079071
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "horizontalPower",
+                                "value": 0.0
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "isActive",
+                                "value": false
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": true,
+                "is_physic_active": false,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 3,
+                "name": "fan",
+                "no_textures": false,
+                "position": {
+                    "x": 19.0,
+                    "y": 0.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 5.0,
+                    "y": 0.30000001192092896,
+                    "z": 2.9000000953674316
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": -25.0,
+                            "is_static": false,
+                            "mass": 100.0
+                        }
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 7,
+                "name": "box",
+                "no_textures": false,
+                "position": {
+                    "x": -5.658571243286133,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.5,
+                    "y": 1.5,
+                    "z": 1.0
+                },
+                "tag": "Box",
+                "type": "Node"
+            },
+            {
+                "components": [
+                    {
+                        "name": "CameraFollow",
+                        "variables": [
+                            {
+                                "field_type": "Node*",
+                                "name": "player",
+                                "value": "null"
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "offsetY",
+                                "value": 3.0
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "offsetZ",
+                                "value": 25.0
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "smoothing",
+                                "value": 6.0
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": false,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "camera_follow",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
                     "z": 0.0
                 },
                 "scale": {

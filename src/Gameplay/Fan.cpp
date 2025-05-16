@@ -27,10 +27,10 @@ void Fan::onUpdate(float deltaTime)
 {
 	// Update the fan state
 	if (isActive) {
-		std::cout << "Fan is active" << std::endl;
+		//std::cout << "Fan is active" << std::endl;
 	}
 	else {
-		std::cout << "Fan is inactive" << std::endl;
+		//std::cout << "Fan is inactive" << std::endl;
 	}
 }
 

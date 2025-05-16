@@ -384,6 +384,20 @@ Node* Node::getChildById(int id) {
     return nullptr;
 }
 
+Node* Node::getChildByTag(std::string tag) {
+	for (auto child : children) {
+		if (child->getTagName() == tag) {
+			return child;
+		}
+		// Checks the children of the first level recursively
+		Node* foundChild = child->getChildByTag(tag);
+		if (foundChild != nullptr) {
+			return foundChild;
+		}
+	}
+	return nullptr;
+}
+
 Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
 
     Node* copy = nullptr;
