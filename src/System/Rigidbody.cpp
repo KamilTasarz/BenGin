@@ -65,6 +65,8 @@ void Rigidbody::onUpdate(float deltaTime)
 	if (lockPositionZ) position.z = startPos.z;
 
     owner->transform.setLocalPosition(position);
+
+	overrideVelocityY = false;
 }
 
 // collission with another rigidbody
@@ -101,7 +103,9 @@ void Rigidbody::onCollision(Node* other)
 void Rigidbody::onStayCollision(Node* other)
 {
     if (other->getLayerName() == "Floor") {
-        velocityY = 0.f;
+		if (!overrideVelocityY) {
+			velocityY = 0.f;
+		}
     }
 }
 

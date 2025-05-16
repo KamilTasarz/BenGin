@@ -10,6 +10,7 @@ public:
 	float targetVelocityX;
 	float velocityY;
 	float targetVelocityY;
+	bool overrideVelocityY = false;
 
 	float mass;
 	float gravity;

@@ -40,6 +40,7 @@ void Fan::onStayCollisionLogic(Node* other)
 		//std::cout << "Fan is active - " << owner->name << std::endl;
 		Rigidbody* rb = other->getComponent<Rigidbody>();
 		if (rb) {
+			rb->overrideVelocityY = true;
 			rb->velocityX += horizontalPower;
 			rb->velocityY += verticalPower;
 		}
