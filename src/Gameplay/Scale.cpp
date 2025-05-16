@@ -29,9 +29,9 @@ void Scale::onStart()
 
 	startPos1 = owner->transform.getLocalPosition();
 	startPos2 = secondScale->transform.getLocalPosition();
-	returnToPosition = true;
+	/*returnToPosition = true;
 	moveHorizontally = false;
-	isPlayerOn = false;
+	isPlayerOn = false;*/
 }
 
 void Scale::onUpdate(float deltaTime)

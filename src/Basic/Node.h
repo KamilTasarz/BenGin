@@ -321,6 +321,15 @@ public:
         }
     }
 
+	void setActive(bool active) {
+		is_visible = active;
+		is_physic_active = active;
+
+		for (auto& child : children) {
+			child->setActive(active);
+		}
+	}
+
     void mark(Ray rayWorld, float& marked_depth);
 
     // Forcing an update of self and children even if there were no changes

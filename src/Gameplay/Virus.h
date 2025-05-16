@@ -33,7 +33,7 @@ public:
 	//void onStayCollision(Node* other) override;
 	//void onExitCollision(Node* other) override;
 
-	void onCollision(Node* other) override;
+	void onCollisionLogic(Node* other) override;
 	//void onStayCollisionLogic(Node* other) override;
 	//void onExitCollisionLogic(Node* other) override;
 

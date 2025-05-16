@@ -13,14 +13,18 @@ void PlayerController::onAttach(Node* owner)
 	this->owner = owner;
 	std::cout << "PlayerController::onAttach::" << owner->name << std::endl;
 }
+
 void PlayerController::onDetach()
 {
 	std::cout << "PlayerController::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
+
 void PlayerController::onStart()
 {
+	isGravityFlipped = false;
 }
+
 void PlayerController::onUpdate(float deltaTime)
 {
 	glm::vec3 position = owner->transform.getLocalPosition();
@@ -36,7 +40,10 @@ void PlayerController::onUpdate(float deltaTime)
 
 		if (isGrounded) {
 			{
-				isGravityFlipped ? rb->velocityY = -jumpForce : jumpForce;
+				//isGravityFlipped ? rb->velocityY = -jumpForce : jumpForce;
+				if (isGravityFlipped) rb->velocityY = -jumpForce;
+				else rb->velocityY = jumpForce;
+
 				isGrounded = false;
 				isJumping = true;
 			}
@@ -60,7 +67,7 @@ void PlayerController::onStayCollision(Node* other)
 {
 	//std::cout << "Gracz koliduje z podloga" << std::endl;
 
-	if (other->getLayerName() == "Floor") {
+	if (other->getLayerName() == "Floor" || other->getLayerName() == "Button") {
 		isGrounded = true;
 		//velocityY = 0.f;
 	}
@@ -69,7 +76,7 @@ void PlayerController::onStayCollision(Node* other)
 	}
 
 	if (other->getTagName() == "Wall") {
-		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 0.5f, 0.f));
+		//owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 0.5f, 0.f));
 	}
 }
 

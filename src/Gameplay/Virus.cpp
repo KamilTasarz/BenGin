@@ -24,7 +24,7 @@ void Virus::onStart()
 
 void Virus::onUpdate(float deltaTime)
 {
-	glm::vec3 position = owner->transform.getLocalPosition();
+	/*glm::vec3 position = owner->transform.getLocalPosition();
 	glm::quat rotation = owner->transform.getLocalRotation();
 
 	float rotationSpeed = 1.f;
@@ -32,14 +32,14 @@ void Virus::onUpdate(float deltaTime)
 
 	rotation = glm::rotate(rotation, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
 	
-	owner->transform.setLocalRotation(rotation);
+	owner->transform.setLocalRotation(rotation);*/
 }
 
 void Virus::onEnd()
 {
 }
 
-void Virus::onCollision(Node* other)
+void Virus::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
 		std::cout << "Ser podniesiony - " << owner->name << std::endl;
@@ -64,14 +64,14 @@ void Virus::VirusEffect(Node* target)
 		target->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 		player->isGravityFlipped = false;
-		target->getComponent<Rigidbody>()->gravity = -25.f;
+		target->getComponent<Rigidbody>()->gravity = -32.f;
 	}
 	else if (/*type == "green"*/ green) {
 		// Apply green virus effect
 		target->changeColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		player->isGravityFlipped = true;
-		target->getComponent<Rigidbody>()->gravity = 25.f;
+		target->getComponent<Rigidbody>()->gravity = 32.f;
 	}
 	else if (/*type == "black"*/ black) {
 		// Apply black virus effect
