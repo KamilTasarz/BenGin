@@ -210,7 +210,7 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
 
 void SceneGraph::update(float delta_time) {
     
-    //if (is_editing)
+    if (!is_editing)
         root->updateComponents(delta_time);
     root->updateSelfAndChild(false);
 }
@@ -419,6 +419,9 @@ Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
         copy->in_frustrum = this->in_frustrum;
         copy->is_marked = this->is_marked;
         copy->no_textures = this->no_textures;
+		copy->is_physic_active = this->is_physic_active;
+		copy->is_logic_active = this->is_logic_active;
+        
 
         // Layer i Tag — kopiujemy weak_ptr
         copy->layer = this->layer;
@@ -493,10 +496,10 @@ void Node::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<B
         in_frustrum = camera->isInFrustrum(AABB);
         if (in_frustrum) {
 			if (is_physic_active) colliders.push_back(AABB);
-            if (is_logic_active) colliders.push_back(AABB_logic);
+            if (is_logic_active && AABB_logic) colliders.push_back(AABB_logic);
             if (has_RB) {
                 if (is_physic_active) colliders_RB.push_back(AABB);
-                if (is_logic_active) colliders_RB.push_back(AABB_logic);
+                if (is_logic_active && AABB_logic) colliders_RB.push_back(AABB_logic);
             }
         }
     }

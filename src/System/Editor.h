@@ -61,6 +61,8 @@ private:
 	void update(float deltaTime);
 
 public:
+
+	bool play = false;
 	Editor(std::vector<std::shared_ptr<Prefab>>& prefabsref);
 
 	void changeMouse(GLFWwindow* window);

@@ -7,6 +7,10 @@
 #include "../ResourceManager.h"
 #include "../Component/CameraGlobals.h"
 
+
+
+
+
 void Engine::init()
 {
 	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.1.2");
@@ -20,25 +24,37 @@ void Engine::init()
 	loadPrefabs(prefabs);
 
 	game = new Game(prefabs);
-	game->init();
+	//game->init();
 
 	editor = new Editor(prefabs);
-	editor->init();
+	//editor->init();
 
 	camera->setAABB();
 }
 
 void Engine::run()
 {
-	editor->run();
+	do {
+		editor->play = false;
+		editor->init();
+		editor->run();
+		editor->shutdown();
+		
+		game->play = true;
+		if (!engine_work) break;
+		game->init();
+		game->run();
+		game->shutdown();
+	} while (engine_work);
 }
 
 void Engine::shutdown()
 {
 
 	saveTagLayers();
-	editor->shutdown();
-	game->shutdown();
+	//editor->shutdown();
+	//game->shutdown();
+	//glfwTerminate();
 
 	ServiceLocator::shutdownServices();
 
