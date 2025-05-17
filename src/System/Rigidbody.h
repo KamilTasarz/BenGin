@@ -16,10 +16,13 @@ public:
 	float gravity;
 	bool is_static;
 	bool useGravity;
+	bool isGrounded;
 	bool lockPositionX;
 	bool lockPositionY;
 	bool lockPositionZ;
 	glm::vec3 startPos;
+
+	bool velocityYResetted = false;
 	
 
 	Rigidbody(float mass = 1.f, float gravity = 1.f, bool isStatic = false, bool useGravity = true, bool lockPositionX = false, bool lockPositionY = false, bool lockPositionZ = false);
@@ -28,7 +31,6 @@ public:
 	void onDetach() override;
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
-	void applyForce(glm::vec3 force);
 	void onCollision(Node* other) override;
 	void onStayCollision(Node* other) override;
 	void onExitCollision(Node* other) override;

@@ -36,7 +36,7 @@ void CameraFollow::onUpdate(float deltaTime)
 		camera->setOffsetToFollowingObject(offset);
 	}
 	else {
-		std::cout << "following player" << std::endl;
+		//std::cout << "following player" << std::endl;
 
 		glm::vec3 targetPosition = player->transform.getLocalPosition();
 		glm::vec3 currentPosition = owner->transform.getLocalPosition();

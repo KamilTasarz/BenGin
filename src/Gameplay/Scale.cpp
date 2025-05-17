@@ -73,7 +73,7 @@ void Scale::onUpdate(float deltaTime)
 			if (isPlayerHeavy) loweringSpeed = 2.f;
 
 			glm::vec3 position1 = owner->transform.getLocalPosition();
-			owner->transform.setLocalPosition(position1 - glm::vec3(0.f, 2.f * deltaTime, 0.f));
+			owner->transform.setLocalPosition(position1 - glm::vec3(0.f, loweringSpeed * deltaTime, 0.f));
 
 			float offset = startPos1.y - position1.y;
 

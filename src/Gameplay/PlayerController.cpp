@@ -39,15 +39,15 @@ void PlayerController::onUpdate(float deltaTime)
 
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-		std::cout << "Gracz probuje skoczyc" << std::endl;
+		//std::cout << "Gracz probuje skoczyc" << std::endl;
 
-		if (isGrounded) {
+		if (rb->isGrounded) {
 			{
 				//isGravityFlipped ? rb->velocityY = -jumpForce : jumpForce;
 				if (isGravityFlipped) rb->velocityY = -jumpForce;
 				else rb->velocityY = jumpForce;
 
-				isGrounded = false;
+				//rb->isGrounded = false;
 				isJumping = true;
 			}
 		}
@@ -61,40 +61,3 @@ void PlayerController::onUpdate(float deltaTime)
 void PlayerController::onEnd()
 {
 }
-
-void PlayerController::onCollision(Node* other)
-{
-}
-
-void PlayerController::onStayCollision(Node* other)
-{
-	//std::cout << "Gracz koliduje z podloga" << std::endl;
-
-	if (other->getLayerName() == "Floor" || other->getLayerName() == "Button") {
-		isGrounded = true;
-		//velocityY = 0.f;
-	}
-	else {
-		isGrounded = false;
-	}
-
-	if (other->getTagName() == "Wall") {
-		//owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 0.5f, 0.f));
-	}
-}
-
-void PlayerController::onExitCollision(Node* other)
-{
-	//std::cout << "PlayerController::onExitCollision::" << owner->name << std::endl;
-
-	if (other->getLayerName() == "Floor") {
-		isGrounded = false;
-	}
-}
-
-//void PlayerController::Jump()
-//{
-//	velocityY = jumpForce;
-//	isGrounded = false;
-//	isJumping = true;
-//}

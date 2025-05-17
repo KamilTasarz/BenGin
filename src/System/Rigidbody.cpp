@@ -1,5 +1,6 @@
 #include "Rigidbody.h"
-
+#include "../Gameplay/GameMath.h"
+#include "../Gameplay/PlayerController.h"
 #include "../Basic/Node.h"
 
 Rigidbody::Rigidbody(float mass, float gravity, bool isStatic, bool useGravity, bool lockPositionX, bool lockPositionY, bool lockPositionZ)
@@ -36,7 +37,10 @@ void Rigidbody::onStart()
 
 void Rigidbody::onUpdate(float deltaTime)
 {
-    if (is_static) {
+	if (isGrounded) std::cout << owner->getName() << " stoi na pod³odze" << std::endl;
+	else std::cout << owner->getName() << " nie stoi na pod³odze" << std::endl;	
+	
+	if (is_static) {
         return;
     }
 
@@ -49,17 +53,22 @@ void Rigidbody::onUpdate(float deltaTime)
 
 	// vertical movement
 	if (overrideVelocityY) {
-		velocityY = glm::mix(velocityY, targetVelocityY, smoothingFactor * deltaTime);
+		velocityY = glm::mix(velocityY, targetVelocityY, smoothingFactor * 0.5f * deltaTime);
+		velocityY += gravity * deltaTime;
 	}
-	else {
+	else if (!isGrounded) {
 		if (useGravity) {
 			velocityY += gravity * deltaTime;
 		}
 	}
+	else if (!velocityYResetted) {
+		velocityY = 0.01f;
+		velocityYResetted = true;
+	}
 
 	// veltical movement limit
-	if (velocityY < -25.f) {
-		velocityY = -25.f;
+	if (velocityY < -25.f || velocityY > 25.f) {
+		GameMath::Clamp(velocityY, -25.f, 25.f);
 	}
 
     glm::vec3 position = owner->transform.getLocalPosition();
@@ -72,18 +81,6 @@ void Rigidbody::onUpdate(float deltaTime)
     owner->transform.setLocalPosition(position);
 
 	overrideVelocityY = false;
-}
-
-void Rigidbody::applyForce(glm::vec3 force)
-{
-	if (is_static) {
-		return;
-	}
-
-	glm::vec3 position = owner->transform.getLocalPosition();
-	position += force * mass;
-	
-	owner->transform.setLocalPosition(position);
 }
 
 // collission with another rigidbody
@@ -119,11 +116,16 @@ void Rigidbody::onCollision(Node* other)
 
 void Rigidbody::onStayCollision(Node* other)
 {
-    if (other->getLayerName() == "Floor") {
+	/*if (other->getTagName() == "Player") {
+		if (other->getComponent<PlayerController>()->isGrounded) {
+			velocityY = 0.f;
+		}
+	}
+	else if (other->getLayerName() == "Floor" || other->getLayerName() == "Platform") {
 		if (!overrideVelocityY) {
 			velocityY = 0.f;
 		}
-    }
+    }*/
 }
 
 void Rigidbody::onExitCollision(Node* other)
