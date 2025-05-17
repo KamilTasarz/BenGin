@@ -15,12 +15,9 @@ public:
     VARIABLE(int, id);
 	VARIABLE(bool, isGravityFlipped);
     
-	//float velocityX = 0.0f;
-    //float velocityY = 0.0f;
-    //float gravity = -20.f;
 	bool isGrounded = false;
     bool isJumping = false;
-    //bool isGravityFlipped = false;
+	std::string virusType = "none";
 
 
     PlayerController() = default;

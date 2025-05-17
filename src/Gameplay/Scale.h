@@ -19,6 +19,7 @@ public:
 	glm::vec3 startPos1;
 	glm::vec3 startPos2;
 	bool isPlayerOn = false;
+	bool isPlayerHeavy = false;
 	float timer = 0.f;
 	//bool moveHorizontally = false;
 	//bool returnToPosition = true;

@@ -28,6 +28,7 @@ public:
 	void onDetach() override;
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
+	void applyForce(glm::vec3 force);
 	void onCollision(Node* other) override;
 	void onStayCollision(Node* other) override;
 	void onExitCollision(Node* other) override;

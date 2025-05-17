@@ -18,6 +18,7 @@ public:
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
 	void onStayCollisionLogic(Node* other) override;
+	void onExitCollisionLogic(Node* other) override;
 	//void onEnd() override;
 
 	std::vector<Variable*> getFields() const override {

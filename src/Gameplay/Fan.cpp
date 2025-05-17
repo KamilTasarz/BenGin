@@ -2,6 +2,7 @@
 #include "../Basic/Node.h"
 #include "RegisterScript.h"
 #include "../System/Rigidbody.h"
+#include "PlayerController.h"
 
 REGISTER_SCRIPT(Fan);
 
@@ -37,14 +38,31 @@ void Fan::onUpdate(float deltaTime)
 void Fan::onStayCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
-		//std::cout << "Fan is active - " << owner->name << std::endl;
+		if (other->getTagName() == "Player") {
+			if (other->getComponent<PlayerController>()->virusType == "black") {
+				return;
+			}
+		}
+
 		Rigidbody* rb = other->getComponent<Rigidbody>();
 		if (rb) {
 			rb->overrideVelocityY = true;
-			rb->velocityX += horizontalPower;
-			rb->velocityY += verticalPower;
+			rb->targetVelocityX = horizontalPower;
+			rb->targetVelocityY = verticalPower;
 		}
 	}
+}
+
+void Fan::onExitCollisionLogic(Node* other)
+{
+	//if (other->getTagName() == "Player" || other->getTagName() == "Box") {
+	//	Rigidbody* rb = other->getComponent<Rigidbody>();
+	//	if (rb) {
+	//		//rb->overrideVelocityY = false;
+	//		rb->velocityX -= horizontalPower;
+	//		rb->velocityY -= verticalPower;
+	//	}
+	//}
 }
 
 

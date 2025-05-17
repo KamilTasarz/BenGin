@@ -2,6 +2,7 @@
 #include "../Basic/Node.h"
 #include "RegisterScript.h"
 #include "GameMath.h"
+#include "PlayerController.h"
 
 
 REGISTER_SCRIPT(Scale);
@@ -68,6 +69,9 @@ void Scale::onUpdate(float deltaTime)
 		else if (isPlayerOn) {
 			owner->getComponent<Rigidbody>()->velocityY = 0.f;
 
+			float loweringSpeed = 0.2f;
+			if (isPlayerHeavy) loweringSpeed = 2.f;
+
 			glm::vec3 position1 = owner->transform.getLocalPosition();
 			owner->transform.setLocalPosition(position1 - glm::vec3(0.f, 2.f * deltaTime, 0.f));
 
@@ -82,6 +86,7 @@ void Scale::onUpdate(float deltaTime)
 		if (timer <= 0.f) {
 			timer = 0.f;
 			isPlayerOn = false;
+			isPlayerHeavy = false;
 		}
 	}
 
@@ -104,6 +109,10 @@ void Scale::onStayCollision(Node* other)
 {
 	if (other->getTagName() == "Player") {
 		isPlayerOn = true;
+
+		if (other->getComponent<PlayerController>()->virusType == "black") {
+			isPlayerHeavy = true;
+		}
 	}
 }
 

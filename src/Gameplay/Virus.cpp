@@ -49,7 +49,14 @@ void Virus::onCollisionLogic(Node* other)
 
 void Virus::ApplyEffect(Node* target)
 {
-	// Implement the effect logic here
+	PlayerController* player = target->getComponent<PlayerController>();
+
+	target->getComponent<Rigidbody>()->gravity = -32.f;
+	player->speed = 15.f;
+	player->isGravityFlipped = false;
+	player->jumpForce = 15.f;
+	player->virusType = "none";
+
 	VirusEffect(target);
 
 	std::cout << "Virus effect applied to: " << target->name << std::endl;
@@ -59,23 +66,26 @@ void Virus::VirusEffect(Node* target)
 {
 	PlayerController* player = target->getComponent<PlayerController>();
 
-	if (/*type == "blue"*/ blue) {
-		// Apply blue virus effect
+	if (blue) {
 		target->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 		player->isGravityFlipped = false;
 		target->getComponent<Rigidbody>()->gravity = -32.f;
+		player->virusType = "blue";
 	}
-	else if (/*type == "green"*/ green) {
-		// Apply green virus effect
+	else if (green) {
 		target->changeColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		player->isGravityFlipped = true;
 		target->getComponent<Rigidbody>()->gravity = 32.f;
+		player->virusType = "green";
 	}
-	else if (/*type == "black"*/ black) {
-		// Apply black virus effect
+	else if (black) {
 		target->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+		player->speed *= 0.75f;
+		player->jumpForce *= 0.75f;
+		player->virusType = "black";
 	}
 	else {
 		std::cout << "Unknown virus type!" << std::endl;

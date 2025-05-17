@@ -43,19 +43,24 @@ void Rigidbody::onUpdate(float deltaTime)
 	if (startPos == glm::vec3(0.f)) startPos = owner->transform.getLocalPosition();
 
     float smoothingFactor = 10.0f;
+
+	// horizontal movement
     velocityX = glm::mix(velocityX, targetVelocityX, smoothingFactor * deltaTime);
 
-	
-	if (useGravity) {
-		velocityY += gravity * deltaTime;
-	}
-	else {
+	// vertical movement
+	if (overrideVelocityY) {
 		velocityY = glm::mix(velocityY, targetVelocityY, smoothingFactor * deltaTime);
 	}
+	else {
+		if (useGravity) {
+			velocityY += gravity * deltaTime;
+		}
+	}
 
-    if (velocityY < -20.f) {
-		velocityY = -20.f;
-    }
+	// veltical movement limit
+	if (velocityY < -25.f) {
+		velocityY = -25.f;
+	}
 
     glm::vec3 position = owner->transform.getLocalPosition();
     position += glm::vec3(velocityX * deltaTime, velocityY * deltaTime, 0.f);
@@ -67,6 +72,18 @@ void Rigidbody::onUpdate(float deltaTime)
     owner->transform.setLocalPosition(position);
 
 	overrideVelocityY = false;
+}
+
+void Rigidbody::applyForce(glm::vec3 force)
+{
+	if (is_static) {
+		return;
+	}
+
+	glm::vec3 position = owner->transform.getLocalPosition();
+	position += force * mass;
+	
+	owner->transform.setLocalPosition(position);
 }
 
 // collission with another rigidbody
