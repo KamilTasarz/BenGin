@@ -43,18 +43,14 @@ void PlayerController::onUpdate(float deltaTime)
 
 		if (rb->isGrounded) {
 			{
-				//isGravityFlipped ? rb->velocityY = -jumpForce : jumpForce;
+				rb->overrideVelocityY = true;
 				if (isGravityFlipped) rb->velocityY = -jumpForce;
 				else rb->velocityY = jumpForce;
 
-				//rb->isGrounded = false;
 				isJumping = true;
 			}
 		}
 	}
-
-	//if (doors) std::cout << "doors::" << doors->name << std::endl;
-	//if (speed > 6.f) std::cout << "speed::" << speed << std::endl;
 }
 
 

@@ -5,6 +5,8 @@
 class GroundObject : public Script
 {
 public:
+	bool justGrounded = false;
+
 	GroundObject() = default;
 	virtual ~GroundObject() = default;
 	void onAttach(Node* owner) override;

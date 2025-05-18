@@ -23,6 +23,7 @@ public:
 	glm::vec3 startPos;
 
 	bool velocityYResetted = false;
+	float timer = 0.f;
 	
 
 	Rigidbody(float mass = 1.f, float gravity = 1.f, bool isStatic = false, bool useGravity = true, bool lockPositionX = false, bool lockPositionY = false, bool lockPositionZ = false);

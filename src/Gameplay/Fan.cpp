@@ -26,13 +26,9 @@ void Fan::onStart()
 
 void Fan::onUpdate(float deltaTime)
 {
-	// Update the fan state
-	if (isActive) {
-		//std::cout << "Fan is active" << std::endl;
-	}
-	else {
-		//std::cout << "Fan is inactive" << std::endl;
-	}
+	wavyPower = verticalPower;
+
+	wavyPower += sin(glfwGetTime() * 0.2);
 }
 
 void Fan::onStayCollisionLogic(Node* other)
@@ -48,7 +44,7 @@ void Fan::onStayCollisionLogic(Node* other)
 		if (rb) {
 			rb->overrideVelocityY = true;
 			rb->targetVelocityX = horizontalPower;
-			rb->targetVelocityY = verticalPower;
+			rb->targetVelocityY = wavyPower;
 		}
 	}
 }

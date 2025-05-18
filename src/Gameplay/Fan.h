@@ -11,6 +11,8 @@ public:
 	VARIABLE(float, horizontalPower);
 	VARIABLE(bool, isActive);
 
+	float wavyPower;
+
 	Fan() = default;
 	virtual ~Fan() = default;
 	void onAttach(Node* owner) override;

@@ -37,8 +37,10 @@ void Rigidbody::onStart()
 
 void Rigidbody::onUpdate(float deltaTime)
 {
-	if (isGrounded) std::cout << owner->getName() << " stoi na pod這dze" << std::endl;
-	else std::cout << owner->getName() << " nie stoi na pod這dze" << std::endl;	
+	//isGrounded = false;
+
+	//if (isGrounded) std::cout << owner->getName() << " stoi na pod這dze" << std::endl;
+	//else std::cout << owner->getName() << " nie stoi na pod這dze" << std::endl;	
 	
 	if (is_static) {
         return;
@@ -52,7 +54,12 @@ void Rigidbody::onUpdate(float deltaTime)
     velocityX = glm::mix(velocityX, targetVelocityX, smoothingFactor * deltaTime);
 
 	// vertical movement
-	if (overrideVelocityY) {
+	if (overrideVelocityY && isGrounded) {
+		if (useGravity) {
+			velocityY += gravity * deltaTime;
+		}
+	}
+	else if (overrideVelocityY) {
 		velocityY = glm::mix(velocityY, targetVelocityY, smoothingFactor * 0.5f * deltaTime);
 		velocityY += gravity * deltaTime;
 	}
@@ -62,13 +69,13 @@ void Rigidbody::onUpdate(float deltaTime)
 		}
 	}
 	else if (!velocityYResetted) {
-		velocityY = 0.01f;
+		velocityY = 0.0f;
 		velocityYResetted = true;
 	}
 
 	// veltical movement limit
 	if (velocityY < -25.f || velocityY > 25.f) {
-		GameMath::Clamp(velocityY, -25.f, 25.f);
+		velocityY = GameMath::Clamp(velocityY, -25.f, 25.f);
 	}
 
     glm::vec3 position = owner->transform.getLocalPosition();
@@ -79,6 +86,13 @@ void Rigidbody::onUpdate(float deltaTime)
 	if (lockPositionZ) position.z = startPos.z;
 
     owner->transform.setLocalPosition(position);
+
+	if (!isGrounded)
+	{
+		timer -= deltaTime;
+		if (timer <= 0.0f)
+			velocityYResetted = false;
+	}
 
 	overrideVelocityY = false;
 }

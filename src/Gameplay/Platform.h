@@ -6,6 +6,7 @@ class Platform : public Script
 {
 public:
 	//using SelfType = Platform;
+	float timer = 0.f;
 	
 	Platform() = default;
 	virtual ~Platform() = default;
@@ -17,6 +18,6 @@ public:
 	
 	void onCollisionLogic(Node* other) override;
 	void onExitCollisionLogic(Node* other) override;
-	void onExitCollision(Node* other) override;
+	void onStayCollision(Node* other) override;
 };
 

@@ -20,21 +20,25 @@ void GroundObject::onDetach()
 
 void GroundObject::onUpdate(float deltaTime)
 {
-	//std::cout << "GroundObject::onUpdate::" << owner->name << std::endl;
 }
 
 void GroundObject::onStayCollision(Node* other)
 {
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
-		other->getComponent<Rigidbody>()->isGrounded = true;
+		Rigidbody* rb = other->getComponent<Rigidbody>();
+		rb->isGrounded = true;
+		rb->timer = 0.0f;
+		justGrounded = true;
 	}
 }
 
 void GroundObject::onExitCollision(Node* other)
 {
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
-		other->getComponent<Rigidbody>()->isGrounded = false;
-		other->getComponent<Rigidbody>()->velocityYResetted = false;
+		Rigidbody* rb = other->getComponent<Rigidbody>();
+		rb->isGrounded = false;
+		rb->velocityYResetted = false;
+		rb->timer = 0.1f;
 
 	}
 }
