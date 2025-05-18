@@ -24,6 +24,7 @@ void PlayerSpawner::onStart()
 void PlayerSpawner::onUpdate(float deltaTime)
 {
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_P) == GLFW_PRESS) {
+
 		spawnPlayer();
 	}
 }
@@ -35,5 +36,7 @@ void PlayerSpawner::onEnd()
 void PlayerSpawner::spawnPlayer()
 {
 	std::cout << "Spawning player" << std::endl;
-	owner->scene_graph->addChild(new PrefabInstance(PrefabRegistry::FindByName("Player"), owner->scene_graph, owner->getTransform().getLocalPosition()));
+	PrefabInstance *pref = new PrefabInstance(PrefabRegistry::FindByName("Player"), owner->scene_graph, owner->getTransform().getLocalPosition());
+	
+	owner->scene_graph->addChild(pref->prefab_root->getChildByTag("Player"));
 }
