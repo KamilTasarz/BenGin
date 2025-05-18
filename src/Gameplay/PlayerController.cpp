@@ -2,6 +2,7 @@
 #include "../Basic/Node.h"
 #include "RegisterScript.h"
 #include "../System/Rigidbody.h"
+#include "../System/PhysicsSystem.h"
 //#include "GameMath.h"
 
 REGISTER_SCRIPT(PlayerController);
@@ -42,6 +43,19 @@ void PlayerController::onUpdate(float deltaTime)
 				isJumping = true;
 			}
 		}
+	}
+
+	Ray ray;
+	ray.direction = glm::vec4(1.f, 0.f, 0.f, 1.f);
+	ray.origin = owner->transform.getGlobalPosition();
+	std::vector<Node*> nodes;
+	if (PhysicsSystem::instance().rayCast(ray, nodes, 4.f)) {
+		if (!(nodes.size() == 1 && nodes[0] == owner))
+			std::cout << nodes.size() << std::endl;
+		
+	}
+	else {
+		std::cout << "brak" << std::endl;
 	}
 
 	//if (doors) std::cout << "doors::" << doors->name << std::endl;
