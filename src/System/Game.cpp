@@ -89,7 +89,7 @@ void Game::init()
 {
 	is_initialized = true;
 
-	loadScene("res/scene/scene.json", sceneGraph, prefabs, colliders);
+	loadScene("res/scene/scene.json", sceneGraph, prefabs);
 
 	sceneGraph->forcedUpdate();
 
@@ -154,6 +154,8 @@ void Game::init()
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+    sceneGraph->root->createComponents();
 
 }
 void Game::run()

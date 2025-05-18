@@ -257,9 +257,9 @@ public:
     Node(std::string nameOfNode, int _id = 0);
 
     // Model
-    Node(std::shared_ptr<Model> model, std::string nameOfNode, std::vector<BoundingBox*>& vector_of_colliders, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f));
-
     Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f));
+
+    //Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id = 0, glm::vec3 min_point = glm::vec3(-0.5f), glm::vec3 max_point = glm::vec3(0.5f));
 
     // DESTRUCTOR
 
@@ -347,6 +347,7 @@ public:
     void virtual drawSelfAndChild(Transform &parent);
 
     void virtual updateComponents(float deltaTime);
+    void virtual createComponents();
 
     void virtual drawShadows(Shader& shader);
 
@@ -562,7 +563,7 @@ public:
 
 
 
-    PrefabInstance(std::shared_ptr<Prefab> prefab, std::vector<BoundingBox*>& colliders, SceneGraph* _scene_graph);
+    PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph);
 
 	~PrefabInstance() {
 		delete prefab_root;
@@ -575,6 +576,7 @@ public:
     void updateSelfAndChild(bool controlDirty) override;
 
 	void updateComponents(float deltaTime) override;
+    void createComponents() override;
 
 	void forceUpdateSelfAndChild() override;
 

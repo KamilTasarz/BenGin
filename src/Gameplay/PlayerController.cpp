@@ -23,6 +23,7 @@ void PlayerController::onDetach()
 void PlayerController::onStart()
 {
 	isGravityFlipped = false;
+	std::cout << PrefabRegistry::Get()[0]->prefab_scene_graph->root->name << std::endl;
 }
 
 void PlayerController::onUpdate(float deltaTime)

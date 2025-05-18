@@ -286,7 +286,7 @@ void Editor::previewDisplay()
             }
             else {
                 //Model
-                Node* p = new Node(ResourceManager::Instance().getModel(id), "entity", colliders);
+                Node* p = new Node(ResourceManager::Instance().getModel(id), "entity");
 
                 sceneGraph->addChild(p);
                 sceneGraph->marked_object = p;
@@ -741,7 +741,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
 
         if (ImGui::Button("ADD_PREFAB_INSTANCE", ImVec2(150, 24))) {
             if (size > 0) {
-                Node* inst = new PrefabInstance(prefabs[current_prefab], colliders, sceneGraph);
+                Node* inst = new PrefabInstance(prefabs[current_prefab], sceneGraph);
                 sceneGraph->addChild(inst);
                 sceneGraph->marked_object = inst;
             }
@@ -1375,7 +1375,7 @@ void Editor::init()
     ImGui_ImplOpenGL3_Init("#version 330");        // (6) backend renderera
 
 
-    loadScene("res/scene/scene.json", editor_sceneGraph, prefabs, colliders);
+    loadScene("res/scene/scene.json", editor_sceneGraph, prefabs);
 
     editor_sceneGraph->forcedUpdate();
 
@@ -1439,6 +1439,9 @@ void Editor::run() {
             if (ServiceLocator::getWindow()->deltaTime > 0.25f) {
                 ServiceLocator::getWindow()->deltaTime = 0.0f;
             }
+
+
+            
 
             frames++;
             fps_timer += ServiceLocator::getWindow()->deltaTime;

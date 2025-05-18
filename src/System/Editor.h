@@ -49,7 +49,7 @@ private:
 	int current_prefab = 0, current_opt1 = 0, current_opt2 = 0, direction = 0, prefab_inst_to_add = 0;
 	int current_component = 0, current_script = 0;
 
-	std::vector<BoundingBox*> colliders;
+	//std::vector<BoundingBox*> colliders;
 	std::vector<std::shared_ptr<Prefab>>& prefabs;
 
 	float fps = 0.0f;
