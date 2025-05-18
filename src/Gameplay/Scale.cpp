@@ -3,6 +3,7 @@
 #include "RegisterScript.h"
 #include "GameMath.h"
 #include "PlayerController.h"
+#include "../System/PhysicsSystem.h"
 
 
 REGISTER_SCRIPT(Scale);
@@ -48,6 +49,40 @@ void Scale::onUpdate(float deltaTime)
 		setStartPos = false;
 	}
 
+	// player detection
+	glm::vec3 position = owner->transform.getGlobalPosition();
+	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
+	float length = owner->transform.getLocalScale().y / 2.f + 0.02f;
+	float width = owner->transform.getLocalScale().x / 2.f - 0.05f;
+	std::vector<Node*> nodes;
+
+	std::vector<Ray> rays = {
+		Ray{position + glm::vec3(-width, 0.f, 0.f), up},
+		Ray{position + glm::vec3(-width/2, 0.f, 0.f), up},
+		Ray{position, up},
+		Ray{position + glm::vec3(width/2, 0.f, 0.f), up},
+		Ray{position + glm::vec3(width, 0.f, 0.f), up}
+	};
+
+	isPlayerOn = false;
+	isPlayerHeavy = false;
+
+	nodes.clear();
+	if (PhysicsSystem::instance().rayCast(rays, nodes, length)) {
+		if (!(nodes.size() == rays.size() && nodes[rays.size() - 1] == owner)) {
+			for (auto node : nodes) {
+				if (node->getTagName() == "Player") {
+					isPlayerOn = true;
+					if (node->getComponent<PlayerController>()->virusType == "black") {
+						isPlayerHeavy = true;
+					}
+					std::cout << "na szalce stoi gracz, jest ciê¿ki: " << isPlayerHeavy << std::endl;
+					break;
+				}
+			}
+		}
+	}
+
 	if (!isPlayerOn && !moveHorizontally && returnToPosition) {
 		glm::vec3 position1 = owner->transform.getLocalPosition();
 		glm::vec3 newPosition = GameMath::MoveTowards(position1, startPos1, 1.f * deltaTime);
@@ -81,14 +116,14 @@ void Scale::onUpdate(float deltaTime)
 		}
 	}
 
-	if (timer > 0.f) {
+	/*if (timer > 0.f) {
 		timer -= deltaTime;
 		if (timer <= 0.f) {
 			timer = 0.f;
 			isPlayerOn = false;
 			isPlayerHeavy = false;
 		}
-	}
+	}*/
 
 
 
@@ -107,18 +142,18 @@ void Scale::onEnd()
 
 void Scale::onStayCollision(Node* other)
 {
-	if (other->getTagName() == "Player") {
+	/*if (other->getTagName() == "Player") {
 		isPlayerOn = true;
 
 		if (other->getComponent<PlayerController>()->virusType == "black") {
 			isPlayerHeavy = true;
 		}
-	}
+	}*/
 }
 
 void Scale::onExitCollision(Node* other)
 {
-	if (other->getTagName() == "Player") {
+	/*if (other->getTagName() == "Player") {
 		timer = 0.1f;
-	}
+	}*/
 }

@@ -22,7 +22,7 @@ void Platform::onUpdate(float deltaTime)
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 		owner->is_physic_active = false;
 		timer = 0.25f;
-		std::cout << "spadanie z platformy, timer: " << timer << std::endl;
+		//std::cout << "spadanie z platformy, timer: " << timer << std::endl;
 	}
 	
 	if (timer > 0.f) {

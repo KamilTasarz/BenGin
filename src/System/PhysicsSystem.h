@@ -25,5 +25,6 @@ public:
     void updateCollisions();
 
     bool rayCast(Ray ray, std::vector<Node*>& collide_with, float length = -1.f);
+    bool rayCast(const std::vector<Ray>& rays, std::vector<Node*>& collide_with, float length = -1.f);
 };
 

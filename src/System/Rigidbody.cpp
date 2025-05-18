@@ -2,6 +2,8 @@
 #include "../Gameplay/GameMath.h"
 #include "../Gameplay/PlayerController.h"
 #include "../Basic/Node.h"
+#include "../Gameplay/GroundObject.h"
+#include "../System/PhysicsSystem.h"
 
 Rigidbody::Rigidbody(float mass, float gravity, bool isStatic, bool useGravity, bool lockPositionX, bool lockPositionY, bool lockPositionZ)
 {
@@ -46,6 +48,51 @@ void Rigidbody::onUpdate(float deltaTime)
         return;
     }
 
+	// ground detection
+	bool isGravityFlipped = false;
+	glm::vec3 position = owner->transform.getGlobalPosition();
+	glm::vec4 down = glm::vec4(0.f, -1.f, 0.f, 0.f);
+	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
+	float length = owner->transform.getLocalScale().y / 2.f + 0.02f;
+	float width = owner->transform.getLocalScale().x / 2.f - 0.15f;
+	std::vector<Node*> nodes;
+
+	if (owner->getTagName() == "Player") {
+		PlayerController* player = owner->getComponent<PlayerController>();
+		if (player->isGravityFlipped) {
+			std::swap(down, up);
+			isGravityFlipped = true;
+		}
+	}
+
+	std::vector<Ray> groundRays = {
+		Ray{position + glm::vec3(-width, 0.f, 0.f), down},
+		Ray{position, down},
+		Ray{position + glm::vec3(width, 0.f, 0.f), down}
+	};
+	std::vector<Ray> ceilingRays = {
+		Ray{position + glm::vec3(-width, 0.f, 0.f), up},
+		Ray{position, up},
+		Ray{position + glm::vec3(width, 0.f, 0.f), up}
+	};
+
+	groundUnderneath = false;
+	ceilingAbove = false;
+
+	nodes.clear();
+	if (PhysicsSystem::instance().rayCast(groundRays, nodes, length)) {
+		if (!(nodes.size() == groundRays.size() && nodes[groundRays.size() - 1] == owner)) {
+			groundUnderneath = true;
+		}
+	}
+
+	nodes.clear();
+	if (PhysicsSystem::instance().rayCast(ceilingRays, nodes, length)) {
+		if (!(nodes.size() == ceilingRays.size() && nodes[ceilingRays.size() - 1] == owner)) {
+			ceilingAbove = true;
+		}
+	}
+
 	if (startPos == glm::vec3(0.f)) startPos = owner->transform.getLocalPosition();
 
     float smoothingFactor = 10.0f;
@@ -54,23 +101,24 @@ void Rigidbody::onUpdate(float deltaTime)
     velocityX = glm::mix(velocityX, targetVelocityX, smoothingFactor * deltaTime);
 
 	// vertical movement
-	if (overrideVelocityY && isGrounded) {
-		if (useGravity) {
-			velocityY += gravity * deltaTime;
-		}
-	}
-	else if (overrideVelocityY) {
+	if (overrideVelocityY) {
 		velocityY = glm::mix(velocityY, targetVelocityY, smoothingFactor * 0.5f * deltaTime);
 		velocityY += gravity * deltaTime;
 	}
-	else if (!isGrounded) {
-		if (useGravity) {
-			velocityY += gravity * deltaTime;
-		}
-	}
-	else if (!velocityYResetted) {
+	else if (velocityY > 0.f && groundUnderneath && isGravityFlipped) {
 		velocityY = 0.0f;
-		velocityYResetted = true;
+	}
+	else if (velocityY < 0.f && ceilingAbove && isGravityFlipped) {
+		velocityY = 0.f;
+	}
+	else if (velocityY < 0.f && groundUnderneath && !isGravityFlipped) {
+		velocityY = 0.0f;
+	}
+	else if (velocityY > 0.f && ceilingAbove && !isGravityFlipped) {
+		velocityY = 0.f;
+	}
+	else if (useGravity) {
+		velocityY += gravity * deltaTime;
 	}
 
 	// veltical movement limit
@@ -78,7 +126,9 @@ void Rigidbody::onUpdate(float deltaTime)
 		velocityY = GameMath::Clamp(velocityY, -25.f, 25.f);
 	}
 
-    glm::vec3 position = owner->transform.getLocalPosition();
+	position = owner->transform.getLocalPosition();
+	velocityDeltaX = position.x - (position.x + velocityX * deltaTime);
+	velocityDeltaY = position.y - (position.y + velocityY * deltaTime);
     position += glm::vec3(velocityX * deltaTime, velocityY * deltaTime, 0.f);
 
 	if (lockPositionX) position.x = startPos.x;
@@ -95,6 +145,8 @@ void Rigidbody::onUpdate(float deltaTime)
 	}
 
 	overrideVelocityY = false;
+
+	std::cout << owner->getName() << " stoi na ziemi: " << groundUnderneath << ", dotyka sufitu: " << ceilingAbove << std::endl;
 }
 
 // collission with another rigidbody

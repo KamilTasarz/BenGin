@@ -62,4 +62,5 @@ public:
 			return target;
 		return current + toVector / distance * maxDistanceDelta;
 	}
+   
 };
