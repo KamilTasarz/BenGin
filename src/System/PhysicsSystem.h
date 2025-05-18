@@ -4,6 +4,8 @@
 
 class BoundingBox;
 class SceneGraph;
+class Node;
+struct Ray;
 
 class PhysicsSystem
 {
@@ -21,5 +23,7 @@ public:
 
     //sprawdza kolizje
     void updateCollisions();
+
+    bool rayCast(Ray ray, std::vector<Node*>& collide_with, float length = -1.f);
 };
 

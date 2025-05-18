@@ -148,3 +148,31 @@ void PhysicsSystem::updateCollisions()
 
 	//std::cout << "Sprawdzono: " << counter << std::endl;
 }
+
+bool PhysicsSystem::rayCast(Ray ray, std::vector<Node*>& collide_with, float length)
+{
+	if (length <= 0.f) {
+		for (auto& collider : colliders) {
+			if (collider->is_logic) continue;
+			float t;
+			if (collider->isRayIntersects(ray.direction, ray.origin, t)) {
+				collide_with.push_back(collider->node);
+			}
+		}
+	}
+	else {
+		for (auto& collider : colliders) {
+			if (collider->is_logic) continue;
+			float t;
+			if (collider->isRayIntersects(ray.direction, ray.origin, t)) {
+				
+				glm::vec3 hitPoint = ray.origin + glm::vec3(ray.direction * t);
+				float distance = glm::length(hitPoint - ray.origin);
+				if (distance <= length) {
+					collide_with.push_back(collider->node);
+				}
+			}
+		}
+	}
+	return collide_with.size() > 0;
+}

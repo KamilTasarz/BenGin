@@ -33,7 +33,10 @@ struct ParticleInstanceData;
 struct Ray {
 	glm::vec3 origin;
 	glm::vec4 direction;
+    float length = 1.f;
 };
+
+
 
 class SceneGraph;
 
