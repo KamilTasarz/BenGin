@@ -2,6 +2,8 @@
 #include "../Basic/Node.h"
 #include "RegisterScript.h"
 #include "../System/Rigidbody.h"
+#include "../System/Tag.h"
+#include "PlayerSpawner.h"
 //#include "GameMath.h"
 
 REGISTER_SCRIPT(PlayerController);
@@ -23,11 +25,13 @@ void PlayerController::onDetach()
 void PlayerController::onStart()
 {
 	isGravityFlipped = false;
-	std::cout << PrefabRegistry::Get()[0]->prefab_scene_graph->root->name << std::endl;
+	//std::cout << PrefabRegistry::Get()[0]->prefab_scene_graph->root->name << std::endl;
 }
 
 void PlayerController::onUpdate(float deltaTime)
 {
+	if (isDead) return;
+	
 	glm::vec3 position = owner->transform.getLocalPosition();
 	Rigidbody* rb = owner->getComponent<Rigidbody>();
 
@@ -38,6 +42,9 @@ void PlayerController::onUpdate(float deltaTime)
 
 	rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
 
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_K) == GLFW_PRESS) {
+		Die(false);
+	}
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		//std::cout << "Gracz probuje skoczyc" << std::endl;
@@ -57,4 +64,20 @@ void PlayerController::onUpdate(float deltaTime)
 
 void PlayerController::onEnd()
 {
+}
+
+void PlayerController::Die(bool freeze)
+{
+	if (isDead) return;
+	
+	Rigidbody* rb = owner->getComponent<Rigidbody>();
+	rb->is_static = freeze;
+
+	std::shared_ptr<Tag> tag = TagLayerManager::Instance().getTag("Box");
+	owner->setTag(tag);
+	isDead = true;
+
+	// spawn new player
+	Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
+	playerSpawner->getComponent<PlayerSpawner>()->spawnPlayer();
 }

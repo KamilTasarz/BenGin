@@ -17,6 +17,7 @@ public:
     
 	bool isGrounded = false;
     bool isJumping = false;
+    bool isDead = false;
 	std::string virusType = "none";
 
 
@@ -32,6 +33,8 @@ public:
     void onUpdate(float deltaTime) override;
 
     void onEnd() override;
+
+    void Die(bool freeze);
 
     std::vector<Variable*> getFields() const override { 
         static Variable speedVar = getField_speed();

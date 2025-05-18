@@ -1018,6 +1018,23 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     this->prefab = prefab;
     AABB = new BoundingBox(transform.getModelMatrix(), this);
 
+    scene_graph = _scene_graph;
+
+    prefab->prefab_instances.push_back(this);
+
+    set_prefab_colliders(prefab->prefab_scene_graph->root);
+
+    //if (scene_graph) {
+    prefab_root = prefab->clone(this->name, scene_graph);
+    prefab_root->parent = this;
+    //}
+}
+
+PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, glm::vec3 position)
+    : Node(prefab->prefab_scene_graph->root->name + "_inst") {
+    this->prefab = prefab;
+    AABB = new BoundingBox(transform.getModelMatrix(), this);
+
 	scene_graph = _scene_graph;
     
     prefab->prefab_instances.push_back(this);
@@ -1027,6 +1044,7 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
+	prefab_root->transform.setLocalPosition(position);
     //}
 }
 

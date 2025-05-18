@@ -564,6 +564,7 @@ public:
 
 
     PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph);
+    PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, glm::vec3 position);
 
 	~PrefabInstance() {
 		delete prefab_root;

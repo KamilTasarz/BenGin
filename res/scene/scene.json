@@ -1,12 +1,12 @@
 {
     "camera": {
-        "Pitch": -14.499811172485352,
-        "Yaw": -90.29981231689453,
+        "Pitch": -18.399869918823242,
+        "Yaw": -92.79975891113281,
         "mode": 2,
         "position": {
-            "x": -5.896925449371338,
-            "y": 8.814537048339844,
-            "z": 14.496509552001953
+            "x": 0.5635204315185547,
+            "y": 18.366390228271484,
+            "z": 34.13019943237305
         }
     },
     "scene": {
@@ -32,88 +32,41 @@
                     "y": -0.5,
                     "z": -0.5
                 },
-                "components": [
-                    {
-                        "name": "Scale",
-                        "variables": [
-                            {
-                                "field_type": "Node*",
-                                "name": "secondScale",
-                                "value": "right_platform"
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "moveHorizontally",
-                                "value": false
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "returnToPosition",
-                                "value": true
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "setStartPos",
-                                "value": false
-                            }
-                        ]
+                "directional_light": {
+                    "ambient": {
+                        "x": 0.20000000298023224,
+                        "y": 0.20000000298023224,
+                        "z": 0.20000000298023224
                     },
-                    {
-                        "name": "Rigidbody",
-                        "properties": {
-                            "gravity": 0.0,
-                            "is_static": false,
-                            "mass": 1.0
-                        }
+                    "diffuse": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
                     },
-                    {
-                        "name": "GroundObject",
-                        "variables": null
+                    "direction": {
+                        "x": -1.0,
+                        "y": -1.0,
+                        "z": -1.0
+                    },
+                    "is_shining": true,
+                    "specular": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
                     }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 5,
-                "name": "left_platform",
-                "no_textures": false,
-                "position": {
-                    "x": -17.0,
-                    "y": 5.5,
-                    "z": 0.0
                 },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 4.0,
-                    "y": 1.0,
-                    "z": 2.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
                 "id": 0,
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
                 "layer": "Default",
-                "model.id": -1,
-                "name": "room_2_inst",
+                "model.id": 6,
+                "name": "dir_light",
                 "no_textures": true,
                 "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_2"
+                    "x": 22.231014251708984,
+                    "y": 18.1098575592041,
+                    "z": 22.04757308959961
                 },
                 "rotation": {
                     "w": 1.0,
@@ -127,17 +80,71 @@
                     "z": 1.0
                 },
                 "tag": "Default",
-                "type": "PrefabInstance"
+                "type": "DirectionalLight"
             },
             {
                 "AABB_logic_max": {
-                    "x": 2.0,
-                    "y": 0.5,
+                    "x": 9.999998092651367,
+                    "y": 7.0,
+                    "z": 10.0
+                },
+                "AABB_logic_min": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "AABB_max": {
+                    "x": 9.999998092651367,
+                    "y": 7.0,
+                    "z": 10.0
+                },
+                "AABB_min": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "components": [
+                    {
+                        "name": "Spikes",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 10,
+                "name": "spikes",
+                "no_textures": false,
+                "position": {
+                    "x": 13.499999046325684,
+                    "y": 11.0,
+                    "z": -1.0
+                },
+                "rotation": {
+                    "w": -4.371138828673793e-08,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0
+                },
+                "scale": {
+                    "x": 0.20000000298023224,
+                    "y": 0.20000000298023224,
+                    "z": 0.20000000298023224
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.550000011920929,
+                    "y": 0.0,
                     "z": 0.5
                 },
                 "AABB_logic_min": {
-                    "x": 1.0,
-                    "y": -0.5,
+                    "x": -0.550000011920929,
+                    "y": -2.0,
                     "z": -0.5
                 },
                 "AABB_max": {
@@ -152,11 +159,11 @@
                 },
                 "components": [
                     {
-                        "name": "CollisionTest",
+                        "name": "GroundObject",
                         "variables": null
                     },
                     {
-                        "name": "GroundObject",
+                        "name": "Platform",
                         "variables": null
                     }
                 ],
@@ -164,13 +171,13 @@
                 "is_logic_active": true,
                 "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Default",
-                "model.id": 5,
-                "name": "entity",
+                "layer": "Platform",
+                "model.id": 9,
+                "name": "platform",
                 "no_textures": false,
                 "position": {
-                    "x": -20.5,
-                    "y": 1.5,
+                    "x": -6.25,
+                    "y": 4.375,
                     "z": 0.0
                 },
                 "rotation": {
@@ -180,11 +187,100 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 2.0,
-                    "y": 2.0,
+                    "x": 8.5,
+                    "y": 0.25,
                     "z": 2.0
                 },
                 "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "components": [
+                    {
+                        "name": "CameraFollow",
+                        "variables": [
+                            {
+                                "field_type": "Node*",
+                                "name": "player",
+                                "value": "null"
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "offsetY",
+                                "value": 3.0
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "offsetZ",
+                                "value": 25.0
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "smoothing",
+                                "value": 6.0
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": false,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "camera_follow",
+                "no_textures": true,
+                "position": {
+                    "x": -12.5,
+                    "y": 5.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "components": [
+                    {
+                        "name": "PlayerSpawner",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "player_spawner",
+                "no_textures": true,
+                "position": {
+                    "x": 6.5,
+                    "y": 9.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "PlayerSpawner",
                 "type": "Node"
             },
             {
@@ -197,7 +293,7 @@
                                     {
                                         "field_type": "bool",
                                         "name": "blue",
-                                        "value": false
+                                        "value": true
                                     },
                                     {
                                         "field_type": "bool",
@@ -207,7 +303,7 @@
                                     {
                                         "field_type": "bool",
                                         "name": "black",
-                                        "value": true
+                                        "value": false
                                     }
                                 ]
                             }
@@ -218,12 +314,12 @@
                         "is_visible": true,
                         "layer": "Default",
                         "model.id": 12,
-                        "name": "black_virus",
+                        "name": "blue_virus",
                         "no_textures": false,
                         "position": {
-                            "x": -0.4139294922351837,
-                            "y": -4.291534878575476e-06,
-                            "z": -0.9999962449073792
+                            "x": -0.5,
+                            "y": 0.0,
+                            "z": -1.0
                         },
                         "rotation": {
                             "w": 1.0,
@@ -254,21 +350,119 @@
                 ],
                 "id": 0,
                 "is_logic_active": false,
-                "is_physic_active": false,
+                "is_physic_active": true,
                 "is_visible": true,
                 "layer": "Default",
                 "model.id": -1,
-                "name": "black_virus_parent",
+                "name": "blue_virus_parent",
                 "no_textures": true,
                 "position": {
-                    "x": 6.0,
+                    "x": -6.0,
                     "y": 11.0,
                     "z": 0.0
                 },
                 "rotation": {
-                    "w": -0.5059625506401062,
+                    "w": 0.21636535227298737,
                     "x": 0.0,
-                    "y": -0.8615767955780029,
+                    "y": -0.9754613041877747,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 25.0,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "Fan",
+                        "variables": [
+                            {
+                                "field_type": "float",
+                                "name": "verticalPower",
+                                "value": 20.0
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "horizontalPower",
+                                "value": 0.0
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "isActive",
+                                "value": false
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": true,
+                "is_physic_active": false,
+                "is_visible": true,
+                "layer": "Fan",
+                "model.id": 3,
+                "name": "fan",
+                "no_textures": false,
+                "position": {
+                    "x": 19.0,
+                    "y": 0.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 5.0,
+                    "y": 0.30000001192092896,
+                    "z": 2.9000000953674316
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "player_test",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 2.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
                     "z": 0.0
                 },
                 "scale": {
@@ -394,55 +588,37 @@
                 },
                 "components": [
                     {
-                        "name": "PlayerController",
+                        "name": "Button",
                         "variables": [
                             {
-                                "field_type": "float",
-                                "name": "speed",
-                                "value": 10.0
-                            },
-                            {
-                                "field_type": "float",
-                                "name": "jumpForce",
-                                "value": 17.0
-                            },
-                            {
                                 "field_type": "Node*",
-                                "name": "doors",
-                                "value": "null"
-                            },
-                            {
-                                "field_type": "int",
-                                "name": "id",
-                                "value": 0
+                                "name": "door",
+                                "value": "door"
                             },
                             {
                                 "field_type": "bool",
-                                "name": "isGravityFlipped",
+                                "name": "activate",
+                                "value": false
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "isPressed",
                                 "value": false
                             }
                         ]
-                    },
-                    {
-                        "name": "Rigidbody",
-                        "properties": {
-                            "gravity": -32.0,
-                            "is_static": false,
-                            "mass": 1.0
-                        }
                     }
                 ],
                 "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
+                "is_logic_active": true,
+                "is_physic_active": false,
                 "is_visible": true,
-                "layer": "Default",
-                "model.id": 7,
-                "name": "player",
+                "layer": "Button",
+                "model.id": 4,
+                "name": "button",
                 "no_textures": false,
                 "position": {
-                    "x": -12.595464706420898,
-                    "y": 5.5,
+                    "x": 6.5,
+                    "y": 0.5,
                     "z": 0.0
                 },
                 "rotation": {
@@ -453,278 +629,7 @@
                 },
                 "scale": {
                     "x": 2.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Player",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 25.0,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "components": [
-                    {
-                        "name": "Fan",
-                        "variables": [
-                            {
-                                "field_type": "float",
-                                "name": "verticalPower",
-                                "value": 20.0
-                            },
-                            {
-                                "field_type": "float",
-                                "name": "horizontalPower",
-                                "value": 0.0
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "isActive",
-                                "value": false
-                            }
-                        ]
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": true,
-                "is_physic_active": false,
-                "is_visible": true,
-                "layer": "Fan",
-                "model.id": 3,
-                "name": "fan",
-                "no_textures": false,
-                "position": {
-                    "x": 19.0,
-                    "y": 0.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 5.0,
-                    "y": 0.30000001192092896,
-                    "z": 2.9000000953674316
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "components": [
-                    {
-                        "name": "CameraFollow",
-                        "variables": [
-                            {
-                                "field_type": "Node*",
-                                "name": "player",
-                                "value": "null"
-                            },
-                            {
-                                "field_type": "float",
-                                "name": "offsetY",
-                                "value": 3.0
-                            },
-                            {
-                                "field_type": "float",
-                                "name": "offsetZ",
-                                "value": 25.0
-                            },
-                            {
-                                "field_type": "float",
-                                "name": "smoothing",
-                                "value": 6.0
-                            }
-                        ]
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": false,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "camera_follow",
-                "no_textures": true,
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "children": [
-                    {
-                        "components": [
-                            {
-                                "name": "Virus",
-                                "variables": [
-                                    {
-                                        "field_type": "bool",
-                                        "name": "blue",
-                                        "value": true
-                                    },
-                                    {
-                                        "field_type": "bool",
-                                        "name": "green",
-                                        "value": false
-                                    },
-                                    {
-                                        "field_type": "bool",
-                                        "name": "black",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ],
-                        "id": 0,
-                        "is_logic_active": true,
-                        "is_physic_active": false,
-                        "is_visible": true,
-                        "layer": "Default",
-                        "model.id": 12,
-                        "name": "blue_virus",
-                        "no_textures": false,
-                        "position": {
-                            "x": -0.5,
-                            "y": 0.0,
-                            "z": -1.0
-                        },
-                        "rotation": {
-                            "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 2.0,
-                            "y": 0.10000000149011612,
-                            "z": 2.0
-                        },
-                        "tag": "Default",
-                        "type": "Node"
-                    }
-                ],
-                "components": [
-                    {
-                        "name": "RotateObject",
-                        "variables": [
-                            {
-                                "field_type": "float",
-                                "name": "rotationSpeed",
-                                "value": 1.0
-                            }
-                        ]
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "blue_virus_parent",
-                "no_textures": true,
-                "position": {
-                    "x": -6.0,
-                    "y": 11.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 0.21636535227298737,
-                    "x": 0.0,
-                    "y": -0.9754613041877747,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "components": [
-                    {
-                        "name": "GroundObject",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 5,
-                "name": "right_platform",
-                "no_textures": false,
-                "position": {
-                    "x": -22.0,
-                    "y": 8.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 4.0,
-                    "y": 1.0,
+                    "y": 0.4000000059604645,
                     "z": 2.0
                 },
                 "tag": "Default",
@@ -815,37 +720,21 @@
                 },
                 "components": [
                     {
-                        "name": "Button",
-                        "variables": [
-                            {
-                                "field_type": "Node*",
-                                "name": "door",
-                                "value": "door"
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "activate",
-                                "value": false
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "isPressed",
-                                "value": false
-                            }
-                        ]
+                        "name": "GroundObject",
+                        "variables": null
                     }
                 ],
                 "id": 0,
-                "is_logic_active": true,
-                "is_physic_active": false,
+                "is_logic_active": false,
+                "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Button",
-                "model.id": 4,
-                "name": "button",
+                "layer": "Floor",
+                "model.id": 5,
+                "name": "right_platform",
                 "no_textures": false,
                 "position": {
-                    "x": 6.5,
-                    "y": 0.5,
+                    "x": -22.0,
+                    "y": 8.0,
                     "z": 0.0
                 },
                 "rotation": {
@@ -855,8 +744,8 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 2.0,
-                    "y": 0.4000000059604645,
+                    "x": 4.0,
+                    "y": 1.0,
                     "z": 2.0
                 },
                 "tag": "Default",
@@ -864,13 +753,13 @@
             },
             {
                 "AABB_logic_max": {
-                    "x": 0.550000011920929,
-                    "y": 0.0,
+                    "x": 0.5,
+                    "y": 0.5,
                     "z": 0.5
                 },
                 "AABB_logic_min": {
-                    "x": -0.550000011920929,
-                    "y": -2.0,
+                    "x": -0.5,
+                    "y": -0.5,
                     "z": -0.5
                 },
                 "AABB_max": {
@@ -885,25 +774,55 @@
                 },
                 "components": [
                     {
-                        "name": "GroundObject",
-                        "variables": null
+                        "name": "PlayerController",
+                        "variables": [
+                            {
+                                "field_type": "float",
+                                "name": "speed",
+                                "value": 10.0
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "jumpForce",
+                                "value": 17.0
+                            },
+                            {
+                                "field_type": "Node*",
+                                "name": "doors",
+                                "value": "null"
+                            },
+                            {
+                                "field_type": "int",
+                                "name": "id",
+                                "value": 0
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "isGravityFlipped",
+                                "value": false
+                            }
+                        ]
                     },
                     {
-                        "name": "Platform",
-                        "variables": null
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": -32.0,
+                            "is_static": false,
+                            "mass": 1.0
+                        }
                     }
                 ],
                 "id": 0,
-                "is_logic_active": true,
+                "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Platform",
-                "model.id": 9,
-                "name": "platform",
+                "layer": "Default",
+                "model.id": 7,
+                "name": "Player",
                 "no_textures": false,
                 "position": {
-                    "x": -6.25,
-                    "y": 4.375,
+                    "x": -12.595464706420898,
+                    "y": 5.5,
                     "z": 0.0
                 },
                 "rotation": {
@@ -913,11 +832,11 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 8.5,
-                    "y": 0.25,
-                    "z": 2.0
+                    "x": 2.0,
+                    "y": 1.0,
+                    "z": 1.0
                 },
-                "tag": "Default",
+                "tag": "Player",
                 "type": "Node"
             },
             {
@@ -970,6 +889,64 @@
             },
             {
                 "AABB_logic_max": {
+                    "x": 2.0,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": 1.0,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "GroundObject",
+                        "variables": null
+                    },
+                    {
+                        "name": "CollisionTest",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": true,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 5,
+                "name": "collision_test",
+                "no_textures": false,
+                "position": {
+                    "x": -20.5,
+                    "y": 1.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 2.0,
+                    "y": 2.0,
+                    "z": 2.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
                     "x": 0.5,
                     "y": 0.5,
                     "z": 0.5
@@ -989,41 +966,180 @@
                     "y": -0.5,
                     "z": -0.5
                 },
-                "directional_light": {
-                    "ambient": {
-                        "x": 0.20000000298023224,
-                        "y": 0.20000000298023224,
-                        "z": 0.20000000298023224
+                "components": [
+                    {
+                        "name": "Scale",
+                        "variables": [
+                            {
+                                "field_type": "Node*",
+                                "name": "secondScale",
+                                "value": "right_platform"
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "moveHorizontally",
+                                "value": false
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "returnToPosition",
+                                "value": true
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "setStartPos",
+                                "value": false
+                            }
+                        ]
                     },
-                    "diffuse": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": 0.0,
+                            "is_static": false,
+                            "mass": 1.0
+                        }
                     },
-                    "direction": {
-                        "x": -1.0,
-                        "y": -1.0,
-                        "z": -1.0
-                    },
-                    "is_shining": true,
-                    "specular": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
+                    {
+                        "name": "GroundObject",
+                        "variables": null
                     }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 5,
+                "name": "left_platform",
+                "no_textures": false,
+                "position": {
+                    "x": -17.0,
+                    "y": 5.5,
+                    "z": 0.0
                 },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 4.0,
+                    "y": 1.0,
+                    "z": 2.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "children": [
+                    {
+                        "components": [
+                            {
+                                "name": "Virus",
+                                "variables": [
+                                    {
+                                        "field_type": "bool",
+                                        "name": "blue",
+                                        "value": false
+                                    },
+                                    {
+                                        "field_type": "bool",
+                                        "name": "green",
+                                        "value": false
+                                    },
+                                    {
+                                        "field_type": "bool",
+                                        "name": "black",
+                                        "value": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "id": 0,
+                        "is_logic_active": true,
+                        "is_physic_active": false,
+                        "is_visible": true,
+                        "layer": "Default",
+                        "model.id": 12,
+                        "name": "black_virus",
+                        "no_textures": false,
+                        "position": {
+                            "x": -0.4139294922351837,
+                            "y": -4.291534878575476e-06,
+                            "z": -0.9999962449073792
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 2.0,
+                            "y": 0.10000000149011612,
+                            "z": 2.0
+                        },
+                        "tag": "Default",
+                        "type": "Node"
+                    }
+                ],
+                "components": [
+                    {
+                        "name": "RotateObject",
+                        "variables": [
+                            {
+                                "field_type": "float",
+                                "name": "rotationSpeed",
+                                "value": 1.0
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": false,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "black_virus_parent",
+                "no_textures": true,
+                "position": {
+                    "x": 6.0,
+                    "y": 11.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": -0.5059625506401062,
+                    "x": 0.0,
+                    "y": -0.8615767955780029,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
                 "id": 0,
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
                 "layer": "Default",
-                "model.id": 6,
-                "name": "dir_light",
+                "model.id": -1,
+                "name": "room_2_inst",
                 "no_textures": true,
                 "position": {
-                    "x": 22.231014251708984,
-                    "y": 18.1098575592041,
-                    "z": 22.04757308959961
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_2"
                 },
                 "rotation": {
                     "w": 1.0,
@@ -1037,7 +1153,7 @@
                     "z": 1.0
                 },
                 "tag": "Default",
-                "type": "DirectionalLight"
+                "type": "PrefabInstance"
             }
         ],
         "id": 0,

@@ -1,6 +1,6 @@
 #include "PlayerSpawner.h"
 #include "../Basic/Node.h"
-#include "../System/Editor.h"
+#include "../System/PrefabRegistry.h"
 #include "RegisterScript.h"
 
 REGISTER_SCRIPT(PlayerSpawner);
@@ -23,6 +23,9 @@ void PlayerSpawner::onStart()
 
 void PlayerSpawner::onUpdate(float deltaTime)
 {
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_P) == GLFW_PRESS) {
+		spawnPlayer();
+	}
 }
 
 void PlayerSpawner::onEnd()
@@ -31,6 +34,6 @@ void PlayerSpawner::onEnd()
 
 void PlayerSpawner::spawnPlayer()
 {
-	//Prefab* player = new Prefab("Player");
-	//owner->scene_graph->addChild(new PrefabInstance(player, owner->scene_graph));
+	std::cout << "Spawning player" << std::endl;
+	owner->scene_graph->addChild(new PrefabInstance(PrefabRegistry::FindByName("Player"), owner->scene_graph, owner->getTransform().getLocalPosition()));
 }

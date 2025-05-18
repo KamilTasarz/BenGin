@@ -25,7 +25,7 @@ void CameraFollow::onStart()
 
 void CameraFollow::onUpdate(float deltaTime)
 {
-	if (player == nullptr) {
+	if (player == nullptr/* || player->getTagName() != "Player"*/) {
 		std::cout << "camera follow - player is nullptr" << std::endl;
 
 		player = owner->scene_graph->root->getChildByTag("Player");
@@ -36,12 +36,16 @@ void CameraFollow::onUpdate(float deltaTime)
 		camera->setOffsetToFollowingObject(offset);
 	}
 	else {
-		//std::cout << "following player" << std::endl;
+		//std::cout << "following player: " << player->getName() << std::endl;
 
 		glm::vec3 targetPosition = player->transform.getLocalPosition();
 		glm::vec3 currentPosition = owner->transform.getLocalPosition();
 		glm::vec3 newPosition = glm::mix(currentPosition, targetPosition, smoothing * deltaTime);
 		owner->transform.setLocalPosition(newPosition);
+
+		std::cout << "Camera target position: " << targetPosition.x << ", " << targetPosition.y << ", " << targetPosition.z << std::endl;
+		std::cout << "Camera current position: " << currentPosition.x << ", " << currentPosition.y << ", " << currentPosition.z << std::endl;
+		std::cout << "Camera new position: " << newPosition.x << ", " << newPosition.y << ", " << newPosition.z << std::endl;
 	}
 }
 

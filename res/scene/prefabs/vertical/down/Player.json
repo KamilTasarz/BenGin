@@ -1,0 +1,119 @@
+{
+    "children": [
+        {
+            "AABB_logic_max": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            },
+            "AABB_logic_min": {
+                "x": -0.5,
+                "y": -0.5,
+                "z": -0.5
+            },
+            "AABB_max": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            },
+            "AABB_min": {
+                "x": -0.5,
+                "y": -0.5,
+                "z": -0.5
+            },
+            "components": [
+                {
+                    "name": "PlayerController",
+                    "variables": [
+                        {
+                            "field_type": "float",
+                            "name": "speed",
+                            "value": 12.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "jumpForce",
+                            "value": 18.0
+                        },
+                        {
+                            "field_type": "Node*",
+                            "name": "doors",
+                            "value": "null"
+                        },
+                        {
+                            "field_type": "int",
+                            "name": "id",
+                            "value": 0
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "isGravityFlipped",
+                            "value": false
+                        }
+                    ]
+                },
+                {
+                    "name": "Rigidbody",
+                    "properties": {
+                        "gravity": -25.0,
+                        "is_static": false,
+                        "mass": 1.0
+                    }
+                }
+            ],
+            "id": 0,
+            "is_logic_active": false,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 7,
+            "name": "player_body",
+            "no_textures": false,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "tag": "Player",
+            "type": "Node"
+        }
+    ],
+    "id": 0,
+    "is_logic_active": false,
+    "is_physic_active": true,
+    "is_visible": true,
+    "layer": "Default",
+    "model.id": -1,
+    "name": "Player",
+    "no_textures": true,
+    "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "pref_type": 1,
+    "rotation": {
+        "w": 1.0,
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+    },
+    "tag": "Default",
+    "type": "Node"
+}
