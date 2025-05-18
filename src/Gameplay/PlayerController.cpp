@@ -33,6 +33,8 @@ void PlayerController::onUpdate(float deltaTime)
 {
 	if (isDead) return;
 	
+	std::cout << "tag aktualnego gracza" << owner->getTagName() << std::endl;
+
 	glm::vec3 position = owner->transform.getLocalPosition();
 	Rigidbody* rb = owner->getComponent<Rigidbody>();
 

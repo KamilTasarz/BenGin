@@ -99,7 +99,7 @@ void Game::init()
 	camera->Yaw = -90.0f;
 	camera->setPosition(glm::vec3(0.f, 0.f, 0.f));
     glm::vec3 origin = glm::vec3(0.f);
-	camera->setObjectToFollow(sceneGraph->root->getChildByName("player"), origin);
+	camera->setObjectToFollow(sceneGraph->root->getChildByName("camera_follow"), origin);
 	camera->changeMode(FOLLOWING);
 	
 
