@@ -643,7 +643,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
     ImGui::SameLine();
 
     if (ImGui::Button("SAVE", ImVec2(150, 24))) {
-        saveScene("res/scene/scene.json", sceneGraph);
+        saveScene("res/scene/scene.json", editor_sceneGraph);
     }
     ImGui::SameLine();
     if (ImGui::Button("EDITING_VIEW", ImVec2(150, 24))) {
@@ -707,7 +707,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
                     sceneGraph->marked_object->addComponent(ScriptFactory::instance().create(scripts[current_script]));
 				}
                 else if (current_component == 1) {
-                    sceneGraph->marked_object->addComponent(std::make_unique<Rigidbody>(mass, gravity, is_static, lockPositionX, lockPositionY, lockPositionZ));
+                    sceneGraph->marked_object->addComponent(std::make_unique<Rigidbody>(mass, gravity, is_static, true, lockPositionX, lockPositionY, lockPositionZ));
                 }
             }
 			

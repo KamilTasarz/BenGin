@@ -198,6 +198,9 @@ json save_node(Node* node) {
 			rigidbodyJson["mass"] = rigidbody->mass;
 			rigidbodyJson["gravity"] = rigidbody->gravity;
 			rigidbodyJson["is_static"] = rigidbody->is_static;
+			rigidbodyJson["lockPositionX"] = rigidbody->lockPositionX;
+			rigidbodyJson["lockPositionY"] = rigidbody->lockPositionY;
+			rigidbodyJson["lockPositionZ"] = rigidbody->lockPositionZ;
 
 			componentJson["properties"] = rigidbodyJson;
 		} else if (dynamic_cast<Script*>(component.get())) {
