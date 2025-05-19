@@ -64,8 +64,8 @@ void Scale::onUpdate(float deltaTime)
 		Ray{position + glm::vec3(width, 0.f, 0.f), up}
 	};
 
-	isPlayerOn = false;
-	isPlayerHeavy = false;
+	//isPlayerOn = false;
+	//isPlayerHeavy = false;
 
 	nodes.clear();
 	if (PhysicsSystem::instance().rayCast(rays, nodes, length)) {
@@ -77,6 +77,7 @@ void Scale::onUpdate(float deltaTime)
 						isPlayerHeavy = true;
 					}
 					std::cout << "na szalce stoi gracz, jest ciê¿ki: " << isPlayerHeavy << std::endl;
+					timer = 0.05f;
 					break;
 				}
 			}
@@ -104,7 +105,7 @@ void Scale::onUpdate(float deltaTime)
 		else if (isPlayerOn) {
 			owner->getComponent<Rigidbody>()->velocityY = 0.f;
 
-			float loweringSpeed = 0.2f;
+			float loweringSpeed = .2f;
 			if (isPlayerHeavy) loweringSpeed = 2.f;
 
 			glm::vec3 position1 = owner->transform.getLocalPosition();
@@ -116,14 +117,14 @@ void Scale::onUpdate(float deltaTime)
 		}
 	}
 
-	/*if (timer > 0.f) {
+	if (timer > 0.f) {
 		timer -= deltaTime;
 		if (timer <= 0.f) {
 			timer = 0.f;
 			isPlayerOn = false;
 			isPlayerHeavy = false;
 		}
-	}*/
+	}
 
 
 

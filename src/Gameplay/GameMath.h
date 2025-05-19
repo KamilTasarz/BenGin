@@ -17,6 +17,12 @@ public:
         return a + t * (b - a);
     }
 
+    glm::vec3 smoothstepVec3(const glm::vec3& start, const glm::vec3& end, float t) {
+        t = glm::clamp(t, 0.0f, 1.0f);
+        float smoothT = t * t * (3 - 2 * t);  // smoothstep(t)
+        return glm::mix(start, end, smoothT); // interpolacja wektorów
+    }
+
     // Ogranicz wartoœæ do przedzia³u [min, max]
     static float Clamp(float value, float minVal, float maxVal)
     {
@@ -63,4 +69,8 @@ public:
 		return current + toVector / distance * maxDistanceDelta;
 	}
    
+	static float RandomFloat(float min, float max)
+	{
+		return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
+	}
 };
