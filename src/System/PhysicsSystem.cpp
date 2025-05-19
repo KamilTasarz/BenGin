@@ -176,3 +176,15 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<Node*>& collide_with, float len
 	}
 	return collide_with.size() > 0;
 }
+
+bool PhysicsSystem::rayCast(const std::vector<Ray>& rays, std::vector<Node*>& collide_with, float length)
+{
+	bool hitAny = false;
+
+	for (const Ray& ray : rays) {
+		bool hit = rayCast(ray, collide_with, length);
+		hitAny = hitAny || hit;
+	}
+
+	return hitAny;
+}

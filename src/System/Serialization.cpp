@@ -767,7 +767,7 @@ void loadComponents(json& j, Node* node, SceneGraph* scene)
 
 			if (component_name._Equal("Rigidbody")) {
 				json rigidbodyJson = component["properties"];
-				node->addComponent(std::make_unique<Rigidbody>(rigidbodyJson["mass"], rigidbodyJson["gravity"], rigidbodyJson["is_static"]));
+				node->addComponent(std::make_unique<Rigidbody>(rigidbodyJson["mass"], rigidbodyJson["gravity"], rigidbodyJson["is_static"], true, rigidbodyJson["lockPositionX"], rigidbodyJson["lockPositionY"], rigidbodyJson["lockPositionZ"]));
 			}
 			else {
 				std::unique_ptr <Component> _component = ScriptFactory::instance().create(component_name);

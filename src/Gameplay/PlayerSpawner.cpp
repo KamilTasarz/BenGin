@@ -37,6 +37,7 @@ void PlayerSpawner::spawnPlayer()
 {
 	std::cout << "Spawning player" << std::endl;
 	PrefabInstance *pref = new PrefabInstance(PrefabRegistry::FindByName("Player"), owner->scene_graph, owner->getTransform().getLocalPosition());
-	
-	owner->scene_graph->addChild(pref->prefab_root->getChildByTag("Player"));
+	Node* player = pref->prefab_root->getChildByTag("Player");
+	player->transform.setLocalPosition(owner->getTransform().getLocalPosition());
+	owner->scene_graph->addChild(player);
 }
