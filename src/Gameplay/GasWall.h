@@ -10,9 +10,10 @@ public:
 
 	VARIABLE(float, spreadSpeed);
 
-	float spreadInterval = 0.5f;
+	float spreadInterval = 1.f;
 	float timer;
 	bool spreading = true;
+	std::vector<std::string> obstacleLayer;
 	std::queue<glm::vec3> spreadQueue;
 	std::unordered_set<std::string> visited;
 

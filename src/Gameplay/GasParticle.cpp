@@ -37,7 +37,7 @@ void GasParticle::onUpdate(float deltaTime)
 
 	if (timer < growTime) {
 		float scaleFactor = timer / growTime;
-		glm::vec3 newScale = glm::mix(glm::vec3(0.f), scale, scaleFactor);
+		//glm::vec3 newScale = glm::mix(glm::vec3(0.f), scale, scaleFactor);
 		owner->transform.setLocalScale(scale * scaleFactor);
 	}
 	else if (timer >= growTime && timer < 20.f) {
@@ -46,7 +46,8 @@ void GasParticle::onUpdate(float deltaTime)
 		owner->transform.setLocalScale(newScale);
 	}
 	else if (timer >= 20.f && timer < 23.f) {
-		glm::vec3 newScale = glm::mix(owner->transform.getLocalScale(), glm::vec3(0.f), 3.f);
+		float scaleFactor = scale.x / 3.f * (23.f - timer);
+		owner->transform.setLocalScale(scale * scaleFactor);
 	}
 	else {
 		//owner->scene_graph->deleteChild(owner);
