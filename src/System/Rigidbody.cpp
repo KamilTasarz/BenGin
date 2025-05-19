@@ -146,7 +146,7 @@ void Rigidbody::onUpdate(float deltaTime)
 
 	overrideVelocityY = false;
 
-	std::cout << owner->getName() << " stoi na ziemi: " << groundUnderneath << ", dotyka sufitu: " << ceilingAbove << std::endl;
+	//std::cout << owner->getName() << " stoi na ziemi: " << groundUnderneath << ", dotyka sufitu: " << ceilingAbove << std::endl;
 }
 
 // collission with another rigidbody

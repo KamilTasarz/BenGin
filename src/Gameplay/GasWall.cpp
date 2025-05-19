@@ -21,6 +21,10 @@ void GasWall::onDetach()
 void GasWall::onStart()
 {
 	std::cout << "GasWall::onStart::" << owner->name << std::endl;
+
+    glm::vec3 startPos = owner->transform.getLocalPosition();
+    spreadQueue.push(startPos);
+    //visited.insert(posKey(startPos));
 }
 
 void GasWall::onUpdate(float deltaTime) {
@@ -29,6 +33,11 @@ void GasWall::onUpdate(float deltaTime) {
     /*if (Input::isKeyPressed(KEY_P)) {
         spreading = !spreading;
     }*/
+
+    std::cout << "timer: " << timer << std::endl;
+	std::cout << "spreadInterval: " << spreadInterval * spreadSpeed << std::endl;
+	std::cout << "spreading: " << spreading << std::endl;
+	std::cout << "spreadQueue size: " << spreadQueue.size() << std::endl;
 
     if (timer >= spreadInterval * spreadSpeed && spreading && !spreadQueue.empty()) {
         spreadCloud();
@@ -66,7 +75,7 @@ void GasWall::spreadCloud() {
                     spreadQueue.push(newPos);
 
                     PrefabInstance* pref = new PrefabInstance(PrefabRegistry::FindByName("GasParticle"), owner->scene_graph, newPos);
-                    Node* gas = pref->prefab_root->getChildByName("gas");
+                    Node* gas = pref->prefab_root->getChildById(0);
                     gas->transform.setLocalPosition(newPos);
 					gas->parent = owner;
 
@@ -74,11 +83,6 @@ void GasWall::spreadCloud() {
 					particle->growTime = spreadInterval * 2.5f;
 
                     owner->scene_graph->addChild(gas);
-
-                    //GameObject* newCloud = PrefabSystem::instantiate(cloudPrefab, newPos);
-                    //newCloud->setParent(gameObject);
-                    //newCloud->transform->scale = glm::vec3(0.f);
-                    //newCloud->getComponent<GasParticle>()->growTime = spreadInterval * 2.5f;
                 }
             }
         }

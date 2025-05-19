@@ -33,7 +33,7 @@ void GasParticle::onStart()
 void GasParticle::onUpdate(float deltaTime)
 {
 	timer += deltaTime;
-	std::cout << timer << std::endl;
+	//std::cout << timer << std::endl;
 
 	if (timer < growTime) {
 		float scaleFactor = timer / growTime;

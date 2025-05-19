@@ -16,7 +16,7 @@ public:
 	std::queue<glm::vec3> spreadQueue;
 	std::unordered_set<std::string> visited;
 
-	GasWall() = default;
+	GasWall() = default;	
 	~GasWall() = default;
 	void onAttach(Node* owner) override;
 	void onDetach() override;
