@@ -89,13 +89,21 @@ void SceneGraph::deleteChild(Node* p)
     auto it = std::find(siblings.begin(), siblings.end(), p);
     if (it != siblings.end()) {
         to_delete_vec.push_back(*it);
-        siblings.erase(it);
+        //siblings.erase(it);
     }
 }
 
 void SceneGraph::clearDeleteVector()
 {
     while (!to_delete_vec.empty()) {
+        Node* parent = to_delete_vec.back()->parent;
+        if (!parent) return;
+        auto& siblings = parent->children;
+        auto it = std::find(siblings.begin(), siblings.end(), to_delete_vec.back());
+        if (it != siblings.end()) {
+            
+            siblings.erase(it);
+        }
         delete to_delete_vec.back();
         to_delete_vec.pop_back();
     }
@@ -765,7 +773,7 @@ void Node::updateComponents(float deltaTime) {
 	for (auto& component : components) {
 		component->onUpdate(deltaTime);
 	}
-
+    
     for (auto& child : children) {
         child->updateComponents(deltaTime);
     }
