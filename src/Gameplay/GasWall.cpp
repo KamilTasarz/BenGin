@@ -73,7 +73,7 @@ void GasWall::spreadCloud() {
 
             bool obstacle = false;
             nodes.clear();
-            if (PhysicsSystem::instance().rayCast(ray, nodes, dir.length() * 0.6f)) {
+            if (PhysicsSystem::instance().rayCast(ray, nodes, glm::distance(currentPos, newPos) * 0.6f)) {
                 if (!(nodes.size() == 0)) {
                     for (int i = 0; i < nodes.size(); i++) {
                         obstacle = std::ranges::any_of(obstacleLayer, [&](const std::string& l) {
@@ -109,8 +109,8 @@ void GasWall::spreadCloud() {
 }
 
 std::string GasWall::posKey(const glm::vec3& pos) {
-    int x = static_cast<int>(round(pos.x * 10));
-    int y = static_cast<int>(round(pos.y * 10));
-    int z = static_cast<int>(round(pos.z * 10));
+    int x = static_cast<int>(round(pos.x * 100));
+    int y = static_cast<int>(round(pos.y * 100));
+    int z = static_cast<int>(round(pos.z * 100));
     return std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z);
 }

@@ -13,7 +13,7 @@ void Scale::onAttach(Node* owner)
 	this->owner = owner;
 	std::cout << "Scale::onAttach::" << owner->name << std::endl;
 
-	rb = owner->getComponent<Rigidbody>();
+	//rb = owner->getComponent<Rigidbody>();
 
 	startPos1 = owner->transform.getLocalPosition();
 	if (secondScale != NULL) startPos2 = secondScale->transform.getLocalPosition();
@@ -29,7 +29,7 @@ void Scale::onStart()
 {
 	std::cout << "start szalek -----------------------------------------------------------" << std::endl;
 	
-	rb = owner->getComponent<Rigidbody>();
+	//rb = owner->getComponent<Rigidbody>();
 
 	startPos1 = owner->transform.getLocalPosition();
 	startPos2 = secondScale->transform.getLocalPosition();
@@ -103,7 +103,7 @@ void Scale::onUpdate(float deltaTime)
 			secondScale->transform.setLocalPosition(startPos2 + glm::vec3(offset, 0.f, 0.f));
 		}
 		else if (isPlayerOn) {
-			owner->getComponent<Rigidbody>()->velocityY = 0.f;
+			//owner->getComponent<Rigidbody>()->velocityY = 0.f;
 
 			float loweringSpeed = .2f;
 			if (isPlayerHeavy) loweringSpeed = 2.f;
