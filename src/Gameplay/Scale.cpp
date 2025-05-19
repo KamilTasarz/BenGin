@@ -52,7 +52,7 @@ void Scale::onUpdate(float deltaTime)
 	// player detection
 	glm::vec3 position = owner->transform.getGlobalPosition();
 	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
-	float length = owner->transform.getLocalScale().y / 2.f + 0.02f;
+	float length = owner->transform.getLocalScale().y / 2.f + 0.1f;
 	float width = owner->transform.getLocalScale().x / 2.f - 0.05f;
 	std::vector<Node*> nodes;
 
@@ -103,7 +103,7 @@ void Scale::onUpdate(float deltaTime)
 			secondScale->transform.setLocalPosition(startPos2 + glm::vec3(offset, 0.f, 0.f));
 		}
 		else if (isPlayerOn) {
-			//owner->getComponent<Rigidbody>()->velocityY = 0.f;
+			owner->getComponent<Rigidbody>()->velocityY = 0.f;
 
 			float loweringSpeed = .2f;
 			if (isPlayerHeavy) loweringSpeed = 2.f;

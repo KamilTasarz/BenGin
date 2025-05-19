@@ -55,6 +55,10 @@ public:
 	void transformWithOffsetAABB(const glm::mat4& model);
 	void draw(Shader& shader);
 	void setBuffers();
+
+	glm::vec3 getCenter() const {
+		return (min_point_world + max_point_world) / 2.f;
+	}
 	
 	BoundingBox* clone(Node* new_owner) const {
 		BoundingBox* box_copy = new BoundingBox(this->model, new_owner, this->min_point_local, this->max_point_local);
