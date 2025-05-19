@@ -88,8 +88,16 @@ void SceneGraph::deleteChild(Node* p)
     auto& siblings = parent->children;
     auto it = std::find(siblings.begin(), siblings.end(), p);
     if (it != siblings.end()) {
+        to_delete_vec.push_back(*it);
         siblings.erase(it);
-        delete p;
+    }
+}
+
+void SceneGraph::clearDeleteVector()
+{
+    while (!to_delete_vec.empty()) {
+        delete to_delete_vec.back();
+        to_delete_vec.pop_back();
     }
 }
 

@@ -67,7 +67,7 @@ void Game::update(float deltaTime)
 	PhysicsSystem::instance().updateColliders(sceneGraph);
 	PhysicsSystem::instance().updateCollisions();
     sceneGraph->update(deltaTime);
-
+    sceneGraph->clearDeleteVector();
     // HUD
     
     //background->update(deltaTime);

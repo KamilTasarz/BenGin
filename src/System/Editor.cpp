@@ -192,7 +192,9 @@ void Editor::DrawNodeBlock(Node* node, int depth)
     if (selectedNode == node) {
         if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
 
-            sceneGraph->to_delete = node;
+            //sceneGraph->deleteChild(node);
+
+            sceneGraph->to_delete = selectedNode;
 
             sceneGraph->marked_object = nullptr;
         }
@@ -1580,6 +1582,8 @@ void Editor::update(float deltaTime) {
 
     // Scena
     sceneGraph->update(deltaTime);
+
+    sceneGraph->clearDeleteVector();
 
     //ziom->update(deltaTime, sceneGraph->root, 100);
 

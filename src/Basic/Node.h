@@ -494,6 +494,7 @@ public:
     Node* marked_object, * new_marked_object;
 
 	Node* to_delete = nullptr;
+    std::vector<Node*> to_delete_vec;
 
     int size = 0, point_light_number = 0, directional_light_number = 0;
     std::list<DirectionalLight*> directional_lights;
@@ -519,6 +520,7 @@ public:
     void addChild(Node* p, std::string name);
     void addChild(Node* p, Node* parent);
 	void deleteChild(Node* p);
+    void clearDeleteVector();
     void deletePointLight(PointLight* p);
     void deleteDirectionalLight(DirectionalLight* p);
     void addPointLight(PointLight* p);
