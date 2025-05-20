@@ -101,7 +101,7 @@ void GasWall::spreadCloud() {
                     GasParticle* particle = gas->getComponent<GasParticle>();
 					particle->growTime = spreadInterval * 2.5f;
 
-                    owner->scene_graph->addChild(gas);
+                    owner->scene_graph->addChild(gas, owner);
                 }
             }
         }

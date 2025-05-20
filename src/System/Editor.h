@@ -51,6 +51,7 @@ private:
 
 	//std::vector<BoundingBox*> colliders;
 	std::vector<std::shared_ptr<Prefab>>& prefabs;
+	std::vector<std::shared_ptr<Prefab>>& puzzle_prefabs;
 
 	float fps = 0.0f;
 	float fps_timer = 0.0f;
@@ -63,7 +64,7 @@ private:
 public:
 
 	bool play = false;
-	Editor(std::vector<std::shared_ptr<Prefab>>& prefabsref);
+	Editor(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::shared_ptr<Prefab>>& prefabsref_puzzle);
 
 	void changeMouse(GLFWwindow* window);
 	Ray getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection);

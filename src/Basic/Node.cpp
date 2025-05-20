@@ -599,14 +599,13 @@ void  Node::updateSelfAndChild(bool controlDirty) {
 
     controlDirty |= transform.isDirty();
 
-     
-   
+    if (in_frustrum) {
+        if (controlDirty) {
+            forceUpdateSelfAndChild();
+            //return;
+            //transform.computeModelMatrix();
 
-    if (controlDirty) {
-        forceUpdateSelfAndChild();
-        //return;
-        //transform.computeModelMatrix();
-
+        }
     }
 
     for (auto& child : children)
@@ -766,13 +765,15 @@ void Node::drawSelfAndChild(Transform& parent)
 }
 
 void Node::updateComponents(float deltaTime) {
-    if (animator != nullptr) {
-        animator->updateAnimation(deltaTime);
-    }
+    if (in_frustrum) {
+        if (animator != nullptr) {
+            animator->updateAnimation(deltaTime);
+        }
 
-	for (auto& component : components) {
-		component->onUpdate(deltaTime);
-	}
+        for (auto& component : components) {
+            component->onUpdate(deltaTime);
+        }
+    }
     
     for (auto& child : children) {
         child->updateComponents(deltaTime);
@@ -929,20 +930,30 @@ const Transform& Node::getTransform() {
 
 // ====INSTANCE MANAGER====
 
-void InstanceManager::drawSelfAndChild() {
-    glStencilMask(0xFF);
-    ResourceManager::Instance().shader_instanced->use();
-    pModel->DrawInstanced(*ResourceManager::Instance().shader_instanced, size);
-    glStencilMask(0x00);
+InstanceManager::~InstanceManager()
+{
+    for (Node* child : children) {
+        delete child;
+    }
+}
 
+void InstanceManager::drawSelfAndChild() {
+    if (in_frustrum && !scene_graph->is_editing) {
+        glStencilMask(0xFF);
+        ResourceManager::Instance().shader_instanced->use();
+        pModel->DrawInstanced(*ResourceManager::Instance().shader_instanced, size);
+        glStencilMask(0x00);
+    }
 }
 
 void InstanceManager::updateSelfAndChild(bool controlDirty) {
 
     controlDirty |= transform.isDirty();
 
-    if (controlDirty) {
-        forceUpdateSelfAndChild();
+    if (in_frustrum) {
+        if (controlDirty) {
+            forceUpdateSelfAndChild();
+        }
     }
 
     for (auto&& child : children)
@@ -952,6 +963,28 @@ void InstanceManager::updateSelfAndChild(bool controlDirty) {
         if (is_dirty) {
             updateBuffer(child);
         }
+    }
+}
+
+void InstanceManager::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB)
+{
+    if (AABB) {
+        in_frustrum = camera->isInFrustrum(AABB);
+        if (in_frustrum) {
+            if (is_physic_active) colliders.push_back(AABB);
+            if (is_logic_active && AABB_logic) colliders.push_back(AABB_logic);
+            if (has_RB) {
+                if (is_physic_active) colliders_RB.push_back(AABB);
+                if (is_logic_active && AABB_logic) colliders_RB.push_back(AABB_logic);
+            }
+        }
+    }
+    else {
+        in_frustrum = true;
+    }
+
+    for (auto& child : children) {
+        child->checkIfInFrustrum(colliders, colliders_RB);
     }
 }
 
