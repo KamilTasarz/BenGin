@@ -60,7 +60,9 @@ void PlayerController::onUpdate(float deltaTime)
 		}
 	}
 
-	
+	if (virusType != "none") {
+		HandleVirus(deltaTime);
+	}
 
 	//if (doors) std::cout << "doors::" << doors->name << std::endl;
 	//if (speed > 6.f) std::cout << "speed::" << speed << std::endl;
@@ -94,6 +96,9 @@ void PlayerController::HandleVirus(float deltaTime)
 	}
 	else {
 		deathTimer -= deltaTime;
+
+		if (deathTimer <= 0.f) {
+			Die(false);
+		}
 	}
-	
 }
