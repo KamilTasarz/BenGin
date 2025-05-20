@@ -7,7 +7,7 @@ class Button : public Script
 public:
 	using SelfType = Button;
 
-	VARIABLE(Node*, door);
+	VARIABLE(Node*, object);
 	VARIABLE(bool, activate)
 	VARIABLE(bool, isPressed);
 	glm::vec3 originalSize;
@@ -18,16 +18,17 @@ public:
 	void onDetach() override;
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
+	void ChangeState(bool state);
 	void onStayCollisionLogic(Node* other) override;
 	void onExitCollisionLogic(Node* other) override;
 	//void onEnd() override;
 
 	std::vector<Variable*> getFields() const override {
-		static Variable doorVar = getField_door();
+		static Variable objectVar = getField_object();
 		static Variable activateVar = getField_activate();
 		static Variable isPressedVar = getField_isPressed();
 
-		return { &doorVar, &activateVar, &isPressedVar };
+		return { &objectVar, &activateVar, &isPressedVar };
 	}
 };
 

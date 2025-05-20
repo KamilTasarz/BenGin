@@ -110,7 +110,7 @@ public:
     // Set position and set "isDirty" to true, for the program to know changes have been made
     void setLocalPosition(const glm::vec3& newPosition)
     {
-        m_pos = newPosition;
+            m_pos = newPosition;
         m_isDirty = true;
     }
 

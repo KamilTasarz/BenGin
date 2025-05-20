@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Script.h"
+#include "../System/Rigidbody.h"
 
 class PlayerController : public Script
 {
@@ -15,10 +16,12 @@ public:
     VARIABLE(int, id);
 	VARIABLE(bool, isGravityFlipped);
     
+	Rigidbody* rb = nullptr;
 	bool isGrounded = false;
     bool isJumping = false;
     bool isDead = false;
 	std::string virusType = "none";
+    float deathTimer;
 
 
     PlayerController() = default;
@@ -35,6 +38,8 @@ public:
     void onEnd() override;
 
     void Die(bool freeze);
+
+    void HandleVirus(float deltaTime);
 
     std::vector<Variable*> getFields() const override { 
         static Variable speedVar = getField_speed();

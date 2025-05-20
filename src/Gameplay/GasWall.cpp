@@ -28,6 +28,8 @@ void GasWall::onStart()
     glm::vec3 startPos = owner->transform.getLocalPosition();
     spreadQueue.push(startPos);
     //visited.insert(posKey(startPos));
+
+    prefab = PrefabRegistry::FindByName("GasParticle");
 }
 
 void GasWall::onUpdate(float deltaTime) {
@@ -43,17 +45,26 @@ void GasWall::onUpdate(float deltaTime) {
 	std::cout << "spreadQueue size: " << spreadQueue.size() << std::endl;*/
 
     if (timer >= spreadInterval * spreadSpeed && spreading && !spreadQueue.empty()) {
-        spreadCloud();
+        spreadCloud(deltaTime);
         timer = 0.f;
 
         //gm->score += 10.f * gm->scoreMultiplier;
     }
 }
 
-void GasWall::spreadCloud() {
+void GasWall::spreadCloud(float deltaTime) {
     int count = spreadQueue.size();
 
+	//float timeDelay = spreadInterval * spreadSpeed / count;
+	//float delayTimer = 0.f;
+
     for (int i = 0; i < count; ++i) {
+
+		/*delayTimer = 0.f;
+		while (delayTimer < timeDelay) {
+			delayTimer += deltaTime;
+		}*/
+
         glm::vec3 currentPos = spreadQueue.front();
         spreadQueue.pop();
 
@@ -92,11 +103,12 @@ void GasWall::spreadCloud() {
                     visited.insert(key);
                     spreadQueue.push(newPos);
 
-                    PrefabInstance* pref = new PrefabInstance(PrefabRegistry::FindByName("GasParticle"), owner->scene_graph, newPos);
+                    PrefabInstance* pref = new PrefabInstance(prefab, owner->scene_graph);
                     Node* gas = pref->prefab_root->getChildById(0);
-                    gas->transform.setLocalPosition(newPos);
+
                     gas->transform.setLocalScale(glm::vec3(0.f));
-					gas->parent = owner;
+                    gas->parent = owner;
+                    gas->transform.setLocalPosition(newPos);
 
                     GasParticle* particle = gas->getComponent<GasParticle>();
 					particle->growTime = spreadInterval * 2.5f;

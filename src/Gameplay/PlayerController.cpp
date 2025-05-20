@@ -1,7 +1,6 @@
 #include "PlayerController.h"
 #include "../Basic/Node.h"
 #include "RegisterScript.h"
-#include "../System/Rigidbody.h"
 #include "../System/Tag.h"
 #include "PlayerSpawner.h"
 //#include "GameMath.h"
@@ -25,7 +24,7 @@ void PlayerController::onDetach()
 void PlayerController::onStart()
 {
 	isGravityFlipped = false;
-	//std::cout << PrefabRegistry::Get()[0]->prefab_scene_graph->root->name << std::endl;
+	rb = owner->getComponent<Rigidbody>();
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -35,7 +34,6 @@ void PlayerController::onUpdate(float deltaTime)
 	//std::cout << "tag aktualnego gracza" << owner->getTagName() << std::endl;
 
 	glm::vec3 position = owner->transform.getLocalPosition();
-	Rigidbody* rb = owner->getComponent<Rigidbody>();
 
 	if (!rb) return;
 
@@ -87,4 +85,15 @@ void PlayerController::Die(bool freeze)
 	// spawn new player
 	Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
 	playerSpawner->getComponent<PlayerSpawner>()->spawnPlayer();
+}
+
+void PlayerController::HandleVirus(float deltaTime)
+{
+	if (abs(rb->velocityX) >= 0.05f) {
+		deathTimer = 0.5f;
+	}
+	else {
+		deathTimer -= deltaTime;
+	}
+	
 }

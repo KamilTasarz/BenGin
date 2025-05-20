@@ -8,7 +8,7 @@ void Door::onAttach(Node* owner)
 {
 	this->owner = owner;
 	std::cout << "Door::onAttach::" << owner->name << std::endl;
-	owner->setActive(isOpen);
+	owner->setActive(!isOpen);
 }
 
 void Door::onDetach()
@@ -20,12 +20,21 @@ void Door::onDetach()
 void Door::onStart()
 {
 	std::cout << "Door::onStart::" << owner->name << std::endl;
-	owner->setActive(isOpen);
+	owner->setActive(!isOpen);
 }
 
 void Door::onUpdate(float deltaTime)
 {
 	std::cout << "Door::onUpdate::" << owner->name << std::endl;
+	owner->setActive(!isOpen);
 }
+
+void Door::ChangeState(bool state)
+{
+	owner->setActive(state);
+	isOpen = !state;
+}
+
+
 
 
