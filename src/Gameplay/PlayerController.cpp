@@ -24,7 +24,7 @@ void PlayerController::onDetach()
 void PlayerController::onStart()
 {
 	isGravityFlipped = false;
-	rb = owner->getComponent<Rigidbody>();
+ 	rb = owner->getComponent<Rigidbody>();
 }
 
 void PlayerController::onUpdate(float deltaTime)
