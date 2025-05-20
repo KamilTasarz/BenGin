@@ -13,7 +13,7 @@ void Scale::onAttach(Node* owner)
 	this->owner = owner;
 	std::cout << "Scale::onAttach::" << owner->name << std::endl;
 
-	rb = owner->getComponent<Rigidbody>();
+	//rb = owner->getComponent<Rigidbody>();
 
 	startPos1 = owner->transform.getLocalPosition();
 	if (secondScale != NULL) startPos2 = secondScale->transform.getLocalPosition();
@@ -29,7 +29,7 @@ void Scale::onStart()
 {
 	std::cout << "start szalek -----------------------------------------------------------" << std::endl;
 	
-	rb = owner->getComponent<Rigidbody>();
+	//rb = owner->getComponent<Rigidbody>();
 
 	startPos1 = owner->transform.getLocalPosition();
 	startPos2 = secondScale->transform.getLocalPosition();
@@ -52,7 +52,7 @@ void Scale::onUpdate(float deltaTime)
 	// player detection
 	glm::vec3 position = owner->transform.getGlobalPosition();
 	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
-	float length = owner->transform.getLocalScale().y / 2.f + 0.02f;
+	float length = owner->transform.getLocalScale().y / 2.f + 0.1f;
 	float width = owner->transform.getLocalScale().x / 2.f - 0.05f;
 	std::vector<Node*> nodes;
 

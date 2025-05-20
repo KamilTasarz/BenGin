@@ -457,6 +457,8 @@ Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
         copy->layer = this->layer;
         copy->tag = this->tag;
 
+        //copy->parent = this->parent;
+
         // Komponenty — głęboka kopia
         //std::vector<std::string> scripts = ScriptFactory::instance().getScriptNames();
         for (auto& comp : this->components) {

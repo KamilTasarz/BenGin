@@ -16,6 +16,7 @@ public:
 	std::vector<std::string> obstacleLayer;
 	std::queue<glm::vec3> spreadQueue;
 	std::unordered_set<std::string> visited;
+	std::shared_ptr<Prefab> prefab;
 
 	GasWall() = default;	
 	~GasWall() = default;
@@ -23,7 +24,7 @@ public:
 	void onDetach() override;
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
-	void spreadCloud();
+	void spreadCloud(float deltaTime);
 	std::string posKey(const glm::vec3& pos);
 	//void onStayCollisionLogic(Node* other) override;
 

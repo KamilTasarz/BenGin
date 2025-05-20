@@ -73,4 +73,9 @@ public:
 	{
 		return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
 	}
+
+	static int RandomInt(int min, int max)
+	{
+		return min + rand() % (max - min + 1);
+	}
 };
