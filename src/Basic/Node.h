@@ -377,12 +377,17 @@ public:
     InstanceManager(std::shared_ptr<Model> model, std::string nameOfNode, int id = 0, int max_size = 1000) : Node(nameOfNode, id), max_size(max_size) {
         pModel = model;
         AABB = nullptr;
+        AABB_logic = nullptr;
         prepareBuffer();
     }
+
+    ~InstanceManager() override;
 
     void drawSelfAndChild() override;
 
     void updateSelfAndChild(bool controlDirty) override;
+
+    void checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB) override;
 
     void addChild(Node* p) override;
 

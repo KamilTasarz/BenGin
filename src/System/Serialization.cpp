@@ -151,7 +151,10 @@ json save_node(Node* node) {
 
 		j["prefab_instance"] = pointLightData;
 	}
-	else {
+	else if (dynamic_cast<InstanceManager*>(node)) {
+		j["type"] = "InstanceManager";
+
+	} else {
 		j["type"] = "Node";
 	}
 
@@ -467,6 +470,12 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, SceneGra
 			}
 
 		}
+		else if (type._Equal("InstanceManager")) {
+			
+			node = new InstanceManager(ResourceManager::Instance().getModel(model_id), name);
+			
+
+		}
 		else {
 			std::cerr << "Unknown node type: " << type << std::endl;
 			return nullptr;
@@ -668,6 +677,12 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			}
 			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, is_shining, direction, ambient, diffuse, specular);
 		}
+		else if (type._Equal("InstanceManager")) {
+
+			node = new InstanceManager(ResourceManager::Instance().getModel(model_id), name);
+
+
+		}
 		else {
 			std::cerr << "Unknown node type: " << type << std::endl;
 			return nullptr;
@@ -841,7 +856,7 @@ void loadComponents(json& j, Node* node, SceneGraph* scene)
 	}
 }
 
-void loadPrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs) {
+void loadPrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs, std::vector<std::shared_ptr<Prefab>>& prefabs_puzzle) {
 	const fs::path prefab_dir = "res/scene/prefabs";
 
 	for (const auto& entry : fs::recursive_directory_iterator(prefab_dir)) {

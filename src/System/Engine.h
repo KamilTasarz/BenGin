@@ -11,6 +11,7 @@ class Window;
 class Engine {
 private:
 	std::vector<std::shared_ptr<Prefab>> prefabs;
+	std::vector<std::shared_ptr<Prefab>> prefabs_puzzle;
 	
 public:
 	Editor* editor;

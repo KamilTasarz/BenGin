@@ -21,14 +21,14 @@ void Engine::init()
 	ResourceManager::Instance().init();
 
 	loadTagLayers();
-	loadPrefabs(prefabs);
+	loadPrefabs(prefabs, prefabs_puzzle);
 
 	PrefabRegistry::Init(&prefabs);
 
 	game = new Game(prefabs);
 	//game->init();
 
-	editor = new Editor(prefabs);
+	editor = new Editor(prefabs, prefabs_puzzle);
 	//editor->init();
 
 	camera->setAABB();

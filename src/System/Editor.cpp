@@ -33,7 +33,7 @@
 
 
 
-Editor::Editor(std::vector<std::shared_ptr<Prefab>>& prefabsref) : prefabs(prefabsref) {
+Editor::Editor(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::shared_ptr<Prefab>>& prefabsref_puzzle) : prefabs(prefabsref), puzzle_prefabs(prefabsref_puzzle) {
     icon = new Sprite(1920.f, 1080.f, "res/sprites/icon.png", 0.f, 0.f, 1.f);
     eye_icon = new Sprite(1920.f, 1080.f, "res/sprites/eye.png", 0.f, 0.f, 1.f);
     eye_slashed_icon = new Sprite(1920.f, 1080.f, "res/sprites/eye_slashed.png", 0.f, 0.f, 1.f);
@@ -658,8 +658,14 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
     }
     ImGui::Separator();
     if (ImGui::Button("ADD_EMPTY_NODE", ImVec2(150, 24))) {
-		sceneGraph->addChild(new Node("empty_node"));
-		sceneGraph->marked_object = sceneGraph->root->getChildByName("entity");
+        Node* new_node = new Node("empty_node");
+		sceneGraph->addChild(new_node);
+        sceneGraph->marked_object = new_node;
+    }
+    if (ImGui::Button("ADD_GAS_EMITTER", ImVec2(150, 24))) {
+        Node* new_node = new InstanceManager(ResourceManager::Instance().getModel(7), "Gas_Emitter");
+        sceneGraph->addChild(new_node);
+        sceneGraph->marked_object = new_node;
     }
 
     if (sceneGraph->marked_object) {
@@ -1537,8 +1543,13 @@ void Editor::input()
                 else {
                     Node* newNode = sceneGraph->marked_object->clone("clone", sceneGraph);
                     newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition() + glm::vec3(1.f, 0.f, 0.f));
-
-                    sceneGraph->addChild(newNode);
+                    
+                    if (sceneGraph->marked_object == sceneGraph->root) {
+                        sceneGraph->addChild(newNode);
+                    }
+                    else {
+                        sceneGraph->addChild(newNode, sceneGraph->marked_object->parent);
+                    }
                     sceneGraph->marked_object = newNode;
                 }
             }
@@ -1587,9 +1598,9 @@ void Editor::update(float deltaTime) {
 
     //ziom->update(deltaTime, sceneGraph->root, 100);
 
-	ParticleEmitter* emitter = dynamic_cast<ParticleEmitter*>(sceneGraph->root->getChildByName("ParticleEmitter"));
+	//ParticleEmitter* emitter = dynamic_cast<ParticleEmitter*>(sceneGraph->root->getChildByName("ParticleEmitter"));
 
-    if (emitter)  emitter->update(deltaTime, sceneGraph->root, 400);
+    //if (emitter)  emitter->update(deltaTime, sceneGraph->root, 400);
 
   
     // HUD

@@ -67,6 +67,7 @@ public:
 		box_copy->min_point_world = this->min_point_world;
 		box_copy->max_point_world = this->max_point_world;
 		box_copy->collison = this->collison;
+		box_copy->is_logic = this->is_logic;
 
 		return box_copy;
 	}
