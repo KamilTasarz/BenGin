@@ -440,6 +440,10 @@ Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
             copy->AABB = this->AABB->clone(copy);
         }
 
+        if (this->AABB_logic) {
+            copy->AABB_logic = this->AABB_logic->clone(copy);
+        }
+
         // Animator - głęboka kopia (jeśli nie jest współdzielony)
         if (this->animator)
             copy->animator = new Animator(*this->animator);
@@ -485,6 +489,16 @@ Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
                                 int* i = reinterpret_cast<int*>(new_ptr);
                                 int* _i = reinterpret_cast<int*>(ptr);
                                 *i = *_i;
+                            }
+                            else if (var->type == "bool") {
+                                bool* b = reinterpret_cast<bool*>(new_ptr);
+                                bool* _b = reinterpret_cast<bool*>(ptr);
+                                *b = *_b;
+                            }
+                            else if (var->type == "std::string") {
+                                std::string* s = reinterpret_cast<std::string*>(new_ptr);
+                                std::string* _s = reinterpret_cast<std::string*>(ptr);
+                                *s = *_s;
                             }
                             else if (var->type == "Node*") {
                                 Node** n = reinterpret_cast<Node**>(new_ptr);
@@ -1078,6 +1092,7 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
+    prefab_root->createComponents();
     //}
 }
 
@@ -1096,6 +1111,7 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
 	prefab_root->transform.setLocalPosition(position);
+    prefab_root->createComponents();
     //}
 }
 
@@ -1362,6 +1378,8 @@ Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph, bool lig
         scene_graph->point_light_number++;
 		//new_light->parent = copy;
     }
+
+    //copy->createComponents();
     return copy;
 }
 
