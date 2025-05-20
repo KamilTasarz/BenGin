@@ -11,7 +11,7 @@ out vec3 Position;
 out vec2 TextureCoords;
 out vec3 Normal;
 out vec4 Color;
-out float Scale;
+//out float Scale;
 
 uniform float totalTime;
 uniform float scaleFactor;
@@ -21,16 +21,18 @@ uniform mat4 projection;
 
 void main() {
 
-	totalTime /= 100.0f;
+	float time = totalTime / 100.0;
 
-	float alpha = clamp(totalTime, 0.0f, 1,0f);
+	float alpha = clamp(time, 0.0, 1,0);
 	Color = vec4(aColor, alpha);
 
-	Scale = scaleFactor * sin(totalTime + offset);
+	scale = scaleFactor * sin(time + aOffset);
+
 	TextureCoords = aTexCord;
 	Normal = aNormal;
 
-	Position = vec3(aModel * vec4(aPos, 1.0));
-	gl_Position = projection * view * aModel * vec4(aPos, 1.0);
+	vec3 scaledPos = aPos * scale;
+	Position = vec3(aModel * vec4(scaledPos, 1.0));
+	gl_Position = projection * view * aModel * vec4(scaledPos, 1.0);
 
 }
