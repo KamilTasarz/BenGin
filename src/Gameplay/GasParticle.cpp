@@ -24,7 +24,7 @@ void GasParticle::onDetach()
 void GasParticle::onStart()
 {
 	std::cout << "GasParticle::onStart::" << owner->name << std::endl;
-	float randomScale = GameMath::RandomFloat(1.1f, 1.9f);
+	float randomScale = GameMath::RandomFloat(0.8f, 1.2f);
 	scale = glm::vec3(randomScale, randomScale, randomScale);
 	growTime = 2.5f;
 	timer = 0.f;

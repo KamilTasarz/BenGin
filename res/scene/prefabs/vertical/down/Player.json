@@ -21,6 +21,56 @@
                 "y": -0.5,
                 "z": -0.5
             },
+            "children": [
+                {
+                    "AABB_logic_max": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "AABB_logic_min": {
+                        "x": -0.5,
+                        "y": -0.5,
+                        "z": -0.5
+                    },
+                    "AABB_max": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "AABB_min": {
+                        "x": -0.5,
+                        "y": -0.5,
+                        "z": -0.5
+                    },
+                    "id": 0,
+                    "is_logic_active": false,
+                    "is_physic_active": false,
+                    "is_visible": true,
+                    "layer": "Default",
+                    "model.id": 7,
+                    "name": "entity",
+                    "no_textures": false,
+                    "position": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "rotation": {
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 0.0,
+                        "y": 0.20000000298023224,
+                        "z": 0.20000000298023224
+                    },
+                    "tag": "Default",
+                    "type": "Node"
+                }
+            ],
             "components": [
                 {
                     "name": "PlayerController",
@@ -33,7 +83,7 @@
                         {
                             "field_type": "float",
                             "name": "jumpForce",
-                            "value": 17.0
+                            "value": 18.5
                         },
                         {
                             "field_type": "Node*",

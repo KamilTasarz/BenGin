@@ -3,6 +3,7 @@
 #include "RegisterScript.h"
 #include "../System/Tag.h"
 #include "PlayerSpawner.h"
+#include "GroundObject.h"
 //#include "GameMath.h"
 
 REGISTER_SCRIPT(PlayerController);
@@ -25,6 +26,7 @@ void PlayerController::onStart()
 {
 	isGravityFlipped = false;
  	rb = owner->getComponent<Rigidbody>();
+	timerIndicator = owner->getChildById(0);
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -43,8 +45,27 @@ void PlayerController::onUpdate(float deltaTime)
 	rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_K) == GLFW_PRESS) {
-		Die(false);
+		rb->is_static = true;
+		owner->is_physic_active = false;
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, -50.f * deltaTime, 0.f));
 	}
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_I) == GLFW_PRESS) {
+		rb->is_static = true;
+		owner->is_physic_active = false;
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 50.f * deltaTime, 0.f));
+	}
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_L) == GLFW_PRESS) {
+		rb->is_static = true;
+		owner->is_physic_active = false;
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(50.f * deltaTime, 0.f, 0.f));
+	}
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_J) == GLFW_PRESS) {
+		rb->is_static = true;
+		owner->is_physic_active = false;
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(-50.f * deltaTime, 0.f, 0.f));
+	}
+	rb->is_static = false;
+	owner->is_physic_active = true;
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		//std::cout << "Gracz probuje skoczyc" << std::endl;
@@ -60,7 +81,9 @@ void PlayerController::onUpdate(float deltaTime)
 		}
 	}
 
-	
+	if (virusType != "none") {
+		HandleVirus(deltaTime);
+	}
 
 	//if (doors) std::cout << "doors::" << doors->name << std::endl;
 	//if (speed > 6.f) std::cout << "speed::" << speed << std::endl;
@@ -75,12 +98,16 @@ void PlayerController::Die(bool freeze)
 {
 	if (isDead) return;
 	
+	timerIndicator->setActive(false);
+
 	Rigidbody* rb = owner->getComponent<Rigidbody>();
 	rb->is_static = freeze;
 
 	std::shared_ptr<Tag> tag = TagLayerManager::Instance().getTag("Box");
 	owner->setTag(tag);
 	isDead = true;
+
+	owner->addComponent(std::make_unique<GroundObject>());
 
 	// spawn new player
 	Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
@@ -89,11 +116,29 @@ void PlayerController::Die(bool freeze)
 
 void PlayerController::HandleVirus(float deltaTime)
 {
-	if (abs(rb->velocityX) >= 0.05f) {
+	if (isGravityFlipped) {
+		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, -1.f, 0.f));
+	}
+	else {
+		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, 1.f, 0.f));
+	}
+	
+	float smoothing = 10.f; // im wiêksza, tym szybsze przejœcie
+
+	glm::vec3 currentScale = timerIndicator->transform.getLocalScale();
+	glm::vec3 targetScale = glm::vec3(deathTimer * 2.f, 0.2f, 0.2f);
+
+	glm::vec3 newScale = glm::mix(currentScale, targetScale, deltaTime * smoothing);
+	timerIndicator->transform.setLocalScale(newScale);
+	
+	if (abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 1.f) {
 		deathTimer = 0.5f;
 	}
 	else {
 		deathTimer -= deltaTime;
+
+		if (deathTimer <= -0.1f) {
+			Die(false);
+		}
 	}
-	
 }

@@ -111,11 +111,13 @@ void GasWall::spreadCloud(float deltaTime) {
                     Node* gas = pref->prefab_root->getChildById(0);
 
                     gas->transform.setLocalScale(glm::vec3(0.f));
+
                     gas->parent = owner;
                     gas->transform.setLocalPosition(newPos - owner->transform.getLocalPosition());
                     gas->time_offset = 2.5f;
                     //GasParticle* particle = gas->getComponent<GasParticle>();
 					//particle->growTime = spreadInterval * 2.5f;
+
 
                     owner->scene_graph->addChild(gas, owner);
                 }
@@ -125,6 +127,14 @@ void GasWall::spreadCloud(float deltaTime) {
     }
     float time2 = glfwGetTime();
     std::cout << time2 - time << std::endl;
+}
+
+void GasWall::onCollisionLogic(Node* other)
+{
+    if (other->getTagName() == "Player") {
+        std::cout << "GasWall::onCollisionLogic::" << other->name << std::endl;
+        spreading = true;
+    }
 }
 
 std::string GasWall::posKey(const glm::vec3& pos) {
