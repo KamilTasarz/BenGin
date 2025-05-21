@@ -152,9 +152,14 @@ void Rigidbody::onUpdate(float deltaTime)
 // collission with another rigidbody
 void Rigidbody::onCollision(Node* other)
 {
-    Rigidbody* rb = other->getComponent<Rigidbody>();
+	if (is_static) {
+		return;
+	}
+	
+	Rigidbody* rb = other->getComponent<Rigidbody>();
 
     if (!rb) return;
+	if (rb->is_static) return;
 
     float averageVelocityX = (velocityX * mass + rb->velocityX * rb->mass) / (mass + rb->mass);
 	float averageVelocityY = (velocityY * mass + rb->velocityY * rb->mass) / (mass + rb->mass);
@@ -196,7 +201,11 @@ void Rigidbody::onStayCollision(Node* other)
 
 void Rigidbody::onExitCollision(Node* other)
 {
-    Rigidbody* rb = other->getComponent<Rigidbody>();
+	if (is_static) {
+		return;
+	}
+	
+	Rigidbody* rb = other->getComponent<Rigidbody>();
 
     if (!rb) return;
 

@@ -281,6 +281,17 @@ public:
     void addComponent(std::unique_ptr<Component> component);
     void deleteComponent(std::list<std::unique_ptr<Component>>::iterator& it);
 
+    void deleteComponent(Component* c) {
+        for (auto it = components.begin(); it != components.end(); ++it) {
+            if (it->get() == c) {
+                (*it)->onDetach();
+                if ((*it)->name == "Rigidbody") has_RB = false;
+                components.erase(it);
+                return;
+            }
+        }
+    }
+
     void increaseCount();
 
 	void setLayer(std::shared_ptr<Layer> layer) {

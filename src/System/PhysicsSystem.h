@@ -26,5 +26,9 @@ public:
 
     bool rayCast(Ray ray, std::vector<Node*>& collide_with, float length = -1.f);
     bool rayCast(const std::vector<Ray>& rays, std::vector<Node*>& collide_with, float length = -1.f);
+
+	std::vector<BoundingBox*>& getColliders() {
+		return colliders;
+	}
 };
 

@@ -52,7 +52,7 @@ void Button::onStayCollisionLogic(Node* other)
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
 		//std::cout << "Button pressed - " << owner->name << std::endl;
 		isPressed = true;
-		glm::vec3 newScale = originalSize * glm::vec3(1.f, 0.5f, 1.f);
+		glm::vec3 newScale = originalSize * glm::vec3(1.f, 0.3f, 1.f);
 		owner->transform.setLocalScale(newScale);
 
 		ChangeState(activate);

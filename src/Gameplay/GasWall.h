@@ -1,43 +1,44 @@
 #pragma once
 
 #include "Script.h"
+#include <unordered_set>
 #include <queue>
 
-class GasWall : public Script
-{
+class GasWall : public Script {
 public:
-	using SelfType = GasWall;
+    using SelfType = GasWall;
 
-	VARIABLE(float, spreadSpeed);
-	VARIABLE(bool, spreading);
+    VARIABLE(float, spreadSpeed);
+    VARIABLE(bool, spreading);
 
-	float spreadInterval = 1.f;
-	float timer;
-	//bool spreading = true;
-	std::vector<std::string> obstacleLayer;
-	std::queue<glm::vec3> spreadQueue;
-	std::unordered_set<std::string> visited;
-	std::shared_ptr<Prefab> prefab;
-	int counter;
+    std::shared_ptr<Prefab> prefab;
 
-	GasWall() = default;	
-	~GasWall() = default;
-	void onAttach(Node* owner) override;
-	void onDetach() override;
-	void onStart() override;
-	void onUpdate(float deltaTime) override;
-	void spreadCloud(float deltaTime);
-	void onCollisionLogic(Node* other) override;
+    float spreadInterval = 1.f;
+    float timer = 0.f;
 
-	std::string posKey(const glm::vec3& pos);
-	//void onStayCollisionLogic(Node* other) override;
+    std::vector<std::string> obstacleLayer;
+    std::queue<glm::ivec2> spreadQueue;
+    std::unordered_set<std::string> visited;
+    std::unordered_set<std::string> blocked;
+    std::unordered_set<std::string> freeButUnused;
 
-	std::vector<Variable*> getFields() const override {
-		static Variable spreadSpeedVar = getField_spreadSpeed();
-		static Variable spreadingVar = getField_spreading();
-		return { &spreadSpeedVar, &spreadingVar };
-	}
+    int counter = 0;
 
+    GasWall() = default;
+    ~GasWall() = default;
 
+    void onAttach(Node* owner) override;
+    void onDetach() override;
+    void onStart() override;
+    void onUpdate(float deltaTime) override;
+    void onCollisionLogic(Node* other) override;
+
+    void spreadCloud();
+    std::string posKey(const glm::ivec2& pos) const;
+
+    std::vector<Variable*> getFields() const override {
+        static Variable spreadSpeedVar = getField_spreadSpeed();
+        static Variable spreadingVar = getField_spreading();
+        return { &spreadSpeedVar, &spreadingVar };
+    }
 };
-

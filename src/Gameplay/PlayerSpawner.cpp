@@ -20,6 +20,7 @@ void PlayerSpawner::onDetach()
 void PlayerSpawner::onStart()
 {
 	i = 12;
+	spawnPlayer();
 }
 
 void PlayerSpawner::onUpdate(float deltaTime)

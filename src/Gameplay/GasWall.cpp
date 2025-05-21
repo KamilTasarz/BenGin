@@ -1,146 +1,123 @@
 #include "GasWall.h"
-#include "../Basic/Node.h"
 #include "RegisterScript.h"
-#include "GameMath.h"
-#include "GasParticle.h"
 #include "../System/PhysicsSystem.h"
+#include "../Component/BoundingBox.h"
+#include "../Basic/Node.h"
 #include "../config.h"
+#include "GasParticle.h"
 #include <iostream>
-#include <string>
+#include <cmath>
 
 REGISTER_SCRIPT(GasWall);
 
-void GasWall::onAttach(Node* owner)
-{
-	this->owner = owner;
-	std::cout << "GasParticle::onAttach::" << owner->name << std::endl;
+void GasWall::onAttach(Node* owner) {
+    this->owner = owner;
 }
 
-void GasWall::onDetach()
-{
-	std::cout << "GasWall::onDetach::" << owner->name << std::endl;
-	owner = nullptr;
+void GasWall::onDetach() {
+    owner = nullptr;
 }
 
-void GasWall::onStart()
-{
-	std::cout << "GasWall::onStart::" << owner->name << std::endl;
-
-    spreadInterval = 1.f;
-	obstacleLayer = { "Floor", "Wall"};
-    glm::vec3 startPos = owner->transform.getLocalPosition();
+void GasWall::onStart() {
+    obstacleLayer = { "Wall", "Floor" };
+    glm::ivec2 startPos = glm::round(glm::vec2(owner->transform.getGlobalPosition().x, owner->transform.getGlobalPosition().y));
     spreadQueue.push(startPos);
-    //visited.insert(posKey(startPos));
-
+    visited.insert(posKey(startPos));
     prefab = PrefabRegistry::FindByName("GasParticle");
-    counter = 0;
 }
 
 void GasWall::onUpdate(float deltaTime) {
+    if (!spreading || spreadQueue.empty()) return;
+
     timer += deltaTime;
-
-    /*if (Input::isKeyPressed(KEY_P)) {
-        spreading = !spreading;
-    }*/
-
-    /*std::cout << "timer: " << timer << std::endl;
-	std::cout << "spreadInterval: " << spreadInterval * spreadSpeed << std::endl;
-	std::cout << "spreading: " << spreading << std::endl;
-	std::cout << "spreadQueue size: " << spreadQueue.size() << std::endl;*/
-
-    if (timer >= spreadInterval * spreadSpeed && spreading && !spreadQueue.empty()) {
-        spreadCloud(deltaTime);
+    if (timer >= spreadInterval * spreadSpeed) {
+        spreadCloud();
         timer = 0.f;
-
-        //gm->score += 10.f * gm->scoreMultiplier;
     }
 }
 
-void GasWall::spreadCloud(float deltaTime) {
-    int count = spreadQueue.size();
+void GasWall::spreadCloud() {
+    int count = std::min(16, static_cast<int>(spreadQueue.size()));
 
-	//float timeDelay = spreadInterval * spreadSpeed / count;
-	//float delayTimer = 0.f;
-    float time = glfwGetTime();
-    for (int i = 0; i < count; ++i) {
+    const std::vector<glm::ivec2> directions = {
+        { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
+        { 1, 1 }, { 1, -1 }, { -1, 1 }, { -1, -1 }
+    };
 
-		/*delayTimer = 0.f;
-		while (delayTimer < timeDelay) {
-			delayTimer += deltaTime;
-		}*/
-
-        glm::vec3 currentPos = spreadQueue.front();
+    while (count-- > 0 && !spreadQueue.empty()) {
+        glm::ivec2 current = *(glm::ivec2*)&spreadQueue.front(); // tylko X i Y
         spreadQueue.pop();
 
-        std::vector<glm::vec3> directions = {
-            { 1, 0, 0 }, { -1, 0, 0 },
-            { 0, 1, 0 }, { 0, -1, 0 }/*,
-            { 1, 1, 0 }, { 1, -1, 0 },
-            { -1, 1, 0 }, { -1, -1, 0 }*/
-        };
-        
         for (const auto& dir : directions) {
-            glm::vec3 newPos = currentPos + dir;
+            glm::ivec2 newPos = current + dir;
             std::string key = posKey(newPos);
 
-            std::vector<Node*> nodes;
-			Ray ray = Ray{ currentPos, glm::vec4(dir, 0.f) };
+            if (visited.count(key)) continue;
 
-            bool obstacle = false;
-            nodes.clear();
-            if (PhysicsSystem::instance().rayCast(ray, nodes, glm::distance(currentPos, newPos) * 1.2f)) {
-                if (!(nodes.size() == 0)) {
-                    for (int i = 0; i < nodes.size(); i++) {
-                        obstacle = std::ranges::any_of(obstacleLayer, [&](const std::string& l) {
-							//std::cout << "Layer: " << nodes[i]->getLayerName() << ", is abstacle: " << (nodes[i]->getLayerName() == l) << std::endl;
-                            return nodes[i]->getLayerName() == l;
-                            });
-					}
+            // SprawdŸ kolizje AABB (osie X i Y)
+            bool isBlocked = false;
+            for (BoundingBox* box : PhysicsSystem::instance().getColliders() /*owner->scene_graph->root->getAllChildren()*/) {
+				if (box->node == nullptr) continue;
+				Node* node = box->node;
+                if (std::find(obstacleLayer.begin(), obstacleLayer.end(), node->getLayerName()) != obstacleLayer.end()) {
+                    glm::vec3 pos = node->transform.getGlobalPosition();
+                    glm::vec3 scale = node->transform.getLocalScale();
+
+                    float halfW = scale.x / 2.f;
+                    float halfH = scale.y / 2.f;
+
+                    if (newPos.x >= pos.x - halfW && newPos.x <= pos.x + halfW &&
+                        newPos.y >= pos.y - halfH && newPos.y <= pos.y + halfH) {
+                        isBlocked = true;
+                        break;
+                    }
                 }
             }
 
-            if (visited.count(key) == 0 && !obstacle) {
+            // SprawdŸ raycast
+            //std::vector<Node*> nodes;
+            //Ray ray = Ray{ glm::vec3(current, 0.f), glm::vec4(dir, 0.f, 0.f)};
 
-                float chance = (dir.x != 0 && dir.y != 0) ? 0.3f : 1.f;
+            //bool isBlocked = false;
+            //nodes.clear();
+            //if (PhysicsSystem::instance().rayCast(ray, nodes, glm::distance(glm::vec2(current), glm::vec2(newPos)) * 0.75f)) {
+            //    if (!(nodes.size() == 0)) {
+            //        for (int i = 0; i < nodes.size(); i++) {
+            //            isBlocked = std::ranges::any_of(obstacleLayer, [&](const std::string& l) {
+            //                //std::cout << "Layer: " << nodes[i]->getLayerName() << ", is abstacle: " << (nodes[i]->getLayerName() == l) << std::endl;
+            //                return nodes[i]->getLayerName() == l;
+            //                });
+            //        }
+            //    }
+            //}
 
-                if (GameMath::RandomFloat(0.f, 1.f) < chance) {
-                    visited.insert(key);
-                    spreadQueue.push(newPos);
+            if (isBlocked) continue;
 
-                    PrefabInstance* pref = new PrefabInstance(prefab, owner->scene_graph, "_" + std::to_string(counter));
-                    Node* gas = pref->prefab_root->getChildById(0);
+            visited.insert(key);
+            spreadQueue.push(glm::ivec2(newPos));
 
-                    gas->transform.setLocalScale(glm::vec3(0.f));
+            // Utwórz cz¹steczkê
+            PrefabInstance* instance = new PrefabInstance(prefab, owner->scene_graph, "_" + std::to_string(counter++));
+            Node* gas = instance->prefab_root->getChildById(0);
 
-                    gas->parent = owner;
-                    gas->transform.setLocalPosition(newPos - owner->transform.getLocalPosition());
-                    gas->time_offset = 2.5f;
+            gas->transform.setLocalScale(glm::vec3(0.f));
+            gas->parent = owner;
+            gas->transform.setLocalPosition(glm::vec3(newPos.x, newPos.y, 0.f) - owner->transform.getLocalPosition());
+            gas->time_offset = 2.5f;
 
-                    //GasParticle* particle = gas->getComponent<GasParticle>();
-					//particle->growTime = spreadInterval * 2.5f;
-
-
-                    owner->scene_graph->addChild(gas, owner);
-                }
-            }
+            owner->scene_graph->addChild(gas, owner);
         }
-       
     }
-    float time2 = glfwGetTime();
-    std::cout << time2 - time << std::endl;
 }
 
-void GasWall::onCollisionLogic(Node* other)
-{
+
+void GasWall::onCollisionLogic(Node* other) {
     if (other->getTagName() == "Player") {
-        std::cout << "GasWall::onCollisionLogic::" << other->name << std::endl;
         spreading = true;
     }
 }
 
-std::string GasWall::posKey(const glm::vec3& pos) {
-    int x = static_cast<int>(round(pos.x * 100));
-    int y = static_cast<int>(round(pos.y * 100));
-    int z = static_cast<int>(round(pos.z * 100));
-    return std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z);
+std::string GasWall::posKey(const glm::ivec2& pos) const {
+    return std::to_string(pos.x) + "_" + std::to_string(pos.y);
 }
+

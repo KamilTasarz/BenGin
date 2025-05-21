@@ -100,8 +100,10 @@ void PlayerController::Die(bool freeze)
 	
 	timerIndicator->setActive(false);
 
-	Rigidbody* rb = owner->getComponent<Rigidbody>();
-	rb->is_static = freeze;
+	if (freeze) {
+		Rigidbody* rb = owner->getComponent<Rigidbody>();
+		owner->deleteComponent(rb);
+	}
 
 	std::shared_ptr<Tag> tag = TagLayerManager::Instance().getTag("Box");
 	owner->setTag(tag);
