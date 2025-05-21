@@ -13,7 +13,7 @@ float random(vec2 st) {
 
 void main()
 {
-    /*float offset = 0.005;
+    float offset = 0.005;
     float glitch = sin(TexCoord.y * 50.0 + time * 5.0) * 0.02;
 
     float r = texture(screenTexture, vec2(TexCoord.x + offset + glitch, TexCoord.y)).r;
@@ -25,8 +25,8 @@ void main()
     float line = sin(TexCoord.y * 600.0 + time * 20.0) * 0.03;
 
     color += vec3(noise + line);
-    color = clamp(color, 0.0, 1.0);*/
+    color = clamp(color, 0.0, 1.0);
 
-    //FragColor = vec4(color, 1.0);
-    FragColor = texture(screenTexture, TexCoord);
+    FragColor = vec4(color, 1.0);
+    //FragColor = texture(screenTexture, TexCoord);
 }

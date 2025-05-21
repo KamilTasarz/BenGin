@@ -210,6 +210,8 @@ public:
 
     int id;
 
+    float time_offset = 0.f;
+
     // Color
     glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -298,6 +300,7 @@ public:
 	Node* getChildByTag(std::string tag);
 
     Node* clone(std::string instance_name, SceneGraph* new_scene_graph = nullptr);
+    void setVariablesNodes(std::string instance_name, Node* root, SceneGraph* new_scene_graph = nullptr);
 
     std::set<Node*> getAllChildren() {
         std::set<Node*> result;
@@ -372,7 +375,7 @@ class InstanceManager : public Node {
 public:
     int size = 0, current_min_id = 0;
     int max_size = 1000;
-    unsigned int buffer;
+    unsigned int buffer, buffer_offset;
 
     InstanceManager(std::shared_ptr<Model> model, std::string nameOfNode, int id = 0, int max_size = 1000) : Node(nameOfNode, id), max_size(max_size) {
         pModel = model;
@@ -573,8 +576,8 @@ public:
 
 
 
-    PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph);
-    PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, glm::vec3 position);
+    PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name);
+    PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name, glm::vec3 position);
 
 	~PrefabInstance() {
 		delete prefab_root;

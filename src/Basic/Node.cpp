@@ -45,10 +45,10 @@ void SceneGraph::unmark() {
 void SceneGraph::addChild(Node* p) {
     int i = 1;
 	string name = p->name;
-    while (root->getChildByName(p->name)) {
+    /*while (root->getChildByName(p->name)) {
         p->name = name + "_" + to_string(i);
         i++;
-    }
+    }*/
     root->addChild(p);
 }
 
@@ -57,11 +57,11 @@ void SceneGraph::addChild(Node* p, std::string name) {
     if (parent != nullptr) {
         int i = 1;
         string name = p->name;
-        while (root->getChildByName(p->name)) {
+        /*while (root->getChildByName(p->name)) {
             
             p->name = name + "_" + to_string(i);
             i++;
-        }
+        }*/
         parent->addChild(p);
     }
 }
@@ -71,11 +71,11 @@ void SceneGraph::addChild(Node* p, Node* parent) {
     if (parent != nullptr) {
         int i = 1;
         string name = p->name;
-        while (root->getChildByName(p->name)) {
+        /*while (root->getChildByName(p->name)) {
 
             p->name = name + "_" + to_string(i);
             i++;
-        }
+        }*/
         parent->addChild(p);
     }
 }
@@ -184,6 +184,8 @@ void SceneGraph::setShaders() {
     setLights(ResourceManager::Instance().shader_instanced);
     ResourceManager::Instance().shader_instanced->setMat4("projection", projection);
     ResourceManager::Instance().shader_instanced->setMat4("view", view);
+    ResourceManager::Instance().shader_instanced->setFloat("totalTime", glfwGetTime());
+    ResourceManager::Instance().shader_instanced->setFloat("scaleFactor", 1.5f);
     ResourceManager::Instance().shader_instanced->setInt("point_light_number", point_light_number);
     ResourceManager::Instance().shader_instanced->setInt("directional_light_number", directional_light_number);
 
@@ -438,10 +440,14 @@ Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
         // AABB - głęboka kopia
         if (this->AABB) {
             copy->AABB = this->AABB->clone(copy);
+            copy->AABB->transformAABB(copy->transform.getModelMatrix());
         }
+
+        
 
         if (this->AABB_logic) {
             copy->AABB_logic = this->AABB_logic->clone(copy);
+            copy->AABB_logic->transformAABB(copy->transform.getModelMatrix());
         }
 
         // Animator - głęboka kopia (jeśli nie jest współdzielony)
@@ -507,7 +513,6 @@ Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
                             }
                             
                             
-
                             break;
                         }
 
@@ -530,10 +535,33 @@ Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
         }
     }
     
-
-    
-
     return copy;
+}
+
+void Node::setVariablesNodes(std::string instance_name, Node* root, SceneGraph* new_scene_graph)
+{   
+    for (auto& comp : this->components) {
+        if (comp->name != "Rigidbody") {
+            
+            Script* script = dynamic_cast<Script*>(comp.get());
+
+            for (auto& var : script->getFields()) {
+                void* ptr = reinterpret_cast<char*>(script) + var->offset;
+                if (var->type == "Node*") {
+                    Node** n = reinterpret_cast<Node**>(ptr);
+                    if (*n) {
+                        Node* _n = root->getChildByName((*n)->name + "_" + instance_name);
+                        *n = _n;
+                    }
+                }
+            }
+        }
+        
+
+    }
+    for (Node* child : this->children) {
+        child->setVariablesNodes(instance_name, root, new_scene_graph);
+    }
 }
 
 
@@ -1044,42 +1072,75 @@ void InstanceManager::removeChild(int id) {
 }
 void InstanceManager::prepareBuffer()
 {
+    //glGenBuffers(1, &buffer_offset);
+    //glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
+    //glBufferData(GL_ARRAY_BUFFER, max_size * sizeof(float), nullptr, GL_STATIC_DRAW);
+    ////glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+    //for (unsigned int i = 0; i < pModel->meshes.size(); i++)
+    //{
+    //    unsigned int VAO = pModel->meshes[i].VAO;
+    //    glBindVertexArray(VAO);
+
+    //    //glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
+
+    //    GLsizei float_size = sizeof(float);
+    //    glEnableVertexAttribArray(7);
+    //    glVertexAttribPointer(7, 1, GL_FLOAT, GL_FALSE, float_size, (void*)0);
+
+    //    glVertexAttribDivisor(7, 1);
+
+    //    glBindVertexArray(0);
+    //}
+
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferData(GL_ARRAY_BUFFER, max_size * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
-
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
     for (unsigned int i = 0; i < pModel->meshes.size(); i++)
     {
+
+
         unsigned int VAO = pModel->meshes[i].VAO;
         glBindVertexArray(VAO);
+        //glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
         // Atrybuty wierzchołków
         GLsizei vec4_size = sizeof(glm::vec4);
-        glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)0);
-        glEnableVertexAttribArray(4);
-        glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(vec4_size));
-        glEnableVertexAttribArray(5);
-        glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(2 * vec4_size));
-        glEnableVertexAttribArray(6);
-        glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(3 * vec4_size));
+        glEnableVertexAttribArray(8);
+        glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(0));
+        glEnableVertexAttribArray(9);
+        glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(vec4_size));
+        glEnableVertexAttribArray(10);
+        glVertexAttribPointer(10, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(2 * vec4_size));
+        glEnableVertexAttribArray(11);
+        glVertexAttribPointer(11, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(3 * vec4_size));
 
-        glVertexAttribDivisor(3, 1);
-        glVertexAttribDivisor(4, 1);
-        glVertexAttribDivisor(5, 1);
-        glVertexAttribDivisor(6, 1);
-
+        glVertexAttribDivisor(8, 1);
+        glVertexAttribDivisor(9, 1);
+        glVertexAttribDivisor(10, 1);
+        glVertexAttribDivisor(11, 1);
+        
         glBindVertexArray(0);
     }
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void InstanceManager::updateBuffer(Node* p) {
+
+   /* glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
+    glBufferSubData(GL_ARRAY_BUFFER, p->id * sizeof(float), sizeof(float), &p->time_offset);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);*/
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferSubData(GL_ARRAY_BUFFER, p->id * sizeof(glm::mat4), sizeof(glm::mat4), &p->transform.getModelMatrix());
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph)
-    : Node(prefab->prefab_scene_graph->root->name + "_inst") {
+PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name)
+    : Node(prefab->prefab_scene_graph->root->name + name) {
     this->prefab = prefab;
     AABB = new BoundingBox(transform.getModelMatrix(), this);
 
@@ -1096,8 +1157,8 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     //}
 }
 
-PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, glm::vec3 position)
-    : Node(prefab->prefab_scene_graph->root->name + "_inst") {
+PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name, glm::vec3 position)
+    : Node(prefab->prefab_scene_graph->root->name + name) {
     this->prefab = prefab;
     AABB = new BoundingBox(transform.getModelMatrix(), this);
 
@@ -1363,6 +1424,7 @@ Prefab::Prefab(std::string name, PrefabType prefab_type)
 Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph, bool light_copy)
 {
 	Node* copy = prefab_scene_graph->root->clone(instance_name, scene_graph);
+    copy->setVariablesNodes(instance_name, copy, scene_graph);
     /*copy->scene_graph = scene_graph;*/
     for (auto& light : prefab_scene_graph->point_lights) {
 		PointLight* new_light = new PointLight(light->pModel, light->name + "_" + instance_name, light->is_shining, light->quadratic, light->linear, light->constant,

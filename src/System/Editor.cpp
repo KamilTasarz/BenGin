@@ -749,7 +749,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
 
         if (ImGui::Button("ADD_PREFAB_INSTANCE", ImVec2(150, 24))) {
             if (size > 0) {
-                Node* inst = new PrefabInstance(prefabs[current_prefab], sceneGraph);
+                Node* inst = new PrefabInstance(prefabs[current_prefab], sceneGraph, "_"+to_string(prefabs[current_prefab]->prefab_instances.size()));
                 sceneGraph->addChild(inst);
                 sceneGraph->marked_object = inst;
             }
@@ -1542,6 +1542,7 @@ void Editor::input()
                 }
                 else {
                     Node* newNode = sceneGraph->marked_object->clone("clone", sceneGraph);
+                    newNode->setVariablesNodes("clone", newNode, sceneGraph);
                     newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition() + glm::vec3(1.f, 0.f, 0.f));
                     
                     if (sceneGraph->marked_object == sceneGraph->root) {

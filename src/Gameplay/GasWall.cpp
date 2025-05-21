@@ -4,6 +4,9 @@
 #include "GameMath.h"
 #include "GasParticle.h"
 #include "../System/PhysicsSystem.h"
+#include "../config.h"
+#include <iostream>
+#include <string>
 
 REGISTER_SCRIPT(GasWall);
 
@@ -30,6 +33,7 @@ void GasWall::onStart()
     //visited.insert(posKey(startPos));
 
     prefab = PrefabRegistry::FindByName("GasParticle");
+    counter = 0;
 }
 
 void GasWall::onUpdate(float deltaTime) {
@@ -57,7 +61,7 @@ void GasWall::spreadCloud(float deltaTime) {
 
 	//float timeDelay = spreadInterval * spreadSpeed / count;
 	//float delayTimer = 0.f;
-
+    float time = glfwGetTime();
     for (int i = 0; i < count; ++i) {
 
 		/*delayTimer = 0.f;
@@ -74,7 +78,7 @@ void GasWall::spreadCloud(float deltaTime) {
             { 1, 1, 0 }, { 1, -1, 0 },
             { -1, 1, 0 }, { -1, -1, 0 }
         };
-
+        
         for (const auto& dir : directions) {
             glm::vec3 newPos = currentPos + dir;
             std::string key = posKey(newPos);
@@ -88,7 +92,7 @@ void GasWall::spreadCloud(float deltaTime) {
                 if (!(nodes.size() == 0)) {
                     for (int i = 0; i < nodes.size(); i++) {
                         obstacle = std::ranges::any_of(obstacleLayer, [&](const std::string& l) {
-							std::cout << "Layer: " << nodes[i]->getLayerName() << ", is abstacle: " << (nodes[i]->getLayerName() == l) << std::endl;
+							//std::cout << "Layer: " << nodes[i]->getLayerName() << ", is abstacle: " << (nodes[i]->getLayerName() == l) << std::endl;
                             return nodes[i]->getLayerName() == l;
                             });
 					}
@@ -103,21 +107,24 @@ void GasWall::spreadCloud(float deltaTime) {
                     visited.insert(key);
                     spreadQueue.push(newPos);
 
-                    PrefabInstance* pref = new PrefabInstance(prefab, owner->scene_graph);
+                    PrefabInstance* pref = new PrefabInstance(prefab, owner->scene_graph, "_" + std::to_string(counter));
                     Node* gas = pref->prefab_root->getChildById(0);
 
                     gas->transform.setLocalScale(glm::vec3(0.f));
                     gas->parent = owner;
-                    gas->transform.setLocalPosition(newPos);
-
-                    GasParticle* particle = gas->getComponent<GasParticle>();
-					particle->growTime = spreadInterval * 2.5f;
+                    gas->transform.setLocalPosition(newPos - owner->transform.getLocalPosition());
+                    gas->time_offset = 2.5f;
+                    //GasParticle* particle = gas->getComponent<GasParticle>();
+					//particle->growTime = spreadInterval * 2.5f;
 
                     owner->scene_graph->addChild(gas, owner);
                 }
             }
         }
+       
     }
+    float time2 = glfwGetTime();
+    std::cout << time2 - time << std::endl;
 }
 
 std::string GasWall::posKey(const glm::vec3& pos) {

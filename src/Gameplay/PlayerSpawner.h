@@ -7,6 +7,8 @@ class PlayerSpawner : public Script
 public:
 	using SelfType = PlayerSpawner;
 
+	int i = 0;
+
 	PlayerSpawner() = default;
 	virtual ~PlayerSpawner() = default;
 	void onAttach(Node* owner) override;

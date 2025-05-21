@@ -146,7 +146,7 @@ void PhysicsSystem::updateCollisions()
 	}
 
 
-	//std::cout << "Sprawdzono: " << counter << std::endl;
+	std::cout << "Sprawdzono: " << counter << std::endl;
 }
 
 bool PhysicsSystem::rayCast(Ray ray, std::vector<Node*>& collide_with, float length)

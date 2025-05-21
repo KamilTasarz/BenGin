@@ -466,7 +466,7 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, SceneGra
 			std::string prefab_name = j["prefab_instance"]["prefab_name"];
 			std::shared_ptr<Prefab> prefab = getPrefab(prefabs, prefab_name);
 			if (prefab) {
-				node = new PrefabInstance(prefab, scene);
+				node = new PrefabInstance(prefab, scene, "_" + to_string(prefab->prefab_instances.size()));
 			}
 
 		}

@@ -19,6 +19,7 @@ void PlayerSpawner::onDetach()
 
 void PlayerSpawner::onStart()
 {
+	i = 12;
 }
 
 void PlayerSpawner::onUpdate(float deltaTime)
@@ -35,8 +36,9 @@ void PlayerSpawner::onEnd()
 
 void PlayerSpawner::spawnPlayer()
 {
+	i++;
 	std::cout << "Spawning player" << std::endl;
-	PrefabInstance *pref = new PrefabInstance(PrefabRegistry::FindByName("Player"), owner->scene_graph, owner->getTransform().getLocalPosition());
+	PrefabInstance *pref = new PrefabInstance(PrefabRegistry::FindByName("Player"), owner->scene_graph, "_" + std::to_string(i), owner->getTransform().getLocalPosition());
 	Node* player = pref->prefab_root->getChildByTag("Player");
 	player->transform.setLocalPosition(owner->getTransform().getLocalPosition());
  	owner->scene_graph->addChild(player);

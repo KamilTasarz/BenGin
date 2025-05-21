@@ -41,7 +41,7 @@ private:
     ResourceManager() {
         shader = new Shader(vertexPath, fragmentPath);
         shader_tile = new Shader(vertexPath_tile, fragmentPath);
-        shader_instanced = new Shader(vertexPath_instanced, fragmentPath);
+        shader_instanced = new Shader(vertexPath_gas, fragmentPath_gas);
         shader_instanced_outline = new Shader(vertexPath_instanced, fragmentPath_outline);
         shader_outline = new Shader(vertexPath, fragmentPath_outline);
         shader2D = new Shader(triangleVertexPath, triangleFragmentPath);
@@ -83,6 +83,8 @@ private:
     const char* vertexPath_vhs = "res/shaders/vhs.vert";
     const char* vertexPath_particle = "res/shaders/particle.vert";
     const char* fragmentPath_particle = "res/shaders/particle.frag";
+    const char* vertexPath_gas = "res/shaders/gas.vert";
+    const char* fragmentPath_gas = "res/shaders/gas.frag";
 
 
 public:

@@ -17,6 +17,7 @@ public:
 	std::queue<glm::vec3> spreadQueue;
 	std::unordered_set<std::string> visited;
 	std::shared_ptr<Prefab> prefab;
+	int counter;
 
 	GasWall() = default;	
 	~GasWall() = default;
