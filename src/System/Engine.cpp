@@ -23,9 +23,9 @@ void Engine::init()
 	loadTagLayers();
 	loadPrefabs(prefabs, prefabs_puzzle);
 
-	PrefabRegistry::Init(&prefabs);
+	PrefabRegistry::Init(&prefabs, &prefabs_puzzle);
 
-	game = new Game(prefabs);
+	game = new Game(prefabs, prefabs_puzzle);
 	//game->init();
 
 	editor = new Editor(prefabs, prefabs_puzzle);

@@ -22,6 +22,7 @@ private:
 
 	std::vector<BoundingBox*> colliders;
 	std::vector<std::shared_ptr<Prefab>>& prefabs;
+	std::vector<std::shared_ptr<Prefab>>& puzzle_prefabs;
 
 	SceneGraph* sceneGraph;
 	unsigned int framebuffer, colorTexture, depthRenderbuffer;
@@ -31,7 +32,7 @@ private:
 	void update(float deltaTime);
 public:
 	bool play = true;
-	Game(std::vector<std::shared_ptr<Prefab>>& prefabsref);
+	Game(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::shared_ptr<Prefab>>& prefabsref_puzzle);
 
 	void init();
 	void run();

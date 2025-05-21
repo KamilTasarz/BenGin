@@ -80,7 +80,7 @@ void Game::update(float deltaTime)
     
 }
 
-Game::Game(std::vector<std::shared_ptr<Prefab>>& prefabsref) : prefabs(prefabsref)
+Game::Game(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::shared_ptr<Prefab>>& prefabsref_puzzle) : prefabs(prefabsref), puzzle_prefabs(prefabsref_puzzle)
 {
 	viewX = 0;
 	viewY = 0;
@@ -92,7 +92,7 @@ void Game::init()
 {
 	is_initialized = true;
 
-	loadScene("res/scene/scene.json", sceneGraph, prefabs);
+	loadScene("res/scene/scene.json", sceneGraph, prefabs, puzzle_prefabs);
 
 	sceneGraph->forcedUpdate();
 
