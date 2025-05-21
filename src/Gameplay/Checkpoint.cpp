@@ -23,7 +23,7 @@ void Checkpoint::onStart()
 
 void Checkpoint::onUpdate(float deltaTime)
 {
-	std::cout << "Checkpoint::onUpdate::" << owner->name << std::endl;
+	//std::cout << "Checkpoint::onUpdate::" << owner->name << std::endl;
 }
 
 void Checkpoint::onCollisionLogic(Node* other)

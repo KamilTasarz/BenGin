@@ -45,8 +45,27 @@ void PlayerController::onUpdate(float deltaTime)
 	rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_K) == GLFW_PRESS) {
-		Die(false);
+		rb->is_static = true;
+		owner->is_physic_active = false;
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, -50.f * deltaTime, 0.f));
 	}
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_I) == GLFW_PRESS) {
+		rb->is_static = true;
+		owner->is_physic_active = false;
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 50.f * deltaTime, 0.f));
+	}
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_L) == GLFW_PRESS) {
+		rb->is_static = true;
+		owner->is_physic_active = false;
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(50.f * deltaTime, 0.f, 0.f));
+	}
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_J) == GLFW_PRESS) {
+		rb->is_static = true;
+		owner->is_physic_active = false;
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(-50.f * deltaTime, 0.f, 0.f));
+	}
+	rb->is_static = false;
+	owner->is_physic_active = true;
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		//std::cout << "Gracz probuje skoczyc" << std::endl;

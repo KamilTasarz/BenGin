@@ -25,7 +25,7 @@ void Door::onStart()
 
 void Door::onUpdate(float deltaTime)
 {
-	std::cout << "Door::onUpdate::" << owner->name << std::endl;
+	//std::cout << "Door::onUpdate::" << owner->name << std::endl;
 	//owner->setActive(!isOpen);
 }
 
