@@ -74,9 +74,9 @@ void GasWall::spreadCloud(float deltaTime) {
 
         std::vector<glm::vec3> directions = {
             { 1, 0, 0 }, { -1, 0, 0 },
-            { 0, 1, 0 }, { 0, -1, 0 },
+            { 0, 1, 0 }, { 0, -1, 0 }/*,
             { 1, 1, 0 }, { 1, -1, 0 },
-            { -1, 1, 0 }, { -1, -1, 0 }
+            { -1, 1, 0 }, { -1, -1, 0 }*/
         };
         
         for (const auto& dir : directions) {
@@ -88,7 +88,7 @@ void GasWall::spreadCloud(float deltaTime) {
 
             bool obstacle = false;
             nodes.clear();
-            if (PhysicsSystem::instance().rayCast(ray, nodes, glm::distance(currentPos, newPos) * 0.6f)) {
+            if (PhysicsSystem::instance().rayCast(ray, nodes, glm::distance(currentPos, newPos) * 1.2f)) {
                 if (!(nodes.size() == 0)) {
                     for (int i = 0; i < nodes.size(); i++) {
                         obstacle = std::ranges::any_of(obstacleLayer, [&](const std::string& l) {
@@ -115,6 +115,7 @@ void GasWall::spreadCloud(float deltaTime) {
                     gas->parent = owner;
                     gas->transform.setLocalPosition(newPos - owner->transform.getLocalPosition());
                     gas->time_offset = 2.5f;
+
                     //GasParticle* particle = gas->getComponent<GasParticle>();
 					//particle->growTime = spreadInterval * 2.5f;
 
