@@ -29,13 +29,18 @@ void Scale::onStart()
 {
 	std::cout << "start szalek -----------------------------------------------------------" << std::endl;
 	
-	//rb = owner->getComponent<Rigidbody>();
+	rb = owner->getComponent<Rigidbody>();
 
 	startPos1 = owner->transform.getLocalPosition();
 	startPos2 = secondScale->transform.getLocalPosition();
-	/*returnToPosition = true;
-	moveHorizontally = false;
-	isPlayerOn = false;*/
+	
+	if (moveHorizontally) {
+		rb->lockPositionY = true;
+	}
+	else {
+		rb->lockPositionX = true;
+	}
+	rb->lockPositionZ = true;
 }
 
 void Scale::onUpdate(float deltaTime)
@@ -71,10 +76,11 @@ void Scale::onUpdate(float deltaTime)
 	if (PhysicsSystem::instance().rayCast(rays, nodes, length)) {
 		if (!(nodes.size() == rays.size() && nodes[rays.size() - 1] == owner)) {
 			for (auto node : nodes) {
-				if (node->getTagName() == "Player") {
+				if (node->getTagName() == "Player" || node->getTagName() == "Box") {
 					isPlayerOn = true;
-					if (node->getComponent<PlayerController>()->virusType == "black") {
-						isPlayerHeavy = true;
+					PlayerController* player = node->getComponent<PlayerController>();
+					if (player != nullptr) {
+						if (player->virusType == "black") isPlayerHeavy = true;
 					}
 					std::cout << "na szalce stoi gracz, jest ciê¿ki: " << isPlayerHeavy << std::endl;
 					timer = 0.05f;
@@ -85,6 +91,8 @@ void Scale::onUpdate(float deltaTime)
 	}
 
 	if (!isPlayerOn && !moveHorizontally && returnToPosition) {
+		rb->velocityY = 0.f;
+
 		glm::vec3 position1 = owner->transform.getLocalPosition();
 		glm::vec3 newPosition = GameMath::MoveTowards(position1, startPos1, 1.f * deltaTime);
 		owner->transform.setLocalPosition(newPosition);
@@ -103,7 +111,7 @@ void Scale::onUpdate(float deltaTime)
 			secondScale->transform.setLocalPosition(startPos2 + glm::vec3(offset, 0.f, 0.f));
 		}
 		else if (isPlayerOn) {
-			owner->getComponent<Rigidbody>()->velocityY = 0.f;
+			rb->velocityY = 0.f;
 
 			float loweringSpeed = .2f;
 			if (isPlayerHeavy) loweringSpeed = 2.f;

@@ -54,7 +54,7 @@ void Virus::ApplyEffect(Node* target)
 	target->getComponent<Rigidbody>()->gravity = -32.f;
 	player->speed = 10.f;
 	player->isGravityFlipped = false;
-	player->jumpForce = 17.f;
+	player->jumpForce = 18.5f;
 	player->virusType = "none";
 
 	VirusEffect(target);

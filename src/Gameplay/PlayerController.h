@@ -22,7 +22,7 @@ public:
     bool isDead = false;
 	std::string virusType = "none";
     float deathTimer;
-
+    Node* timerIndicator;
 
     PlayerController() = default;
     virtual ~PlayerController() = default;

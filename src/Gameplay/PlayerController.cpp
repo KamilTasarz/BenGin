@@ -3,6 +3,7 @@
 #include "RegisterScript.h"
 #include "../System/Tag.h"
 #include "PlayerSpawner.h"
+#include "GroundObject.h"
 //#include "GameMath.h"
 
 REGISTER_SCRIPT(PlayerController);
@@ -25,6 +26,7 @@ void PlayerController::onStart()
 {
 	isGravityFlipped = false;
  	rb = owner->getComponent<Rigidbody>();
+	timerIndicator = owner->getChildById(0);
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -77,12 +79,16 @@ void PlayerController::Die(bool freeze)
 {
 	if (isDead) return;
 	
+	timerIndicator->setActive(false);
+
 	Rigidbody* rb = owner->getComponent<Rigidbody>();
 	rb->is_static = freeze;
 
 	std::shared_ptr<Tag> tag = TagLayerManager::Instance().getTag("Box");
 	owner->setTag(tag);
 	isDead = true;
+
+	owner->addComponent(std::make_unique<GroundObject>());
 
 	// spawn new player
 	Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
@@ -91,13 +97,28 @@ void PlayerController::Die(bool freeze)
 
 void PlayerController::HandleVirus(float deltaTime)
 {
-	if (abs(rb->velocityX) >= 0.05f) {
+	if (isGravityFlipped) {
+		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, -1.f, 0.f));
+	}
+	else {
+		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, 1.f, 0.f));
+	}
+	
+	float smoothing = 10.f; // im wiêksza, tym szybsze przejœcie
+
+	glm::vec3 currentScale = timerIndicator->transform.getLocalScale();
+	glm::vec3 targetScale = glm::vec3(deathTimer * 2.f, 0.2f, 0.2f);
+
+	glm::vec3 newScale = glm::mix(currentScale, targetScale, deltaTime * smoothing);
+	timerIndicator->transform.setLocalScale(newScale);
+	
+	if (abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 1.f) {
 		deathTimer = 0.5f;
 	}
 	else {
 		deathTimer -= deltaTime;
 
-		if (deathTimer <= 0.f) {
+		if (deathTimer <= -0.1f) {
 			Die(false);
 		}
 	}

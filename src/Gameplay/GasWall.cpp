@@ -108,12 +108,12 @@ void GasWall::spreadCloud(float deltaTime) {
 
                     gas->transform.setLocalScale(glm::vec3(0.f));
                     //gas->parent = owner;
-                    gas->transform.setLocalPosition(newPos);
+                    gas->transform.setLocalPosition(newPos - owner->transform.getLocalPosition());
 
                     GasParticle* particle = gas->getComponent<GasParticle>();
 					particle->growTime = spreadInterval * 2.5f;
 
-                    owner->scene_graph->addChild(gas);
+                    owner->scene_graph->addChild(gas, owner);
                 }
             }
         }
