@@ -31,11 +31,7 @@ void main()
     color += vec3(noise + line);
     color = clamp(color, 0.0, 1.0);
 
-<<<<<<< Updated upstream
-    FragColor = vec4(color, 1.0);*/
-    FragColor = texture(screenTexture, TexCoord);
-=======
     FragColor = vec4(color, 1.0);
     //FragColor = texture(screenTexture, vectorUV);
->>>>>>> Stashed changes
+
 }
