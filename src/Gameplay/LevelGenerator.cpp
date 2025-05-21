@@ -39,10 +39,11 @@ void LevelGenerator::GenerateLevel()
 		int levelIndex = GameMath::RandomInt(3, 4);
 		std::string levelName = "room_" + std::to_string(levelIndex);
 
-		PrefabInstance* pref = new PrefabInstance(PrefabRegistry::FindByName(levelName), owner->scene_graph, std::to_string(i + 20), owner->getTransform().getLocalPosition());
+		PrefabInstance* pref = new PrefabInstance(PrefabRegistry::FindByName(levelName), owner->scene_graph, std::to_string(i + 20));
 		//Node* player = pref->prefab_root->getChildByTag("Player");
 		//player->transform.setLocalPosition(owner->getTransform().getLocalPosition());
-		owner->scene_graph->addChild(pref, owner->scene_graph->root);
+		owner->scene_graph->addChild(pref);
+		pref->transform.setLocalPosition(owner->getTransform().getLocalPosition());
 
 		glm::vec3 levelOffset = pref->prefab_root->getChildByTag("Exit")->transform.getLocalPosition();
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + levelOffset);

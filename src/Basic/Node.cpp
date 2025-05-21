@@ -568,6 +568,7 @@ void Node::setVariablesNodes(std::string instance_name, Node* root, SceneGraph* 
 void Node::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB) {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
+        //in_frustrum = true;
         if (in_frustrum) {
 			if (is_physic_active) colliders.push_back(AABB);
             if (is_logic_active && AABB_logic) colliders.push_back(AABB_logic);
@@ -1014,6 +1015,7 @@ void InstanceManager::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, st
 {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
+        //in_frustrum = true;
         if (in_frustrum) {
             if (is_physic_active) colliders.push_back(AABB);
             if (is_logic_active && AABB_logic) colliders.push_back(AABB_logic);
@@ -1148,13 +1150,15 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
 
     prefab->prefab_instances.push_back(this);
 
-    set_prefab_colliders(prefab->prefab_scene_graph->root);
+    
 
     //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
     prefab_root->createComponents();
     //}
+    prefab_root->forceUpdateSelfAndChild();
+    set_prefab_colliders(prefab_root);
 }
 
 PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name, glm::vec3 position)
@@ -1166,13 +1170,17 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     
     prefab->prefab_instances.push_back(this);
 
-    set_prefab_colliders(prefab->prefab_scene_graph->root);
+
     
     //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
 	prefab_root->transform.setLocalPosition(position);
+    prefab_root->forceUpdateSelfAndChild();
     prefab_root->createComponents();
+
+    set_prefab_colliders(prefab_root);
+
     //}
 }
 
@@ -1274,7 +1282,10 @@ void PrefabInstance::drawSelfAndChild()
         }
     }
     
-    
+    ResourceManager::Instance().shader_outline->use();
+    glm::vec3 dynamic_color = glm::vec3(0.f, 0.6f, 0.6f);
+    ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+    AABB->draw(*ResourceManager::Instance().shader_outline);
 }
 
 void PrefabInstance::drawShadows(Shader& shader)
@@ -1288,6 +1299,7 @@ void PrefabInstance::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std
 {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
+        //in_frustrum = true;
         if (in_frustrum) {
             for (auto& child : prefab_root->getAllChildren()) {
                 child->in_frustrum = true;
