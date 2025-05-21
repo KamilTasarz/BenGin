@@ -9,10 +9,11 @@ public:
 	using SelfType = GasWall;
 
 	VARIABLE(float, spreadSpeed);
+	VARIABLE(bool, spreading);
 
 	float spreadInterval = 1.f;
 	float timer;
-	bool spreading = true;
+	//bool spreading = true;
 	std::vector<std::string> obstacleLayer;
 	std::queue<glm::vec3> spreadQueue;
 	std::unordered_set<std::string> visited;
@@ -25,12 +26,17 @@ public:
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
 	void spreadCloud(float deltaTime);
+	void onCollisionLogic(Node* other) override;
+
 	std::string posKey(const glm::vec3& pos);
 	//void onStayCollisionLogic(Node* other) override;
 
 	std::vector<Variable*> getFields() const override {
 		static Variable spreadSpeedVar = getField_spreadSpeed();
-		return { &spreadSpeedVar };
+		static Variable spreadingVar = getField_spreading();
+		return { &spreadSpeedVar, &spreadingVar };
 	}
+
+
 };
 

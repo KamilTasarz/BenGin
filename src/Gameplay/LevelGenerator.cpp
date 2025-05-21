@@ -42,7 +42,7 @@ void LevelGenerator::GenerateLevel()
 		PrefabInstance* pref = new PrefabInstance(PrefabRegistry::FindByName(levelName), owner->scene_graph, owner->getTransform().getLocalPosition());
 		//Node* player = pref->prefab_root->getChildByTag("Player");
 		//player->transform.setLocalPosition(owner->getTransform().getLocalPosition());
-		owner->scene_graph->addChild(pref);
+		owner->scene_graph->addChild(pref, owner->scene_graph->root);
 
 		glm::vec3 levelOffset = pref->prefab_root->getChildByTag("Exit")->transform.getLocalPosition();
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + levelOffset);

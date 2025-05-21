@@ -120,6 +120,14 @@ void GasWall::spreadCloud(float deltaTime) {
     }
 }
 
+void GasWall::onCollisionLogic(Node* other)
+{
+    if (other->getTagName() == "Player") {
+        std::cout << "GasWall::onCollisionLogic::" << other->name << std::endl;
+        spreading = true;
+    }
+}
+
 std::string GasWall::posKey(const glm::vec3& pos) {
     int x = static_cast<int>(round(pos.x * 100));
     int y = static_cast<int>(round(pos.y * 100));
