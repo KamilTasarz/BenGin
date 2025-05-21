@@ -645,7 +645,11 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
     ImGui::SameLine();
 
     if (ImGui::Button("SAVE", ImVec2(150, 24))) {
+        
         saveScene("res/scene/scene.json", editor_sceneGraph);
+        if (!scene_editor) {
+            savePrefab(prefabs[current_prefab]);
+        }
     }
     ImGui::SameLine();
     if (ImGui::Button("EDITING_VIEW", ImVec2(150, 24))) {
@@ -821,6 +825,37 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         if (ImGui::Button("EDIT_PREFAB", ImVec2(150, 24))) {
             scene_editor = !scene_editor;
         }
+
+        ImGui::Separator();
+        if (ImGui::Button("DUPLICATE_PREFAB", ImVec2(150, 24))) {
+
+            std::string name = new_prefab_name;
+            if (name == "") name = "New_prefab";
+
+            shared_ptr<Prefab> new_prefab = make_shared<Prefab>(name);
+
+            new_prefab->prefab_scene_graph->root = prefabs[prefab_to_duplicate]->clone("", new_prefab->prefab_scene_graph, true);
+            new_prefab->prefab_scene_graph->root->name = name;
+            prefabs.push_back(new_prefab);
+            current_prefab = prefabs.size() - 1;
+            scene_editor = false;
+            new_prefab->prefab_type = prefabs[prefab_to_duplicate]->prefab_type;
+            
+
+            new_prefab_name[0] = '\0';
+        }
+
+        if (ImGui::Combo("Choose prefab to duplicate", &prefab_to_duplicate, items.data(), items.size())) {
+            if (current_prefab == size) {
+                std::cout << "Wybrano: brak\n";
+            }
+            else {
+                std::cout << "Wybrano: " << items[prefab_to_duplicate] << "\n";
+            }
+        }
+
+        ImGui::InputText("Duplicate name:", new_prefab_name, 128);
+        ImGui::Separator();
     }
     else {
 

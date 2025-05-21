@@ -103,6 +103,7 @@ void SceneGraph::clearDeleteVector()
         if (it != siblings.end()) {
             
             siblings.erase(it);
+            this->size--;
         }
         delete to_delete_vec.back();
         to_delete_vec.pop_back();
@@ -1198,8 +1199,10 @@ void PrefabInstance::set_prefab_colliders(Node* node)
 
 void PrefabInstance::updateSelf()
 {
-    delete prefab_root;
-    delete AABB;
+    if (prefab_root)
+        delete prefab_root;
+    if (AABB)
+        delete AABB;
 	AABB = new BoundingBox(transform.getModelMatrix(), this);
 	prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
