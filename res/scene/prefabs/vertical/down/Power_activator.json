@@ -2,13 +2,13 @@
     "children": [
         {
             "AABB_logic_max": {
-                "x": 0.5,
-                "y": 0.5,
+                "x": 1.5,
+                "y": 1.5,
                 "z": 0.5
             },
             "AABB_logic_min": {
-                "x": -0.5,
-                "y": -0.5,
+                "x": -1.5,
+                "y": -1.5,
                 "z": -0.5
             },
             "AABB_max": {
@@ -23,106 +23,21 @@
             },
             "components": [
                 {
-                    "name": "Virus",
-                    "variables": [
-                        {
-                            "field_type": "bool",
-                            "name": "blue",
-                            "value": false
-                        },
-                        {
-                            "field_type": "bool",
-                            "name": "green",
-                            "value": false
-                        },
-                        {
-                            "field_type": "bool",
-                            "name": "black",
-                            "value": false
-                        }
-                    ]
+                    "name": "Electrified",
+                    "variables": null
                 }
             ],
             "id": 0,
-            "is_logic_active": false,
+            "is_logic_active": true,
             "is_physic_active": true,
             "is_visible": true,
             "layer": "Default",
-            "model.id": 4,
-            "name": "box_1",
+            "model.id": 3,
+            "name": "power",
             "no_textures": false,
             "position": {
-                "x": -9.6389107806516e-10,
+                "x": 1.5,
                 "y": 0.0,
-                "z": 4.357491867335028e-10
-            },
-            "rotation": {
-                "w": 0.44451066851615906,
-                "x": 0.0,
-                "y": 0.8957517147064209,
-                "z": 0.0
-            },
-            "scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "tag": "Default",
-            "type": "Node"
-        },
-        {
-            "AABB_logic_max": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "AABB_logic_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
-            },
-            "AABB_max": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "AABB_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
-            },
-            "id": 0,
-            "is_logic_active": false,
-            "is_physic_active": true,
-            "is_visible": true,
-            "layer": "Default",
-            "model.id": 6,
-            "name": "test_point_light",
-            "no_textures": true,
-            "point_light": {
-                "ambient": {
-                    "x": 0.20000000298023224,
-                    "y": 0.20000000298023224,
-                    "z": 0.20000000298023224
-                },
-                "constant": 1.0,
-                "diffuse": {
-                    "x": 0.800000011920929,
-                    "y": 0.800000011920929,
-                    "z": 0.800000011920929
-                },
-                "is_shining": true,
-                "linear": 0.09000000357627869,
-                "quadratic": 0.03200000151991844,
-                "specular": {
-                    "x": 0.800000011920929,
-                    "y": 0.800000011920929,
-                    "z": 0.800000011920929
-                }
-            },
-            "position": {
-                "x": 1.901902198791504,
-                "y": 1.6934080123901367,
                 "z": 0.0
             },
             "rotation": {
@@ -137,7 +52,77 @@
                 "z": 1.0
             },
             "tag": "Default",
-            "type": "PointLight"
+            "type": "Node"
+        },
+        {
+            "AABB_logic_max": {
+                "x": 0.6000000238418579,
+                "y": 0.6000000238418579,
+                "z": 0.5
+            },
+            "AABB_logic_min": {
+                "x": -0.6000000238418579,
+                "y": -0.6000000238418579,
+                "z": -0.5
+            },
+            "AABB_max": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            },
+            "AABB_min": {
+                "x": -0.5,
+                "y": -0.5,
+                "z": -0.5
+            },
+            "components": [
+                {
+                    "name": "PowerActivator",
+                    "variables": [
+                        {
+                            "field_type": "Node*",
+                            "name": "object",
+                            "value": "null"
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "activate",
+                            "value": false
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "isActivated",
+                            "value": false
+                        }
+                    ]
+                }
+            ],
+            "id": 0,
+            "is_logic_active": true,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 5,
+            "name": "activator",
+            "no_textures": false,
+            "position": {
+                "x": -1.5,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "tag": "Default",
+            "type": "Node"
         }
     ],
     "id": 0,
@@ -146,7 +131,7 @@
     "is_visible": true,
     "layer": "Default",
     "model.id": -1,
-    "name": "puzzle_1",
+    "name": "Power_activator",
     "no_textures": true,
     "position": {
         "x": 0.0,

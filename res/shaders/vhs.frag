@@ -17,7 +17,7 @@ float random(vec2 st) {
 
 void main()
 {
-    float offset = 0.005;
+    /*float offset = 0.005;
     float glitch = sin(vectorUV.y * 50.0 + time * 5.0) * 0.02;
 
     float r = texture(screenTexture, vec2(vectorUV.x + offset + glitch, vectorUV.y)).r;
@@ -31,7 +31,7 @@ void main()
     color += vec3(noise + line);
     color = clamp(color, 0.0, 1.0);
 
-    FragColor = vec4(color, 1.0);
-    //FragColor = texture(screenTexture, vectorUV);
+    FragColor = vec4(color, 1.0); */
+    FragColor = texture(screenTexture, vectorUV);
 
 }

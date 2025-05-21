@@ -37,7 +37,7 @@ public:
 
     void onEnd() override;
 
-    void Die(bool freeze);
+    void Die(bool freeze, bool electrified = false);
 
     void HandleVirus(float deltaTime);
 

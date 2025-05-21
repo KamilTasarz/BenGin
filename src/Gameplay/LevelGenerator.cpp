@@ -36,7 +36,7 @@ void LevelGenerator::onUpdate(float deltaTime)
 void LevelGenerator::GenerateLevel()
 {
 	for (int i = 0; i < levelCount; ++i) {
-		int levelIndex = GameMath::RandomInt(3, 5);
+		int levelIndex = GameMath::RandomInt(3, 6);
 		std::string levelName = "room_" + std::to_string(levelIndex);
 
 		PrefabInstance* pref = new PrefabInstance(PrefabRegistry::FindByName(levelName), owner->scene_graph, std::to_string(i + 20));

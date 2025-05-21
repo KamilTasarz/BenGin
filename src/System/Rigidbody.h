@@ -9,7 +9,7 @@ public:
 	float velocityX, velocityY;;
 	float targetVelocityX, targetVelocityY;
 
-	bool overrideVelocityY = false;
+	bool overrideVelocityX = false, overrideVelocityY = false;
 
 	float velocityDeltaX, velocityDeltaY;
 

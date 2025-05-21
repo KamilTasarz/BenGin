@@ -145,6 +145,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	}
 
 	overrideVelocityY = false;
+	overrideVelocityX = false;
 
 	//std::cout << owner->getName() << " stoi na ziemi: " << groundUnderneath << ", dotyka sufitu: " << ceilingAbove << std::endl;
 }

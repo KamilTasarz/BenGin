@@ -60,6 +60,8 @@
     <ClCompile Include="src\Gameplay\GasWall.cpp" />
     <ClCompile Include="src\Gameplay\Door.cpp" />
     <ClCompile Include="src\Gameplay\LevelGenerator.cpp" />
+    <ClCompile Include="src\Gameplay\Electrified.cpp" />
+    <ClCompile Include="src\Gameplay\PowerActivator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -148,6 +150,8 @@
     <ClInclude Include="src\Gameplay\GasWall.h" />
     <ClInclude Include="src\Gameplay\Door.h" />
     <ClInclude Include="src\Gameplay\LevelGenerator.h" />
+    <ClInclude Include="src\Gameplay\Electrified.h" />
+    <ClInclude Include="src\Gameplay\PowerActivator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
@@ -175,6 +179,8 @@
     <None Include="cpp.hint" />
     <None Include="res\shaders\particle.frag" />
     <None Include="res\shaders\particle.vert" />
+    <None Include="res\shaders\gas.frag" />
+    <None Include="res\shaders\gas.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />

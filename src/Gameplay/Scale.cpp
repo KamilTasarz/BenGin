@@ -113,6 +113,8 @@ void Scale::onUpdate(float deltaTime)
 		else if (isPlayerOn) {
 			rb->velocityY = 0.f;
 
+			if (rb->groundUnderneath) return;
+
 			float loweringSpeed = .2f;
 			if (isPlayerHeavy) loweringSpeed = 2.f;
 

@@ -42,7 +42,7 @@ void PlayerController::onUpdate(float deltaTime)
 	bool pressedRight = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS);
 	bool pressedLeft = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS);
 
-	rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
+	if (!rb->overrideVelocityX) rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_K) == GLFW_PRESS) {
 		rb->is_static = true;
@@ -94,13 +94,16 @@ void PlayerController::onEnd()
 {
 }
 
-void PlayerController::Die(bool freeze)
+void PlayerController::Die(bool freeze, bool electrified)
 {
 	if (isDead) return;
 	
 	timerIndicator->setActive(false);
 
-	if (freeze) {
+	if (electrified) {
+		rb->is_static = true;
+	}
+	else if (freeze) {
 		Rigidbody* rb = owner->getComponent<Rigidbody>();
 		owner->deleteComponent(rb);
 	}

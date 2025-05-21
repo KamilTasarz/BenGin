@@ -33,6 +33,8 @@ void Fan::onUpdate(float deltaTime)
 
 void Fan::onStayCollisionLogic(Node* other)
 {
+	if (!isActive) return;
+	
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
 		if (other->getTagName() == "Player") {
 			if (other->getComponent<PlayerController>()->virusType == "black") {
@@ -42,9 +44,14 @@ void Fan::onStayCollisionLogic(Node* other)
 
 		Rigidbody* rb = other->getComponent<Rigidbody>();
 		if (rb) {
-			rb->overrideVelocityY = true;
-			rb->targetVelocityX = horizontalPower;
-			rb->targetVelocityY = wavyPower;
+			if (verticalPower != 0.f) {
+				rb->overrideVelocityY = true;
+				rb->targetVelocityY = wavyPower;
+			}
+			if (horizontalPower != 0.f) {
+				rb->overrideVelocityX = true;
+				rb->targetVelocityX = horizontalPower;
+			}
 		}
 	}
 }
