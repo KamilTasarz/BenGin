@@ -58,7 +58,8 @@ void GasParticle::onUpdate(float deltaTime)
 void GasParticle::onStayCollisionLogic(Node * other)
 {
 	if (other->getTagName() == "Player") {
-		other->getComponent<PlayerController>()->Die(true);
+		//other->getComponent<PlayerController>()->Die(true);
+		other->getComponent<Rigidbody>()->is_static = true;;
 	}
 }
 
