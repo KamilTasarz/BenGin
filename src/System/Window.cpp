@@ -281,3 +281,24 @@ void Window::initializeWindow() {
     }
 
 }
+
+void Window::toggleFullscreen()
+{
+
+    is_fullscreen = !is_fullscreen;
+
+    if (is_fullscreen) {
+        monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+        // zapisz pozycjê i rozmiar przed prze³¹czeniem
+        glfwGetWindowPos(window, &windowPosX, &windowPosY);
+        glfwGetWindowSize(window, &width, &height);
+
+        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+    }
+    else {
+        glfwSetWindowMonitor(window, nullptr, windowPosX, windowPosY, width, height, 0);
+    }
+
+}

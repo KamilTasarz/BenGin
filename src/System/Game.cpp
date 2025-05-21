@@ -21,6 +21,14 @@ void Game::input()
         //glfwSetWindowShouldClose(window->window, true);
         play = false;
     }
+
+    if (glfwGetKey(window->window, GLFW_KEY_F11) == GLFW_PRESS) {
+        window->toggleFullscreen();
+        // Buffer button press
+        while (glfwGetKey(window->window, GLFW_KEY_F11) == GLFW_PRESS)
+            glfwPollEvents();
+    }
+
 }
 void Game::draw()
 {
@@ -46,14 +54,15 @@ void Game::draw()
     // Tu gdzieś ustawić uniformy dla shadera/shaderów SSAO i użyć
 
     glDisable(GL_DEPTH_TEST);
-	ResourceManager::Instance().shader_vhs->use();
+	ResourceManager::Instance().shader_crt->use();
     glBindVertexArray(quadVAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, colorTexture);
 
-    ResourceManager::Instance().shader_vhs->setInt("screenTexture", 0);
+    ResourceManager::Instance().shader_crt->setInt("screenTexture", 0);
+    ResourceManager::Instance().shader_crt->setVec2("curvature", glm::vec2(3.0f, 3.0f));
     float time = glfwGetTime();
-    ResourceManager::Instance().shader_vhs->setFloat("time", time);
+    ResourceManager::Instance().shader_crt->setFloat("time", time);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glEnable(GL_DEPTH_TEST);
 }

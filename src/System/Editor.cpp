@@ -656,6 +656,11 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         play = true;
         //glfwSetWindowShouldClose(ServiceLocator::getWindow()->window, true);
     }
+    ImGui::SameLine();
+    if (ImGui::Button("FULL-SCREEN", ImVec2(150, 24))) {
+        auto* window = ServiceLocator::getWindow();
+        window->toggleFullscreen();
+    }
     ImGui::Separator();
     if (ImGui::Button("ADD_EMPTY_NODE", ImVec2(150, 24))) {
         Node* new_node = new Node("empty_node");
