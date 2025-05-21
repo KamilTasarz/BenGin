@@ -43,11 +43,14 @@ void Game::draw()
     //text->renderText("Fps: " + to_string(fpsValue), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *ResourceManager::Instance().shader_text, glm::vec3(1.f, 0.3f, 0.3f));
     //text->renderText("We have text render!", 200, 200, *ResourceManager::Instance().shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
   
+    // Tu gdzieś ustawić uniformy dla shadera/shaderów SSAO i użyć
+
     glDisable(GL_DEPTH_TEST);
 	ResourceManager::Instance().shader_vhs->use();
     glBindVertexArray(quadVAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, colorTexture);
+
     ResourceManager::Instance().shader_vhs->setInt("screenTexture", 0);
     float time = glfwGetTime();
     ResourceManager::Instance().shader_vhs->setFloat("time", time);
