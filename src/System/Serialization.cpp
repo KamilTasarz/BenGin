@@ -998,8 +998,14 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	json j;
 
+	j["is_pp"] = data.is_post_process;
+
+	j["is_crt"] = data.is_crt_curved;
+
 	// Save as an array of 2 values
 	j["crt_curvature"] = vec2_to_json(data.crt_curvature);
+
+	j["crt_outline_color"] = vec3_to_json(data.crt_outline_color);
 
 	std::ofstream file(filename);
 	if (file.is_open()) {
@@ -1017,8 +1023,17 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 	if (file.is_open()) {
 		json j;
 		try {
+
 			file >> j;
+
+			data.is_post_process = j.at("is_pp");
+
+			data.is_crt_curved = j.at("is_crt");
+
 			data.crt_curvature = json_to_vec2(j.at("crt_curvature"));
+
+			data.crt_outline_color = json_to_vec3(j.at("crt_outline_color"));
+		
 		}
 		catch (const std::exception& e) {
 			std::cerr << "Blad przy wczytywaniu pliku " << filename << ": " << e.what() << std::endl;

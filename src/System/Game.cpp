@@ -39,7 +39,7 @@ void Game::draw()
 
     sceneGraph->draw(viewWidth, viewHeight, framebuffer);
 
-    
+
     //glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     //background->render(*ResourceManager::Instance().shader_background);
     //sprite2->render(*ResourceManager::Instance().shader_background);
@@ -47,24 +47,43 @@ void Game::draw()
     //sprite->render(*ResourceManager::Instance().shader_background);
     //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    float time = glfwGetTime();
     float fpsValue = 1.f / ServiceLocator::getWindow()->deltaTime;
+
     //text->renderText("Fps: " + to_string(fpsValue), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *ResourceManager::Instance().shader_text, glm::vec3(1.f, 0.3f, 0.3f));
     //text->renderText("We have text render!", 200, 200, *ResourceManager::Instance().shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
-  
+
     // Tu gdzieś ustawić uniformy dla shadera/shaderów SSAO i użyć
 
     glDisable(GL_DEPTH_TEST);
-	ResourceManager::Instance().shader_crt->use();
+
     glBindVertexArray(quadVAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, colorTexture);
 
-    ResourceManager::Instance().shader_crt->setInt("screenTexture", 0);
-    ResourceManager::Instance().shader_crt->setVec2("curvature", postProcessData.crt_curvature);
-    float time = glfwGetTime();
-    ResourceManager::Instance().shader_crt->setFloat("time", time);
+    if(postProcessData.is_post_process) {
+
+        if (postProcessData.is_crt_curved) {
+
+            ResourceManager::Instance().shader_PostProcess_crt->use();
+            ResourceManager::Instance().shader_PostProcess_crt->setInt("screenTexture", 0);
+
+            ResourceManager::Instance().shader_PostProcess_crt->setVec2("curvature", postProcessData.crt_curvature);
+            ResourceManager::Instance().shader_PostProcess_crt->setVec3("outline_color", postProcessData.crt_outline_color);
+            ResourceManager::Instance().shader_PostProcess_crt->setFloat("time", time);
+        }
+
+    }
+    else {
+        
+        ResourceManager::Instance().shader_PostProcess_pass->use();
+        ResourceManager::Instance().shader_PostProcess_pass->setInt("screenTexture", 0);
+
+    }
+
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glEnable(GL_DEPTH_TEST);
+
 }
 void Game::update(float deltaTime)
 {

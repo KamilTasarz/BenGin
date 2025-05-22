@@ -1366,7 +1366,16 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
     }
     else {
 
-        ImGui::Text("Not selected");
+        ImGui::Checkbox("Post-Process Enable/Disable", &postProcessData.is_post_process);
+        ImGui::Separator();
+
+        ImGui::Checkbox("CRT Enable/Disable", &postProcessData.is_crt_curved);
+
+        ImGui::Text("CRT Curvature:");
+        ImGui::DragFloat("X", &postProcessData.crt_curvature.x, 0.1f, 1.0f, 15.0f, "%.1f");
+        ImGui::DragFloat("Y", &postProcessData.crt_curvature.y, 0.1f, 1.0f, 10.0f, "%.1f");
+
+        ImGui::ColorEdit3("CRT Outline Color", glm::value_ptr(postProcessData.crt_outline_color));
 
     }
 
@@ -1387,7 +1396,7 @@ void Editor::init()
     );
     ImGui_ImplOpenGL3_Init("#version 330");        // (6) backend renderera
 
-    //postProcessData.crt_curvature = glm::vec2(3.0f, 3.0f);
+    //postProcessData.crt_outline_color = glm::vec3(0.0706f, 0.0078f, 0.0039f);
     //savePostProcessData("res/scene/postprocess_data.json", postProcessData);
 
     loadScene("res/scene/scene.json", editor_sceneGraph, prefabs);

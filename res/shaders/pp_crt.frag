@@ -6,6 +6,7 @@ out vec4 FragColor;
 
 uniform sampler2D screenTexture;
 uniform vec2 curvature; // jak mocno jest widoczny efekt zakrzywienia (uzyty w metodzie curveTexture)
+uniform vec3 outline_color; // kolor obramowki, a'la telewizor
 uniform float time;
 
 // Szum oparty o pozycję i czas
@@ -52,7 +53,7 @@ void main()
 
     // Upewniamy sie czy nie wychodzimy poza krawedzie tekstury
     if(remappedUV.x < 0.0 || remappedUV.x > 1.0 || remappedUV.y < 0.0 || remappedUV.y > 1.0) {
-         FragColor = vec4(0.0, 0.0, 0.0, 1.0); // Jesli tak to dajemy kolor obramowki
+         FragColor = vec4(outline_color, 1.0); // Jesli tak to dajemy kolor obramowki
     } else {
         FragColor = tempColor;
     }
