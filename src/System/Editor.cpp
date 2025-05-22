@@ -846,6 +846,9 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         if (ImGui::Button("EDIT_PREFAB", ImVec2(150, 24))) {
             scene_editor = !scene_editor;
             puzz = false;
+            edit_camera_pos = camera->cameraPos;
+            camera->setPosition(glm::vec3(0.f, 0.f, 20.f));
+            
         }
 
         ImGui::Separator();
@@ -927,6 +930,8 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         if (ImGui::Button("EDIT_PUZZLE", ImVec2(150, 24))) {
             scene_editor = !scene_editor;
             puzz = true;
+            edit_camera_pos = camera->cameraPos;
+            camera->setPosition(glm::vec3(0.f, 0.f, 20.f));
         }
 
         ImGui::Separator();
@@ -1016,7 +1021,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
             }
 
             scene_editor = !scene_editor;
-
+            camera->setPosition(edit_camera_pos);
         }
     }
 
@@ -1711,7 +1716,7 @@ void Editor::input()
                     newNode->setVariablesNodes("clone", newNode, sceneGraph);
                     newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition() + glm::vec3(1.f, 0.f, 0.f));
                     
-                    if (sceneGraph->marked_object == sceneGraph->root) {
+                    if (sceneGraph->marked_object->parent == sceneGraph->root) {
                         sceneGraph->addChild(newNode);
                     }
                     else {

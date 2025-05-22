@@ -50,6 +50,7 @@ void SceneGraph::addChild(Node* p) {
         i++;
     }*/
     root->addChild(p);
+    //nodes.insert(std::pair<std::string, Node*>(p->name, p));
 }
 
 void SceneGraph::addChild(Node* p, std::string name) {
@@ -63,20 +64,16 @@ void SceneGraph::addChild(Node* p, std::string name) {
             i++;
         }*/
         parent->addChild(p);
+        //nodes.insert(std::pair<std::string, Node*>(p->name, p));
     }
 }
 
 void SceneGraph::addChild(Node* p, Node* parent) {
     
     if (parent != nullptr) {
-        int i = 1;
-        string name = p->name;
-        /*while (root->getChildByName(p->name)) {
-
-            p->name = name + "_" + to_string(i);
-            i++;
-        }*/
+        
         parent->addChild(p);
+        //nodes.insert(std::pair<std::string, Node*>(p->name, p));
     }
 }
 
@@ -89,6 +86,7 @@ void SceneGraph::deleteChild(Node* p)
     auto it = std::find(siblings.begin(), siblings.end(), p);
     if (it != siblings.end()) {
         to_delete_vec.push_back(*it);
+        //nodes.erase((*it)->name);
         //siblings.erase(it);
     }
 }
@@ -246,6 +244,22 @@ void SceneGraph::mark(Ray ray) {
     root->mark(ray, t);
 }
 
+//std::string SceneGraph::generateUniqueName(const std::string& base)
+//{
+//    std::string candidate = base;
+//    int counter = 1;
+//    while (nameRegistry.contains(candidate)) {
+//        candidate = base + "_" + std::to_string(counter++);
+//    }
+//    nameRegistry.insert(candidate);
+//    return candidate;
+//}
+//
+//void SceneGraph::release(const std::string& name)
+//{
+//    nameRegistry.erase(name);
+//}
+
 void SceneGraph::setLights(Shader* shader) {
 
     shader->setVec3("cameraPosition", camera->cameraPos);
@@ -335,7 +349,11 @@ void SceneGraph::drawMarkedObject() {
 // ====NODE====
 
 void Node::addChild(Node* p) {
+
+    //p->name = scene_graph->generateUniqueName(p->name);
+
     children.insert(p);
+    
     p->scene_graph = scene_graph; // Set this as the created child's parent
     p->parent = this; // Set this as the created child's parent
     increaseCount();
@@ -423,7 +441,7 @@ Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
 
     // Tworzymy nowego Node'a na podstawie bieżących danych
     if (!dynamic_cast<PointLight*>(this) && !dynamic_cast<DirectionalLight*>(this)) {
-        copy = new Node(this->name + "_" + instance_name, this->id);
+        copy = new Node(instance_name + "_" + this->name, this->id);
 
         //^ zapewnić kopie instancji prefabów ^
 
@@ -551,7 +569,7 @@ void Node::setVariablesNodes(std::string instance_name, Node* root, SceneGraph* 
                 if (var->type == "Node*") {
                     Node** n = reinterpret_cast<Node**>(ptr);
                     if (*n) {
-                        Node* _n = root->getChildByName((*n)->name + "_" + instance_name);
+                        Node* _n = root->getChildByName(instance_name + "_" + (*n)->name);
                         *n = _n;
                     }
                 }
@@ -1036,6 +1054,7 @@ void InstanceManager::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, st
 }
 
 void InstanceManager::addChild(Node* p) {
+    //p->name = scene_graph->generateUniqueName(p->name);
     children.insert(p);
     p->parent = this; // Set this as the created child's parent
     size++;
@@ -1366,6 +1385,23 @@ void DirectionalLight::render(unsigned int depthMapFBO, Shader& shader)
     updateMatrix();
     shader.setMat4("view_projection", view_projection);
 
+}
+
+void DirectionalLight::updateSelfAndChild(bool controlDirty)
+{
+    glm::mat4 model = glm::translate(glm::mat4(1.f), camera->cameraPos);
+    if (parent) {
+        transform.computeModelMatrix(model * parent->transform.getModelMatrix());
+    }
+    else {
+        transform.computeModelMatrix(model);
+    }
+    if (AABB != nullptr) {
+        AABB->transformAABB(transform.getModelMatrix());
+    }
+    if (AABB_logic != nullptr) {
+        AABB_logic->transformAABB(transform.getModelMatrix());
+    }
 }
 
 PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)

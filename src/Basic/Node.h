@@ -226,6 +226,8 @@ public:
     // Children list
     std::set<Node*> children;
 
+
+
     int size = 0;
 
 	Node* parent = nullptr; // Pointer to a parent object
@@ -465,9 +467,11 @@ public:
 
     void render(unsigned int depthMapFBO, Shader& shader);
 
+    void updateSelfAndChild(bool controlDirty) override;
+
     void updateMatrix() {
         view = glm::lookAt(transform.getGlobalPosition(), transform.getGlobalPosition() + direction, glm::vec3(0.f, 1.f, 0.f));
-        float size = 60.f;
+        float size = 90.f;
         projection = glm::ortho(-size, size, -size, size, 1.5f, 50.f);
         view_projection = projection * view;
     }
@@ -525,7 +529,8 @@ public:
 
 	bool is_editing = true;
 
-    
+    //std::unordered_set<std::string> nameRegistry;
+    //std::unordered_map<std::string, Node*> nodes;
 
     SceneGraph();
 
@@ -554,6 +559,8 @@ public:
     void forcedUpdate();
     void setLights(Shader* shader);
     void mark(Ray ray);
+    //std::string generateUniqueName(const std::string& base);
+    //void release(const std::string& name);
 };
 
 enum PrefabType {

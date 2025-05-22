@@ -43,6 +43,7 @@ private:
 	bool isSnapped = false, is_static = true, lockPositionX = false, lockPositionY = false, lockPositionZ = false, puzz = true;
 	glm::vec3 lastSnapOffset;
 	glm::vec3 snapedPosition;
+	glm::vec3 edit_camera_pos;
 
 	float mass = 1.f, gravity = 1.f;
 	
