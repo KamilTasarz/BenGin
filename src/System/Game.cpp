@@ -60,7 +60,7 @@ void Game::draw()
     glBindTexture(GL_TEXTURE_2D, colorTexture);
 
     ResourceManager::Instance().shader_crt->setInt("screenTexture", 0);
-    ResourceManager::Instance().shader_crt->setVec2("curvature", glm::vec2(3.0f, 3.0f));
+    ResourceManager::Instance().shader_crt->setVec2("curvature", postProcessData.crt_curvature);
     float time = glfwGetTime();
     ResourceManager::Instance().shader_crt->setFloat("time", time);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -99,9 +99,12 @@ Game::Game(std::vector<std::shared_ptr<Prefab>>& prefabsref) : prefabs(prefabsre
 
 void Game::init()
 {
+
 	is_initialized = true;
 
 	loadScene("res/scene/scene.json", sceneGraph, prefabs);
+
+    loadPostProcessData("res/scene/postprocess_data.json", postProcessData);
 
 	sceneGraph->forcedUpdate();
 

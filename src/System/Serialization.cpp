@@ -79,6 +79,13 @@ int saveScene(const std::string& filename, SceneGraph*& scene) {
 
 }
 
+json vec2_to_json(const glm::vec2& vec) {
+	json j;
+	j["x"] = vec.x;
+	j["y"] = vec.y;
+	return j;
+}
+
 json vec3_to_json(const glm::vec3& vec) {
 	json j;
 	j["x"] = vec.x;
@@ -105,6 +112,10 @@ glm::quat json_to_quat(const json& j) {
 glm::vec3 json_to_vec3(const json& j) {
 
 	return glm::vec3(j["x"], j["y"], j["z"]);
+}
+
+glm::vec2 json_to_vec2(const json& j) {
+	return glm::vec2(j["x"], j["y"]);
 }
 
 json save_node(Node* node) {
@@ -982,6 +993,43 @@ void saveTagLayers()
 	file.close();
 
 }
+
+void savePostProcessData(const std::string& filename, PostProcessData& data) {
+
+	json j;
+
+	// Save as an array of 2 values
+	j["crt_curvature"] = vec2_to_json(data.crt_curvature);
+
+	std::ofstream file(filename);
+	if (file.is_open()) {
+		file << j.dump(4); // Pretty print with 4 spaces
+		file.close();
+	}
+	else {
+		std::cerr << "Nie mozna zapisac pliku: " << filename << std::endl;
+	}
+	
+}
+
+void loadPostProcessData(const std::string& filename, PostProcessData& data) {
+	std::ifstream file(filename);
+	if (file.is_open()) {
+		json j;
+		try {
+			file >> j;
+			data.crt_curvature = json_to_vec2(j.at("crt_curvature"));
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Blad przy wczytywaniu pliku " << filename << ": " << e.what() << std::endl;
+		}
+		file.close();
+	}
+	else {
+		std::cerr << "Nie mozna otworzyc pliku: " << filename << std::endl;
+	}
+}
+
 
 void savePrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs) {
 	for (auto& prefab : prefabs) {

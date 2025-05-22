@@ -5,7 +5,7 @@
 
 #include "../config.h"
 
-
+#include "PostProcessData.h"
 
 class Sprite;
 class SceneGraph;
@@ -32,6 +32,8 @@ private:
 	Sprite * icon, * eye_icon, * eye_slashed_icon, *switch_on, *switch_off, * dir_light_icon, * point_light_icon;
 	SceneGraph* sceneGraph;
 	SceneGraph* editor_sceneGraph;
+
+	PostProcessData postProcessData;
 
 	char tag_name[128], layer_name[128];
 

@@ -1387,8 +1387,12 @@ void Editor::init()
     );
     ImGui_ImplOpenGL3_Init("#version 330");        // (6) backend renderera
 
+    //postProcessData.crt_curvature = glm::vec2(3.0f, 3.0f);
+    //savePostProcessData("res/scene/postprocess_data.json", postProcessData);
 
     loadScene("res/scene/scene.json", editor_sceneGraph, prefabs);
+
+    loadPostProcessData("res/scene/postprocess_data.json", postProcessData);
 
     editor_sceneGraph->forcedUpdate();
 
@@ -1479,6 +1483,8 @@ void Editor::shutdown()
 {
     saveScene("res/scene/scene.json", editor_sceneGraph);
     savePrefabs(prefabs);
+
+    savePostProcessData("res/scene/postprocess_data.json", postProcessData);
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

@@ -27,7 +27,6 @@ class ParticleEmitter;
 struct Particle;    
 struct ParticleInstanceData;
 
-
 //class Component;
 
 struct Ray {

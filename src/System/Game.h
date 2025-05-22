@@ -4,6 +4,8 @@
 
 #include "../config.h"
 
+#include "PostProcessData.h"
+
 class Prefab;
 class SceneGraph;
 class BoundingBox;
@@ -24,6 +26,7 @@ private:
 	std::vector<std::shared_ptr<Prefab>>& prefabs;
 
 	SceneGraph* sceneGraph;
+	PostProcessData postProcessData;
 	unsigned int framebuffer, colorTexture, depthRenderbuffer;
 
 	void input();
