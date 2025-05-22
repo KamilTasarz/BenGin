@@ -23,7 +23,7 @@ void GasWall::onStart() {
     glm::ivec2 startPos = glm::round(glm::vec2(owner->transform.getGlobalPosition().x, owner->transform.getGlobalPosition().y));
     spreadQueue.push(startPos);
     visited.insert(posKey(startPos));
-    prefab = PrefabRegistry::FindByName("GasParticle");
+    prefab = PrefabRegistry::FindPuzzleByName("GasParticle");
 }
 
 void GasWall::onUpdate(float deltaTime) {

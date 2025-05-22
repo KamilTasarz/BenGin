@@ -1,23 +1,43 @@
 {
     "children": [
         {
+            "AABB_logic_max": {
+                "x": 0.5,
+                "y": 20.0,
+                "z": 0.5
+            },
+            "AABB_logic_min": {
+                "x": -0.5,
+                "y": -0.5,
+                "z": -0.5
+            },
+            "AABB_max": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            },
+            "AABB_min": {
+                "x": -0.5,
+                "y": -0.5,
+                "z": -0.5
+            },
             "components": [
                 {
-                    "name": "Virus",
+                    "name": "Fan",
                     "variables": [
                         {
-                            "field_type": "bool",
-                            "name": "blue",
-                            "value": true
+                            "field_type": "float",
+                            "name": "verticalPower",
+                            "value": 20.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "horizontalPower",
+                            "value": 0.0
                         },
                         {
                             "field_type": "bool",
-                            "name": "green",
-                            "value": false
-                        },
-                        {
-                            "field_type": "bool",
-                            "name": "black",
+                            "name": "isActive",
                             "value": false
                         }
                     ]
@@ -28,13 +48,13 @@
             "is_physic_active": false,
             "is_visible": true,
             "layer": "Default",
-            "model.id": 12,
-            "name": "cheese",
+            "model.id": 3,
+            "name": "fan",
             "no_textures": false,
             "position": {
-                "x": -0.5,
+                "x": 0.0,
                 "y": 0.0,
-                "z": -1.0
+                "z": 0.0
             },
             "rotation": {
                 "w": 1.0,
@@ -43,24 +63,12 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 2.0,
-                "y": 0.10000000149011612,
-                "z": 2.0
+                "x": 3.200000047683716,
+                "y": 0.30000001192092896,
+                "z": 3.200000047683716
             },
             "tag": "Default",
             "type": "Node"
-        }
-    ],
-    "components": [
-        {
-            "name": "RotateObject",
-            "variables": [
-                {
-                    "field_type": "float",
-                    "name": "rotationSpeed",
-                    "value": 1.0
-                }
-            ]
         }
     ],
     "id": 0,
@@ -69,14 +77,13 @@
     "is_visible": true,
     "layer": "Default",
     "model.id": -1,
-    "name": "Blue_cheese",
+    "name": "Fan",
     "no_textures": true,
     "position": {
         "x": 0.0,
         "y": 0.0,
-        "z": -1.0
+        "z": 0.0
     },
-    "pref_type": 1,
     "rotation": {
         "w": 1.0,
         "x": 0.0,

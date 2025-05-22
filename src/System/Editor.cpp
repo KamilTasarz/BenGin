@@ -648,7 +648,12 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         
         saveScene("res/scene/scene.json", editor_sceneGraph);
         if (!scene_editor) {
-            savePrefab(prefabs[current_prefab]);
+            if (puzz) {
+                savePuzzle(puzzle_prefabs[current_puzzle]);
+            }
+            else {
+                savePrefab(prefabs[current_prefab]);
+            }
         }
     }
     ImGui::SameLine();
@@ -739,8 +744,24 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         items.push_back("<none>");
     }
 
+    std::vector<const char*> puzzles;
+
+
+    int size_puzzle = puzzle_prefabs.size();
+
+    for (const auto& prefab : puzzle_prefabs) {
+        puzzles.push_back(prefab->prefab_scene_graph->root->name.c_str());
+    }
+    if (size == 0) {
+        puzzles.push_back("<none>");
+    }
+
+
     if (scene_editor) {
 
+        ImGui::Separator();
+        ImGui::Text("ROOMS");
+        ImGui::PushID("##rooms");
         // wyświetl combo box tylko jeśli jest coś do wyboru
         if (ImGui::Combo("Choose prefab", &current_prefab, items.data(), items.size())) {
             if (current_prefab == size) {
@@ -824,6 +845,10 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
 
         if (ImGui::Button("EDIT_PREFAB", ImVec2(150, 24))) {
             scene_editor = !scene_editor;
+            puzz = false;
+            edit_camera_pos = camera->cameraPos;
+            camera->setPosition(glm::vec3(0.f, 0.f, 20.f));
+            
         }
 
         ImGui::Separator();
@@ -839,6 +864,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
             prefabs.push_back(new_prefab);
             current_prefab = prefabs.size() - 1;
             scene_editor = false;
+            puzz = false;
             new_prefab->prefab_type = prefabs[prefab_to_duplicate]->prefab_type;
             
 
@@ -855,7 +881,92 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         }
 
         ImGui::InputText("Duplicate name:", new_prefab_name, 128);
+        ImGui::PopID();
         ImGui::Separator();
+        
+        ImGui::Text("PUZZLES");
+        ImGui::PushID("##puzzles");
+
+        if (ImGui::Combo("Choose puzzle", &current_puzzle, puzzles.data(), puzzles.size())) {
+            if (current_prefab == size_puzzle) {
+                std::cout << "Wybrano: brak\n";
+            }
+            else {
+                std::cout << "Wybrano: " << puzzles[current_puzzle] << "\n";
+            }
+        }
+
+        if (ImGui::Button("ADD_PUZZLE_INSTANCE", ImVec2(150, 24))) {
+            if (size_puzzle > 0) {
+                Node* inst = new PrefabInstance(puzzle_prefabs[current_puzzle], sceneGraph, "_" + to_string(puzzle_prefabs[current_puzzle]->prefab_instances.size()));
+                sceneGraph->addChild(inst);
+                sceneGraph->marked_object = inst;
+            }
+
+        }
+
+        ImGui::Separator();
+
+
+        if (ImGui::Button("CREATE_PUZZLE", ImVec2(150, 24))) {
+
+            std::string name = "Puzzle_new";
+            bool unique = false;
+            while (!unique) {
+                unique = true;
+                for (auto& prefab : puzzle_prefabs) {
+                    if (prefab->prefab_scene_graph->root->name._Equal(name)) {
+                        name += "new";
+                        unique = false;
+                        break;
+                    }
+                }
+            }
+            shared_ptr<Prefab> new_prefab = make_shared<Prefab>(name);
+            puzzle_prefabs.push_back(new_prefab);
+
+        }
+
+        if (ImGui::Button("EDIT_PUZZLE", ImVec2(150, 24))) {
+            scene_editor = !scene_editor;
+            puzz = true;
+            edit_camera_pos = camera->cameraPos;
+            camera->setPosition(glm::vec3(0.f, 0.f, 20.f));
+        }
+
+        ImGui::Separator();
+        if (ImGui::Button("DUPLICATE_PUZZLE", ImVec2(150, 24))) {
+
+            std::string name = new_prefab_name_puzz;
+            if (name == "") name = "New_puzzle";
+
+            shared_ptr<Prefab> new_prefab = make_shared<Prefab>(name);
+
+            new_prefab->prefab_scene_graph->root = puzzle_prefabs[puzzle_to_duplicate]->clone("", new_prefab->prefab_scene_graph, true);
+            new_prefab->prefab_scene_graph->root->name = name;
+            puzzle_prefabs.push_back(new_prefab);
+            current_puzzle = puzzle_prefabs.size() - 1;
+            scene_editor = false;
+            puzz = true;
+            new_prefab->prefab_type = puzzle_prefabs[puzzle_to_duplicate]->prefab_type;
+
+
+            new_prefab_name_puzz[0] = '\0';
+        }
+
+        if (ImGui::Combo("Choose prefab to duplicate", &puzzle_to_duplicate, puzzles.data(), puzzles.size())) {
+            if (current_prefab == size_puzzle) {
+                std::cout << "Wybrano: brak\n";
+            }
+            else {
+                std::cout << "Wybrano: " << puzzles[puzzle_to_duplicate] << "\n";
+            }
+        }
+
+        ImGui::InputText("Duplicate name:", new_prefab_name_puzz, 128);
+        ImGui::PopID();
+        ImGui::Separator();
+
     }
     else {
 
@@ -870,10 +981,29 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
             }
         }
 
-        if (ImGui::Button("ADD_PUZZLE_COPY", ImVec2(150, 24))) {
+        if (ImGui::Button("ADD_ROOM_COPY", ImVec2(150, 24))) {
             if (size > 0) {
                 std::string name = prefabs[prefab_inst_to_add]->prefab_scene_graph->root->name + "_new";
-				Node* inst = prefabs[prefab_inst_to_add]->clone(name, sceneGraph, true);
+                Node* inst = prefabs[prefab_inst_to_add]->clone(name, sceneGraph, true);
+                sceneGraph->addChild(inst);
+                sceneGraph->marked_object = inst;
+            }
+
+        }
+
+        if (ImGui::Combo("Choose puzzle", &puzzle_inst_to_add, puzzles.data(), puzzles.size())) {
+            if (current_prefab == size_puzzle) {
+                std::cout << "Wybrano: brak\n";
+            }
+            else {
+                std::cout << "Wybrano: " << puzzles[prefab_inst_to_add] << "\n";
+            }
+        }
+
+        if (ImGui::Button("ADD_PUZZLE_COPY", ImVec2(150, 24))) {
+            if (size_puzzle > 0) {
+                std::string name = puzzle_prefabs[puzzle_inst_to_add]->prefab_scene_graph->root->name + "_new";
+                Node* inst = puzzle_prefabs[puzzle_inst_to_add]->clone(name, sceneGraph, true);
                 sceneGraph->addChild(inst);
                 sceneGraph->marked_object = inst;
             }
@@ -881,14 +1011,20 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         }
 
         if (ImGui::Button("RETURN", ImVec2(150, 24))) {
-            
-			Prefab prefab = *prefabs[current_prefab];
-			prefab.notifyInstances();
+            if (!puzz) {
+                Prefab prefab = *prefabs[current_prefab];
+                prefab.notifyInstances();
+            }
+            else {
+                Prefab prefab = *puzzle_prefabs[current_puzzle];
+                prefab.notifyInstances();
+            }
 
             scene_editor = !scene_editor;
-            
+            camera->setPosition(edit_camera_pos);
         }
     }
+
 
     ImGui::Separator();
 
@@ -1418,7 +1554,7 @@ void Editor::init()
     ImGui_ImplOpenGL3_Init("#version 330");        // (6) backend renderera
 
 
-    loadScene("res/scene/scene.json", editor_sceneGraph, prefabs);
+    loadScene("res/scene/scene.json", editor_sceneGraph, prefabs, puzzle_prefabs);
 
     editor_sceneGraph->forcedUpdate();
 
@@ -1473,7 +1609,7 @@ void Editor::run() {
         
             sceneGraph = (scene_editor || prefabs.empty())
                 ? editor_sceneGraph
-                : prefabs[current_prefab]->prefab_scene_graph;
+                : (puzz ? puzzle_prefabs[current_puzzle]->prefab_scene_graph : prefabs[current_prefab]->prefab_scene_graph);
 
             GLfloat currentFrame = glfwGetTime();
             ServiceLocator::getWindow()->deltaTime = currentFrame - ServiceLocator::getWindow()->lastFrame;
@@ -1508,7 +1644,7 @@ void Editor::run() {
 void Editor::shutdown()
 {
     saveScene("res/scene/scene.json", editor_sceneGraph);
-    savePrefabs(prefabs);
+    savePrefabs(prefabs, puzzle_prefabs);
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
@@ -1580,7 +1716,7 @@ void Editor::input()
                     newNode->setVariablesNodes("clone", newNode, sceneGraph);
                     newNode->transform.setLocalPosition(sceneGraph->marked_object->transform.getLocalPosition() + glm::vec3(1.f, 0.f, 0.f));
                     
-                    if (sceneGraph->marked_object == sceneGraph->root) {
+                    if (sceneGraph->marked_object->parent == sceneGraph->root) {
                         sceneGraph->addChild(newNode);
                     }
                     else {

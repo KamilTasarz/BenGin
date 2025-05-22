@@ -33,20 +33,22 @@ private:
 	SceneGraph* sceneGraph;
 	SceneGraph* editor_sceneGraph;
 
-	char tag_name[128], layer_name[128], new_prefab_name[128];
+	char tag_name[128], layer_name[128], new_prefab_name[128], new_prefab_name_puzz[128];
 
 	unsigned int framebuffer, colorTexture, depthRenderbuffer;
 
 	bool isHUD = false, isInPreview = false, pressed_add = false, scene_editor = true, is_initialized = false, AABB_changing = false;
 	glm::vec3* local_point;
 
-	bool isSnapped = false, is_static = true, lockPositionX = false, lockPositionY = false, lockPositionZ = false;
+	bool isSnapped = false, is_static = true, lockPositionX = false, lockPositionY = false, lockPositionZ = false, puzz = true;
 	glm::vec3 lastSnapOffset;
 	glm::vec3 snapedPosition;
+	glm::vec3 edit_camera_pos;
 
 	float mass = 1.f, gravity = 1.f;
 	
-	int current_prefab = 0, current_opt1 = 0, current_opt2 = 0, direction = 0, prefab_inst_to_add = 0, prefab_to_duplicate = 0;
+	int current_prefab = 0, current_puzzle = 0, current_opt1 = 0, current_opt2 = 0, direction = 0, prefab_inst_to_add = 0, 
+		prefab_to_duplicate = 0, puzzle_inst_to_add = 0, puzzle_to_duplicate = 0;
 	int current_component = 0, current_script = 0;
 
 	//std::vector<BoundingBox*> colliders;

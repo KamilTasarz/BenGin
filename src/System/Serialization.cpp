@@ -272,7 +272,7 @@ json save_node(Node* node) {
 	return j;
 }
 
-int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::shared_ptr<Prefab>>& prefabs) {
+int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vector<std::shared_ptr<Prefab>>& puzzle_prefabs) {
 
 	std::ifstream file(filename);
 	if (!file) {
@@ -326,7 +326,7 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 
 	scene = new SceneGraph();
 
-	load_node(sceneData["scene"], prefabs, scene);
+	load_node(sceneData["scene"], prefabs, puzzle_prefabs, scene);
 
 	loadComponents(sceneData["scene"], scene->root, scene);
 
@@ -359,7 +359,7 @@ std::shared_ptr<Prefab> getPrefab(std::vector<std::shared_ptr<Prefab>>& prefabs,
 	return nullptr;
 }
 
-Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, SceneGraph*& scene) {
+Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vector<std::shared_ptr<Prefab>>& puzzle_prefabs, SceneGraph*& scene) {
 	Node* node = nullptr;
 
 
@@ -387,7 +387,7 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, SceneGra
 		scene->root->is_visible = is_visible;
 		for (json j : j["children"]) {
 
-			Node* child = load_node(j, prefabs, scene);
+			Node* child = load_node(j, prefabs, puzzle_prefabs, scene);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
 				scene->addPointLight(point_light);
@@ -465,6 +465,9 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, SceneGra
 		else if (type._Equal("PrefabInstance")) {
 			std::string prefab_name = j["prefab_instance"]["prefab_name"];
 			std::shared_ptr<Prefab> prefab = getPrefab(prefabs, prefab_name);
+
+			if (!prefab) prefab = getPrefab(puzzle_prefabs, prefab_name);
+
 			if (prefab) {
 				node = new PrefabInstance(prefab, scene, "_" + to_string(prefab->prefab_instances.size()));
 			}
@@ -551,7 +554,7 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, SceneGra
 
 		// Rekurencyjnie zapisujemy dzieci
 		for (json _j : j["children"]) {
-			Node* child = load_node(_j, prefabs, scene);
+			Node* child = load_node(_j, prefabs, puzzle_prefabs, scene);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
 				//scene->addPointLight(point_light, node->name);
@@ -760,8 +763,10 @@ std::shared_ptr<Prefab> loadPrefab(const std::string& filename)
 		file.close();
 
 		std::string name = prefab_data["name"];
-		PrefabType type = PrefabType(prefab_data["pref_type"].get<int>());
-		prefab->prefab_type = type;
+		if (prefab_data.contains("pref_type")) {
+			PrefabType type = PrefabType(prefab_data["pref_type"].get<int>());
+			prefab->prefab_type = type;
+		}
 		prefab->prefab_scene_graph->root->name = name;
 		load_prefab_node(prefab_data, prefab->prefab_scene_graph, name);
 
@@ -866,6 +871,16 @@ void loadPrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs, std::vector<std:
 			prefabs.push_back(prefab);
 		}
 	}
+
+	const fs::path prefab_dir_puzzle = "res/scene/puzzles";
+
+	for (const auto& entry : fs::recursive_directory_iterator(prefab_dir_puzzle)) {
+		if (entry.is_regular_file()) {
+			std::shared_ptr<Prefab> prefab = loadPrefab(entry.path().string());
+			prefab->prefab_scene_graph->forcedUpdate();
+			prefabs_puzzle.push_back(prefab);
+		}
+	}
 }
 
 
@@ -914,6 +929,26 @@ void savePrefab(std::shared_ptr<Prefab>& prefab)
 		file.close();
 	}
 
+}
+
+void savePuzzle(std::shared_ptr<Prefab>& prefab)
+{
+	std::string filename = "res/scene/puzzles/";
+	std::string name = prefab->prefab_scene_graph->root->getName();
+
+	json json_prefab = save_node(prefab->prefab_scene_graph->root);
+	filename += name + ".json";
+	json_prefab["name"] = name;
+
+	std::ofstream file(filename);
+	if (!file.is_open()) {
+		std::cerr << "Error opening file for writing: " << filename << std::endl;
+
+	}
+	else {
+		file << json_prefab.dump(4);
+		file.close();
+	}
 }
 
 void loadTagLayers()
@@ -983,8 +1018,14 @@ void saveTagLayers()
 
 }
 
-void savePrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs) {
+void savePrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs, std::vector<std::shared_ptr<Prefab>>& prefabs_puzzles) {
 	for (auto& prefab : prefabs) {
 		savePrefab(prefab);
 	}
+
+	for (auto& prefab : prefabs_puzzles) {
+		savePuzzle(prefab);
+	}
 }
+
+

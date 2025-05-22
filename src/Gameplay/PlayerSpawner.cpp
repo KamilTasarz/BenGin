@@ -40,7 +40,7 @@ void PlayerSpawner::spawnPlayer()
 	i++;
 	std::cout << "Spawning player" << std::endl;
 
-	PrefabInstance *pref = new PrefabInstance(PrefabRegistry::FindByName("Player"), owner->scene_graph, "_" + std::to_string(i), owner->getTransform().getLocalPosition());
+	PrefabInstance *pref = new PrefabInstance(PrefabRegistry::FindPuzzleByName("Player"), owner->scene_graph, "_" + std::to_string(i), owner->getTransform().getLocalPosition());
 
 	Node* player = pref->prefab_root->getChildByTag("Player");
 	player->transform.setLocalPosition(owner->getTransform().getLocalPosition());
