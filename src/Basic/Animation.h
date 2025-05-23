@@ -19,22 +19,38 @@ class Animation {
 public:
 	float duration = 0.f;
 	float speed = 0.f;
+	std::string name;
 	std::vector<Bone> bones;
 	Ass_impNodeData root;
 	std::map<std::string, BoneInfo> m_BoneInfoMap;
 
 	Animation() = default;
 
-	Animation(const char* animation_path, Model &model) {
+	Animation(const char* animation_path, Model& model, int num = 0) {
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(animation_path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 		if (scene && scene->mRootNode) {
-			cout << "Wczytano" << endl;
-			aiAnimation *anim = scene->mAnimations[0];
+
+			if (num < scene->mNumAnimations) {
+				aiAnimation* anim = scene->mAnimations[num];
+				duration = anim->mDuration;
+				speed = anim->mTicksPerSecond;
+				name = anim->mName.C_Str();
+				readHierarchy(root, scene->mRootNode);
+				ReadMissingBones(anim, model);
+				cout << "Wczytano animacje: " << animation_path << " " << num << endl;
+			}
+		}
+	}
+
+	Animation(aiAnimation* anim, Model& model, const aiScene* scene) {
+		if (anim) {
 			duration = anim->mDuration;
 			speed = anim->mTicksPerSecond;
+			name = anim->mName.C_Str();
 			readHierarchy(root, scene->mRootNode);
 			ReadMissingBones(anim, model);
+			
 		}
 	}
 

@@ -7,6 +7,9 @@
 class Prefab;
 class SceneGraph;
 class BoundingBox;
+class Animator;
+class Animation;
+
 
 class Game
 {
@@ -26,6 +29,9 @@ private:
 
 	SceneGraph* sceneGraph;
 	unsigned int framebuffer, colorTexture, depthRenderbuffer;
+
+	Animator* animator;
+	Animation* anim;
 
 	void input();
 	void draw();

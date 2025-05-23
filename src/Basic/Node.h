@@ -239,7 +239,7 @@ public:
 	bool is_visible = true;
 	bool in_frustrum = true;    
 	bool has_RB = false;    
-    
+    bool is_animating = false;
     bool is_physic_active = true; //serializacja potrzbna
     bool is_logic_active = false;
 

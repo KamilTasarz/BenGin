@@ -2,8 +2,8 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCord;
-//layout (location = 3) in vec2 aTangent;
-//layout (location = 4) in vec2 aBitangent;
+layout (location = 3) in vec3 aTangent;
+layout (location = 4) in vec3 aBitangent;
 layout (location = 5) in ivec4 aBoneId;
 layout (location = 6) in vec4 aWeight;
 
@@ -27,6 +27,7 @@ uniform mat4 light_view_projection1;
 const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
+uniform int is_animating;
 
 void main()
 {
@@ -37,18 +38,13 @@ void main()
     //vs_out.TBN = mat3(T, B, N);
 	vec4 pos = vec4(0.f);
 	vec3 localNormal = vec3(0.0);
-	for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
-		if (aBoneId[i] < 0) {
-			//if (i == MAX_BONE_INFLUENCE - 1) pos = vec4(aPos, 1.f);
-			continue;
+	if (is_animating == 1) {
+		for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+			if (aBoneId[i] < 0 || aWeight[i] == 0.0) continue;
+			vec4 localPosition = finalBonesMatrices[aBoneId[i]] * vec4(aPos,1.0f);
+			pos += localPosition * aWeight[i];
+			localNormal += mat3(finalBonesMatrices[aBoneId[i]]) * aNormal * aWeight[i];
 		}
-		if (aBoneId[i] >= MAX_BONES) {
-			pos = vec4(aPos, 1.f);
-			break;
-		}
-		vec4 localPosition = finalBonesMatrices[aBoneId[i]] * vec4(aPos,1.0f);
-        pos += localPosition * aWeight[i];
-		localNormal += mat3(finalBonesMatrices[aBoneId[i]]) * aNormal * aWeight[i];
 	}
 	
 
@@ -64,6 +60,7 @@ void main()
 	} else {
 		vs_out.Normal = normalize(mat3(transpose(inverse(model))) * localNormal);
 	}
+
 
 	vs_out.Light_Perspective_Pos = light_view_projection1 * vec4(vs_out.Pos, 1.0f);
 	//vs_out.Light_Perspective_Pos2 = light_view_projection_back * vec4(vs_out.Pos, 1.0f);
