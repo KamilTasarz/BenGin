@@ -20,9 +20,12 @@ public:
 	bool isGrounded = false;
     bool isJumping = false;
     bool isDead = false;
+    bool is_pressed = false;
 	std::string virusType = "none";
     float deathTimer;
     Node* timerIndicator;
+    bool face_right = true;
+    float scale_factor = 1.f;
 
     PlayerController() = default;
     virtual ~PlayerController() = default;

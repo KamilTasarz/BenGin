@@ -30,8 +30,9 @@ void PlayerController::onStart()
 	timerIndicator = owner->getChildById(0);
 	if (!owner->is_animating) {
 		owner->is_animating = true;
-		owner->animator->playAnimation(owner->pModel->getAnimationByName("Run"));
+		owner->animator->playAnimation(owner->pModel->getAnimationByName("Turn"), false);
 	}
+	scale_factor = owner->transform.getLocalScale().x;
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -48,6 +49,20 @@ void PlayerController::onUpdate(float deltaTime)
 	bool pressedLeft = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS);
 
 	if (!rb->overrideVelocityX) rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
+	
+
+	if (owner->animator->ended) {
+		
+		glm::vec3 scale = owner->transform.getLocalScale();
+		scale.y = -scale.y;
+		owner->transform.setLocalScale(scale);
+		Animation* anim = owner->pModel->getAnimationByName("Turn");
+		anim->speed = 4000.f;
+		owner->animator->playAnimation(owner->pModel->getAnimationByName("Turn"), false);
+	}
+
+	
+
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_K) == GLFW_PRESS) {
 		rb->is_static = true;
@@ -69,6 +84,18 @@ void PlayerController::onUpdate(float deltaTime)
 		owner->is_physic_active = false;
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(-50.f * deltaTime, 0.f, 0.f));
 	}
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_X) == GLFW_PRESS) {
+		if (!is_pressed) {
+			owner->animator->blendAnimation(owner->pModel->getAnimationByName("Turn"), 0.1f, true);
+			is_pressed = true;
+		}
+	}
+	else {
+		is_pressed = false;
+	}
+
+
+
 	rb->is_static = false;
 	owner->is_physic_active = true;
 
@@ -76,15 +103,19 @@ void PlayerController::onUpdate(float deltaTime)
 		//std::cout << "Gracz probuje skoczyc" << std::endl;
 
 		if (rb->groundUnderneath) {
-			{
-				rb->overrideVelocityY = true;
-				if (isGravityFlipped) rb->velocityY = -jumpForce;
-				else rb->velocityY = jumpForce;
+			
+			rb->overrideVelocityY = true;
+			if (isGravityFlipped) rb->velocityY = -jumpForce;
+			else rb->velocityY = jumpForce;
 
-				isJumping = true;
-			}
+			isJumping = true;
+
+			
+			
 		}
 	}
+
+	
 
 	if (virusType != "none") {
 		HandleVirus(deltaTime);
