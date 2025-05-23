@@ -95,8 +95,6 @@ void Rigidbody::onUpdate(float deltaTime)
 
 	if (startPos == glm::vec3(0.f)) startPos = owner->transform.getLocalPosition();
 
-    float smoothingFactor = 10.0f;
-
 	// horizontal movement
     velocityX = glm::mix(velocityX, targetVelocityX, smoothingFactor * deltaTime);
 
@@ -147,44 +145,51 @@ void Rigidbody::onUpdate(float deltaTime)
 	overrideVelocityY = false;
 	overrideVelocityX = false;
 
+	targetVelocityX = 0.f;
+	targetVelocityY = 0.f;
+
 	//std::cout << owner->getName() << " stoi na ziemi: " << groundUnderneath << ", dotyka sufitu: " << ceilingAbove << std::endl;
 }
 
 // collission with another rigidbody
-void Rigidbody::onCollision(Node* other)
-{
-	if (is_static) {
-		return;
-	}
-	
-	Rigidbody* rb = other->getComponent<Rigidbody>();
+void Rigidbody::onCollision(Node* other) {
+	//if (is_static) return;
 
-    if (!rb) return;
-	if (rb->is_static) return;
+	//Rigidbody* rb = other->getComponent<Rigidbody>();
+	//if (!rb || rb->is_static) return;
 
-    float averageVelocityX = (velocityX * mass + rb->velocityX * rb->mass) / (mass + rb->mass);
-	float averageVelocityY = (velocityY * mass + rb->velocityY * rb->mass) / (mass + rb->mass);
+	//// Relative velocity
+	//glm::vec2 relativeVelocity(velocityX - rb->velocityX, velocityY - rb->velocityY);
 
-    velocityX = averageVelocityX;
-    rb->velocityX = averageVelocityX;
+	//// Approximate normal (we assume axis-aligned for simplicity)
+	//glm::vec2 collisionNormal = glm::normalize(relativeVelocity);
+	//if (glm::length(collisionNormal) == 0.0f) return;
 
-	velocityY = averageVelocityY;
-	rb->velocityY = averageVelocityY;
+	//// Relative velocity along the normal
+	//float velAlongNormal = glm::dot(relativeVelocity, collisionNormal);
 
-	/*float massSum = mass + rb->mass;
-	float massRatio = mass / massSum;
+	//// Ignore if objects are separating
+	//if (velAlongNormal > 0) return;
 
-	targetVelocityX *= massRatio;*/
+	//// Coefficient of restitution (bounciness)
+	//float restitution = 0.2f; // 0 = inelastic, 1 = elastic
 
-	//// Apply friction
-	//float friction = 0.5f;
-	//velocityX *= (1.f - friction);
-	//rb->velocityX *= (1.f - friction);
-	//// Apply restitution
-	//float restitution = 0.5f;
-	//velocityY *= -restitution;
-	//rb->velocityY *= -restitution;
+	//// Calculate impulse scalar
+	//float invMassA = (mass > 0.f ? 1.f / mass : 0.f);
+	//float invMassB = (rb->mass > 0.f ? 1.f / rb->mass : 0.f);
+	//float impulseScalar = -(1 + restitution) * velAlongNormal / (invMassA + invMassB);
+
+	//// Apply impulse to each object (change velocity)
+	//glm::vec2 impulse = impulseScalar * collisionNormal;
+
+	//// Change velocities based on mass
+	//velocityX += impulse.x * invMassA;
+	//velocityY += impulse.y * invMassA;
+
+	//rb->velocityX -= impulse.x * invMassB;
+	//rb->velocityY -= impulse.y * invMassB;
 }
+
 
 void Rigidbody::onStayCollision(Node* other)
 {

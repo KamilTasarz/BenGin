@@ -13,6 +13,7 @@ public:
 
 	float velocityDeltaX, velocityDeltaY;
 
+	float smoothingFactor = 10.0f;
 	float mass;
 	float gravity;
 	bool is_static;
