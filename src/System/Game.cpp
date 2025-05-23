@@ -7,6 +7,7 @@
 #include "../Component/CameraGlobals.h"
 #include "../ResourceManager.h"
 #include "../System/PhysicsSystem.h"
+#include "../Basic/Animator.h"
 
 void Game::input()
 {
@@ -160,6 +161,11 @@ void Game::init()
 
     sceneGraph->root->createComponents();
 
+    anim = new Animation("res/models/szczur/Rat.glb", *ResourceManager::Instance().getModel(16).get(), 5);
+    animator = new Animator(anim);
+
+    Node* szczur = sceneGraph->root->getChildByName("szczur");
+    szczur->animator = animator;
 }
 void Game::run()
 {

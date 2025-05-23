@@ -1,7 +1,12 @@
 #include "Animator.h"
 
-void Animator::playAnimation(Animation* animation)
+void Animator::playAnimation(Animation* animation, bool repeat)
 {
+	this->repeat = repeat;
+
+	begin = 0;
+	end = 0;
+
 	current_animation = animation;
 	current_time = 0.0f;
 }
@@ -10,9 +15,19 @@ void Animator::updateAnimation(float delta_time)
 {
 	this->delta_time = delta_time;
 	if (current_animation) {
-		current_time += current_animation->speed * delta_time;
-		current_time = fmodf(current_time, current_animation->duration);
-		calculateBoneTransform(&current_animation->root, glm::mat4(1.f));
+		if (begin == end && (begin == 0 || repeat)) begin++;
+
+		if (begin != end) {
+
+			current_time += current_animation->speed * delta_time;
+
+			if (current_time > current_animation->duration) end++;
+
+			current_time = fmodf(current_time, current_animation->duration);
+			calculateBoneTransform(&current_animation->root, glm::mat4(1.f));
+
+			
+		}
 	}
 }
 
@@ -23,6 +38,8 @@ void Animator::calculateBoneTransform(Ass_impNodeData* node, glm::mat4 parent_tr
 	glm::mat4 transform = node->transform;//node->transform;
 
 	Bone* bone = current_animation->FindBone(name);
+
+	//assert(bone != nullptr);
 
 	if (bone) {
 		bone->update(current_time);

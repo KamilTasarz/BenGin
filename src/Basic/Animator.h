@@ -13,6 +13,11 @@ public:
 	std::vector<glm::mat4> final_bone_matrices;
 	float current_time;
 	float delta_time;
+
+	int begin = 0, end = 0;
+
+	bool repeat = true;
+
 	Animator(Animation* animation_to_play) {
 		current_time = 0.f;
 		current_animation = animation_to_play;
@@ -22,7 +27,7 @@ public:
 			final_bone_matrices.push_back(glm::mat4(1.0f));
 	}
 
-	void playAnimation(Animation* animation);
+	void playAnimation(Animation* animation, bool repeat = true);
 	void updateAnimation(float delta_time);
 	void calculateBoneTransform(Ass_impNodeData* node, glm::mat4 parent_transform);
 

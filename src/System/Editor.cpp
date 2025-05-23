@@ -1528,6 +1528,29 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
             }
             
             ImGui::PopID();
+
+            
+
+        }
+
+        ImGui::Separator();
+        ImGui::Text("Available animations: ");
+        depth = 10.f;
+        cursorPos = ImGui::GetCursorScreenPos();
+        fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+        if (preview_node->pModel && preview_node->pModel->has_animations) {
+
+            for (auto& a : preview_node->pModel->animations) {
+                cursorPos = ImGui::GetCursorScreenPos();
+                fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(fieldPos);
+                ImGui::Text(a->name.c_str());
+            }
+
+        }
+        else {
+            ImGui::SetCursorScreenPos(fieldPos);
+            ImGui::Text("--none--");
         }
     }
     else {
@@ -1599,6 +1622,8 @@ void Editor::init()
     //ziom->transform.setLocalScale({ 0.1f, .1f, .1f });
     //editor_sceneGraph->addChild(ziom);
 
+
+    
 }
 
 void Editor::run() {

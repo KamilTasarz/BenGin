@@ -693,12 +693,22 @@ void Node::drawSelfAndChild() {
 			ResourceManager::Instance().shader_tile->setMat4("model", transform.getModelMatrix());
         }
         
+        if (is_animating) {
+            ResourceManager::Instance().shader->setInt("is_animating", 1);
+        }
+        else {
+            ResourceManager::Instance().shader->setInt("is_animating", 0);
+        }
 
-        if (animator != nullptr) {
-            auto f = animator->final_bone_matrices;
+        if (animator != nullptr && is_animating) {
+            //is_animating = true;
+            auto &f = animator->final_bone_matrices;
             for (int i = 0; i < f.size(); ++i)
                 ResourceManager::Instance().shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+
+            //ResourceManager::Instance().shader->setInt("is_animating", 1);
         }
+
         if (is_marked) {
             glStencilMask(0xFF);
         }
@@ -723,14 +733,25 @@ void Node::drawSelfAndChild() {
             ResourceManager::Instance().shader_tile->setInt("is_light", 0);
         }
         
-        
+
 
         ResourceManager::Instance().shader_outline->use();
+
+        if (is_animating) {
+            ResourceManager::Instance().shader_outline->setInt("is_animating", 1);
+        }
+        else {
+            ResourceManager::Instance().shader_outline->setInt("is_animating", 0);
+        }
+
+
         ResourceManager::Instance().shader_outline->setMat4("model", transform.getModelMatrix());
-        if (animator != nullptr) {
-            auto f = animator->final_bone_matrices;
+        if (animator != nullptr && is_animating) {
+            auto &f = animator->final_bone_matrices;
             for (int i = 0; i < f.size(); ++i)
                 ResourceManager::Instance().shader_outline->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+
+            //ResourceManager::Instance().shader_outline->setInt("is_animating", 1);
         }
         glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
         ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
@@ -743,6 +764,8 @@ void Node::drawSelfAndChild() {
         if (scene_graph->is_editing && AABB_logic) {
             AABB_logic->draw(*ResourceManager::Instance().shader_outline);
         }
+
+
     }
 
     if (is_visible) {
@@ -774,7 +797,7 @@ void Node::drawSelfAndChild(Transform& parent)
 
 
         if (animator != nullptr) {
-            auto f = animator->final_bone_matrices;
+            auto &f = animator->final_bone_matrices;
             for (int i = 0; i < f.size(); ++i)
                 ResourceManager::Instance().shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
         }
@@ -806,7 +829,7 @@ void Node::drawSelfAndChild(Transform& parent)
         ResourceManager::Instance().shader_outline->use();
         ResourceManager::Instance().shader_outline->setMat4("model", globalTransform);
         if (animator != nullptr) {
-            auto f = animator->final_bone_matrices;
+            auto &f = animator->final_bone_matrices;
             for (int i = 0; i < f.size(); ++i)
                 ResourceManager::Instance().shader_outline->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
         }
@@ -830,7 +853,7 @@ void Node::drawSelfAndChild(Transform& parent)
 
 void Node::updateComponents(float deltaTime) {
     if (in_frustrum) {
-        if (animator != nullptr) {
+        if (animator != nullptr && is_animating) {
             animator->updateAnimation(deltaTime);
         }
 
@@ -863,11 +886,16 @@ void Node::drawShadows(Shader& shader) {
         shader.setMat4("model", transform.getModelMatrix());
         if (!no_textures && is_visible) {
             if (animator != nullptr) {
-                auto f = animator->final_bone_matrices;
+                auto &f = animator->final_bone_matrices;
                 for (int i = 0; i < f.size(); ++i)
                     shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+
+                shader.setInt("is_animating", 1);
             }
             pModel->Draw(shader); //jak nie ma tekstury to najpewniej swiatlo -> przyjmuje takie zalozenie
+            
+            shader.setInt("is_animating", 0);
+            
         }
     }
 
@@ -907,6 +935,11 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
 
 	AABB_logic = AABB->clone(this);
     AABB_logic->is_logic = true;
+
+    if (model && model->has_animations) {
+        animator = new Animator(model->animations[0]);
+        is_animating = false;
+    }
 
     //this->no_textures = no_textures;
     

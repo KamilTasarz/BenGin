@@ -12,6 +12,8 @@ class SceneGraph;
 class Prefab;
 class Node;
 class BoundingBox;
+class Animator;
+class Animation;
 
 struct Ray;
 
@@ -58,6 +60,9 @@ private:
 	float fps = 0.0f;
 	float fps_timer = 0.0f;
 	int frames = 0;
+
+	Animator* animator;
+	Animation* anim;
 	
 	void input();
 	void draw();

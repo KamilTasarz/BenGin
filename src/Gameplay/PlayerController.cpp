@@ -4,6 +4,7 @@
 #include "../System/Tag.h"
 #include "PlayerSpawner.h"
 #include "GroundObject.h"
+#include "../Basic/Animator.h"
 //#include "GameMath.h"
 
 REGISTER_SCRIPT(PlayerController);
@@ -27,6 +28,10 @@ void PlayerController::onStart()
 	isGravityFlipped = false;
  	rb = owner->getComponent<Rigidbody>();
 	timerIndicator = owner->getChildById(0);
+	if (!owner->is_animating) {
+		owner->is_animating = true;
+		owner->animator->playAnimation(owner->pModel->getAnimationByName("Run"));
+	}
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -111,6 +116,8 @@ void PlayerController::Die(bool freeze, bool electrified)
 	std::shared_ptr<Tag> tag = TagLayerManager::Instance().getTag("Box");
 	owner->setTag(tag);
 	isDead = true;
+
+	owner->is_animating = false;
 
 	owner->addComponent(std::make_unique<GroundObject>());
 
