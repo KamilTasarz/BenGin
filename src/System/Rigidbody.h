@@ -14,6 +14,7 @@ public:
 	float velocityDeltaX, velocityDeltaY;
 
 	float smoothingFactor = 10.0f;
+	float drag = 0.f;
 	float mass;
 	float gravity;
 	bool is_static;
@@ -24,7 +25,7 @@ public:
 
 	bool velocityYResetted = false;
 	float timer = 0.f;
-	bool groundUnderneath = false;
+	bool groundUnderneath = false, scaleUnderneath = false;
 	bool ceilingAbove = false;
 	
 

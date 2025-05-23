@@ -24,8 +24,8 @@ public:
     //sprawdza kolizje
     void updateCollisions();
 
-    bool rayCast(Ray ray, std::vector<Node*>& collide_with, float length = -1.f);
-    bool rayCast(const std::vector<Ray>& rays, std::vector<Node*>& collide_with, float length = -1.f);
+    bool rayCast(Ray ray, std::vector<Node*>& collide_with, float length = -1.f, Node* owner = nullptr);
+    bool rayCast(const std::vector<Ray>& rays, std::vector<Node*>& collide_with, float length = -1.f, Node* owner = nullptr);
 
 	std::vector<BoundingBox*>& getColliders() {
 		return colliders;

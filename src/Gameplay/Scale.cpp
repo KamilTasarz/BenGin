@@ -5,166 +5,135 @@
 #include "PlayerController.h"
 #include "../System/PhysicsSystem.h"
 
-
 REGISTER_SCRIPT(Scale);
 
 void Scale::onAttach(Node* owner)
 {
-	this->owner = owner;
-	std::cout << "Scale::onAttach::" << owner->name << std::endl;
-
-	//rb = owner->getComponent<Rigidbody>();
-
-	startPos1 = owner->transform.getLocalPosition();
-	if (secondScale != NULL) startPos2 = secondScale->transform.getLocalPosition();
+    this->owner = owner;
+    std::cout << "Scale::onAttach::" << owner->name << std::endl;
+    startPos1 = owner->transform.getLocalPosition();
+    if (secondScale != nullptr) startPos2 = secondScale->transform.getLocalPosition();
 }
 
 void Scale::onDetach()
 {
-	std::cout << "Scale::onDetach::" << owner->name << std::endl;
-	owner = nullptr;
+    std::cout << "Scale::onDetach::" << owner->name << std::endl;
+    owner = nullptr;
 }
 
 void Scale::onStart()
 {
-	std::cout << "start szalek -----------------------------------------------------------" << std::endl;
-	
-	rb = owner->getComponent<Rigidbody>();
+    std::cout << "start szalek -----------------------------------------------------------" << std::endl;
 
-	startPos1 = owner->transform.getLocalPosition();
-	startPos2 = secondScale->transform.getLocalPosition();
-	
-	if (moveHorizontally) {
-		rb->lockPositionY = true;
-	}
-	else {
-		rb->lockPositionX = true;
-	}
-	rb->lockPositionZ = true;
+    rb = owner->getComponent<Rigidbody>();
+    startPos1 = owner->transform.getLocalPosition();
+    startPos2 = secondScale->transform.getLocalPosition();
+
+    if (moveHorizontally) {
+        rb->lockPositionY = true;
+    }
+    else {
+        rb->lockPositionX = true;
+    }
+    rb->lockPositionZ = true;
 }
 
 void Scale::onUpdate(float deltaTime)
 {
-	if (secondScale == NULL) return;
-	else if (startPos2 == glm::vec3(0.f)) startPos2 = secondScale->transform.getLocalPosition();
+    if (secondScale == nullptr) return;
+    else if (startPos2 == glm::vec3(0.f)) startPos2 = secondScale->transform.getLocalPosition();
 
-	if (setStartPos) {
-		startPos1 = owner->transform.getLocalPosition();
-		startPos2 = secondScale->transform.getLocalPosition();
-		setStartPos = false;
-	}
+    if (setStartPos) {
+        startPos1 = owner->transform.getLocalPosition();
+        startPos2 = secondScale->transform.getLocalPosition();
+        setStartPos = false;
+    }
 
-	// player detection
-	glm::vec3 position = owner->transform.getGlobalPosition();
-	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
-	float length = owner->transform.getLocalScale().y / 2.f + 0.1f;
-	float width = owner->transform.getLocalScale().x / 2.f - 0.05f;
-	std::vector<Node*> nodes;
+    // Wykrywanie gracza (promieñ w górê)
+    glm::vec3 position = owner->transform.getGlobalPosition();
+    glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
+    float length = owner->transform.getLocalScale().y / 2.f + 0.01f;
+    float width = owner->transform.getLocalScale().x / 2.f - 0.05f;
 
-	std::vector<Ray> rays = {
-		Ray{position + glm::vec3(-width, 0.f, 0.f), up},
-		Ray{position + glm::vec3(-width/2, 0.f, 0.f), up},
-		Ray{position, up},
-		Ray{position + glm::vec3(width/2, 0.f, 0.f), up},
-		Ray{position + glm::vec3(width, 0.f, 0.f), up}
-	};
+    std::vector<Ray> upRays = {
+        Ray{position + glm::vec3(-width, 0.f, 0.f), up},
+        Ray{position, up},
+        Ray{position + glm::vec3(width, 0.f, 0.f), up}
+    };
 
-	//isPlayerOn = false;
-	//isPlayerHeavy = false;
-
-	nodes.clear();
-	if (PhysicsSystem::instance().rayCast(rays, nodes, length)) {
-		if (!(nodes.size() == rays.size() && nodes[rays.size() - 1] == owner)) {
-			for (auto node : nodes) {
+    std::vector<Node*> hitNodes;
+    bool playerOnTop = false;
+    if (PhysicsSystem::instance().rayCast(upRays, hitNodes, length, owner)) {
+		if (hitNodes.size() > 0) {
+			for (Node* node : hitNodes) {
 				if (node->getTagName() == "Player" || node->getTagName() == "Box") {
-					isPlayerOn = true;
-					PlayerController* player = node->getComponent<PlayerController>();
-					if (player != nullptr) {
-						if (player->virusType == "black") isPlayerHeavy = true;
-					}
-					std::cout << "na szalce stoi gracz, jest ciê¿ki: " << isPlayerHeavy << std::endl;
-					timer = 0.05f;
+					playerOnTop = true;
 					break;
 				}
 			}
 		}
-	}
+    }
 
-	if (!isPlayerOn && !moveHorizontally && returnToPosition) {
-		rb->velocityY = 0.f;
+    glm::vec3 pos1 = owner->transform.getLocalPosition();
+    glm::vec3 pos2 = secondScale->transform.getLocalPosition();
 
-		glm::vec3 position1 = owner->transform.getLocalPosition();
-		glm::vec3 newPosition = GameMath::MoveTowards(position1, startPos1, 1.f * deltaTime);
-		owner->transform.setLocalPosition(newPosition);
+    float offset = startPos1.y - pos1.y;
+    glm::vec3 newPos2 = startPos2 + glm::vec3(0.f, offset, 0.f);
 
-		glm::vec3 position2 = secondScale->transform.getLocalPosition();
-		glm::vec3 newPosition2 = GameMath::MoveTowards(position2, startPos2, 1.f * deltaTime);
-		secondScale->transform.setLocalPosition(newPosition2);
-	}
-	else {
-		if (moveHorizontally) {
-			glm::vec3 position1 = owner->transform.getLocalPosition();
-			//owner->transform.setLocalPosition(position1 - glm::vec3(0.f, 2.f * deltaTime, 0.f));
+    secondScale->transform.setLocalPosition(newPos2);
 
-			float offset = startPos1.x - position1.x;
+    if (!playerOnTop && returnToPosition) {
+        glm::vec3 newPos1 = mix(pos1, startPos1, 0.5f * deltaTime);
+        glm::vec3 newPos2 = mix(pos2, startPos2, 0.5f * deltaTime);
 
-			secondScale->transform.setLocalPosition(startPos2 + glm::vec3(offset, 0.f, 0.f));
-		}
-		else if (isPlayerOn) {
-			rb->velocityY = 0.f;
+        owner->transform.setLocalPosition(newPos1);
+        secondScale->transform.setLocalPosition(newPos2);
+        return;
+    }
+    
+    //// Ruch pionowy
+    //float maxDisplacement = 1.0f; // maksymalna ró¿nica wysokoœci miêdzy szalkami
+    //glm::vec3 pos1 = owner->transform.getLocalPosition();
+    //glm::vec3 pos2 = secondScale->transform.getLocalPosition();
+    //float delta = pos1.y - pos2.y;
 
-			if (rb->groundUnderneath) return;
-
-			float loweringSpeed = .2f;
-			if (isPlayerHeavy) loweringSpeed = 2.f;
-
-			glm::vec3 position1 = owner->transform.getLocalPosition();
-			owner->transform.setLocalPosition(position1 - glm::vec3(0.f, loweringSpeed * deltaTime, 0.f));
-
-			float offset = startPos1.y - position1.y;
-
-			secondScale->transform.setLocalPosition(startPos2 + glm::vec3(0.f, offset, 0.f));
-		}
-	}
-
-	if (timer > 0.f) {
-		timer -= deltaTime;
-		if (timer <= 0.f) {
-			timer = 0.f;
-			isPlayerOn = false;
-			isPlayerHeavy = false;
-		}
-	}
-
-
-
-	// draw line between pins and platforms
-	//glm::vec3 leftPinPos = leftPin->transform.getLocalPosition();
-	//glm::vec3 rightPinPos = rightPin->transform.getLocalPosition();
-	//glm::vec3 leftPlatformPos = owner->transform.getLocalPosition();
-	//glm::vec3 rightPlatformPos = secondScale->transform.getLocalPosition();
-
-	//TODO: draw line
+    //float moveSpeed = 15.0f; // prêdkoœæ celowana
+    //if (playerOnTop) {
+    //    if (delta < maxDisplacement) {
+    //        rb->targetVelocityY = -moveSpeed;
+    //        Rigidbody* rb2 = secondScale->getComponent<Rigidbody>();
+    //        if (rb2) rb2->targetVelocityY = moveSpeed;
+    //    }
+    //    else {
+    //        rb->targetVelocityY = 0.f;
+    //        Rigidbody* rb2 = secondScale->getComponent<Rigidbody>();
+    //        if (rb2) rb2->targetVelocityY = 0.f;
+    //    }
+    //}
+    //else {
+    //    // Automatyczny powrót do poziomu
+    //    float restoreSpeed = 1.5f;
+    //    if (delta > 0.05f) {
+    //        rb->targetVelocityY = restoreSpeed;
+    //        Rigidbody* rb2 = secondScale->getComponent<Rigidbody>();
+    //        if (rb2) rb2->targetVelocityY = -restoreSpeed;
+    //    }
+    //    else if (delta < -0.05f) {
+    //        rb->targetVelocityY = -restoreSpeed;
+    //        Rigidbody* rb2 = secondScale->getComponent<Rigidbody>();
+    //        if (rb2) rb2->targetVelocityY = restoreSpeed;
+    //    }
+    //    else {
+    //        rb->targetVelocityY = 0.f;
+    //        Rigidbody* rb2 = secondScale->getComponent<Rigidbody>();
+    //        if (rb2) rb2->targetVelocityY = 0.f;
+    //    }
+    //}
 }
 
-void Scale::onEnd()
-{
-}
 
-void Scale::onStayCollision(Node* other)
-{
-	/*if (other->getTagName() == "Player") {
-		isPlayerOn = true;
+void Scale::onEnd() {}
 
-		if (other->getComponent<PlayerController>()->virusType == "black") {
-			isPlayerHeavy = true;
-		}
-	}*/
-}
+void Scale::onStayCollision(Node* other) {}
 
-void Scale::onExitCollision(Node* other)
-{
-	/*if (other->getTagName() == "Player") {
-		timer = 0.1f;
-	}*/
-}
+void Scale::onExitCollision(Node* other) {}

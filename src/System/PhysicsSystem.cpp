@@ -149,13 +149,13 @@ void PhysicsSystem::updateCollisions()
 	//std::cout << "Sprawdzono: " << counter << std::endl;
 }
 
-bool PhysicsSystem::rayCast(Ray ray, std::vector<Node*>& collide_with, float length)
+bool PhysicsSystem::rayCast(Ray ray, std::vector<Node*>& collide_with, float length, Node* owner)
 {
 	if (length <= 0.f) {
 		for (auto& collider : colliders) {
 			if (collider->is_logic) continue;
 			float t;
-			if (collider->isRayIntersects(ray.direction, ray.origin, t)) {
+			if (collider->isRayIntersects(ray.direction, ray.origin, t) && collider->node != owner) {
 				collide_with.push_back(collider->node);
 			}
 		}
@@ -164,7 +164,7 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<Node*>& collide_with, float len
 		for (auto& collider : colliders) {
 			if (collider->is_logic) continue;
 			float t;
-			if (collider->isRayIntersects(ray.direction, ray.origin, t)) {
+			if (collider->isRayIntersects(ray.direction, ray.origin, t) && collider->node != owner) {
 				
 				glm::vec3 hitPoint = ray.origin + glm::vec3(ray.direction * t);
 				float distance = glm::length(hitPoint - ray.origin);
@@ -177,12 +177,12 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<Node*>& collide_with, float len
 	return collide_with.size() > 0;
 }
 
-bool PhysicsSystem::rayCast(const std::vector<Ray>& rays, std::vector<Node*>& collide_with, float length)
+bool PhysicsSystem::rayCast(const std::vector<Ray>& rays, std::vector<Node*>& collide_with, float length, Node* owner)
 {
 	bool hitAny = false;
 
 	for (const Ray& ray : rays) {
-		bool hit = rayCast(ray, collide_with, length);
+		bool hit = rayCast(ray, collide_with, length, owner);
 		hitAny = hitAny || hit;
 	}
 

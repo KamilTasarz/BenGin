@@ -70,7 +70,7 @@ void PlayerController::onUpdate(float deltaTime)
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		//std::cout << "Gracz probuje skoczyc" << std::endl;
 
-		if (rb->groundUnderneath) {
+		if (rb->groundUnderneath || rb->scaleUnderneath) {
 			{
 				rb->overrideVelocityY = true;
 				if (isGravityFlipped) rb->velocityY = -jumpForce;

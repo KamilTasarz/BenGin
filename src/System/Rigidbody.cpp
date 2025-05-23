@@ -53,7 +53,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	glm::vec3 position = owner->transform.getGlobalPosition();
 	glm::vec4 down = glm::vec4(0.f, -1.f, 0.f, 0.f);
 	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
-	float length = owner->transform.getLocalScale().y / 2.f + 0.02f;
+	float length = owner->transform.getLocalScale().y / 2.f + 0.03f;
 	float width = owner->transform.getLocalScale().x / 2.f - 0.15f;
 	std::vector<Node*> nodes;
 
@@ -77,18 +77,31 @@ void Rigidbody::onUpdate(float deltaTime)
 	};
 
 	groundUnderneath = false;
+	scaleUnderneath = false;
 	ceilingAbove = false;
 
 	nodes.clear();
-	if (PhysicsSystem::instance().rayCast(groundRays, nodes, length)) {
-		if (!(nodes.size() == groundRays.size() && nodes[groundRays.size() - 1] == owner)) {
-			groundUnderneath = true;
+	if (PhysicsSystem::instance().rayCast(groundRays, nodes, length, owner)) {
+		if (nodes.size() > 0) {
+			for (Node* node : nodes) {
+				if (node->getLayerName() == "Scale") {
+					if (node->getComponent<Rigidbody>()->groundUnderneath) {
+						groundUnderneath = true;
+					}
+					else {
+						scaleUnderneath = true;
+					}
+				}
+				if (node->getLayerName() != "Scale") {
+					groundUnderneath = true;
+				}
+			}
 		}
 	}
 
 	nodes.clear();
-	if (PhysicsSystem::instance().rayCast(ceilingRays, nodes, length)) {
-		if (!(nodes.size() == ceilingRays.size() && nodes[ceilingRays.size() - 1] == owner)) {
+	if (PhysicsSystem::instance().rayCast(ceilingRays, nodes, length, owner)) {
+		if (nodes.size() > 0) {
 			ceilingAbove = true;
 		}
 	}
@@ -96,12 +109,24 @@ void Rigidbody::onUpdate(float deltaTime)
 	if (startPos == glm::vec3(0.f)) startPos = owner->transform.getLocalPosition();
 
 	// horizontal movement
-    velocityX = glm::mix(velocityX, targetVelocityX, smoothingFactor * deltaTime);
+	velocityX = glm::mix(velocityX, targetVelocityX, smoothingFactor * deltaTime);
+	velocityX *= (1.0f - drag * deltaTime);
 
 	// vertical movement
 	if (overrideVelocityY) {
 		velocityY = glm::mix(velocityY, targetVelocityY, smoothingFactor * 0.5f * deltaTime);
 		velocityY += gravity * deltaTime;
+		velocityY *= (1.0f - drag * deltaTime);
+	}
+	else if (scaleUnderneath && !groundUnderneath && velocityY < 0.f) {
+		velocityY = -0.5f;
+		
+		PlayerController* player = owner->getComponent<PlayerController>();
+		if (player) {
+			if (player->virusType == "black") {
+				velocityY = -5.f;
+			}
+		}
 	}
 	else if (velocityY > 0.f && groundUnderneath && isGravityFlipped) {
 		velocityY = 0.0f;
@@ -117,6 +142,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	}
 	else if (useGravity) {
 		velocityY += gravity * deltaTime;
+		velocityY *= (1.0f - drag * deltaTime);
 	}
 
 	// veltical movement limit

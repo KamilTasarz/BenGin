@@ -94,12 +94,8 @@ void NPC::detectPlayer() {
                 glm::vec3 direction = playerPos - ownerPos;
                 Ray ray{ ownerPos, glm::normalize(glm::vec4(direction, 0.f)) };
                 std::vector<Node*> hitNodes;
-                if (PhysicsSystem::instance().rayCast(ray, hitNodes, distance)) {
-                    if (hitNodes.size() >= 2 && hitNodes[1]->getTagName() == "Player") {
-                        player = hitNodes[1];
-                        return;
-                    }
-                    else if (hitNodes.size() >= 2 && hitNodes[0]->getTagName() == "Player") {
+                if (PhysicsSystem::instance().rayCast(ray, hitNodes, distance, owner)) {
+                    if (hitNodes.size() > 0 && hitNodes[0]->getTagName() == "Player") {
                         player = hitNodes[0];
                         return;
                     }
@@ -237,7 +233,7 @@ glm::vec2 NPC::getMoveDirection() {
     for (size_t i = 0; i < interest.size(); ++i)
         output += eightDirections[i] * interest[i];
 
-	std::cout << "NPC " << owner->getName() << " kierunek ruchu: " << output.x << ", " << output.y << std::endl;
+	//std::cout << "NPC " << owner->getName() << " kierunek ruchu: " << output.x << ", " << output.y << std::endl;
 
     return output == glm::vec2(0.f) ? glm::vec2(0.f) : glm::normalize(output);
 }
