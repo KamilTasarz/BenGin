@@ -32,6 +32,7 @@ public:
 
 	void playAnimation(Animation* animation, bool repeat = true);
 	void blendAnimation(Animation* next_animation, float duration, bool repeat = false);
+	bool isPlayingNonLooping() const;
 	void updateAnimation(float delta_time);
 	void calculateBoneTransform(Ass_impNodeData* node, glm::mat4 parent_transform);
 	void blendAnimations(Animation* A, Animation* B, float alpha);

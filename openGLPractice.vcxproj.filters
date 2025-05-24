@@ -64,6 +64,14 @@
     <ClCompile Include="src\Gameplay\PowerActivator.cpp" />
     <ClCompile Include="src\Gameplay\NPC.cpp" />
     <ClCompile Include="src\Basic\Model.cpp" />
+    <ClCompile Include="src\Gameplay\PlayerAnimationController.cpp" />
+    <ClCompile Include="src\Gameplay\IPlayerAnimState.h" />
+    <ClCompile Include="src\Gameplay\IdleState.cpp" />
+    <ClCompile Include="src\Gameplay\RunState.cpp" />
+    <ClCompile Include="src\Gameplay\JumpState.cpp" />
+    <ClCompile Include="src\Gameplay\InAirState.cpp" />
+    <ClCompile Include="src\Gameplay\LandState.cpp" />
+    <ClCompile Include="src\Gameplay\TurnState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -155,6 +163,13 @@
     <ClInclude Include="src\Gameplay\Electrified.h" />
     <ClInclude Include="src\Gameplay\PowerActivator.h" />
     <ClInclude Include="src\Gameplay\NPC.h" />
+    <ClInclude Include="src\Gameplay\PlayerAnimationController.h" />
+    <ClInclude Include="src\Gameplay\IdleState.h" />
+    <ClInclude Include="src\Gameplay\RunState.h" />
+    <ClInclude Include="src\Gameplay\JumpState.h" />
+    <ClInclude Include="src\Gameplay\InAirState.h" />
+    <ClInclude Include="src\Gameplay\LandState.h" />
+    <ClInclude Include="src\Gameplay\TurnState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />

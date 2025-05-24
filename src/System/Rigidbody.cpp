@@ -4,6 +4,7 @@
 #include "../Basic/Node.h"
 #include "../Gameplay/GroundObject.h"
 #include "../System/PhysicsSystem.h"
+#include "../Component/BoundingBox.h"
 
 Rigidbody::Rigidbody(float mass, float gravity, bool isStatic, bool useGravity, bool lockPositionX, bool lockPositionY, bool lockPositionZ)
 {
@@ -50,11 +51,13 @@ void Rigidbody::onUpdate(float deltaTime)
 
 	// ground detection
 	bool isGravityFlipped = false;
-	glm::vec3 position = owner->transform.getGlobalPosition();
+	//glm::vec3 position = owner->transform.getGlobalPosition();
+	glm::vec3 position = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
 	glm::vec4 down = glm::vec4(0.f, -1.f, 0.f, 0.f);
 	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
-	float length = owner->transform.getLocalScale().y / 2.f + 0.03f;
-	float width = owner->transform.getLocalScale().x / 2.f - 0.15f;
+	//float length = owner->transform.getLocalScale().y / 2.f + 0.03f;
+	float length = (owner->AABB->max_point_world.y - owner->AABB->min_point_world.y) / 2.f + 0.03f;
+	float width = (owner->AABB->max_point_world.x - owner->AABB->min_point_world.x) / 2.f - 0.15f;
 	std::vector<Node*> nodes;
 
 	if (owner->getTagName() == "Player") {

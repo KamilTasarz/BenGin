@@ -2,24 +2,24 @@
     "children": [
         {
             "AABB_logic_max": {
-                "x": 1.100000023841858,
-                "y": 1.600000023841858,
-                "z": 1.600000023841858
+                "x": 0.550000011920929,
+                "y": 0.6000000238418579,
+                "z": 0.5
             },
             "AABB_logic_min": {
-                "x": -1.100000023841858,
-                "y": -1.600000023841858,
-                "z": -0.10000000149011612
+                "x": -0.550000011920929,
+                "y": -0.6000000238418579,
+                "z": -0.5
             },
             "AABB_max": {
-                "x": 1.0,
-                "y": 1.5,
-                "z": 1.5
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
             },
             "AABB_min": {
-                "x": -1.0,
-                "y": -1.5,
-                "z": 0.0
+                "x": -0.5,
+                "y": -0.5,
+                "z": -0.5
             },
             "children": [
                 {
@@ -49,18 +49,18 @@
                     "is_visible": true,
                     "layer": "Default",
                     "model.id": 7,
-                    "name": "entity",
+                    "name": "timer",
                     "no_textures": false,
                     "position": {
-                        "x": -3.973649143063085e-08,
-                        "y": 0.33333319425582886,
-                        "z": 2.0
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 2.000000238418579
                     },
                     "rotation": {
-                        "w": 0.7071067690849304,
+                        "w": 1.0,
                         "x": 0.0,
                         "y": 0.0,
-                        "z": 0.7071067690849304
+                        "z": 0.0
                     },
                     "scale": {
                         "x": 0.0010000000474974513,
@@ -78,12 +78,12 @@
                         {
                             "field_type": "float",
                             "name": "speed",
-                            "value": 9.100000381469727
+                            "value": 9.0
                         },
                         {
                             "field_type": "float",
                             "name": "jumpForce",
-                            "value": 19.799999237060547
+                            "value": 18.5
                         },
                         {
                             "field_type": "Node*",
@@ -112,10 +112,6 @@
                         "lockPositionZ": true,
                         "mass": 1.0
                     }
-                },
-                {
-                    "name": "PlayerAnimationController",
-                    "variables": null
                 }
             ],
             "id": 0,
@@ -123,24 +119,24 @@
             "is_physic_active": true,
             "is_visible": true,
             "layer": "Default",
-            "model.id": 16,
+            "model.id": 7,
             "name": "player_body",
             "no_textures": false,
             "position": {
-                "x": -0.5416666865348816,
-                "y": 5.8284825854570954e-08,
+                "x": 0.0,
+                "y": 0.0,
                 "z": 0.0
             },
             "rotation": {
-                "w": 0.4999999701976776,
-                "x": -0.4999999701976776,
-                "y": 0.4999999701976776,
-                "z": 0.4999999701976776
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
             },
             "scale": {
-                "x": 1.5,
-                "y": 0.75,
-                "z": 0.75
+                "x": 2.0,
+                "y": 1.0,
+                "z": 1.0
             },
             "tag": "Player",
             "type": "Node"
@@ -152,7 +148,7 @@
     "is_visible": true,
     "layer": "Default",
     "model.id": -1,
-    "name": "Player",
+    "name": "Player_old",
     "no_textures": true,
     "position": {
         "x": 0.0,
@@ -168,7 +164,7 @@
     "scale": {
         "x": 1.0,
         "y": 1.0,
-        "z": 0.5
+        "z": 1.0
     },
     "tag": "Default",
     "type": "Node"

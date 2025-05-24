@@ -1,5 +1,8 @@
 #include "Animator.h"
 #include <glm/gtx/matrix_decompose.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 void Animator::playAnimation(Animation* animation, bool repeat)
 {
@@ -26,6 +29,10 @@ void Animator::blendAnimation(Animation* next_animation, float duration, bool re
     this->next_animation = next_animation;
 }
 
+bool Animator::isPlayingNonLooping() const {
+    return !repeat && !ended;
+}
+
 void Animator::updateAnimation(float delta_time)
 {
 	this->delta_time = delta_time;
@@ -40,12 +47,14 @@ void Animator::updateAnimation(float delta_time)
 
                 current_time += current_animation->speed * delta_time;
 
-                if (current_time > current_animation->duration) end++;
+                if (current_time > current_animation->duration) {
+                    end++;
+                    current_time = fmodf(current_time, current_animation->duration);
+                    return;
+                }
 
                 current_time = fmodf(current_time, current_animation->duration);
                 calculateBoneTransform(&current_animation->root, glm::mat4(1.f));
-
-
             }
         }
     }
@@ -124,12 +133,20 @@ void Animator::blendBoneTransform(Animation* A, Animation* B, Ass_impNodeData* n
     glm::mat4 localB = nodeB->transform;
 
     if (boneA) {
-        boneA->update(current_time);
+        //boneA->update(current_time);
+
+        float timeA = fmodf(blend_time * A->speed, A->duration);
+        boneA->update(timeA);
+
         localA = boneA->local_model_matrix;
     }
 
     if (boneB) {
-        boneB->update(current_time);
+        //boneB->update(current_time);
+
+        float timeB = fmodf(blend_time * B->speed, B->duration);
+        boneB->update(timeB);
+
         localB = boneB->local_model_matrix;
     }
 
@@ -152,7 +169,8 @@ void Animator::blendBoneTransform(Animation* A, Animation* B, Ass_impNodeData* n
 
     glm::mat4 globalA = parentA * localA;
     glm::mat4 globalB = parentB * localB;
-    glm::mat4 global_blended = parentA * blended; // or mix(globalA, globalB, alpha)
+    //glm::mat4 global_blended = parentA * blended; // or mix(globalA, globalB, alpha)
+    glm::mat4 global_blended = globalA * (1.0f - alpha) + globalB * alpha;
 
     // Save to final bone matrices
     if (A->m_BoneInfoMap.find(name) != A->m_BoneInfoMap.end()) {
