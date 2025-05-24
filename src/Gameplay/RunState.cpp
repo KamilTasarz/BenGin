@@ -22,18 +22,18 @@ void RunState::update(Node* owner, float deltaTime) {
     if (player->isJumping) {
         animation->changeState(new JumpState());
     }
-    else if (animation->facingRight && animation->deltaX < -0.02f) {
+    else if (animation->facingRight && animation->deltaX < -(4.f * deltaTime)) {
         animation->facingRight = false;
         animation->changeState(new TurnState());
     }
-    else if (!animation->facingRight && animation->deltaX > 0.02f) {
+    else if (!animation->facingRight && animation->deltaX > (4.f * deltaTime)) {
         animation->facingRight = true;
         animation->changeState(new TurnState());
     }
-    else if (abs(animation->deltaX) < 0.02f && (rb->groundUnderneath || rb->scaleUnderneath)) {
+    else if (abs(animation->deltaX) < (4.f * deltaTime) && (rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new IdleState());
     }
-    else if (abs(animation->deltaY) > 0.02f && !(rb->groundUnderneath || rb->scaleUnderneath)) {
+    else if (abs(rb->velocityY) > 0.2f && !(rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new InAirState());
     }
 }
