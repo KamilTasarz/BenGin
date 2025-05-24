@@ -11,7 +11,7 @@
 void RunState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
     animation->run->speed = 1500.f;
-    owner->animator->playAnimation(animation->run, true);
+    owner->animator->blendAnimation(animation->run, 2500.f, true, true);
 }
 
 void RunState::update(Node* owner, float deltaTime) {

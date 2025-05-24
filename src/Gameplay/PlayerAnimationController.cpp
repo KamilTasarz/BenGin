@@ -86,25 +86,25 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_Z) == GLFW_PRESS)) {
-		owner->animator->playAnimation(idle, false);
+		owner->animator->blendAnimation(idle, 0.2f, false);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_X) == GLFW_PRESS)) {
-		owner->animator->playAnimation(turn, false);
+		owner->animator->blendAnimation(turn, 0.2f, false);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_C) == GLFW_PRESS)) {
-		owner->animator->playAnimation(run, false);
+		owner->animator->blendAnimation(run, 0.2f, false);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_V) == GLFW_PRESS)) {
-		owner->animator->playAnimation(sleep, false);
+		owner->animator->blendAnimation(sleep, 0.2f, false);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_B) == GLFW_PRESS)) {
-		owner->animator->playAnimation(jump, false);
+		owner->animator->blendAnimation(jump, 0.2f, false);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_N) == GLFW_PRESS)) {
-		owner->animator->playAnimation(inAir, false);
+		owner->animator->blendAnimation(inAir, 0.2f, false);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_M) == GLFW_PRESS)) {
-		owner->animator->playAnimation(fall, false);
+		owner->animator->blendAnimation(fall, 0.2f, false);
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_H) == GLFW_PRESS) {
 		owner->animator->blendAnimation(run, 0.5f, true);

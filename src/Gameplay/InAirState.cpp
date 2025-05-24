@@ -6,8 +6,8 @@
 
 void InAirState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
-	animation->inAir->speed = 250.f;
-    owner->animator->playAnimation(animation->inAir, false);
+	animation->inAir->speed = 100.f;
+    owner->animator->blendAnimation(animation->inAir, 200.f, true, false);
 }
 
 void InAirState::update(Node* owner, float deltaTime) {

@@ -18,7 +18,7 @@ public:
 
 	int begin = 0, end = 0;
 
-	bool repeat = true, blending = false, ended = false;
+	bool repeat = true, blending = false, ended = false, into_next = false;
 
 	Animator(Animation* animation_to_play) {
 		current_time = 0.f;
@@ -31,7 +31,7 @@ public:
 	}
 
 	void playAnimation(Animation* animation, bool repeat = true);
-	void blendAnimation(Animation* next_animation, float duration, bool repeat = false);
+	void blendAnimation(Animation* next_animation, float duration, bool into_next = false, bool repeat = false);
 	bool isPlayingNonLooping() const;
 	void updateAnimation(float delta_time);
 	void calculateBoneTransform(Ass_impNodeData* node, glm::mat4 parent_transform);

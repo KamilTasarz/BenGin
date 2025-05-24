@@ -7,7 +7,7 @@
 void JumpState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
     animation->jump->speed = 1500.f;
-    owner->animator->playAnimation(animation->jump, false);
+    owner->animator->blendAnimation(animation->jump, 1000.f, true, false);
 }
 
 void JumpState::update(Node* owner, float deltaTime) {

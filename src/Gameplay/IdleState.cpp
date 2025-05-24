@@ -10,7 +10,7 @@
 
 void IdleState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
-    owner->animator->playAnimation(animation->idle, true);
+    owner->animator->blendAnimation(animation->idle, 2500.f, true, true);
 }
 
 void IdleState::update(Node* owner, float deltaTime) {

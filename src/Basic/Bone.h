@@ -41,6 +41,9 @@ public:
 
 	int id;
 	glm::mat4 local_model_matrix;
+	glm::mat4 local_pos;
+	glm::mat4 local_rot;
+	glm::mat4 local_scl;
 
 	Bone(aiNodeAnim* anim_channel, int ID, std::string name) : m_name(name), id(ID) {
 		local_model_matrix = glm::mat4(1.f);

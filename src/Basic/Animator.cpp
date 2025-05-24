@@ -17,14 +17,16 @@ void Animator::playAnimation(Animation* animation, bool repeat)
 	current_time = 0.0f;
 }
 
-void Animator::blendAnimation(Animation* next_animation, float duration, bool repeat)
+void Animator::blendAnimation(Animation* next_animation, float duration, bool into_next, bool repeat)
 {
     this->repeat = repeat;
     blending = true;
     ended = false;
+    this->into_next = into_next;
     begin = 1;
     end = 0;
     blend_duration = duration;
+    
     blend_time = 0.0f;
     this->next_animation = next_animation;
 }
@@ -61,21 +63,31 @@ void Animator::updateAnimation(float delta_time)
     else {
         if (next_animation) {
 
-            blend_time += current_animation->speed * delta_time;
+            blend_time += next_animation->speed * delta_time;
 
-            float alpha = 0.5f;
+            
+
+            float alpha = 0.0f;
             if (blend_duration > 0.f) {
-                alpha = blend_time / blend_duration;
+                alpha = (float) blend_time / (float) blend_duration;
+                if (blend_time > blend_duration) alpha = 1.f;
             }
 
+            cout << alpha << endl;
+
             if (alpha < 1.f) {
+                
                 blendAnimations(current_animation, next_animation, alpha);
             }
             else {
                 current_animation = next_animation;
                 next_animation = nullptr;
                 blending = false;
-                if (!repeat) ended = true;
+                current_time = 0.0f;
+                if ((into_next && blend_duration > current_animation->duration) && !repeat) ended = true;
+
+                if (into_next) current_time = blend_time;
+                //if (!repeat) ended = true;
             }
         }
         else {
@@ -117,8 +129,8 @@ void Animator::calculateBoneTransform(Ass_impNodeData* node, glm::mat4 parent_tr
 
 void Animator::blendAnimations(Animation* A, Animation* B, float alpha)
 {
-	current_time += delta_time;
 
+    
 	glm::mat4 identity = glm::mat4(1.0f);
 	blendBoneTransform(A, B, &A->root, &B->root, identity, identity, alpha);
 }
@@ -132,49 +144,56 @@ void Animator::blendBoneTransform(Animation* A, Animation* B, Ass_impNodeData* n
     glm::mat4 localA = nodeA->transform;
     glm::mat4 localB = nodeB->transform;
 
-    if (boneA) {
-        //boneA->update(current_time);
-
-        float timeA = fmodf(blend_time * A->speed, A->duration);
-        boneA->update(timeA);
-
-        localA = boneA->local_model_matrix;
-    }
-
-    if (boneB) {
-        //boneB->update(current_time);
-
-        float timeB = fmodf(blend_time * B->speed, B->duration);
-        boneB->update(timeB);
-
-        localB = boneB->local_model_matrix;
-    }
-
     // Decompose both matrices
     glm::vec3 posA, scaleA, posB, scaleB;
     glm::quat rotA, rotB;
     glm::vec3 skew; glm::vec4 perspective;
 
-    glm::decompose(localA, scaleA, rotA, posA, skew, perspective);
-    glm::decompose(localB, scaleB, rotB, posB, skew, perspective);
+    if (boneA) {
 
+        boneA->update(current_time);
+
+        localA = boneA->local_model_matrix;
+    }
+    
+
+    if (boneB) {
+        //boneB->update(current_time);
+
+        float timeB = 0.f;
+        if (into_next) {
+            timeB = fmodf(blend_duration, B->duration);
+        }
+        boneB->update(timeB);
+
+        localB = boneB->local_model_matrix;
+    }
+
+    glm::mat4 globalA = parentA * localA;
+    glm::mat4 globalB = parentB * localB;
+
+    glm::decompose(globalA, scaleA, rotA, posA, skew, perspective);
+    glm::decompose(globalB, scaleB, rotB, posB, skew, perspective);
+    
     // Interpolate
     glm::vec3 final_pos = glm::mix(posA, posB, alpha);
     glm::quat final_rot = glm::slerp(rotA, rotB, alpha);
     glm::vec3 final_scale = glm::mix(scaleA, scaleB, alpha);
-
+    
     glm::mat4 blended = glm::translate(glm::mat4(1.0f), final_pos) *
         glm::mat4_cast(final_rot) *
         glm::scale(glm::mat4(1.0f), final_scale);
 
-    glm::mat4 globalA = parentA * localA;
-    glm::mat4 globalB = parentB * localB;
-    //glm::mat4 global_blended = parentA * blended; // or mix(globalA, globalB, alpha)
-    glm::mat4 global_blended = globalA * (1.0f - alpha) + globalB * alpha;
+    
+    
+    glm::mat4 global_blended = blended;
+
+
 
     // Save to final bone matrices
     if (A->m_BoneInfoMap.find(name) != A->m_BoneInfoMap.end()) {
         int index = A->m_BoneInfoMap[name].id;
+
         glm::mat4 offset = A->m_BoneInfoMap[name].offset;
         final_bone_matrices[index] = global_blended * offset;
     }

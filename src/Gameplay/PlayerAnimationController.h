@@ -2,9 +2,10 @@
 
 #include "Script.h"
 #include "../System/Rigidbody.h"
-#include "../Basic/Animation.h"
+
 
 class IPlayerAnimState;
+class Animation;
 
 class PlayerAnimationController : public Script
 {

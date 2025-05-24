@@ -81,5 +81,8 @@ void Bone::update(float animation_time)
     glm::mat4 translation = interpolatePosition(animation_time);
     glm::mat4 rotation = interpolateRotation(animation_time);
     glm::mat4 scale = interpolateScale(animation_time);
+    local_scl = scale;
+    local_rot = rotation;
+    local_pos = translation;
     local_model_matrix = translation * rotation * scale;
 }
