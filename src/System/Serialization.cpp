@@ -1007,6 +1007,16 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	j["crt_outline_color"] = vec3_to_json(data.crt_outline_color);
 
+	j["crt_screen_resolution"] = vec2_to_json(data.crt_screen_resolution);
+
+	j["crt_vignette_radius"] = data.crt_vignette_radius;
+
+	j["crt_lines_sinusoid_factor"] = vec2_to_json(data.crt_lines_sinusoid_factor);
+
+	j["crt_vignette_factor"] = data.crt_vignette_factor;
+
+	j["crt_brightness"] = vec3_to_json(data.crt_brightness);
+
 	std::ofstream file(filename);
 	if (file.is_open()) {
 		file << j.dump(4); // Pretty print with 4 spaces
@@ -1033,7 +1043,17 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 			data.crt_curvature = json_to_vec2(j.at("crt_curvature"));
 
 			data.crt_outline_color = json_to_vec3(j.at("crt_outline_color"));
+
+			data.crt_screen_resolution = json_to_vec2(j.at("crt_screen_resolution"));
+
+			data.crt_vignette_radius = j.at("crt_vignette_radius");
+
+			data.crt_lines_sinusoid_factor = json_to_vec2(j.at("crt_lines_sinusoid_factor"));
 		
+			data.crt_vignette_factor = j.at("crt_vignette_factor");
+
+			data.crt_brightness = json_to_vec3(j.at("crt_brightness"));
+
 		}
 		catch (const std::exception& e) {
 			std::cerr << "Blad przy wczytywaniu pliku " << filename << ": " << e.what() << std::endl;

@@ -70,6 +70,15 @@ void Game::draw()
 
             ResourceManager::Instance().shader_PostProcess_crt->setVec2("curvature", postProcessData.crt_curvature);
             ResourceManager::Instance().shader_PostProcess_crt->setVec3("outline_color", postProcessData.crt_outline_color);
+
+            ResourceManager::Instance().shader_PostProcess_crt->setVec2("screen_resolution", postProcessData.crt_screen_resolution);
+            ResourceManager::Instance().shader_PostProcess_crt->setFloat("vignette_radius", postProcessData.crt_vignette_radius);
+
+            ResourceManager::Instance().shader_PostProcess_crt->setVec2("lines_sinusoid_factor", postProcessData.crt_lines_sinusoid_factor);
+            ResourceManager::Instance().shader_PostProcess_crt->setFloat("vignette_factor", postProcessData.crt_vignette_factor);
+            
+            ResourceManager::Instance().shader_PostProcess_crt->setVec3("brightness", postProcessData.crt_brightness);
+
             ResourceManager::Instance().shader_PostProcess_crt->setFloat("time", time);
         }
 

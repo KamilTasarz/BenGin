@@ -17,6 +17,21 @@ struct PostProcessData {
     // Kolor "telewizora" (tej obramowki dookola)
     glm::vec3 crt_outline_color;
 
+    // Ilosc linii w poziomie i pionie dla crt
+    glm::vec2 crt_screen_resolution;
+    
+    // Promien elipsy winiety
+    float crt_vignette_radius;
+
+    // Jak ostro przechodzi kolor miedzy liniami kolorowymi a czarnymi
+    glm::vec2 crt_lines_sinusoid_factor;
+
+    // Jak ostro przechodzi kolor ekran -> winietka
+    float crt_vignette_factor;
+
+    // Caloekranowy filtr kolorystyczny
+    glm::vec3 crt_brightness;
+
 };
 
 #endif
