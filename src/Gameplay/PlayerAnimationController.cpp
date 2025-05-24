@@ -63,7 +63,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	if (currentState)
 		currentState->update(owner, deltaTime);
 
-	if (facingRight && deltaX < -0.02f) {
+	/*if (facingRight && deltaX < -0.02f) {
 		facingRight = false;
 		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f,-1.f, 1.f);
 		owner->transform.setLocalScale(newScale);
@@ -72,7 +72,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 		facingRight = true;
 		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
 		owner->transform.setLocalScale(newScale);
-	}
+	}*/
 
 	if (owner->getComponent<PlayerController>()->isGravityFlipped && !gravityFlipped) {
 		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, 1.f, -1.f);

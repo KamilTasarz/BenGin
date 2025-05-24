@@ -9,7 +9,7 @@
 
 void TurnState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
-    animation->fall->speed = 4000.f;
+    animation->turn->speed = 8000.f;
     owner->animator->playAnimation(animation->turn, false);
 }
 
@@ -20,6 +20,23 @@ void TurnState::update(Node* owner, float deltaTime) {
 
     if (owner->animator->isPlayingNonLooping()) {
         return;
+    }
+
+    if (!animation->facingRight) {
+        glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
+        owner->transform.setLocalScale(newScale);
+
+		glm::vec3 position = owner->transform.getLocalPosition();
+		position.x -= 0.78f;
+		owner->transform.setLocalPosition(position);
+    }
+    else if (animation->facingRight) {
+        glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
+        owner->transform.setLocalScale(newScale);
+
+        glm::vec3 position = owner->transform.getLocalPosition();
+        position.x += 0.78f;
+        owner->transform.setLocalPosition(position);
     }
 
     if (player->isJumping) {
