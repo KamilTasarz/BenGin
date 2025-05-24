@@ -1396,6 +1396,7 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
         ImGui::Separator();
 
+        ImGui::ColorEdit3("CRT Brightness", glm::value_ptr(postProcessData.crt_brightness));
 
     }
 

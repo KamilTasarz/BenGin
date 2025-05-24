@@ -83,10 +83,12 @@ void Game::draw()
         }
 
     }
+    else {
         
-    ResourceManager::Instance().shader_PostProcess_pass->use();
-    ResourceManager::Instance().shader_PostProcess_pass->setInt("screenTexture", 0);
+        ResourceManager::Instance().shader_PostProcess_pass->use();
+        ResourceManager::Instance().shader_PostProcess_pass->setInt("screenTexture", 0);
 
+    }
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glEnable(GL_DEPTH_TEST);
