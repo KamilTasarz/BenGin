@@ -1375,7 +1375,16 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
         ImGui::DragFloat("X", &postProcessData.crt_curvature.x, 0.1f, 1.0f, 15.0f, "%.1f");
         ImGui::DragFloat("Y", &postProcessData.crt_curvature.y, 0.1f, 1.0f, 10.0f, "%.1f");
 
-        ImGui::ColorEdit3("CRT Outline Color", glm::value_ptr(postProcessData.crt_outline_color));
+        ImGui::ColorEdit3("CRT Outline", glm::value_ptr(postProcessData.crt_outline_color));
+
+        ImGui::Separator();
+
+        ImGui::Text("CRT Lines: ");
+        ImGui::DragFloat("X Resolution", &postProcessData.crt_screen_resolution.x, 1.0f, 0.0f, 1000.0f, "%.1f");
+        ImGui::DragFloat("Y Resolution", &postProcessData.crt_screen_resolution.y, 1.0f, 0.0f, 1000.0f, "%.1f");
+
+        ImGui::DragFloat("X factor", &postProcessData.crt_lines_sinusoid_factor.x, 0.1f, 0.01f, 3.0f, "%.2f");
+        ImGui::DragFloat("Y factor", &postProcessData.crt_lines_sinusoid_factor.y, 0.1f, 0.01f, 3.0f, "%.2f");
 
     }
 
@@ -1395,9 +1404,6 @@ void Editor::init()
         ServiceLocator::getWindow()->window, true  // (5) backend platformy
     );
     ImGui_ImplOpenGL3_Init("#version 330");        // (6) backend renderera
-
-    //postProcessData.crt_outline_color = glm::vec3(0.0706f, 0.0078f, 0.0039f);
-    //savePostProcessData("res/scene/postprocess_data.json", postProcessData);
 
     loadScene("res/scene/scene.json", editor_sceneGraph, prefabs);
 
