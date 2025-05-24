@@ -1379,12 +1379,23 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
         ImGui::Separator();
 
-        ImGui::Text("CRT Lines: ");
+        ImGui::Text("CRT Lines:");
         ImGui::DragFloat("X Resolution", &postProcessData.crt_screen_resolution.x, 1.0f, 0.0f, 1000.0f, "%.1f");
         ImGui::DragFloat("Y Resolution", &postProcessData.crt_screen_resolution.y, 1.0f, 0.0f, 1000.0f, "%.1f");
 
-        ImGui::DragFloat("X factor", &postProcessData.crt_lines_sinusoid_factor.x, 0.1f, 0.01f, 3.0f, "%.2f");
-        ImGui::DragFloat("Y factor", &postProcessData.crt_lines_sinusoid_factor.y, 0.1f, 0.01f, 3.0f, "%.2f");
+        ImGui::DragFloat("X Factor", &postProcessData.crt_lines_sinusoid_factor.x, 0.1f, 0.01f, 3.0f, "%.2f");
+        ImGui::DragFloat("Y Factor", &postProcessData.crt_lines_sinusoid_factor.y, 0.1f, 0.01f, 3.0f, "%.2f");
+
+        ImGui::Separator();
+
+        ImGui::Text("Vignette:");
+
+        ImGui::DragFloat("X Radius", &postProcessData.crt_vignette_radius, 1.0f, 0.0f, 1000.0f, "%.1f");
+
+        ImGui::DragFloat("Power Factor", &postProcessData.crt_vignette_factor, 0.1f, 0.01f, 6.0f, "%.2f");
+
+        ImGui::Separator();
+
 
     }
 
