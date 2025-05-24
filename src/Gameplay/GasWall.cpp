@@ -7,6 +7,7 @@
 #include "GasParticle.h"
 #include <iostream>
 #include <cmath>
+#include <random>
 
 REGISTER_SCRIPT(GasWall);
 
@@ -97,13 +98,22 @@ void GasWall::spreadCloud() {
             spreadQueue.push(glm::ivec2(newPos));
 
             // Utwórz cz¹steczkê
-            PrefabInstance* instance = new PrefabInstance(prefab, owner->scene_graph, "_" + std::to_string(counter++));
+            /*PrefabInstance* instance = new PrefabInstance(prefab, owner->scene_graph, "_" + std::to_string(counter++));
             Node* gas = instance->prefab_root->getChildById(0);
 
             gas->transform.setLocalScale(glm::vec3(0.f));
             gas->parent = owner;
             gas->transform.setLocalPosition(glm::vec3(newPos.x, newPos.y, 0.f) - owner->transform.getLocalPosition());
-            gas->time_offset = 2.5f;
+            gas->time_offset = 2.5f;*/
+            glm::vec4 pos = glm::vec4(newPos.x, newPos.y, 0.f, 1.f); //- glm::vec4(owner->transform.getLocalPosition(), 1.f);
+            
+            std::random_device rd;
+            std::mt19937 gen(rd()); // silnik
+            std::uniform_real_distribution<float> dist(0.0f, 3.1415f);
+
+            float randomValue = dist(gen);
+            
+            ParticleGasNode* gas = new ParticleGasNode(pos, randomValue);
 
             owner->scene_graph->addChild(gas, owner);
         }

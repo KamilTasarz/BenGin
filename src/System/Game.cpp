@@ -182,6 +182,7 @@ void Game::run()
 
         ServiceLocator::getWindow()->updateWindow();
 
+        std::cout << "Fps: " << 1 / ServiceLocator::getWindow()->deltaTime << std::endl;
 	}
 
     if (glfwWindowShouldClose(ServiceLocator::getWindow()->window)) engine_work = false;

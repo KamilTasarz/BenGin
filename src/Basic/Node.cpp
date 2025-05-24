@@ -184,7 +184,7 @@ void SceneGraph::setShaders() {
     ResourceManager::Instance().shader_instanced->setMat4("projection", projection);
     ResourceManager::Instance().shader_instanced->setMat4("view", view);
     ResourceManager::Instance().shader_instanced->setFloat("totalTime", glfwGetTime());
-    ResourceManager::Instance().shader_instanced->setFloat("scaleFactor", 1.5f);
+    ResourceManager::Instance().shader_instanced->setFloat("scaleFactor", 0.2f);
     ResourceManager::Instance().shader_instanced->setInt("point_light_number", point_light_number);
     ResourceManager::Instance().shader_instanced->setInt("directional_light_number", directional_light_number);
 
@@ -1052,7 +1052,7 @@ void InstanceManager::updateSelfAndChild(bool controlDirty) {
             forceUpdateSelfAndChild();
         }
     }
-
+    /*
     for (auto&& child : children)
     {
         bool is_dirty = child->transform.isDirty();
@@ -1060,7 +1060,7 @@ void InstanceManager::updateSelfAndChild(bool controlDirty) {
         if (is_dirty) {
             updateBuffer(child);
         }
-    }
+    }*/
 }
 
 void InstanceManager::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB)
@@ -1088,11 +1088,20 @@ void InstanceManager::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, st
 
 void InstanceManager::addChild(Node* p) {
     //p->name = scene_graph->generateUniqueName(p->name);
+
+
     children.insert(p);
     p->parent = this; // Set this as the created child's parent
     size++;
-    p->id = current_min_id;
-    current_min_id++;
+    if (free_ids.empty()) {
+        p->id = current_min_id;
+        current_min_id++;
+    }
+    else {
+        p->id = free_ids.back();
+        free_ids.pop_back();
+    }
+    
     updateBuffer(p);
     increaseCount();
 }
@@ -1108,52 +1117,52 @@ Node* InstanceManager::find(int id) {
 
 
 void InstanceManager::removeChild(int id) {
-    //usuniecie ze sceny tworzylo by dziury w tablicy
-    //wiec znajdujemy to co usuwamy po indexach
+
     Node* temp = find(id);
-    if (!temp) return;
-    //zapisujemy index
-    int new_id = temp->id;
-    //usuwamy
+    
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
+    glBufferSubData(GL_ARRAY_BUFFER, id * sizeof(float), sizeof(float), nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferSubData(GL_ARRAY_BUFFER, id * sizeof(glm::vec4), sizeof(glm::vec4), nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    free_ids.push_back(id);
+
     children.erase(temp);
-    //i ostatni element dajemy w miejsce dziury
-    if (!children.empty()) {
-        temp = *children.rbegin();
-        temp->id = new_id;
-        updateBuffer(temp);
-    }
-    current_min_id--;
+    delete temp;
+    
     size--;
 }
 void InstanceManager::prepareBuffer()
 {
-    //glGenBuffers(1, &buffer_offset);
-    //glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
-    //glBufferData(GL_ARRAY_BUFFER, max_size * sizeof(float), nullptr, GL_STATIC_DRAW);
-    ////glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glGenBuffers(1, &buffer_offset);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
+    glBufferData(GL_ARRAY_BUFFER, max_size * sizeof(float), nullptr, GL_STATIC_DRAW);
+    //glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
-    //for (unsigned int i = 0; i < pModel->meshes.size(); i++)
-    //{
-    //    unsigned int VAO = pModel->meshes[i].VAO;
-    //    glBindVertexArray(VAO);
+    for (unsigned int i = 0; i < pModel->meshes.size(); i++)
+    {
+        unsigned int VAO = pModel->meshes[i].VAO;
+        glBindVertexArray(VAO);
 
-    //    //glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
+        //glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
 
-    //    GLsizei float_size = sizeof(float);
-    //    glEnableVertexAttribArray(7);
-    //    glVertexAttribPointer(7, 1, GL_FLOAT, GL_FALSE, float_size, (void*)0);
+        GLsizei float_size = sizeof(float);
+        glEnableVertexAttribArray(7);
+        glVertexAttribPointer(7, 1, GL_FLOAT, GL_FALSE, float_size, (void*)0);
 
-    //    glVertexAttribDivisor(7, 1);
+        glVertexAttribDivisor(7, 1);
 
-    //    glBindVertexArray(0);
-    //}
+        glBindVertexArray(0);
+    }
 
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, max_size * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, max_size * sizeof(glm::vec4), nullptr, GL_STATIC_DRAW);
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
     for (unsigned int i = 0; i < pModel->meshes.size(); i++)
     {
@@ -1166,31 +1175,33 @@ void InstanceManager::prepareBuffer()
         // Atrybuty wierzchołków
         GLsizei vec4_size = sizeof(glm::vec4);
         glEnableVertexAttribArray(8);
-        glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(0));
-        glEnableVertexAttribArray(9);
-        glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(vec4_size));
-        glEnableVertexAttribArray(10);
-        glVertexAttribPointer(10, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(2 * vec4_size));
-        glEnableVertexAttribArray(11);
-        glVertexAttribPointer(11, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(3 * vec4_size));
+        glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, vec4_size, (void*)(0));
+        //glEnableVertexAttribArray(9);
+        //glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(vec4_size));
+        //glEnableVertexAttribArray(10);
+        //glVertexAttribPointer(10, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(2 * vec4_size));
+        //glEnableVertexAttribArray(11);
+        //glVertexAttribPointer(11, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(3 * vec4_size));
 
         glVertexAttribDivisor(8, 1);
-        glVertexAttribDivisor(9, 1);
-        glVertexAttribDivisor(10, 1);
-        glVertexAttribDivisor(11, 1);
+        //glVertexAttribDivisor(9, 1);
+        //glVertexAttribDivisor(10, 1);
+        //glVertexAttribDivisor(11, 1);
         
         glBindVertexArray(0);
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void InstanceManager::updateBuffer(Node* p) {
+void InstanceManager::updateBuffer(Node* n) {
 
-   /* glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
+    ParticleGasNode* p = dynamic_cast<ParticleGasNode*>(n);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
     glBufferSubData(GL_ARRAY_BUFFER, p->id * sizeof(float), sizeof(float), &p->time_offset);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);*/
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferSubData(GL_ARRAY_BUFFER, p->id * sizeof(glm::mat4), sizeof(glm::mat4), &p->transform.getModelMatrix());
+    glBufferSubData(GL_ARRAY_BUFFER, p->id * sizeof(glm::vec4), sizeof(glm::vec4), &p->pos);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

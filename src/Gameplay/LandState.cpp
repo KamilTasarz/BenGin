@@ -10,7 +10,7 @@
 void LandState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
     animation->fall->speed = 1500.f;
-    owner->animator->blendAnimation(animation->fall, 1000.f, true, false);
+    owner->animator->blendAnimation(animation->fall, 10.f, true, false);
 }
 
 void LandState::update(Node* owner, float deltaTime) {

@@ -210,8 +210,6 @@ public:
 
     int id;
 
-    float time_offset = 0.f;
-
     // Color
     glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -387,6 +385,7 @@ public:
 class InstanceManager : public Node {
 public:
     int size = 0, current_min_id = 0;
+    std::vector<int> free_ids;
     int max_size = 1000;
     unsigned int buffer, buffer_offset;
 
@@ -651,6 +650,18 @@ public:
 
     unsigned int firstUnusedParticle();
 
+};
+
+class ParticleGasNode : public Node {
+public:
+    glm::vec4 pos;
+    float time_offset;
+
+    ParticleGasNode(glm::vec4& pos, float offset) : Node("particle"), pos(pos), time_offset(offset) {
+        
+    }
+
+    virtual ~ParticleGasNode() = default;
 };
 
 #endif // !NODE_H
