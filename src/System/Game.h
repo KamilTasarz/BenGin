@@ -27,7 +27,7 @@ private:
 
 	SceneGraph* sceneGraph;
 	PostProcessData postProcessData;
-	unsigned int framebuffer, colorTexture, depthRenderbuffer;
+	unsigned int framebuffer, colorTexture, normalTexture, depthRenderbuffer;
 
 	void input();
 	void draw();
@@ -42,7 +42,3 @@ public:
 };
 
 #endif // !GAME_H
-
-
-
-

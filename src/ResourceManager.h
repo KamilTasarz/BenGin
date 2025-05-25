@@ -92,6 +92,7 @@ private:
 
     const char* postPath_vert = "res/shaders/pp_vert.vert";
     const char* postPath_pass = "res/shaders/pp_pass.frag";
+    //const char* postPath_pass = "res/shaders/debug.frag";
     const char* postPath_crt = "res/shaders/pp_crt.frag";
 
 public:
