@@ -37,7 +37,7 @@ bool Animator::isPlayingNonLooping() const {
 
 void Animator::updateAnimation(float delta_time)
 {
-	this->delta_time = delta_time;
+    this->delta_time = delta_time;
 
     if (begin == end && !repeat) ended = true;
 
@@ -47,12 +47,17 @@ void Animator::updateAnimation(float delta_time)
 
             if (begin != end) {
 
-                current_time += current_animation->speed * delta_time;
-
-                if (current_time > current_animation->duration) {
+                if (current_time + current_animation->speed * delta_time > current_animation->duration) {
                     end++;
-                    current_time = fmodf(current_time, current_animation->duration);
+
+                    if (repeat) {
+                        current_time += current_animation->speed * delta_time;
+                        current_time = fmodf(current_time, current_animation->duration);
+                    }
                     return;
+                }
+                else {
+                    current_time += current_animation->speed * delta_time;
                 }
 
                 current_time = fmodf(current_time, current_animation->duration);
@@ -65,18 +70,16 @@ void Animator::updateAnimation(float delta_time)
 
             blend_time += next_animation->speed * delta_time;
 
-            
-
             float alpha = 0.0f;
             if (blend_duration > 0.f) {
-                alpha = (float) blend_time / (float) blend_duration;
+                alpha = (float)blend_time / (float)blend_duration;
                 if (blend_time > blend_duration) alpha = 1.f;
             }
 
             cout << alpha << endl;
 
             if (alpha < 1.f) {
-                
+
                 blendAnimations(current_animation, next_animation, alpha);
             }
             else {
@@ -93,7 +96,6 @@ void Animator::updateAnimation(float delta_time)
         else {
             blending = false;
         }
-
     }
 }
 

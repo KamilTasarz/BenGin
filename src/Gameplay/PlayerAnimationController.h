@@ -2,7 +2,7 @@
 
 #include "Script.h"
 #include "../System/Rigidbody.h"
-
+#include "PlayerController.h"
 
 class IPlayerAnimState;
 class Animation;
@@ -11,6 +11,7 @@ class PlayerAnimationController : public Script
 {
 public:
 	Rigidbody* rb;
+	PlayerController* player;
 
 	Animation* idle;
 	Animation* turn;
@@ -27,6 +28,12 @@ public:
 
 	bool gravityFlipped = false;
 	bool facingRight = true;
+	bool isRunning = false;
+	bool isStanding = false;
+	bool hasJumped = false;
+	bool isRising = false;
+	bool isFalling = false;
+	bool hasLanded = false;
 
 	PlayerAnimationController() = default;
 	virtual ~PlayerAnimationController() = default;

@@ -10,7 +10,8 @@
 void LandState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
     animation->fall->speed = 1500.f;
-    owner->animator->blendAnimation(animation->fall, 10.f, true, false);
+    owner->animator->playAnimation(animation->fall, false);
+    //owner->animator->blendAnimation(animation->fall, 50.f, true, false);
 }
 
 void LandState::update(Node* owner, float deltaTime) {
@@ -36,7 +37,7 @@ void LandState::update(Node* owner, float deltaTime) {
     if (player->isJumping) {
         animation->changeState(new JumpState());
     }
-    else if (abs(rb->velocityX) < 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
+    else if (abs(animation->deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new IdleState());
     }
     else if (abs(rb->velocityX) > 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {

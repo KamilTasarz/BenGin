@@ -5,6 +5,8 @@
 #include "PlayerSpawner.h"
 #include "GroundObject.h"
 #include "../Basic/Animator.h"
+#include "../System/PhysicsSystem.h"
+#include "../Component/BoundingBox.h"
 //#include "GameMath.h"
 
 REGISTER_SCRIPT(PlayerController);
@@ -68,15 +70,6 @@ void PlayerController::onUpdate(float deltaTime)
 		owner->is_physic_active = false;
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(-50.f * deltaTime, 0.f, 0.f));
 	}
-	/*if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_X) == GLFW_PRESS) {
-		if (!is_pressed) {
-			owner->animator->blendAnimation(owner->pModel->getAnimationByName("Turn"), 0.1f, true);
-			is_pressed = true;
-		}
-	}
-	else {
-		is_pressed = false;
-	}*/
 
 	rb->is_static = false;
 	owner->is_physic_active = true;
@@ -92,6 +85,17 @@ void PlayerController::onUpdate(float deltaTime)
 
 			isJumping = true;
 		}
+	}
+
+	if (CheckIfInGas()) {
+		gasTimer += deltaTime;
+
+		if (gasTimer > 2.f) {
+			Die(false);
+		}
+	}
+	else {
+		gasTimer = 0.f;
 	}
 
 	if (virusType != "none") {
@@ -158,4 +162,29 @@ void PlayerController::HandleVirus(float deltaTime)
 			Die(false);
 		}
 	}
+}
+
+bool PlayerController::CheckIfInGas() {
+	bool inGas = false;
+	
+	for (Node* node : owner->scene_graph->root->getAllChildren()) {
+		if (!node->in_frustrum) continue;
+		//Node* node = box->node;
+		if (node->getLayerName() == "Gas") {
+			if (ParticleGasNode* gasNode = dynamic_cast<ParticleGasNode*>(node)) {
+				glm::vec3 gasPos = gasNode->pos;
+				glm::vec3 playerPos = owner->transform.getGlobalPosition();
+				isGravityFlipped ? playerPos.y -= 0.5f : playerPos.y += 0.5f;
+
+				float distance = glm::distance(playerPos, gasPos);
+
+				if (distance < 0.8f) {
+					inGas = true;
+					break;
+				}
+			}
+		}
+	}
+
+	return inGas;
 }
