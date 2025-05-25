@@ -7,6 +7,8 @@
 #include "../Basic/Animator.h"
 #include "../System/PhysicsSystem.h"
 #include "../Component/BoundingBox.h"
+#include "PlayerAnimationController.h"
+
 //#include "GameMath.h"
 
 REGISTER_SCRIPT(PlayerController);
@@ -76,14 +78,15 @@ void PlayerController::onUpdate(float deltaTime)
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		//std::cout << "Gracz probuje skoczyc" << std::endl;
-
-		if (rb->groundUnderneath || rb->scaleUnderneath) {
+		
+		if ((rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
 			
 			rb->overrideVelocityY = true;
 			if (isGravityFlipped) rb->velocityY = -jumpForce;
 			else rb->velocityY = jumpForce;
 
 			isJumping = true;
+			canJump = false;
 		}
 	}
 

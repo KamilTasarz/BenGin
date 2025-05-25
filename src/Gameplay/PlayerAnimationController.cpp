@@ -77,8 +77,11 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 		hasLanded = true;
 	}
 
-	if (rb->velocityDeltaY < 0.f && !gravityFlipped || rb->velocityDeltaY > 0.f && gravityFlipped) {
+	if ((rb->velocityDeltaY < 0.f && !gravityFlipped) || (rb->velocityDeltaY > 0.f && gravityFlipped)) {
 		isFalling = true;
+	}
+	else {
+		isFalling = false;
 	}
 
 	if (currentState)
