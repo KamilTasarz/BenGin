@@ -47,12 +47,19 @@ void Animator::updateAnimation(float delta_time)
 
             if (begin != end) {
 
-                current_time += current_animation->speed * delta_time;
+                
 
-                if (current_time > current_animation->duration) {
+                if (current_time + current_animation->speed * delta_time > current_animation->duration) {
                     end++;
-                    current_time = fmodf(current_time, current_animation->duration);
+                   
+                    if (repeat) {
+                        current_time += current_animation->speed * delta_time;
+                        current_time = fmodf(current_time, current_animation->duration);
+                    }
                     return;
+                }
+                else {
+                    current_time += current_animation->speed * delta_time;
                 }
 
                 current_time = fmodf(current_time, current_animation->duration);
