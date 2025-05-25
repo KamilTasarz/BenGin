@@ -20,9 +20,11 @@ public:
 	bool isGrounded = false;
     bool isJumping = false;
     bool isDead = false;
+    //bool inGas = false;
     bool is_pressed = false;
 	std::string virusType = "none";
     float deathTimer;
+    float gasTimer;
     Node* timerIndicator;
     bool face_right = true;
     float scale_factor = 1.f;
@@ -43,6 +45,8 @@ public:
     void Die(bool freeze, bool electrified = false);
 
     void HandleVirus(float deltaTime);
+
+    bool CheckIfInGas();
 
     std::vector<Variable*> getFields() const override { 
         static Variable speedVar = getField_speed();

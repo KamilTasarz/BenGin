@@ -40,14 +40,12 @@ void Rigidbody::onStart()
 
 void Rigidbody::onUpdate(float deltaTime)
 {
-	//isGrounded = false;
-
-	//if (isGrounded) std::cout << owner->getName() << " stoi na pod³odze" << std::endl;
-	//else std::cout << owner->getName() << " nie stoi na pod³odze" << std::endl;	
-	
 	if (is_static) {
         return;
     }
+
+	float lastVelocityX = velocityX;
+	float lastVelocityY = velocityY;
 
 	// ground detection
 	bool isGravityFlipped = false;
@@ -170,6 +168,9 @@ void Rigidbody::onUpdate(float deltaTime)
 		if (timer <= 0.0f)
 			velocityYResetted = false;
 	}
+
+	velocityDeltaX = velocityX - lastVelocityX;
+	velocityDeltaY = velocityY - lastVelocityY;
 
 	overrideVelocityY = false;
 	overrideVelocityX = false;

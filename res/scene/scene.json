@@ -83,37 +83,6 @@
                 "type": "DirectionalLight"
             },
             {
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "room_2_2",
-                "no_textures": true,
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_2"
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "PrefabInstance"
-            },
-            {
                 "components": [
                     {
                         "name": "GasWall",
@@ -121,12 +90,12 @@
                             {
                                 "field_type": "float",
                                 "name": "spreadSpeed",
-                                "value": 1.2000000476837158
+                                "value": 0.800000011920929
                             },
                             {
                                 "field_type": "bool",
                                 "name": "spreading",
-                                "value": false
+                                "value": true
                             }
                         ]
                     }
@@ -157,279 +126,6 @@
                 },
                 "tag": "Default",
                 "type": "InstanceManager"
-            },
-            {
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "room_5_6",
-                "no_textures": true,
-                "position": {
-                    "x": 27.5,
-                    "y": 2.5,
-                    "z": 0.0
-                },
-                "prefab_instance": {
-                    "prefab_name": "room_5"
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "PrefabInstance"
-            },
-            {
-                "children": [
-                    {
-                        "components": [
-                            {
-                                "name": "Virus",
-                                "variables": [
-                                    {
-                                        "field_type": "bool",
-                                        "name": "blue",
-                                        "value": false
-                                    },
-                                    {
-                                        "field_type": "bool",
-                                        "name": "green",
-                                        "value": false
-                                    },
-                                    {
-                                        "field_type": "bool",
-                                        "name": "black",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ],
-                        "id": 0,
-                        "is_logic_active": true,
-                        "is_physic_active": false,
-                        "is_visible": true,
-                        "layer": "Default",
-                        "model.id": 12,
-                        "name": "black_virus",
-                        "no_textures": false,
-                        "position": {
-                            "x": -0.4139294922351837,
-                            "y": -4.291534878575476e-06,
-                            "z": -0.9999962449073792
-                        },
-                        "rotation": {
-                            "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 2.0,
-                            "y": 0.10000000149011612,
-                            "z": 2.0
-                        },
-                        "tag": "Default",
-                        "type": "Node"
-                    }
-                ],
-                "components": [
-                    {
-                        "name": "RotateObject",
-                        "variables": [
-                            {
-                                "field_type": "float",
-                                "name": "rotationSpeed",
-                                "value": 1.0
-                            }
-                        ]
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": false,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "black_virus_parent",
-                "no_textures": true,
-                "position": {
-                    "x": 6.0,
-                    "y": 11.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 0.527463436126709,
-                    "x": 0.0,
-                    "y": -0.8485830426216125,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 7,
-                "name": "box_clone",
-                "no_textures": false,
-                "position": {
-                    "x": -12.658571243286133,
-                    "y": 5.565921783447266,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.5,
-                    "y": 1.5,
-                    "z": 1.0
-                },
-                "tag": "Box",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 9.999998092651367,
-                    "y": 7.0,
-                    "z": 10.0
-                },
-                "AABB_logic_min": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "AABB_max": {
-                    "x": 9.999998092651367,
-                    "y": 7.0,
-                    "z": 10.0
-                },
-                "AABB_min": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "components": [
-                    {
-                        "name": "Spikes",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 10,
-                "name": "spikes_clone",
-                "no_textures": false,
-                "position": {
-                    "x": 0.9999990463256836,
-                    "y": 15.999999046325684,
-                    "z": -1.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 0.20000000298023224,
-                    "y": 0.20000000298023224,
-                    "z": 0.20000000298023224
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 9,
-                "name": "entity_clone_clone_1",
-                "no_textures": false,
-                "position": {
-                    "x": 25.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 5.0,
-                    "y": 1.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
             },
             {
                 "components": [
@@ -487,68 +183,484 @@
                 "type": "Node"
             },
             {
-                "children": [
-                    {
-                        "components": [
-                            {
-                                "name": "Virus",
-                                "variables": [
-                                    {
-                                        "field_type": "bool",
-                                        "name": "blue",
-                                        "value": true
-                                    },
-                                    {
-                                        "field_type": "bool",
-                                        "name": "green",
-                                        "value": false
-                                    },
-                                    {
-                                        "field_type": "bool",
-                                        "name": "black",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ],
-                        "id": 0,
-                        "is_logic_active": true,
-                        "is_physic_active": false,
-                        "is_visible": true,
-                        "layer": "Default",
-                        "model.id": 12,
-                        "name": "blue_virus",
-                        "no_textures": false,
-                        "position": {
-                            "x": -0.5,
-                            "y": 0.0,
-                            "z": -1.0
-                        },
-                        "rotation": {
-                            "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "scale": {
-                            "x": 2.0,
-                            "y": 0.10000000149011612,
-                            "z": 2.0
-                        },
-                        "tag": "Default",
-                        "type": "Node"
-                    }
-                ],
+                "AABB_logic_max": {
+                    "x": 2.0,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": 1.0,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
                 "components": [
                     {
-                        "name": "RotateObject",
+                        "name": "GroundObject",
+                        "variables": null
+                    },
+                    {
+                        "name": "CollisionTest",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": true,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 5,
+                "name": "collision_test",
+                "no_textures": false,
+                "position": {
+                    "x": -20.5,
+                    "y": 1.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 2.0,
+                    "y": 2.0,
+                    "z": 2.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "clone_entity_clone_clone_2",
+                "no_textures": false,
+                "position": {
+                    "x": -35.0,
+                    "y": 15.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 20.0,
+                    "y": 1.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Wall",
+                "model.id": 9,
+                "name": "entity_clone_clone_clone_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -3.5,
+                    "y": 21.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 4.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "entity_clone_clone_2_clone_clone_clone_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -120.71349334716797,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 20.0,
+                    "y": 1.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "clone_clone_clone_clone_entity_clone_clone_2",
+                "no_textures": false,
+                "position": {
+                    "x": -39.0,
+                    "y": 5.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 3.0,
+                    "y": 1.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "entity_clone_clone_1",
+                "no_textures": false,
+                "position": {
+                    "x": 25.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 5.0,
+                    "y": 1.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "entity_clone_clone_2_clone_clone_clone_clone_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -141.92181396484375,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 20.0,
+                    "y": 1.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 25.0,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "Fan",
                         "variables": [
                             {
                                 "field_type": "float",
-                                "name": "rotationSpeed",
-                                "value": 1.0
+                                "name": "verticalPower",
+                                "value": 20.0
+                            },
+                            {
+                                "field_type": "float",
+                                "name": "horizontalPower",
+                                "value": 0.0
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "isActive",
+                                "value": false
                             }
                         ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": true,
+                "is_physic_active": false,
+                "is_visible": true,
+                "layer": "Fan",
+                "model.id": 3,
+                "name": "fan",
+                "no_textures": false,
+                "position": {
+                    "x": 19.0,
+                    "y": 0.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 5.0,
+                    "y": 0.30000001192092896,
+                    "z": 2.9000000953674316
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.550000011920929,
+                    "y": -0.25,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.550000011920929,
+                    "y": -2.0,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "GroundObject",
+                        "variables": null
+                    },
+                    {
+                        "name": "Platform",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": true,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Platform",
+                "model.id": 9,
+                "name": "platform",
+                "no_textures": false,
+                "position": {
+                    "x": -6.25,
+                    "y": 4.375,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 8.5,
+                    "y": 0.25,
+                    "z": 2.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "components": [
+                    {
+                        "name": "PlayerSpawner",
+                        "variables": null
                     }
                 ],
                 "id": 0,
@@ -557,17 +669,17 @@
                 "is_visible": true,
                 "layer": "Default",
                 "model.id": -1,
-                "name": "blue_virus_parent",
+                "name": "+++++++player_spawner",
                 "no_textures": true,
                 "position": {
                     "x": -6.0,
-                    "y": 11.0,
+                    "y": 1.5,
                     "z": 0.0
                 },
                 "rotation": {
-                    "w": 0.9641879200935364,
+                    "w": 1.0,
                     "x": 0.0,
-                    "y": -0.2620689868927002,
+                    "y": 0.0,
                     "z": 0.0
                 },
                 "scale": {
@@ -575,7 +687,7 @@
                     "y": 1.0,
                     "z": 1.0
                 },
-                "tag": "Default",
+                "tag": "PlayerSpawner",
                 "type": "Node"
             },
             {
@@ -620,6 +732,378 @@
                 },
                 "scale": {
                     "x": 5.0,
+                    "y": 1.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "Door",
+                        "variables": [
+                            {
+                                "field_type": "bool",
+                                "name": "isOpen",
+                                "value": false
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 4,
+                "name": "door",
+                "no_textures": false,
+                "position": {
+                    "x": 12.5,
+                    "y": 2.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 3.0,
+                    "z": 2.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "Button",
+                        "variables": [
+                            {
+                                "field_type": "Node*",
+                                "name": "object",
+                                "value": "door"
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "activate",
+                                "value": false
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "isPressed",
+                                "value": false
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": true,
+                "is_physic_active": false,
+                "is_visible": true,
+                "layer": "Button",
+                "model.id": 4,
+                "name": "button",
+                "no_textures": false,
+                "position": {
+                    "x": 6.5,
+                    "y": 0.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 2.0,
+                    "y": 0.800000011920929,
+                    "z": 2.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Wall",
+                "model.id": 9,
+                "name": "clone_entity_clone_clone_2_clone_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -25.5,
+                    "y": 7.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 16.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 3.9636096954345703,
+                    "y": 2.0,
+                    "z": 3.096189498901367
+                },
+                "AABB_logic_min": {
+                    "x": 9.5367431640625e-07,
+                    "y": -9.5367431640625e-07,
+                    "z": 0.0
+                },
+                "components": [
+                    {
+                        "name": "Checkpoint",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": true,
+                "is_physic_active": false,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 8,
+                "name": "checkpoint_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -16.67841148376465,
+                    "y": 0.5000202059745789,
+                    "z": -1.0
+                },
+                "rotation": {
+                    "w": -0.27071166038513184,
+                    "x": 0.27071306109428406,
+                    "y": 0.6532345414161682,
+                    "z": 0.6532337069511414
+                },
+                "scale": {
+                    "x": 0.75,
+                    "y": 0.75,
+                    "z": 0.7499998807907104
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "entity_clone_clone_2_clone_clone_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -98.89579772949219,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 20.0,
+                    "y": 1.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "GroundObject",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 5,
+                "name": "right_platform",
+                "no_textures": false,
+                "position": {
+                    "x": -22.0,
+                    "y": 8.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 4.0,
+                    "y": 1.0,
+                    "z": 2.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "clone_clone_clone_entity_clone_clone_2",
+                "no_textures": false,
+                "position": {
+                    "x": -39.0,
+                    "y": 10.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 3.0,
                     "y": 1.0,
                     "z": 3.0
                 },
@@ -768,250 +1252,34 @@
                 "type": "Node"
             },
             {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
                 "components": [
                     {
-                        "name": "Rigidbody",
-                        "properties": {
-                            "gravity": -32.0,
-                            "is_static": false,
-                            "lockPositionX": false,
-                            "lockPositionY": false,
-                            "lockPositionZ": false,
-                            "mass": 20.0
-                        }
-                    },
-                    {
-                        "name": "GroundObject",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 7,
-                "name": "box",
-                "no_textures": false,
-                "position": {
-                    "x": -35.7141227722168,
-                    "y": 3.5659217834472656,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.5,
-                    "y": 1.5,
-                    "z": 1.0
-                },
-                "tag": "Box",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Wall",
-                "model.id": 9,
-                "name": "entity_clone_clone_clone_clone_clone",
-                "no_textures": false,
-                "position": {
-                    "x": 3.5,
-                    "y": 18.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 4.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 2.0,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": 1.0,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "components": [
-                    {
-                        "name": "GroundObject",
-                        "variables": null
-                    },
-                    {
-                        "name": "CollisionTest",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": true,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 5,
-                "name": "collision_test",
-                "no_textures": false,
-                "position": {
-                    "x": -20.5,
-                    "y": 1.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 2.0,
-                    "y": 2.0,
-                    "z": 2.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "components": [
-                    {
-                        "name": "Scale",
+                        "name": "LevelGenerator",
                         "variables": [
                             {
-                                "field_type": "Node*",
-                                "name": "secondScale",
-                                "value": "right_platform"
-                            },
-                            {
                                 "field_type": "bool",
-                                "name": "moveHorizontally",
-                                "value": false
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "returnToPosition",
+                                "name": "generate",
                                 "value": true
                             },
                             {
-                                "field_type": "bool",
-                                "name": "setStartPos",
-                                "value": false
+                                "field_type": "int",
+                                "name": "levelCount",
+                                "value": 10
                             }
                         ]
-                    },
-                    {
-                        "name": "GroundObject",
-                        "variables": null
-                    },
-                    {
-                        "name": "Rigidbody",
-                        "properties": {
-                            "gravity": 0.0,
-                            "is_static": false,
-                            "lockPositionX": true,
-                            "lockPositionY": false,
-                            "lockPositionZ": true,
-                            "mass": 1.0
-                        }
                     }
                 ],
                 "id": 0,
                 "is_logic_active": false,
-                "is_physic_active": true,
+                "is_physic_active": false,
                 "is_visible": true,
-                "layer": "Scale",
-                "model.id": 5,
-                "name": "left_platform",
-                "no_textures": false,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "level_generator",
+                "no_textures": true,
                 "position": {
-                    "x": -17.0,
-                    "y": 5.5,
+                    "x": -25.0,
+                    "y": -23.0,
                     "z": 0.0
                 },
                 "rotation": {
@@ -1021,146 +1289,38 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 4.0,
+                    "x": 1.0,
                     "y": 1.0,
-                    "z": 2.0
+                    "z": 1.0
                 },
                 "tag": "Default",
                 "type": "Node"
             },
             {
                 "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
+                    "x": 9.999998092651367,
+                    "y": 7.0,
+                    "z": 10.0
                 },
                 "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
                 },
                 "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
+                    "x": 9.999998092651367,
+                    "y": 7.0,
+                    "z": 10.0
                 },
                 "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
                 },
                 "components": [
                     {
-                        "name": "GroundObject",
+                        "name": "Spikes",
                         "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 5,
-                "name": "right_platform",
-                "no_textures": false,
-                "position": {
-                    "x": -22.0,
-                    "y": 8.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 4.0,
-                    "y": 1.0,
-                    "z": 2.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 9,
-                "name": "entity_clone",
-                "no_textures": false,
-                "position": {
-                    "x": 0.0,
-                    "y": 23.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 20.0,
-                    "y": 1.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "components": [
-                    {
-                        "name": "Door",
-                        "variables": [
-                            {
-                                "field_type": "bool",
-                                "name": "isOpen",
-                                "value": false
-                            }
-                        ]
                     }
                 ],
                 "id": 0,
@@ -1168,360 +1328,24 @@
                 "is_physic_active": true,
                 "is_visible": true,
                 "layer": "Default",
-                "model.id": 4,
-                "name": "door",
+                "model.id": 10,
+                "name": "spikes",
                 "no_textures": false,
                 "position": {
-                    "x": 12.5,
-                    "y": 2.0,
-                    "z": 0.0
+                    "x": 13.499999046325684,
+                    "y": 11.0,
+                    "z": -1.0
                 },
                 "rotation": {
-                    "w": 1.0,
+                    "w": -4.371138828673793e-08,
                     "x": 0.0,
                     "y": 0.0,
-                    "z": 0.0
+                    "z": 1.0
                 },
                 "scale": {
-                    "x": 1.0,
-                    "y": 3.0,
-                    "z": 2.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 9,
-                "name": "clone_clone_clone_entity_clone_clone_2",
-                "no_textures": false,
-                "position": {
-                    "x": -31.5,
-                    "y": 10.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 3.0,
-                    "y": 1.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 9,
-                "name": "entity_clone_clone_2_clone_clone_clone_clone_clone",
-                "no_textures": false,
-                "position": {
-                    "x": -141.92181396484375,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 20.0,
-                    "y": 1.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 9,
-                "name": "entity_clone_clone_2_clone_clone_clone_clone_clone_clone_clone_clone",
-                "no_textures": false,
-                "position": {
-                    "x": -207.7342987060547,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 20.0,
-                    "y": 1.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 9,
-                "name": "clone_clone_entity_clone_clone_2",
-                "no_textures": false,
-                "position": {
-                    "x": -31.5,
-                    "y": 5.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 3.0,
-                    "y": 1.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 9,
-                "name": "entity_clone_clone_2",
-                "no_textures": false,
-                "position": {
-                    "x": -35.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 20.0,
-                    "y": 1.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Wall",
-                "model.id": 9,
-                "name": "entity_clone_clone",
-                "no_textures": false,
-                "position": {
-                    "x": 9.5,
-                    "y": 19.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 7.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Wall",
-                "model.id": 9,
-                "name": "clone_entity_clone_clone_2_clone_clone",
-                "no_textures": false,
-                "position": {
-                    "x": -25.5,
-                    "y": 7.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 16.0,
-                    "z": 3.0
+                    "x": 0.20000000298023224,
+                    "y": 0.20000000298023224,
+                    "z": 0.20000000298023224
                 },
                 "tag": "Default",
                 "type": "Node"
@@ -1566,228 +1390,6 @@
                     "x": 0.75,
                     "y": 0.75,
                     "z": 0.7499998807907104
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Wall",
-                "model.id": 9,
-                "name": "entity_clone_clone_clone",
-                "no_textures": false,
-                "position": {
-                    "x": -9.5,
-                    "y": 19.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 7.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Wall",
-                "model.id": 9,
-                "name": "entity_clone_clone_2_clone_clone",
-                "no_textures": false,
-                "position": {
-                    "x": -45.5,
-                    "y": 7.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 16.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 3.9636096954345703,
-                    "y": 2.0,
-                    "z": 3.096189498901367
-                },
-                "AABB_logic_min": {
-                    "x": 9.5367431640625e-07,
-                    "y": -9.5367431640625e-07,
-                    "z": 0.0
-                },
-                "components": [
-                    {
-                        "name": "Checkpoint",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": true,
-                "is_physic_active": false,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 8,
-                "name": "checkpoint_clone",
-                "no_textures": false,
-                "position": {
-                    "x": -16.67841148376465,
-                    "y": 0.5000202059745789,
-                    "z": -1.0
-                },
-                "rotation": {
-                    "w": -0.27071166038513184,
-                    "x": 0.27071306109428406,
-                    "y": 0.6532345414161682,
-                    "z": 0.6532337069511414
-                },
-                "scale": {
-                    "x": 0.75,
-                    "y": 0.75,
-                    "z": 0.7499998807907104
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "components": [
-                    {
-                        "name": "PlayerSpawner",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "+++++++player_spawner",
-                "no_textures": true,
-                "position": {
-                    "x": -5.5,
-                    "y": 2.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "PlayerSpawner",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Wall",
-                "model.id": 9,
-                "name": "entity_clone_clone_clone_clone",
-                "no_textures": false,
-                "position": {
-                    "x": -3.5,
-                    "y": 21.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 4.0,
-                    "z": 3.0
                 },
                 "tag": "Default",
                 "type": "Node"
@@ -1909,108 +1511,12 @@
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Wall",
-                "model.id": 9,
-                "name": "entity_clone_clone_clone_1_clone",
-                "no_textures": false,
-                "position": {
-                    "x": -29.5,
-                    "y": -15.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 19.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Wall",
-                "model.id": 9,
-                "name": "entity_clone_clone_clone_1",
-                "no_textures": false,
-                "position": {
-                    "x": -25.5,
-                    "y": -13.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 15.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
                 "layer": "Floor",
                 "model.id": 9,
-                "name": "entity_clone_clone_2_clone_clone_clone",
+                "name": "entity_clone_clone_2_clone_clone_clone_clone_clone_clone",
                 "no_textures": false,
                 "position": {
-                    "x": -98.89579772949219,
+                    "x": -163.13014221191406,
                     "y": 0.0,
                     "z": 0.0
                 },
@@ -2049,39 +1555,17 @@
                     "y": -0.5,
                     "z": -0.5
                 },
-                "components": [
-                    {
-                        "name": "Button",
-                        "variables": [
-                            {
-                                "field_type": "Node*",
-                                "name": "object",
-                                "value": "door"
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "activate",
-                                "value": false
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "isPressed",
-                                "value": false
-                            }
-                        ]
-                    }
-                ],
                 "id": 0,
-                "is_logic_active": true,
-                "is_physic_active": false,
+                "is_logic_active": false,
+                "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Button",
-                "model.id": 4,
-                "name": "button",
+                "layer": "Wall",
+                "model.id": 9,
+                "name": "entity_clone_clone",
                 "no_textures": false,
                 "position": {
-                    "x": 6.5,
-                    "y": 0.5,
+                    "x": 9.5,
+                    "y": 19.5,
                     "z": 0.0
                 },
                 "rotation": {
@@ -2091,9 +1575,9 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 2.0,
-                    "y": 0.800000011920929,
-                    "z": 2.0
+                    "x": 1.0,
+                    "y": 7.0,
+                    "z": 3.0
                 },
                 "tag": "Default",
                 "type": "Node"
@@ -2101,7 +1585,7 @@
             {
                 "AABB_logic_max": {
                     "x": 0.5,
-                    "y": 25.0,
+                    "y": 0.5,
                     "z": 0.5
                 },
                 "AABB_logic_min": {
@@ -2119,39 +1603,17 @@
                     "y": -0.5,
                     "z": -0.5
                 },
-                "components": [
-                    {
-                        "name": "Fan",
-                        "variables": [
-                            {
-                                "field_type": "float",
-                                "name": "verticalPower",
-                                "value": 20.0
-                            },
-                            {
-                                "field_type": "float",
-                                "name": "horizontalPower",
-                                "value": 0.0
-                            },
-                            {
-                                "field_type": "bool",
-                                "name": "isActive",
-                                "value": false
-                            }
-                        ]
-                    }
-                ],
                 "id": 0,
-                "is_logic_active": true,
-                "is_physic_active": false,
+                "is_logic_active": false,
+                "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Fan",
-                "model.id": 3,
-                "name": "fan",
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "clone_clone_entity_clone_clone_2",
                 "no_textures": false,
                 "position": {
-                    "x": 19.0,
-                    "y": 0.5,
+                    "x": -31.5,
+                    "y": 5.0,
                     "z": 0.0
                 },
                 "rotation": {
@@ -2161,9 +1623,9 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 5.0,
-                    "y": 0.30000001192092896,
-                    "z": 2.9000000953674316
+                    "x": 3.0,
+                    "y": 1.0,
+                    "z": 3.0
                 },
                 "tag": "Default",
                 "type": "Node"
@@ -2201,23 +1663,746 @@
                 "is_visible": true,
                 "layer": "Default",
                 "model.id": 10,
-                "name": "spikes_clone_clone",
+                "name": "spikes_clone",
                 "no_textures": false,
                 "position": {
-                    "x": 8.999998092651367,
-                    "y": 23.0,
+                    "x": 0.9999990463256836,
+                    "y": 15.999999046325684,
                     "z": -1.0
                 },
                 "rotation": {
-                    "w": -4.371138828673793e-08,
+                    "w": 1.0,
                     "x": 0.0,
                     "y": 0.0,
-                    "z": 1.0
+                    "z": 0.0
                 },
                 "scale": {
                     "x": 0.20000000298023224,
                     "y": 0.20000000298023224,
                     "z": 0.20000000298023224
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Wall",
+                "model.id": 9,
+                "name": "entity_clone_clone_2_clone_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -45.5,
+                    "y": 7.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 16.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "clone_clone_clone_entity_clone_clone_2",
+                "no_textures": false,
+                "position": {
+                    "x": -31.5,
+                    "y": 10.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 3.0,
+                    "y": 1.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "children": [
+                    {
+                        "components": [
+                            {
+                                "name": "Virus",
+                                "variables": [
+                                    {
+                                        "field_type": "bool",
+                                        "name": "blue",
+                                        "value": true
+                                    },
+                                    {
+                                        "field_type": "bool",
+                                        "name": "green",
+                                        "value": false
+                                    },
+                                    {
+                                        "field_type": "bool",
+                                        "name": "black",
+                                        "value": false
+                                    }
+                                ]
+                            }
+                        ],
+                        "id": 0,
+                        "is_logic_active": true,
+                        "is_physic_active": false,
+                        "is_visible": true,
+                        "layer": "Default",
+                        "model.id": 12,
+                        "name": "blue_virus",
+                        "no_textures": false,
+                        "position": {
+                            "x": -0.5,
+                            "y": 0.0,
+                            "z": -1.0
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 2.0,
+                            "y": 0.10000000149011612,
+                            "z": 2.0
+                        },
+                        "tag": "Default",
+                        "type": "Node"
+                    }
+                ],
+                "components": [
+                    {
+                        "name": "RotateObject",
+                        "variables": [
+                            {
+                                "field_type": "float",
+                                "name": "rotationSpeed",
+                                "value": 1.0
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "blue_virus_parent",
+                "no_textures": true,
+                "position": {
+                    "x": -6.0,
+                    "y": 11.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 0.9641879200935364,
+                    "x": 0.0,
+                    "y": -0.2620689868927002,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "Scale",
+                        "variables": [
+                            {
+                                "field_type": "Node*",
+                                "name": "secondScale",
+                                "value": "right_platform"
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "moveHorizontally",
+                                "value": false
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "returnToPosition",
+                                "value": true
+                            },
+                            {
+                                "field_type": "bool",
+                                "name": "setStartPos",
+                                "value": false
+                            }
+                        ]
+                    },
+                    {
+                        "name": "GroundObject",
+                        "variables": null
+                    },
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": 0.0,
+                            "is_static": false,
+                            "lockPositionX": true,
+                            "lockPositionY": false,
+                            "lockPositionZ": true,
+                            "mass": 1.0
+                        }
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Scale",
+                "model.id": 5,
+                "name": "left_platform",
+                "no_textures": false,
+                "position": {
+                    "x": -17.0,
+                    "y": 5.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 4.0,
+                    "y": 1.0,
+                    "z": 2.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 7,
+                "name": "box_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -12.658571243286133,
+                    "y": 5.565921783447266,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.5,
+                    "y": 1.5,
+                    "z": 1.0
+                },
+                "tag": "Box",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "entity_clone_clone_3",
+                "no_textures": false,
+                "position": {
+                    "x": -27.5,
+                    "y": -5.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 5.0,
+                    "y": 1.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Wall",
+                "model.id": 9,
+                "name": "entity_clone_clone_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -9.5,
+                    "y": 19.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 7.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "components": [
+                    {
+                        "name": "Rigidbody",
+                        "properties": {
+                            "gravity": -32.0,
+                            "is_static": false,
+                            "lockPositionX": false,
+                            "lockPositionY": false,
+                            "lockPositionZ": false,
+                            "mass": 20.0
+                        }
+                    },
+                    {
+                        "name": "GroundObject",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 7,
+                "name": "box",
+                "no_textures": false,
+                "position": {
+                    "x": -35.7141227722168,
+                    "y": 3.5659217834472656,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.5,
+                    "y": 1.5,
+                    "z": 1.0
+                },
+                "tag": "Box",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Floor",
+                "model.id": 9,
+                "name": "entity_clone_clone_2_clone_clone_clone_clone_clone_clone_clone_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -207.7342987060547,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 20.0,
+                    "y": 1.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Wall",
+                "model.id": 9,
+                "name": "entity_clone_clone_clone_1_clone",
+                "no_textures": false,
+                "position": {
+                    "x": -29.5,
+                    "y": -15.5,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 19.0,
+                    "z": 3.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.0,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": 0.0,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.0,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": 0.0,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 13,
+                "name": "entity_1",
+                "no_textures": false,
+                "position": {
+                    "x": -27.0,
+                    "y": -15.5,
+                    "z": -1.5
+                },
+                "rotation": {
+                    "w": 0.7071067690849304,
+                    "x": 0.7071067690849304,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 4.0,
+                    "y": 1.0,
+                    "z": 19.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "children": [
+                    {
+                        "components": [
+                            {
+                                "name": "Virus",
+                                "variables": [
+                                    {
+                                        "field_type": "bool",
+                                        "name": "blue",
+                                        "value": false
+                                    },
+                                    {
+                                        "field_type": "bool",
+                                        "name": "green",
+                                        "value": false
+                                    },
+                                    {
+                                        "field_type": "bool",
+                                        "name": "black",
+                                        "value": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "id": 0,
+                        "is_logic_active": true,
+                        "is_physic_active": false,
+                        "is_visible": true,
+                        "layer": "Default",
+                        "model.id": 12,
+                        "name": "black_virus",
+                        "no_textures": false,
+                        "position": {
+                            "x": -0.4139294922351837,
+                            "y": -4.291534878575476e-06,
+                            "z": -0.9999962449073792
+                        },
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 2.0,
+                            "y": 0.10000000149011612,
+                            "z": 2.0
+                        },
+                        "tag": "Default",
+                        "type": "Node"
+                    }
+                ],
+                "components": [
+                    {
+                        "name": "RotateObject",
+                        "variables": [
+                            {
+                                "field_type": "float",
+                                "name": "rotationSpeed",
+                                "value": 1.0
+                            }
+                        ]
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": false,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "black_virus_parent",
+                "no_textures": true,
+                "position": {
+                    "x": 6.0,
+                    "y": 11.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 0.527463436126709,
+                    "x": 0.0,
+                    "y": -0.8485830426216125,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
                 },
                 "tag": "Default",
                 "type": "Node"
@@ -2277,10 +2462,10 @@
                 "is_visible": true,
                 "layer": "Floor",
                 "model.id": 9,
-                "name": "entity_clone_clone_2_clone_clone_clone_clone",
+                "name": "entity_clone_clone_2_clone_clone_clone_clone_clone_clone_clone",
                 "no_textures": false,
                 "position": {
-                    "x": -120.71349334716797,
+                    "x": -184.7342987060547,
                     "y": 0.0,
                     "z": 0.0
                 },
@@ -2300,64 +2485,6 @@
             },
             {
                 "AABB_logic_max": {
-                    "x": 0.550000011920929,
-                    "y": -0.25,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.550000011920929,
-                    "y": -2.0,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "components": [
-                    {
-                        "name": "GroundObject",
-                        "variables": null
-                    },
-                    {
-                        "name": "Platform",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": true,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Platform",
-                "model.id": 9,
-                "name": "platform",
-                "no_textures": false,
-                "position": {
-                    "x": -6.25,
-                    "y": 4.375,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 8.5,
-                    "y": 0.25,
-                    "z": 2.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
                     "x": 0.5,
                     "y": 0.5,
                     "z": 0.5
@@ -2381,13 +2508,13 @@
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Floor",
+                "layer": "Wall",
                 "model.id": 9,
-                "name": "clone_clone_clone_entity_clone_clone_2",
+                "name": "entity_clone_clone_clone_clone_clone",
                 "no_textures": false,
                 "position": {
-                    "x": -39.0,
-                    "y": 10.0,
+                    "x": 3.5,
+                    "y": 18.0,
                     "z": 0.0
                 },
                 "rotation": {
@@ -2397,56 +2524,8 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 3.0,
-                    "y": 1.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 9,
-                "name": "entity_clone_clone_3",
-                "no_textures": false,
-                "position": {
-                    "x": -27.5,
-                    "y": -5.5,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 5.0,
-                    "y": 1.0,
+                    "x": 1.0,
+                    "y": 4.0,
                     "z": 3.0
                 },
                 "tag": "Default",
@@ -2485,11 +2564,11 @@
                 "is_visible": true,
                 "layer": "Default",
                 "model.id": 10,
-                "name": "spikes",
+                "name": "spikes_clone_clone",
                 "no_textures": false,
                 "position": {
-                    "x": 13.499999046325684,
-                    "y": 11.0,
+                    "x": 8.999998092651367,
+                    "y": 23.0,
                     "z": -1.0
                 },
                 "rotation": {
@@ -2533,11 +2612,11 @@
                 "is_visible": true,
                 "layer": "Floor",
                 "model.id": 9,
-                "name": "clone_entity_clone_clone_2",
+                "name": "entity_clone",
                 "no_textures": false,
                 "position": {
-                    "x": -35.0,
-                    "y": 15.0,
+                    "x": 0.0,
+                    "y": 23.5,
                     "z": 0.0
                 },
                 "rotation": {
@@ -2581,10 +2660,10 @@
                 "is_visible": true,
                 "layer": "Floor",
                 "model.id": 9,
-                "name": "entity_clone_clone_2_clone_clone_clone_clone_clone_clone_clone",
+                "name": "entity_clone_clone_2",
                 "no_textures": false,
                 "position": {
-                    "x": -184.7342987060547,
+                    "x": -35.0,
                     "y": 0.0,
                     "z": 0.0
                 },
@@ -2605,81 +2684,67 @@
             {
                 "AABB_logic_max": {
                     "x": 0.5,
-                    "y": 0.0,
+                    "y": 0.5,
                     "z": 0.5
                 },
                 "AABB_logic_min": {
                     "x": -0.5,
-                    "y": 0.0,
+                    "y": -0.5,
                     "z": -0.5
                 },
                 "AABB_max": {
                     "x": 0.5,
-                    "y": 0.0,
+                    "y": 0.5,
                     "z": 0.5
                 },
                 "AABB_min": {
                     "x": -0.5,
-                    "y": 0.0,
+                    "y": -0.5,
                     "z": -0.5
                 },
                 "id": 0,
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Default",
-                "model.id": 13,
-                "name": "entity_1",
+                "layer": "Wall",
+                "model.id": 9,
+                "name": "entity_clone_clone_clone_1",
                 "no_textures": false,
                 "position": {
-                    "x": -27.0,
-                    "y": -15.5,
-                    "z": -1.5
+                    "x": -25.5,
+                    "y": -13.5,
+                    "z": 0.0
                 },
                 "rotation": {
-                    "w": 0.7071067690849304,
-                    "x": 0.7071067690849304,
+                    "w": 1.0,
+                    "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 4.0,
-                    "y": 1.0,
-                    "z": 19.0
+                    "x": 1.0,
+                    "y": 15.0,
+                    "z": 3.0
                 },
                 "tag": "Default",
                 "type": "Node"
             },
             {
-                "components": [
-                    {
-                        "name": "LevelGenerator",
-                        "variables": [
-                            {
-                                "field_type": "bool",
-                                "name": "generate",
-                                "value": true
-                            },
-                            {
-                                "field_type": "int",
-                                "name": "levelCount",
-                                "value": 10
-                            }
-                        ]
-                    }
-                ],
                 "id": 0,
                 "is_logic_active": false,
-                "is_physic_active": false,
+                "is_physic_active": true,
                 "is_visible": true,
                 "layer": "Default",
                 "model.id": -1,
-                "name": "level_generator",
+                "name": "room_2_2",
                 "no_textures": true,
                 "position": {
-                    "x": -25.0,
-                    "y": -23.0,
+                    "x": 0.0,
+                    "y": 0.0,
                     "z": 0.0
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_2"
                 },
                 "rotation": {
                     "w": 1.0,
@@ -2693,41 +2758,24 @@
                     "z": 1.0
                 },
                 "tag": "Default",
-                "type": "Node"
+                "type": "PrefabInstance"
             },
             {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
                 "id": 0,
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
-                "layer": "Floor",
-                "model.id": 9,
-                "name": "clone_clone_clone_clone_entity_clone_clone_2",
-                "no_textures": false,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "room_5_6",
+                "no_textures": true,
                 "position": {
-                    "x": -39.0,
-                    "y": 5.0,
+                    "x": 27.5,
+                    "y": 2.5,
                     "z": 0.0
+                },
+                "prefab_instance": {
+                    "prefab_name": "room_5"
                 },
                 "rotation": {
                     "w": 1.0,
@@ -2736,60 +2784,12 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 3.0,
+                    "x": 1.0,
                     "y": 1.0,
-                    "z": 3.0
+                    "z": 1.0
                 },
                 "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Floor",
-                "model.id": 9,
-                "name": "entity_clone_clone_2_clone_clone_clone_clone_clone_clone",
-                "no_textures": false,
-                "position": {
-                    "x": -163.13014221191406,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 20.0,
-                    "y": 1.0,
-                    "z": 3.0
-                },
-                "tag": "Default",
-                "type": "Node"
+                "type": "PrefabInstance"
             }
         ],
         "id": 0,

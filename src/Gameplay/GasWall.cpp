@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+#include "../System/Tag.h"
 
 REGISTER_SCRIPT(GasWall);
 
@@ -114,6 +115,9 @@ void GasWall::spreadCloud() {
             float randomValue = dist(gen);
             
             ParticleGasNode* gas = new ParticleGasNode(pos, randomValue);
+
+            std::shared_ptr<Layer> layer = TagLayerManager::Instance().getLayer("Gas");
+            gas->setLayer(layer);
 
             owner->scene_graph->addChild(gas, owner);
         }

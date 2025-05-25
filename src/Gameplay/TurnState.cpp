@@ -10,7 +10,7 @@
 void TurnState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
     animation->turn->speed = 8000.f;
-    owner->animator->blendAnimation(animation->turn, 1000.f, true, false);
+    owner->animator->blendAnimation(animation->turn, 500.f, true, false);
 }
 
 void TurnState::update(Node* owner, float deltaTime) {

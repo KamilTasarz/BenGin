@@ -11,7 +11,7 @@
 void RunState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
     animation->run->speed = 1500.f;
-    owner->animator->blendAnimation(animation->run, 2500.f, true, true);
+    owner->animator->blendAnimation(animation->run, 50.f, true, true);
 }
 
 void RunState::update(Node* owner, float deltaTime) {
@@ -30,10 +30,10 @@ void RunState::update(Node* owner, float deltaTime) {
         animation->facingRight = true;
         animation->changeState(new TurnState());
     }
-    else if (abs(animation->deltaX) < (4.f * deltaTime) && (rb->groundUnderneath || rb->scaleUnderneath)) {
+    else if (abs(animation->deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new IdleState());
     }
-    else if (abs(rb->velocityY) > 0.2f && !(rb->groundUnderneath || rb->scaleUnderneath)) {
+    else if (/*abs(rb->velocityY) > 0.2f*/ abs(rb->velocityDeltaY) > 0.f && !(rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new InAirState());
     }
 }

@@ -1,9 +1,7 @@
 #include "PlayerAnimationController.h"
-#include "PlayerController.h"
 #include "../Basic/Node.h"
 #include "../Basic/Animator.h"
 #include "../Basic/Model.h"      // Potrzebne dla owner->pModel
-#include "../System/Rigidbody.h" // Potrzebne dla owner->getComponent<Rigidbody>()
 #include "RegisterScript.h"
 
 // Spróbuj uporz¹dkowaæ tak, aby najpierw by³y te, które s¹ "najmniej zale¿ne"
@@ -37,6 +35,7 @@ void PlayerAnimationController::onDetach()
 void PlayerAnimationController::onStart()
 {
 	rb = owner->getComponent<Rigidbody>();
+	player = owner->getComponent<PlayerController>();
 	previousPosition = owner->transform.getLocalPosition();
 	facingRight = true;
 
@@ -57,9 +56,31 @@ void PlayerAnimationController::onStart()
 
 void PlayerAnimationController::onUpdate(float deltaTime)
 {
+	if (owner->getComponent<Rigidbody>() == nullptr) {
+		return;
+	}
+	
 	deltaX = owner->transform.getLocalPosition().x - previousPosition.x;
 	deltaY = owner->transform.getLocalPosition().y - previousPosition.y;
 	
+	if (abs(deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
+		isStanding = true;
+	}
+	else if (abs(rb->velocityX) > 0.2f && abs(rb->velocityDeltaX) >= 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
+		isRunning = true;
+	}
+
+	if (player->isJumping) {
+		hasJumped = true;
+	}
+	else if (rb->groundUnderneath || rb->scaleUnderneath) {
+		hasLanded = true;
+	}
+
+	if (rb->velocityDeltaY < 0.f && !gravityFlipped || rb->velocityDeltaY > 0.f && gravityFlipped) {
+		isFalling = true;
+	}
+
 	if (currentState)
 		currentState->update(owner, deltaTime);
 
@@ -86,28 +107,28 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_Z) == GLFW_PRESS)) {
-		owner->animator->blendAnimation(idle, 0.2f, false);
+		owner->animator->blendAnimation(idle, 100.f, true, true);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_X) == GLFW_PRESS)) {
-		owner->animator->blendAnimation(turn, 0.2f, false);
+		owner->animator->blendAnimation(turn, 100.f, true, true);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_C) == GLFW_PRESS)) {
-		owner->animator->blendAnimation(run, 0.2f, false);
+		owner->animator->blendAnimation(run, 100.f, true, true);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_V) == GLFW_PRESS)) {
-		owner->animator->blendAnimation(sleep, 0.2f, false);
+		owner->animator->blendAnimation(sleep, 100.f, true, true);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_B) == GLFW_PRESS)) {
-		owner->animator->blendAnimation(jump, 0.2f, false);
+		owner->animator->blendAnimation(jump, 100.f, true, true);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_N) == GLFW_PRESS)) {
-		owner->animator->blendAnimation(inAir, 0.2f, false);
+		owner->animator->blendAnimation(inAir, 100.f, true, true);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_M) == GLFW_PRESS)) {
-		owner->animator->blendAnimation(fall, 0.2f, false);
+		owner->animator->blendAnimation(fall, 100.f, true, true);
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_H) == GLFW_PRESS) {
-		owner->animator->blendAnimation(run, 0.5f, true);
+		owner->animator->blendAnimation(run, 100.f, true, true);
 	}
 
 	previousPosition = owner->transform.getLocalPosition();

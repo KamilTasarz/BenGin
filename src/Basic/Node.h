@@ -658,7 +658,6 @@ public:
     float time_offset;
 
     ParticleGasNode(glm::vec4& pos, float offset) : Node("particle"), pos(pos), time_offset(offset) {
-        
     }
 
     virtual ~ParticleGasNode() = default;
