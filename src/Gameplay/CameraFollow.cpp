@@ -20,7 +20,7 @@ void CameraFollow::onDetach()
 
 void CameraFollow::onStart()
 {
-	// Initialize the camera follow state
+	positionZ = owner->transform.getLocalPosition().z;
 }
 
 void CameraFollow::onUpdate(float deltaTime)
@@ -46,6 +46,9 @@ void CameraFollow::onUpdate(float deltaTime)
 
 		//std::cout << "Following: " << player->getName() << ", tag: " << player->getTagName() <<   std::endl;
 	}
+
+	glm::vec3 pos = owner->transform.getLocalPosition();
+	owner->transform.setLocalPosition(glm::vec3(pos.x, pos.y, positionZ));
 }
 
 void CameraFollow::onEnd()

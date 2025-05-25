@@ -12,6 +12,8 @@ public:
 	VARIABLE(float, offsetZ);
 	VARIABLE(float, smoothing);
 
+	float positionZ;
+
 	CameraFollow() = default;
 	virtual ~CameraFollow() = default;
 	void onAttach(Node* owner) override;

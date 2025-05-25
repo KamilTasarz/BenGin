@@ -2,9 +2,7 @@
 
 #include "IPlayerAnimState.h"
 
-class Node;
-
-class InAirState : public IPlayerAnimState {
+class RiseState : public IPlayerAnimState {
 public:
     void enter(Node* owner) override;
     void update(Node* owner, float deltaTime) override;

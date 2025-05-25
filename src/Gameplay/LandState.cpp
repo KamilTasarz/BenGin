@@ -9,8 +9,8 @@
 
 void LandState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
-    animation->fall->speed = 1500.f;
-    owner->animator->playAnimation(animation->fall, false);
+    animation->land->speed = 1500.f;
+    owner->animator->playAnimation(animation->land, false);
     //owner->animator->blendAnimation(animation->fall, 50.f, true, false);
 }
 
@@ -19,7 +19,7 @@ void LandState::update(Node* owner, float deltaTime) {
     auto* rb = owner->getComponent<Rigidbody>();
     auto* player = owner->getComponent<PlayerController>();
 
-    if (animation->facingRight && animation->deltaX < -(4.f * deltaTime)) {
+    /*if (animation->facingRight && animation->deltaX < -(4.f * deltaTime)) {
         animation->facingRight = false;
         glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
         owner->transform.setLocalScale(newScale);
@@ -28,7 +28,7 @@ void LandState::update(Node* owner, float deltaTime) {
         animation->facingRight = true;
         glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
         owner->transform.setLocalScale(newScale);
-    }
+    }*/
 
 	if (owner->animator->isPlayingNonLooping()) {
 		return;

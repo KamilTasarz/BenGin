@@ -29,6 +29,7 @@ void PlayerController::onStart()
 {
 	isGravityFlipped = false;
  	rb = owner->getComponent<Rigidbody>();
+	rb->lockPositionZ = true;
 	timerIndicator = owner->getChildById(0);
 	scale_factor = owner->transform.getLocalScale().x;
 }

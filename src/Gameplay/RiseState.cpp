@@ -1,16 +1,16 @@
-#include "JumpState.h"
-#include "PlayerAnimationController.h"
 #include "RiseState.h"
+#include "PlayerAnimationController.h"
+#include "FallState.h"
 #include "../System/Rigidbody.h"
 #include "../Basic/Animator.h"
 
-void JumpState::enter(Node* owner) {
+void RiseState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
-    animation->jump->speed = 1500.f;
-    owner->animator->blendAnimation(animation->jump, 50.f, true, false);
+    animation->rise->speed = 500.f;
+    owner->animator->blendAnimation(animation->rise, 50.f, true, false);
 }
 
-void JumpState::update(Node* owner, float deltaTime) {
+void RiseState::update(Node* owner, float deltaTime) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
 
     /*if (animation->facingRight && animation->deltaX < -(4.f * deltaTime)) {
@@ -24,11 +24,9 @@ void JumpState::update(Node* owner, float deltaTime) {
         owner->transform.setLocalScale(newScale);
     }*/
 
-    if (owner->animator->isPlayingNonLooping()) {
-        return;
+    if (abs(animation->deltaY) < (4.f * deltaTime)) {
+        animation->changeState(new FallState());
     }
-
-    animation->changeState(new RiseState());
 }
 
-void JumpState::exit(Node* owner) {}
+void RiseState::exit(Node* owner) {}

@@ -3,7 +3,7 @@
 #include "PlayerController.h"
 #include "RunState.h"
 #include "JumpState.h"
-#include "InAirState.h"
+#include "FallState.h"
 #include "TurnState.h"
 #include "../System/Rigidbody.h"
 #include "../Basic/Animator.h"
@@ -22,19 +22,19 @@ void IdleState::update(Node* owner, float deltaTime) {
     if (player->isJumping) {
         animation->changeState(new JumpState());
     }
-    else if (animation->facingRight && animation->deltaX < -(4.f * deltaTime)) {
+    /*else if (animation->facingRight && animation->deltaX < -(4.f * deltaTime)) {
         animation->facingRight = false;
         animation->changeState(new TurnState());
     }
     else if (!animation->facingRight && animation->deltaX > (4.f * deltaTime)) {
         animation->facingRight = true;
         animation->changeState(new TurnState());
-    }
+    }*/
     else if (abs(rb->velocityX) > 0.2f && abs(rb->velocityDeltaX) >= 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new RunState());
     }
     else if (/*abs(rb->velocityY) > 0.02f*/ abs(rb->velocityDeltaY) > 0.f && !(rb->groundUnderneath || rb->scaleUnderneath)) {
-        animation->changeState(new InAirState());
+        animation->changeState(new FallState());
     }
 }
 

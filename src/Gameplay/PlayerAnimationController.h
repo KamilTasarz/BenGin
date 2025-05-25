@@ -4,6 +4,10 @@
 #include "../System/Rigidbody.h"
 #include "PlayerController.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+//#include <glm/gtx/quaternion.hpp>
+
 class IPlayerAnimState;
 class Animation;
 
@@ -18,8 +22,11 @@ public:
 	Animation* run;
 	Animation* sleep;
 	Animation* jump;
+	Animation* rise;
 	Animation* inAir;
 	Animation* fall;
+	Animation* land;
+	Animation* push;
 
 	glm::vec3 previousPosition;
 	float deltaX, deltaY;
@@ -34,6 +41,10 @@ public:
 	bool isRising = false;
 	bool isFalling = false;
 	bool hasLanded = false;
+
+	bool isTurning = false;
+	glm::quat targetRotation;
+	float turnSpeed = 15.f;
 
 	PlayerAnimationController() = default;
 	virtual ~PlayerAnimationController() = default;

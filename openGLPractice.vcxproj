@@ -124,7 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Gameplay\IdleState.cpp" />
-    <ClCompile Include="src\Gameplay\InAirState.cpp" />
+    <ClCompile Include="src\Gameplay\FallState.cpp" />
     <ClCompile Include="src\Gameplay\IPlayerAnimState.h" />
     <ClCompile Include="src\Gameplay\JumpState.cpp" />
     <ClCompile Include="src\Gameplay\LandState.cpp" />
@@ -139,6 +139,7 @@
     <ClCompile Include="src\Gameplay\GasWall.cpp" />
     <ClCompile Include="src\Gameplay\Checkpoint.cpp" />
     <ClCompile Include="src\Gameplay\PlayerSpawner.cpp" />
+    <ClCompile Include="src\Gameplay\RiseState.cpp" />
     <ClCompile Include="src\Gameplay\RunState.cpp" />
     <ClCompile Include="src\Gameplay\Spikes.cpp" />
     <ClCompile Include="src\Gameplay\GroundObject.cpp" />
@@ -197,7 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Gameplay\IdleState.h" />
-    <ClInclude Include="src\Gameplay\InAirState.h" />
+    <ClInclude Include="src\Gameplay\FallState.h" />
     <ClInclude Include="src\Gameplay\JumpState.h" />
     <ClInclude Include="src\Gameplay\LandState.h" />
     <ClInclude Include="src\Gameplay\PlayerAnimationController.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="src\Gameplay\GasWall.h" />
     <ClInclude Include="src\Gameplay\Checkpoint.h" />
     <ClInclude Include="src\Gameplay\PlayerSpawner.h" />
+    <ClInclude Include="src\Gameplay\RiseState.h" />
     <ClInclude Include="src\Gameplay\RunState.h" />
     <ClInclude Include="src\Gameplay\Spikes.h" />
     <ClInclude Include="src\Gameplay\GroundObject.h" />
@@ -293,6 +295,7 @@
     <ClInclude Include="src\Text\Text.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\Downloads\szczur.glb" />
     <None Include="assimp.dll" />
     <None Include="cpp.hint" />
     <None Include="dependencies\fmod\fmod.cs" />

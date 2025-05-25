@@ -9,8 +9,9 @@
 #include "IPlayerAnimState.h" // Zawsze jako pierwszy z interfejsów/stanów
 
 // Stany, które nie tworz¹ tak wielu innych stanów lub s¹ koñcowe/pocz¹tkowe
-#include "InAirState.h"   // Tworzy LandState
+#include "FallState.h"   // Tworzy LandState
 #include "JumpState.h"    // Tworzy InAirState
+#include "RiseState.h"    // Tworzy InAirState
 
 // Stany bardziej "centralne" lub z wiêksz¹ liczb¹ przejœæ
 #include "LandState.h"    // Tworzy Idle, Run, Jump
@@ -48,8 +49,12 @@ void PlayerAnimationController::onStart()
 	run = owner->pModel->getAnimationByName("Run");
 	sleep = owner->pModel->getAnimationByName("Sleep");
 	jump = owner->pModel->getAnimationByName("JumpStart");
-	inAir = owner->pModel->getAnimationByName("JumpInAir");
-	fall = owner->pModel->getAnimationByName("JumpEnd");
+	//inAir = owner->pModel->getAnimationByName("JumpInAir");
+	rise = owner->pModel->getAnimationByName("JumpUp");
+	fall = owner->pModel->getAnimationByName("JumpFall");
+	land = owner->pModel->getAnimationByName("JumpEnd");
+	push = owner->pModel->getAnimationByName("PushFinal");
+	//fall = owner->pModel->getAnimationByName("JumpEnd");
 
 	changeState(new IdleState());
 }
@@ -84,24 +89,41 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	if (currentState)
 		currentState->update(owner, deltaTime);
 
-	/*if (facingRight && deltaX < -0.02f) {
-		facingRight = false;
-		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f,-1.f, 1.f);
-		owner->transform.setLocalScale(newScale);
+	glm::vec3 rotationAxis(0.f, 1.f, 0.f);
+
+	if (!isTurning) {
+		if (facingRight && deltaX < -(4.f * deltaTime)) {
+			facingRight = false;
+			isTurning = true;
+			targetRotation = glm::angleAxis(glm::radians(180.f), rotationAxis) * owner->transform.getLocalRotation();
+		}
+		else if (!facingRight && deltaX > (4.f * deltaTime)) {
+			facingRight = true;
+			isTurning = true;
+			targetRotation = glm::angleAxis(glm::radians(-180.f), rotationAxis) * owner->transform.getLocalRotation();
+		}
 	}
-	else if (!facingRight && deltaX > 0.02f) {
-		facingRight = true;
-		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
-		owner->transform.setLocalScale(newScale);
-	}*/
+
+	if (isTurning) {
+		glm::quat currentRotation = owner->transform.getLocalRotation();
+		glm::quat newRotation = glm::slerp(currentRotation, targetRotation, turnSpeed * deltaTime);
+
+		owner->transform.setLocalRotation(newRotation);
+
+		float dot = glm::dot(glm::normalize(newRotation), glm::normalize(targetRotation));
+		if (abs(dot) > 0.999f) {
+			owner->transform.setLocalRotation(targetRotation);
+			isTurning = false;
+		}
+	}
 
 	if (owner->getComponent<PlayerController>()->isGravityFlipped && !gravityFlipped) {
-		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, 1.f, -1.f);
+		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
 		owner->transform.setLocalScale(newScale);
 		gravityFlipped = true;
 	}
 	else if (!owner->getComponent<PlayerController>()->isGravityFlipped && gravityFlipped) {
-		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, 1.f, -1.f);
+		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
 		owner->transform.setLocalScale(newScale);
 		gravityFlipped = false;
 	}
@@ -129,6 +151,10 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_H) == GLFW_PRESS) {
 		owner->animator->blendAnimation(run, 100.f, true, true);
+	}
+
+	if (rb->targetVelocityX > 0.f) {
+		std::cout << "gracz siê porusza" << std::endl;
 	}
 
 	previousPosition = owner->transform.getLocalPosition();
