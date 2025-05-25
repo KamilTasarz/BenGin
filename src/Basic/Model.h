@@ -66,12 +66,12 @@ private:
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
     // the required info is returned as a Texture struct.
-    vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+    std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
     
 
-    void loadCube(const char** texture_names, short texture_number);
+    void loadCube(std::vector<shared_ptr<Texture>>&& textures);
 
-    void loadPlane(const char** texture_names, short texture_number);
+    void loadPlane(std::vector<shared_ptr<Texture>>&& textures);
 
     void loadAnimations();
 
@@ -98,7 +98,7 @@ public:
     // constructor, expects a filepath to a 3D model.
     Model(string const& path, int id, bool gamma = false);
 
-    Model(const char** texture_names, short texture_number, int id, string mode = "cube");
+    Model(std::vector<shared_ptr<Texture>>&& textures, int id, string mode = "cube");
 
     ~Model();
 

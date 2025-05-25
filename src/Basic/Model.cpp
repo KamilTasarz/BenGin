@@ -106,7 +106,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     // data to fill
     vector<Vertex> vertices;
     vector<unsigned int> indices;
-    vector<Texture> textures;
+    vector<shared_ptr<Texture>> textures;
 
     glm::vec3 translate = -min_points;
 
@@ -208,22 +208,22 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 
     // 1. diffuse maps
-    vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    std::vector<std::shared_ptr<Texture>> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
     // 2. specular maps
-    vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    std::vector<std::shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     // 3. normal maps
-    std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+    std::vector<std::shared_ptr<Texture>> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
     // 4. height maps
-    std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+    std::vector<std::shared_ptr<Texture>> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     extractBoneWeightForVertices(vertices, mesh, scene);
 
     // return a mesh object created from the extracted mesh data
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices, indices, std::move(textures));
 }
 
 void Model::extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
@@ -305,9 +305,9 @@ void Model::normalizeBoneWeights(Vertex& vertex)
     }
 }
 
-vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
-    vector<Texture> textures;
+    vector<shared_ptr<Texture>> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
         aiString str;
@@ -318,7 +318,7 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
         {
             if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
             {
-                textures.push_back(textures_loaded[j]);
+                textures.push_back(std::make_shared<Texture>(textures_loaded[j]));
                 skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
                 break;
             }
@@ -329,14 +329,14 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
             texture.id = textureFromFile(str.C_Str(), this->directory);
             texture.type = typeName;
             texture.path = str.C_Str();
-            textures.push_back(texture);
+            textures.push_back(std::make_shared<Texture>(texture));
             textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
         }
     }
     return textures;
 }
 
-void Model::loadCube(const char** texture_names, short texture_number)
+void Model::loadCube(std::vector<shared_ptr<Texture>>&& textures)
 {
 
     float boxVertices[] = {
@@ -406,7 +406,7 @@ void Model::loadCube(const char** texture_names, short texture_number)
 
     // data to fill
     vector<Vertex> vertices;
-    vector<Texture> textures;
+    //vector<Texture> textures;
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < 36; i++)
@@ -434,7 +434,7 @@ void Model::loadCube(const char** texture_names, short texture_number)
         vertices.push_back(vertex);
     }
 
-    for (short i = 0; i < texture_number; i++) {
+    /*for (short i = 0; i < texture_number; i++) {
         Texture texture;
         texture.id = textureFromFile(texture_names[i]);
         texture.path = string(texture_names[i]);
@@ -447,12 +447,12 @@ void Model::loadCube(const char** texture_names, short texture_number)
         }
         textures.push_back(texture);
         textures_loaded.push_back(texture);
-    }
+    }*/
 
-    meshes.push_back(Mesh(vertices, textures));
+    meshes.push_back(Mesh(vertices, std::move(textures)));
 }
 
-void Model::loadPlane(const char** texture_names, short texture_number)
+void Model::loadPlane(vector<shared_ptr<Texture>>&& textures)
 {
 
     float planeVertices[] = {
@@ -470,7 +470,7 @@ void Model::loadPlane(const char** texture_names, short texture_number)
 
     // data to fill
     vector<Vertex> vertices;
-    vector<Texture> textures;
+    //vector<Texture> textures;
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < 6; i++) {
@@ -499,7 +499,7 @@ void Model::loadPlane(const char** texture_names, short texture_number)
 
     }
 
-    for (short i = 0; i < texture_number; i++) {
+    /*for (short i = 0; i < texture_number; i++) {
         Texture texture;
         texture.id = textureFromFile(texture_names[i]);
         texture.path = string(texture_names[i]);
@@ -508,9 +508,9 @@ void Model::loadPlane(const char** texture_names, short texture_number)
         else texture.type = "texture_diffuse";
         textures.push_back(texture);
         textures_loaded.push_back(texture);
-    }
+    }*/
 
-    meshes.push_back(Mesh(vertices, textures));
+    meshes.push_back(Mesh(vertices, std::move(textures)));
 }
 
 void Model::loadAnimations()
@@ -537,13 +537,13 @@ Model::Model(string const& path, int id, bool gamma) : gammaCorrection(gamma), i
     if (has_animations) loadAnimations();
 }
 
-Model::Model(const char** texture_names, short texture_number, int id, string mode) : id(id) {
+Model::Model(std::vector<shared_ptr<Texture>>&& textures, int id, string mode) : id(id) {
     this->mode = mode;
     if (mode == "cube") {
-        loadCube(texture_names, texture_number);
+        loadCube(std::move(textures));
     }
     else {
-        loadPlane(texture_names, texture_number);
+        loadPlane(std::move(textures));
     }
 
 }

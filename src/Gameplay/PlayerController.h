@@ -20,6 +20,7 @@ public:
 	bool isGrounded = false;
     bool isJumping = false;
     bool isDead = false;
+    bool canJump = true;
     //bool inGas = false;
     bool is_pressed = false;
 	std::string virusType = "none";

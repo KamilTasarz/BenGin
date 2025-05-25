@@ -104,12 +104,12 @@ public:
     // mesh Data
     vector<Vertex>       vertices;
     vector<unsigned int> indices;
-    vector<Texture>      textures;
+    vector<shared_ptr<Texture>>     textures;
     unsigned int VAO;
     bool is_EBO;
 
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<shared_ptr<Texture>>&& textures)
     {
         this->vertices = vertices;
         this->indices = indices;
@@ -119,7 +119,7 @@ public:
         setupMesh();
     }
 
-    Mesh(vector<Vertex> vertices, vector<Texture> textures)
+    Mesh(vector<Vertex> vertices, vector<shared_ptr<Texture>>&& textures)
     {
         this->vertices = vertices;
         this->textures = textures;
@@ -141,7 +141,7 @@ public:
             glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
             // retrieve texture number (the N in diffuse_textureN)
             string number;
-            string name = textures[i].type;
+            string name = textures[i]->type;
             if (name == "texture_diffuse")
                 number = std::to_string(diffuseNr++);
             else if (name == "texture_specular")
@@ -154,11 +154,11 @@ public:
             // now set the sampler to the correct texture unit
             glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
             // and finally bind the texture
-            glBindTexture(GL_TEXTURE_2D, textures[i].id);
+            glBindTexture(GL_TEXTURE_2D, textures[i]->id);
 
             if (textures.size() < 2) {
                 glUniform1i(glGetUniformLocation(shader.ID, "texture_specular1"), i);
-                glBindTexture(GL_TEXTURE_2D, textures[i].id);
+                glBindTexture(GL_TEXTURE_2D, textures[i]->id);
             }
         }
 
@@ -188,7 +188,7 @@ public:
             glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
             // retrieve texture number (the N in diffuse_textureN)
             string number;
-            string name = textures[i].type;
+            string name = textures[i]->type;
             if (name == "texture_diffuse")
                 number = std::to_string(diffuseNr++);
             else if (name == "texture_specular")
@@ -201,11 +201,11 @@ public:
             // now set the sampler to the correct texture unit
             glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
             // and finally bind the texture
-            glBindTexture(GL_TEXTURE_2D, textures[i].id);
+            glBindTexture(GL_TEXTURE_2D, textures[i]->id);
 
             if (textures.size() < 2) {
                 glUniform1i(glGetUniformLocation(shader.ID, "texture_specular1"), i);
-                glBindTexture(GL_TEXTURE_2D, textures[i].id);
+                glBindTexture(GL_TEXTURE_2D, textures[i]->id);
             }
         }
 

@@ -45,4 +45,7 @@ void LandState::update(Node* owner, float deltaTime) {
     }
 }
 
-void LandState::exit(Node* owner) {}
+void LandState::exit(Node* owner) {
+    PlayerController* p = owner->getComponent<PlayerController>();
+    p->canJump = true;
+}

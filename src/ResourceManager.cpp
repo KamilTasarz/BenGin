@@ -77,11 +77,11 @@ void ResourceManager::init(const char* path)
 				else {
 
 					json textures = model["textures_id"];
-					const char* texture_names[4];
+					std::vector<shared_ptr<Texture>> textures_ptr;
 					for (int i = 0; i < textures.size(); i++) {
-						texture_names[i] = getTexture(textures[i].get<unsigned int>()).get()->path.c_str();
+						textures_ptr.push_back(getTexture(textures[i].get<unsigned int>()));
 					}
-					shared_ptr<Model> modelPtr = std::make_shared<Model>(texture_names, textures.size(), id, type);
+					shared_ptr<Model> modelPtr = std::make_shared<Model>(std::move(textures_ptr), id, type);
 					models[id] = modelPtr;
 					cout << "Model loaded: " << type << " id: " << id << endl;
 					if (highest_id < id) highest_id = id;
