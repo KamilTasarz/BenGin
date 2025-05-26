@@ -39,6 +39,7 @@ private:
     std::unordered_map<unsigned int, std::shared_ptr<ViewLight>> lights;
 
     ResourceManager() {
+
         shader = new Shader(vertexPath, fragmentPath);
         shader_tile = new Shader(vertexPath_tile, fragmentPath);
         shader_instanced = new Shader(vertexPath_gas, fragmentPath_gas);
@@ -48,10 +49,14 @@ private:
         shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
         shader_text = new Shader(vertexPath_text, fragmentPath_text);
         shader_background = new Shader(vertexPath_text, fragmentPath_background);
-        shader_vhs = new Shader(vertexPath_vhs, fragmentPath_vhs);
         shader_particle = new Shader(vertexPath_particle, fragmentPath_particle);
+        
+        shader_PostProcess_pass = new Shader(postPath_vert, postPath_pass);
+        shader_PostProcess_crt = new Shader(postPath_vert, postPath_crt);
+
     }
     ~ResourceManager() {
+
         delete shader;
         delete shader_tile;
         delete shader_instanced;
@@ -61,11 +66,12 @@ private:
         delete shader_shadow;
         delete shader_text;
         delete shader_background;
-        delete shader_vhs;
         delete shader_particle;
+        
+        delete shader_PostProcess_pass;
+        delete shader_PostProcess_crt;
+
     }
-
-
 
     const char* vertexPath = "res/shaders/basic.vert";
     const char* vertexPath_tile = "res/shaders/tile.vert";
@@ -79,15 +85,19 @@ private:
     const char* vertexPath_text = "res/shaders/text.vert";
     const char* fragmentPath_text = "res/shaders/text.frag";
     const char* fragmentPath_background = "res/shaders/background.frag";
-    const char* fragmentPath_vhs = "res/shaders/vhs.frag";
-    const char* vertexPath_vhs = "res/shaders/vhs.vert";
     const char* vertexPath_particle = "res/shaders/particle.vert";
     const char* fragmentPath_particle = "res/shaders/particle.frag";
     const char* vertexPath_gas = "res/shaders/gas.vert";
     const char* fragmentPath_gas = "res/shaders/gas.frag";
 
+    const char* postPath_vert = "res/shaders/pp_vert.vert";
+    const char* postPath_pass = "res/shaders/pp_pass.frag";
+    //const char* postPath_pass = "res/shaders/debug.frag";
+    const char* postPath_crt = "res/shaders/pp_crt.frag";
 
 public:
+
+    // Normal shaders
 
     Shader* shader;
     Shader* shader_tile;
@@ -98,8 +108,12 @@ public:
     Shader* shader_shadow;
     Shader* shader_text;
     Shader* shader_background;
-    Shader* shader_vhs;
     Shader* shader_particle;
+
+    // Post process shaders
+
+    Shader* shader_PostProcess_pass; // pass - just draw framebuffer with no changes
+    Shader* shader_PostProcess_crt;
 
 	static ResourceManager& Instance() {
 		static ResourceManager instance;

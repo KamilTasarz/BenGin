@@ -1,0 +1,37 @@
+#pragma once
+
+#ifndef POSTPROCESSDATA_H
+#define POSTPROCESSDATA_H
+
+#include "../config.h"
+
+struct PostProcessData {
+
+    bool is_post_process; // Jesli nie to rysuj zwyczajnie quada z tekstura
+
+    bool is_crt_curved; // Shader crt do zakrzywienia ekranu
+
+    // Si³a tego efektu "wypuklosci" ekranu
+    glm::vec2 crt_curvature;
+
+    // Kolor "telewizora" (tej obramowki dookola)
+    glm::vec3 crt_outline_color;
+
+    // Ilosc linii w poziomie i pionie dla crt
+    glm::vec2 crt_screen_resolution;
+    
+    // Promien elipsy winiety
+    float crt_vignette_radius;
+
+    // Jak ostro przechodzi kolor miedzy liniami kolorowymi a czarnymi
+    glm::vec2 crt_lines_sinusoid_factor;
+
+    // Jak ostro przechodzi kolor ekran -> winietka
+    float crt_vignette_factor;
+
+    // Caloekranowy filtr kolorystyczny
+    glm::vec3 crt_brightness;
+
+};
+
+#endif

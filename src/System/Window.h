@@ -3,8 +3,8 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#define WINDOW_WIDTH 1728
-#define WINDOW_HEIGHT 972
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
 
 #include "../config.h"
 #include "../Input/InputKey.h"
@@ -27,9 +27,11 @@ private:
 
 	std::unordered_map<InputKey, InputDeviceState> getGamepadState(int joystick_id);
 
-	//Input _intput {};
+	//Input _input {};
 
 public:
+
+	bool is_fullscreen = false;
 
     bool is_camera = true, is_camera_prev = false;
     bool mouse_pressed = false;
@@ -42,9 +44,11 @@ public:
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
 
-	float width, height;
+	int windowPosX, windowPosY;
+	int width, height;
 	const char* title;
 	GLFWwindow* window;
+	GLFWmonitor* monitor;
 
 	Window(float _width, float _height, const char* _title) {
 		this->width = _width;
@@ -63,6 +67,8 @@ public:
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	void toggleFullscreen();
 
 };
 

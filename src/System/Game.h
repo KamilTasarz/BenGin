@@ -4,6 +4,8 @@
 
 #include "../config.h"
 
+#include "PostProcessData.h"
+
 class Prefab;
 class SceneGraph;
 class BoundingBox;
@@ -13,7 +15,9 @@ class Animation;
 
 class Game
 {
+
 private:
+
 	bool is_initialized = false;
 
 	int viewX;
@@ -27,8 +31,12 @@ private:
 	std::vector<std::shared_ptr<Prefab>>& prefabs;
 	std::vector<std::shared_ptr<Prefab>>& puzzle_prefabs;
 
+	// SSAO vectors
+	std::vector<glm::vec3> ssao_kernel;
+
 	SceneGraph* sceneGraph;
-	unsigned int framebuffer, colorTexture, depthRenderbuffer;
+	PostProcessData postProcessData;
+	unsigned int framebuffer, colorTexture, normalTexture, depthRenderbuffer;
 
 	Animator* animator;
 	Animation* anim;
@@ -36,17 +44,16 @@ private:
 	void input();
 	void draw();
 	void update(float deltaTime);
+
 public:
+
 	bool play = true;
 	Game(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::shared_ptr<Prefab>>& prefabsref_puzzle);
 
 	void init();
 	void run();
 	void shutdown();
+
 };
 
 #endif // !GAME_H
-
-
-
-

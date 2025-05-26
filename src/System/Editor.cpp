@@ -665,6 +665,11 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         play = true;
         //glfwSetWindowShouldClose(ServiceLocator::getWindow()->window, true);
     }
+    ImGui::SameLine();
+    if (ImGui::Button("FULL-SCREEN", ImVec2(150, 24))) {
+        auto* window = ServiceLocator::getWindow();
+        window->toggleFullscreen();
+    }
     ImGui::Separator();
     if (ImGui::Button("ADD_EMPTY_NODE", ImVec2(150, 24))) {
         Node* new_node = new Node("empty_node");
@@ -1555,7 +1560,37 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
     }
     else {
 
-        ImGui::Text("Not selected");
+        ImGui::Checkbox("Post-Process Enable/Disable", &postProcessData.is_post_process);
+        ImGui::Separator();
+
+        ImGui::Checkbox("CRT Enable/Disable", &postProcessData.is_crt_curved);
+
+        ImGui::Text("CRT Curvature:");
+        ImGui::DragFloat("X", &postProcessData.crt_curvature.x, 0.1f, 1.0f, 15.0f, "%.1f");
+        ImGui::DragFloat("Y", &postProcessData.crt_curvature.y, 0.1f, 1.0f, 10.0f, "%.1f");
+
+        ImGui::ColorEdit3("CRT Outline", glm::value_ptr(postProcessData.crt_outline_color));
+
+        ImGui::Separator();
+
+        ImGui::Text("CRT Lines:");
+        ImGui::DragFloat("X Resolution", &postProcessData.crt_screen_resolution.x, 1.0f, 0.0f, 1000.0f, "%.1f");
+        ImGui::DragFloat("Y Resolution", &postProcessData.crt_screen_resolution.y, 1.0f, 0.0f, 1000.0f, "%.1f");
+
+        ImGui::DragFloat("X Factor", &postProcessData.crt_lines_sinusoid_factor.x, 0.1f, 0.01f, 3.0f, "%.2f");
+        ImGui::DragFloat("Y Factor", &postProcessData.crt_lines_sinusoid_factor.y, 0.1f, 0.01f, 3.0f, "%.2f");
+
+        ImGui::Separator();
+
+        ImGui::Text("Vignette:");
+
+        ImGui::DragFloat("X Radius", &postProcessData.crt_vignette_radius, 1.0f, 0.0f, 1000.0f, "%.1f");
+
+        ImGui::DragFloat("Power Factor", &postProcessData.crt_vignette_factor, 0.1f, 0.01f, 6.0f, "%.2f");
+
+        ImGui::Separator();
+
+        ImGui::ColorEdit3("CRT Brightness", glm::value_ptr(postProcessData.crt_brightness));
 
     }
 
@@ -1576,8 +1611,9 @@ void Editor::init()
     );
     ImGui_ImplOpenGL3_Init("#version 330");        // (6) backend renderera
 
-
     loadScene("res/scene/scene.json", editor_sceneGraph, prefabs, puzzle_prefabs);
+
+    loadPostProcessData("res/scene/postprocess_data.json", postProcessData);
 
     editor_sceneGraph->forcedUpdate();
 
@@ -1670,6 +1706,8 @@ void Editor::shutdown()
 {
     saveScene("res/scene/scene.json", editor_sceneGraph);
     savePrefabs(prefabs, puzzle_prefabs);
+
+    savePostProcessData("res/scene/postprocess_data.json", postProcessData);
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

@@ -22,6 +22,14 @@ void Game::input()
         //glfwSetWindowShouldClose(window->window, true);
         play = false;
     }
+
+    if (glfwGetKey(window->window, GLFW_KEY_F11) == GLFW_PRESS) {
+        window->toggleFullscreen();
+        // Buffer button press
+        while (glfwGetKey(window->window, GLFW_KEY_F11) == GLFW_PRESS)
+            glfwPollEvents();
+    }
+
 }
 void Game::draw()
 {
@@ -32,7 +40,7 @@ void Game::draw()
 
     sceneGraph->draw(viewWidth, viewHeight, framebuffer);
 
-    
+
     //glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     //background->render(*ResourceManager::Instance().shader_background);
     //sprite2->render(*ResourceManager::Instance().shader_background);
@@ -40,23 +48,54 @@ void Game::draw()
     //sprite->render(*ResourceManager::Instance().shader_background);
     //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    float time = glfwGetTime();
     float fpsValue = 1.f / ServiceLocator::getWindow()->deltaTime;
+
     //text->renderText("Fps: " + to_string(fpsValue), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *ResourceManager::Instance().shader_text, glm::vec3(1.f, 0.3f, 0.3f));
     //text->renderText("We have text render!", 200, 200, *ResourceManager::Instance().shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
-  
+
     // Tu gdzieś ustawić uniformy dla shadera/shaderów SSAO i użyć
 
     glDisable(GL_DEPTH_TEST);
-	ResourceManager::Instance().shader_vhs->use();
+
     glBindVertexArray(quadVAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, colorTexture);
+    //glBindTexture(GL_TEXTURE_2D, normalTexture);
 
-    ResourceManager::Instance().shader_vhs->setInt("screenTexture", 0);
-    float time = glfwGetTime();
-    ResourceManager::Instance().shader_vhs->setFloat("time", time);
+    if(postProcessData.is_post_process) {
+
+        if (postProcessData.is_crt_curved) {
+
+            ResourceManager::Instance().shader_PostProcess_crt->use();
+            ResourceManager::Instance().shader_PostProcess_crt->setInt("screenTexture", 0);
+
+            ResourceManager::Instance().shader_PostProcess_crt->setVec2("curvature", postProcessData.crt_curvature);
+            ResourceManager::Instance().shader_PostProcess_crt->setVec3("outline_color", postProcessData.crt_outline_color);
+
+            ResourceManager::Instance().shader_PostProcess_crt->setVec2("screen_resolution", postProcessData.crt_screen_resolution);
+            ResourceManager::Instance().shader_PostProcess_crt->setFloat("vignette_radius", postProcessData.crt_vignette_radius);
+
+            ResourceManager::Instance().shader_PostProcess_crt->setVec2("lines_sinusoid_factor", postProcessData.crt_lines_sinusoid_factor);
+            ResourceManager::Instance().shader_PostProcess_crt->setFloat("vignette_factor", postProcessData.crt_vignette_factor);
+            
+            ResourceManager::Instance().shader_PostProcess_crt->setVec3("brightness", postProcessData.crt_brightness);
+
+            ResourceManager::Instance().shader_PostProcess_crt->setFloat("time", time);
+        }
+
+    }
+    else {
+        
+        ResourceManager::Instance().shader_PostProcess_pass->use();
+        ResourceManager::Instance().shader_PostProcess_pass->setInt("screenTexture", 0);
+        //ResourceManager::Instance().shader_PostProcess_pass->setInt("gNormal", 0);
+
+    }
+
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glEnable(GL_DEPTH_TEST);
+
 }
 void Game::update(float deltaTime)
 {
@@ -91,9 +130,12 @@ Game::Game(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::sh
 
 void Game::init()
 {
+
 	is_initialized = true;
 
 	loadScene("res/scene/scene.json", sceneGraph, prefabs, puzzle_prefabs);
+
+    loadPostProcessData("res/scene/postprocess_data.json", postProcessData);
 
 	sceneGraph->forcedUpdate();
 
@@ -119,16 +161,30 @@ void Game::init()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    // 2. Bufor głębokości
+    // 2. Bufor normalnych
+    glGenTextures(1, &normalTexture);
+    glBindTexture(GL_TEXTURE_2D, normalTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, fbWidth, fbHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // 3. Bufor głębokości
     glGenRenderbuffers(1, &depthRenderbuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, fbWidth, fbHeight);
 
-    // 3. Framebuffer
+    // 4. Framebuffer
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);       // Color / albedo + lighting
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normalTexture, 0);      // Normal
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer); // Depth
+
+    GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers(2, attachments);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cerr << "Framebuffer nie jest kompletny!" << std::endl;

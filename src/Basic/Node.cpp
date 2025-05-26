@@ -20,6 +20,7 @@
 
 using namespace std;
 
+
 SceneGraph::SceneGraph()
 {
 
@@ -209,6 +210,10 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    //GLenum attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    //glDrawBuffers(2, attachments);
+
     glViewport(0, 0, width, height);
     glClearColor(.01f, .01f, .01f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

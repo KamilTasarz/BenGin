@@ -79,6 +79,13 @@ int saveScene(const std::string& filename, SceneGraph*& scene) {
 
 }
 
+json vec2_to_json(const glm::vec2& vec) {
+	json j;
+	j["x"] = vec.x;
+	j["y"] = vec.y;
+	return j;
+}
+
 json vec3_to_json(const glm::vec3& vec) {
 	json j;
 	j["x"] = vec.x;
@@ -105,6 +112,10 @@ glm::quat json_to_quat(const json& j) {
 glm::vec3 json_to_vec3(const json& j) {
 
 	return glm::vec3(j["x"], j["y"], j["z"]);
+}
+
+glm::vec2 json_to_vec2(const json& j) {
+	return glm::vec2(j["x"], j["y"]);
 }
 
 json save_node(Node* node) {
@@ -1019,6 +1030,7 @@ void saveTagLayers()
 }
 
 void savePrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs, std::vector<std::shared_ptr<Prefab>>& prefabs_puzzles) {
+
 	for (auto& prefab : prefabs) {
 		savePrefab(prefab);
 	}
@@ -1029,3 +1041,73 @@ void savePrefabs(std::vector<std::shared_ptr<Prefab>>& prefabs, std::vector<std:
 }
 
 
+void savePostProcessData(const std::string& filename, PostProcessData& data) {
+
+	json j;
+
+	j["is_pp"] = data.is_post_process;
+
+	j["is_crt"] = data.is_crt_curved;
+
+	// Save as an array of 2 values
+	j["crt_curvature"] = vec2_to_json(data.crt_curvature);
+
+	j["crt_outline_color"] = vec3_to_json(data.crt_outline_color);
+
+	j["crt_screen_resolution"] = vec2_to_json(data.crt_screen_resolution);
+
+	j["crt_vignette_radius"] = data.crt_vignette_radius;
+
+	j["crt_lines_sinusoid_factor"] = vec2_to_json(data.crt_lines_sinusoid_factor);
+
+	j["crt_vignette_factor"] = data.crt_vignette_factor;
+
+	j["crt_brightness"] = vec3_to_json(data.crt_brightness);
+
+	std::ofstream file(filename);
+	if (file.is_open()) {
+		file << j.dump(4); // Pretty print with 4 spaces
+		file.close();
+	}
+	else {
+		std::cerr << "Nie mozna zapisac pliku: " << filename << std::endl;
+	}
+	
+}
+
+void loadPostProcessData(const std::string& filename, PostProcessData& data) {
+	std::ifstream file(filename);
+	if (file.is_open()) {
+		json j;
+		try {
+
+			file >> j;
+
+			data.is_post_process = j.at("is_pp");
+
+			data.is_crt_curved = j.at("is_crt");
+
+			data.crt_curvature = json_to_vec2(j.at("crt_curvature"));
+
+			data.crt_outline_color = json_to_vec3(j.at("crt_outline_color"));
+
+			data.crt_screen_resolution = json_to_vec2(j.at("crt_screen_resolution"));
+
+			data.crt_vignette_radius = j.at("crt_vignette_radius");
+
+			data.crt_lines_sinusoid_factor = json_to_vec2(j.at("crt_lines_sinusoid_factor"));
+		
+			data.crt_vignette_factor = j.at("crt_vignette_factor");
+
+			data.crt_brightness = json_to_vec3(j.at("crt_brightness"));
+
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Blad przy wczytywaniu pliku " << filename << ": " << e.what() << std::endl;
+		}
+		file.close();
+	}
+	else {
+		std::cerr << "Nie mozna otworzyc pliku: " << filename << std::endl;
+	}
+}

@@ -284,6 +284,7 @@
     <ClInclude Include="src\System\Engine.h" />
     <ClInclude Include="src\System\Game.h" />
     <ClInclude Include="src\System\PhysicsSystem.h" />
+    <ClInclude Include="src\System\PostProcessData.h" />
     <ClInclude Include="src\System\PrefabRegistry.h" />
     <ClInclude Include="src\System\Rigidbody.h" />
     <ClInclude Include="src\System\Serialization.h" />
@@ -316,19 +317,23 @@
     <None Include="res\shaders\outline.frag" />
     <None Include="res\shaders\particle.frag" />
     <None Include="res\shaders\particle.vert" />
+    <None Include="res\shaders\pp_pass.frag" />
     <None Include="res\shaders\tile.vert" />
     <None Include="res\shaders\triangle.frag" />
     <None Include="res\shaders\triangle.vert" />
     <None Include="res\shaders\text.frag" />
     <None Include="res\shaders\text.vert" />
-    <None Include="res\shaders\vhs.frag" />
-    <None Include="res\shaders\vhs.vert" />
+    <None Include="res\shaders\pp_crt.frag" />
+    <None Include="res\shaders\pp_vert.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />
     <Library Include="dependencies\lib\fmodstudioL_vc.lib" />
     <None Include="res\shaders\shadow.frag" />
     <None Include="res\shaders\shadow.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\shaders\debug.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
