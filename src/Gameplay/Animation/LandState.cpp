@@ -1,11 +1,11 @@
 #include "LandState.h"
 #include "PlayerAnimationController.h"
-#include "PlayerController.h"
+#include "../PlayerController.h"
 #include "IdleState.h"
 #include "RunState.h"
 #include "JumpState.h"
-#include "../System/Rigidbody.h"
-#include "../Basic/Animator.h"
+#include "../../System/Rigidbody.h"
+#include "../../Basic/Animator.h"
 
 void LandState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
@@ -37,10 +37,10 @@ void LandState::update(Node* owner, float deltaTime) {
     if (player->isJumping) {
         animation->changeState(new JumpState());
     }
-    else if (abs(animation->deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
+    else if (/*abs(animation->deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f*/ !player->isRunning && (rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new IdleState());
     }
-    else if (abs(rb->velocityX) > 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
+    else if (abs(rb->velocityX) > 0.2f /*!player->isRunning*/ && (rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new RunState());
     }
 }

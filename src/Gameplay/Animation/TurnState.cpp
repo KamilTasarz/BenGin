@@ -1,11 +1,11 @@
 #include "TurnState.h"
 #include "PlayerAnimationController.h"
-#include "PlayerController.h"
+#include "../PlayerController.h"
 #include "IdleState.h"
 #include "RunState.h"
 #include "JumpState.h"
-#include "../System/Rigidbody.h"
-#include "../Basic/Animator.h"
+#include "../../System/Rigidbody.h"
+#include "../../Basic/Animator.h"
 
 void TurnState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();

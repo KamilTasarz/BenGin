@@ -27,7 +27,15 @@ public:
 	float timer = 0.f;
 	bool groundUnderneath = false, scaleUnderneath = false;
 	bool ceilingAbove = false;
+	bool isPushing = false;
 	
+	bool isGravityFlipped = false;
+	float length;
+	float width;
+	glm::vec4 side = glm::vec4(0.f, 0.f, 1.f, 0.f);
+	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
+
+	bool isPlayer = false;
 
 	Rigidbody(float mass = 1.f, float gravity = 1.f, bool isStatic = false, bool useGravity = true, bool lockPositionX = false, bool lockPositionY = false, bool lockPositionZ = false);
 	virtual ~Rigidbody() = default;

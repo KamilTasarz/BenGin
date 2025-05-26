@@ -20,12 +20,14 @@ public:
 	bool isGrounded = false;
     bool isJumping = false;
     bool isDead = false;
+    bool isRunning = false;
     bool canJump = true;
     //bool inGas = false;
     bool is_pressed = false;
 	std::string virusType = "none";
     float deathTimer;
     float gasTimer;
+    float gasCheckTimer;
     Node* timerIndicator;
     bool face_right = true;
     float scale_factor = 1.f;

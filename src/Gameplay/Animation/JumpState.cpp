@@ -1,8 +1,8 @@
 #include "JumpState.h"
 #include "PlayerAnimationController.h"
 #include "RiseState.h"
-#include "../System/Rigidbody.h"
-#include "../Basic/Animator.h"
+#include "../../System/Rigidbody.h"
+#include "../../Basic/Animator.h"
 
 void JumpState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();

@@ -1,8 +1,8 @@
 #include "FallState.h"
 #include "PlayerAnimationController.h"
 #include "LandState.h"
-#include "../System/Rigidbody.h"
-#include "../Basic/Animator.h"
+#include "../../System/Rigidbody.h"
+#include "../../Basic/Animator.h"
 
 void FallState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();

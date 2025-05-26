@@ -1,22 +1,16 @@
 #include "PlayerAnimationController.h"
-#include "../Basic/Node.h"
-#include "../Basic/Animator.h"
-#include "../Basic/Model.h"      // Potrzebne dla owner->pModel
-#include "RegisterScript.h"
+#include "../../Basic/Node.h"
+#include "../../Basic/Animator.h"
+#include "../../Basic/Model.h"
+#include "../RegisterScript.h"
+#include "IPlayerAnimState.h"
 
-// Spróbuj uporz¹dkowaæ tak, aby najpierw by³y te, które s¹ "najmniej zale¿ne"
-// lub te, które s¹ potrzebne jako pierwsze. To jednak nie gwarantuje sukcesu.
-#include "IPlayerAnimState.h" // Zawsze jako pierwszy z interfejsów/stanów
-
-// Stany, które nie tworz¹ tak wielu innych stanów lub s¹ koñcowe/pocz¹tkowe
-#include "FallState.h"   // Tworzy LandState
-#include "JumpState.h"    // Tworzy InAirState
-#include "RiseState.h"    // Tworzy InAirState
-
-// Stany bardziej "centralne" lub z wiêksz¹ liczb¹ przejœæ
-#include "LandState.h"    // Tworzy Idle, Run, Jump
-#include "IdleState.h"    // Tworzy Run, Jump, InAir
-#include "RunState.h"     // Tworzy Jump, Idle
+#include "FallState.h"
+#include "JumpState.h"
+#include "RiseState.h"
+#include "LandState.h"
+#include "IdleState.h"
+#include "RunState.h"
 
 
 REGISTER_SCRIPT(PlayerAnimationController);
@@ -68,7 +62,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	deltaX = owner->transform.getLocalPosition().x - previousPosition.x;
 	deltaY = owner->transform.getLocalPosition().y - previousPosition.y;
 	
-	if (abs(deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
+	/*if (abs(deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
 		isStanding = true;
 	}
 	else if (abs(rb->velocityX) > 0.2f && abs(rb->velocityDeltaX) >= 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
@@ -87,7 +81,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 	else {
 		isFalling = false;
-	}
+	}*/
 
 	if (currentState)
 		currentState->update(owner, deltaTime);
@@ -131,7 +125,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 		gravityFlipped = false;
 	}
 
-	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_Z) == GLFW_PRESS)) {
+	/*if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_Z) == GLFW_PRESS)) {
 		owner->animator->blendAnimation(idle, 100.f, true, true);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_X) == GLFW_PRESS)) {
@@ -154,7 +148,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_H) == GLFW_PRESS) {
 		owner->animator->blendAnimation(run, 100.f, true, true);
-	}
+	}*/
 
 	if (rb->targetVelocityX > 0.f) {
 		std::cout << "gracz siê porusza" << std::endl;

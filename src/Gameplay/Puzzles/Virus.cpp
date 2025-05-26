@@ -1,8 +1,8 @@
 #include "Virus.h"
-#include "../Basic/Node.h"
-#include "RegisterScript.h"
-#include "PlayerController.h"
-#include "../System/Rigidbody.h"
+#include "../../Basic/Node.h"
+#include "../RegisterScript.h"
+#include "../PlayerController.h"
+#include "../../System/Rigidbody.h"
 
 REGISTER_SCRIPT(Virus);
 

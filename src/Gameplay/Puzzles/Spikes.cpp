@@ -1,7 +1,7 @@
 #include "Spikes.h"
-#include "../Basic/Node.h"
-#include "RegisterScript.h"
-#include "PlayerController.h"
+#include "../../Basic/Node.h"
+#include "../RegisterScript.h"
+#include "../PlayerController.h"
 
 REGISTER_SCRIPT(Spikes);
 

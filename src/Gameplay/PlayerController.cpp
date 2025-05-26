@@ -7,7 +7,6 @@
 #include "../Basic/Animator.h"
 #include "../System/PhysicsSystem.h"
 #include "../Component/BoundingBox.h"
-#include "PlayerAnimationController.h"
 
 //#include "GameMath.h"
 
@@ -32,6 +31,7 @@ void PlayerController::onStart()
 	isGravityFlipped = false;
  	rb = owner->getComponent<Rigidbody>();
 	rb->lockPositionZ = true;
+	rb->isPlayer = true;
 	timerIndicator = owner->getChildById(0);
 	scale_factor = owner->transform.getLocalScale().x;
 }
@@ -39,7 +39,7 @@ void PlayerController::onStart()
 void PlayerController::onUpdate(float deltaTime)
 {
 	if (isDead) return;
-	
+
 	//std::cout << "tag aktualnego gracza" << owner->getTagName() << std::endl;
 
 	glm::vec3 position = owner->transform.getLocalPosition();
@@ -48,10 +48,20 @@ void PlayerController::onUpdate(float deltaTime)
 
 	if (rb->groundUnderneath || rb->scaleUnderneath) isJumping = false;
 
+	if (isGravityFlipped && !rb->isGravityFlipped) {
+		rb->isGravityFlipped = true;
+	}
+	else if (!isGravityFlipped && rb->isGravityFlipped) {
+		rb->isGravityFlipped = false;
+	}
+
 	bool pressedRight = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS);
 	bool pressedLeft = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS);
 
 	if (!rb->overrideVelocityX) rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
+
+	if (pressedRight - pressedLeft != 0.f) isRunning = true;
+	else isRunning = false;
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_K) == GLFW_PRESS) {
 		rb->is_static = true;
@@ -79,9 +89,9 @@ void PlayerController::onUpdate(float deltaTime)
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		//std::cout << "Gracz probuje skoczyc" << std::endl;
-		
+
 		if ((rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
-			
+
 			rb->overrideVelocityY = true;
 			if (isGravityFlipped) rb->velocityY = -jumpForce;
 			else rb->velocityY = jumpForce;
@@ -91,19 +101,26 @@ void PlayerController::onUpdate(float deltaTime)
 		}
 	}
 
-	if (CheckIfInGas()) {
-		gasTimer += deltaTime;
-
-		if (gasTimer > 2.f) {
-			Die(false);
-		}
-	}
-	else {
-		gasTimer = 0.f;
-	}
-
 	if (virusType != "none") {
 		HandleVirus(deltaTime);
+	}
+
+	float checkDelay = 0.5f;
+	if (gasCheckTimer > checkDelay) {
+		if (CheckIfInGas()) {
+			gasTimer += checkDelay;
+
+			if (gasTimer > 2.f) {
+				Die(false);
+			}
+		}
+		else {
+			gasTimer = 0.f;
+		}
+		gasCheckTimer = 0.f;
+	}
+	else {
+		gasCheckTimer += deltaTime;
 	}
 }
 

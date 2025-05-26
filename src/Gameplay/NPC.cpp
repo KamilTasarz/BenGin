@@ -38,6 +38,14 @@ void NPC::onStart() {
 }
 
 void NPC::onUpdate(float deltaTime) {
+	if (updateTimer > 0.f) {
+		updateTimer -= deltaTime;
+		return;
+	}
+    else {
+        updateTimer = 0.25f;
+    }
+    
     danger.fill(0.f);
     interest.fill(0.f);
 
