@@ -12,8 +12,8 @@
 
 void PushState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
-    //animation->idle->speed = 500.f;
-    owner->animator->blendAnimation(animation->push, 100.f, false, true);
+    animation->push->speed = 1500.f;
+    owner->animator->blendAnimation(animation->push, 200.f, false, true);
 }
 
 void PushState::update(Node* owner, float deltaTime) {

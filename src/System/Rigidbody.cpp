@@ -37,8 +37,8 @@ void Rigidbody::onStart()
 
 	startPos = owner->transform.getLocalPosition();
 
-	length = (owner->AABB->max_point_world.y - owner->AABB->min_point_world.y) / 2.f + 0.2f;
-	width = (owner->AABB->max_point_world.x - owner->AABB->min_point_world.x) / 2.f - 0.15f;
+	length = (owner->AABB->max_point_world.y - owner->AABB->min_point_world.y) / 2.f;
+	width = (owner->AABB->max_point_world.x - owner->AABB->min_point_world.x) / 2.f;
 }
 
 void Rigidbody::onUpdate(float deltaTime)
@@ -61,9 +61,9 @@ void Rigidbody::onUpdate(float deltaTime)
 	std::vector<Node*> nodes;
 
 	std::vector<Ray> Rays = {
-		Ray{position + glm::vec3(-width, -length, 0.f), up},
-		Ray{position + glm::vec3(0.f, -length, 0.f), up},
-		Ray{position + glm::vec3(width, -length, 0.f), up}
+		Ray{position + glm::vec3(-width + 0.15f, -length - 0.15f, 0.f), up},
+		Ray{position + glm::vec3(0.f, -length - 0.1f, 0.f), up},
+		Ray{position + glm::vec3(width - 0.15f, -length - 0.15f, 0.f), up}
 	};
 	//std::vector<Ray> ceilingRays = {
 	//	Ray{position + glm::vec3(-width, 0.f, 0.f), up},
@@ -71,10 +71,10 @@ void Rigidbody::onUpdate(float deltaTime)
 	//};
 
 	nodes.clear();
-	if (PhysicsSystem::instance().rayCast(Rays, nodes, length * 2.f, owner)) {
+	if (PhysicsSystem::instance().rayCast(Rays, nodes, (length + 0.1f) * 2.f, owner)) {
 		if (nodes.size() > 0) {
 			for (Node* node : nodes) {
-				if (owner->getComponent<PlayerController>()) std::cout << "Gracz dotyka: " << node->getName() << ", warstwa: " << node->getLayerName() << std::endl;
+				//if (owner->getComponent<PlayerController>()) std::cout << "Gracz dotyka: " << node->getName() << ", warstwa: " << node->getLayerName() << std::endl;
 
 				glm::vec3 nodePos = node->transform.getGlobalPosition();
 
@@ -100,11 +100,13 @@ void Rigidbody::onUpdate(float deltaTime)
 		std::swap(groundUnderneath, ceilingAbove);
 	}
 
-	if (isPlayer) {
-		Ray ray = Ray{ position + glm::vec3(-width - 0.17f, 0.f, 0.f), side };
+ 	if (isPlayer) {
+		std::cout << "kierunek: " << side.x << ", " << side.y << ", " << side.z << ", " << side.w << std::endl;
+
+		Ray ray = Ray{ position, side };
 
 		nodes.clear();
-		if (PhysicsSystem::instance().rayCast(ray, nodes, (width + 0.17f) * 2.f, owner)) {
+		if (PhysicsSystem::instance().rayCast(ray, nodes, width + 0.2f, owner)) {
 			if (nodes.size() > 0) {
 				isPushing = true;
 				std::cout << "Gracz pcha obiekt: " << nodes[0]->getName() << std::endl;

@@ -10,7 +10,8 @@
 
 void RunState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
-    animation->run->speed = 1000.f;
+    auto* player = owner->getComponent<PlayerController>();
+    animation->run->speed = player->virusType == "black" ? 700.f : 1000.f;
     owner->animator->blendAnimation(animation->run, 50.f, true, true);
 }
 

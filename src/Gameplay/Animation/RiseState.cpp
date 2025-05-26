@@ -12,19 +12,9 @@ void RiseState::enter(Node* owner) {
 
 void RiseState::update(Node* owner, float deltaTime) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
+	auto* rb = owner->getComponent<Rigidbody>();
 
-    /*if (animation->facingRight && animation->deltaX < -(4.f * deltaTime)) {
-        animation->facingRight = false;
-        glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
-        owner->transform.setLocalScale(newScale);
-    }
-    else if (!animation->facingRight && animation->deltaX > (4.f * deltaTime)) {
-        animation->facingRight = true;
-        glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
-        owner->transform.setLocalScale(newScale);
-    }*/
-
-    if (abs(animation->deltaY) < (4.f * deltaTime)) {
+    if (abs(animation->deltaY) < (4.f * deltaTime) && !rb->overrideVelocityY) {
         animation->changeState(new FallState());
     }
 }

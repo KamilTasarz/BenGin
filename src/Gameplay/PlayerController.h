@@ -31,6 +31,8 @@ public:
     Node* timerIndicator;
     bool face_right = true;
     float scale_factor = 1.f;
+	bool pressedRight = false;
+	bool pressedLeft = false;
 
     PlayerController() = default;
     virtual ~PlayerController() = default;

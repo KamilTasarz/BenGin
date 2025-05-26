@@ -32,7 +32,7 @@ public:
 	bool isGravityFlipped = false;
 	float length;
 	float width;
-	glm::vec4 side = glm::vec4(0.f, 0.f, 1.f, 0.f);
+	glm::vec4 side = glm::vec4(1.f, 0.f, 0.f, 0.f);
 	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
 
 	bool isPlayer = false;

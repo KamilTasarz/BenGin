@@ -53,5 +53,7 @@ public:
 	void onUpdate(float deltaTime) override;
 	void onEnd() override;
 	void changeState(IPlayerAnimState* newState);
+	void StartRotation(bool& conditionFlag, bool desiredState, float angleDegrees, const glm::vec3& axis);
+	void UpdateRotation(float deltaTime);
 };
 

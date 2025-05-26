@@ -13,17 +13,6 @@ void JumpState::enter(Node* owner) {
 void JumpState::update(Node* owner, float deltaTime) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
 
-    /*if (animation->facingRight && animation->deltaX < -(4.f * deltaTime)) {
-        animation->facingRight = false;
-        glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
-        owner->transform.setLocalScale(newScale);
-    }
-    else if (!animation->facingRight && animation->deltaX > (4.f * deltaTime)) {
-        animation->facingRight = true;
-        glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
-        owner->transform.setLocalScale(newScale);
-    }*/
-
     if (owner->animator->isPlayingNonLooping()) {
         return;
     }
