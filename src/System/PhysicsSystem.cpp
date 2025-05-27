@@ -12,9 +12,8 @@ PhysicsSystem& PhysicsSystem::instance() {
 
 void PhysicsSystem::updateColliders(SceneGraph* scene_graph)
 {
-	colliders.clear();
-	colliders_RigidBody.clear();
-	scene_graph->root->checkIfInFrustrum(colliders, colliders_RigidBody);
+
+	scene_graph->root->checkIfInFrustrum(colliders, colliders_RigidBody, rooms);
 	//std::cout << colliders.size() << " " << colliders_RigidBody.size() << std::endl;
 }
 
@@ -33,11 +32,17 @@ void PhysicsSystem::updateCollisions()
 		for (auto& collider2 : colliders) {
 			if (collider1->node == collider2->node) continue;
 
+			if (!collider1->active) {
+				break;
+			}
+			if (!collider2->active) {
+				continue; 
+			}
+
 			BoundingBox* first = (collider1 < collider2) ? collider1 : collider2;
 			BoundingBox* second = (collider1 < collider2) ? collider2 : collider1;
 
 			std::pair<BoundingBox*, BoundingBox*> pair = { first, second };
-
 			// pomiń, jeśli już było
 			if (testedPairs.find(pair) != testedPairs.end()) continue;
 
@@ -153,7 +158,7 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<Node*>& collide_with, float len
 {
 	if (length <= 0.f) {
 		for (auto& collider : colliders) {
-			if (collider->is_logic) continue;
+			if (collider->is_logic || !collider->active) continue;
 			float t;
 			if (collider->isRayIntersects(ray.direction, ray.origin, t) && collider->node != owner) {
 				collide_with.push_back(collider->node);
@@ -162,7 +167,7 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<Node*>& collide_with, float len
 	}
 	else {
 		for (auto& collider : colliders) {
-			if (collider->is_logic) continue;
+			if (collider->is_logic || !collider->active) continue;
 			float t;
 			if (collider->isRayIntersects(ray.direction, ray.origin, t) && collider->node != owner) {
 				

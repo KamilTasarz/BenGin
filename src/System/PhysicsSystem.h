@@ -9,13 +9,14 @@ struct Ray;
 
 class PhysicsSystem
 {
-private:
-    std::vector<BoundingBox*> colliders;
-    std::vector<BoundingBox*> colliders_RigidBody;
-
-    std::vector<BoundingBox*> colliders_logic;
-    std::vector<BoundingBox*> colliders_RigidBody_logic;
 public:
+    std::unordered_set<BoundingBox*> colliders;
+    std::unordered_set<BoundingBox*> colliders_RigidBody;
+    std::unordered_set<Node*> rooms;
+
+    //std::vector<BoundingBox*> colliders_logic;
+    //std::vector<BoundingBox*> colliders_RigidBody_logic;
+
     static PhysicsSystem& instance();
     
 	//zmienia vector koliderów, na te co są w frustum
@@ -27,7 +28,7 @@ public:
     bool rayCast(Ray ray, std::vector<Node*>& collide_with, float length = -1.f, Node* owner = nullptr);
     bool rayCast(const std::vector<Ray>& rays, std::vector<Node*>& collide_with, float length = -1.f, Node* owner = nullptr);
 
-	std::vector<BoundingBox*>& getColliders() {
+	std::unordered_set<BoundingBox*>& getColliders() {
 		return colliders;
 	}
 };

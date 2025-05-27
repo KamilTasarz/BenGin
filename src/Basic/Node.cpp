@@ -364,6 +364,18 @@ void Node::addChild(Node* p) {
     increaseCount();
 }
 
+void Node::setPhysic(bool active)
+{
+	is_physic_active = active;
+	AABB->active = active;
+}
+
+void Node::setLogic(bool active)
+{
+	is_logic_active = active;
+	AABB_logic->active = active;
+}
+
 void Node::addComponent(std::unique_ptr<Component> component) {
     
     if (component->name == "Rigidbody") has_RB = true;
@@ -589,36 +601,53 @@ void Node::setVariablesNodes(std::string instance_name, Node* root, SceneGraph* 
 }
 
 
-void Node::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB) {
+void Node::checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB,
+    std::unordered_set<Node*>& rooms) {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
         //in_frustrum = true;
         if (in_frustrum) {
-			if (is_physic_active) colliders.push_back(AABB);
-            if (is_logic_active && AABB_logic) colliders.push_back(AABB_logic);
+			if (is_physic_active) colliders.insert(AABB);
+			else colliders.erase(AABB);
+
+            if (is_logic_active && AABB_logic) colliders.insert(AABB_logic);
+			else colliders.erase(AABB_logic);
+
             if (has_RB) {
-                if (is_physic_active) colliders_RB.push_back(AABB);
-                if (is_logic_active && AABB_logic) colliders_RB.push_back(AABB_logic);
+                if (is_physic_active) colliders_RB.insert(AABB);
+				else colliders_RB.erase(AABB);
+
+                if (is_logic_active && AABB_logic) colliders_RB.insert(AABB_logic);
+				else colliders_RB.erase(AABB_logic);
+            }
+        }
+        else {
+            if (is_physic_active) colliders.erase(AABB);
+            if (is_logic_active && AABB_logic) colliders.erase(AABB_logic);
+            if (has_RB) {
+                if (is_physic_active) colliders_RB.erase(AABB);
+                if (is_logic_active && AABB_logic) colliders_RB.erase(AABB_logic);
             }
         }
     }
     else {
         in_frustrum = true;
+
     }
 
     for (auto& child : children) {
-        child->checkIfInFrustrum(colliders, colliders_RB);
+        child->checkIfInFrustrum(colliders, colliders_RB, rooms);
     }
 }
 
-void Node::checkIfInFrustrumLogic(std::vector<BoundingBox*>& colliders_logic, std::vector<BoundingBox*>& colliders_RB_logic)
+void Node::checkIfInFrustrumLogic(std::unordered_set<BoundingBox*>& colliders_logic, std::unordered_set<BoundingBox*>& colliders_RB_logic)
 {
     if (AABB_logic) {
         
         if (in_frustrum) {
-            colliders_logic.push_back(AABB_logic);
+            colliders_logic.insert(AABB_logic);
             if (has_RB) {
-                colliders_RB_logic.push_back(AABB_logic);
+                colliders_RB_logic.insert(AABB_logic);
             }
         }
     }
@@ -664,7 +693,7 @@ void Node::forceUpdateSelfAndChild() {
 }
 
 // This will update if there were changes only (checks the dirty flag)
-void  Node::updateSelfAndChild(bool controlDirty) {
+void Node::updateSelfAndChild(bool controlDirty) {
 
     controlDirty |= transform.isDirty();
 
@@ -1068,17 +1097,33 @@ void InstanceManager::updateSelfAndChild(bool controlDirty) {
     }*/
 }
 
-void InstanceManager::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB)
+void InstanceManager::checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, 
+    std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms)
 {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
         //in_frustrum = true;
         if (in_frustrum) {
-            if (is_physic_active) colliders.push_back(AABB);
-            if (is_logic_active && AABB_logic) colliders.push_back(AABB_logic);
+            if (is_physic_active) colliders.insert(AABB);
+            else colliders.erase(AABB);
+
+            if (is_logic_active && AABB_logic) colliders.insert(AABB_logic);
+            else colliders.erase(AABB_logic);
+
             if (has_RB) {
-                if (is_physic_active) colliders_RB.push_back(AABB);
-                if (is_logic_active && AABB_logic) colliders_RB.push_back(AABB_logic);
+                if (is_physic_active) colliders_RB.insert(AABB);
+                else colliders_RB.erase(AABB);
+
+                if (is_logic_active && AABB_logic) colliders_RB.insert(AABB_logic);
+                else colliders_RB.erase(AABB_logic);
+            }
+        }
+        else {
+            if (is_physic_active) colliders.erase(AABB);
+            if (is_logic_active && AABB_logic) colliders.erase(AABB_logic);
+            if (has_RB) {
+                if (is_physic_active) colliders_RB.erase(AABB);
+                if (is_logic_active && AABB_logic) colliders_RB.erase(AABB_logic);
             }
         }
     }
@@ -1087,7 +1132,7 @@ void InstanceManager::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, st
     }
 
     for (auto& child : children) {
-        child->checkIfInFrustrum(colliders, colliders_RB);
+        child->checkIfInFrustrum(colliders, colliders_RB, rooms);
     }
 }
 
@@ -1366,28 +1411,47 @@ void PrefabInstance::drawShadows(Shader& shader)
 	}
 }
 
-void PrefabInstance::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB)
+void PrefabInstance::checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms)
 {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
-        //in_frustrum = true;
-        if (in_frustrum) {
+
+        if (in_frustrum && (rooms.find(this) == rooms.end())) {
             for (auto& child : prefab_root->getAllChildren()) {
                 child->in_frustrum = true;
                 if (child->AABB && child->is_physic_active) {
-                    if (child->has_RB) colliders_RB.push_back(child->AABB);
-                    colliders.push_back(child->AABB);
+                    if (child->has_RB) colliders_RB.insert(child->AABB);
+                    colliders.insert(child->AABB);
                 }
+                else {
+					if (child->has_RB) colliders_RB.erase(child->AABB);
+					colliders.erase(child->AABB);
+                }
+
                 if (child->AABB_logic && child->is_logic_active) {
-                    if (child->has_RB) colliders_RB.push_back(child->AABB_logic);
-                    colliders.push_back(child->AABB_logic);
+                    if (child->has_RB) colliders_RB.insert(child->AABB_logic);
+                    colliders.insert(child->AABB_logic);
+				}
+                else {
+                    if (child->has_RB) colliders_RB.erase(child->AABB_logic);
+                    colliders.erase(child->AABB_logic);
                 }
             }
+            rooms.insert(this);
         }
-        else {
+        else if (!in_frustrum && (rooms.find(this) != rooms.end())) {
             for (auto& child : prefab_root->getAllChildren()) {
                 child->in_frustrum = false;
+                if (child->AABB && child->is_physic_active) {
+                    if (child->has_RB) colliders_RB.erase(child->AABB);
+                    colliders.erase(child->AABB);
+                }
+                if (child->AABB_logic && child->is_logic_active) {
+                    if (child->has_RB) colliders_RB.erase(child->AABB_logic);
+                    colliders.erase(child->AABB_logic);
+                }
             }
+			rooms.erase(this);
         }
     }
     else {
@@ -1398,7 +1462,7 @@ void PrefabInstance::checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std
 Light::Light(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular) : Node(model, nameOfNode), ambient(ambient), diffuse(diffuse), specular(specular) {
 
     no_textures = true;
-
+    
 	is_shining = _is_shining;
 
     glGenTextures(1, &depthMap);

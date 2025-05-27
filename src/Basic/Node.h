@@ -237,7 +237,7 @@ public:
 	bool in_frustrum = true;    
 	bool has_RB = false;    
     bool is_animating = false;
-    bool is_physic_active = true; //serializacja potrzbna
+    bool is_physic_active = true; 
     bool is_logic_active = false;
 
     bool is_marked = false;
@@ -276,6 +276,9 @@ public:
 
     // Add child
     void virtual addChild(Node* p);
+
+    void setPhysic(bool active);
+	void setLogic(bool active);
 
     void addComponent(std::unique_ptr<Component> component);
     void deleteComponent(std::list<std::unique_ptr<Component>>::iterator& it);
@@ -328,8 +331,8 @@ public:
         return nullptr;
     }
 
-    virtual void checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB);
-    virtual void checkIfInFrustrumLogic(std::vector<BoundingBox*>& colliders_logic, std::vector<BoundingBox*>& colliders_RB_logic);
+    virtual void checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms);
+    virtual void checkIfInFrustrumLogic(std::unordered_set<BoundingBox*>& colliders_logic, std::unordered_set<BoundingBox*>& colliders_RB_logic);
 
     void collectAllChildren(std::set<Node*>& out) {
         for (Node* child : children) {
@@ -341,7 +344,7 @@ public:
 
 	void setActive(bool active) {
 		is_visible = active;
-		is_physic_active = active;
+		setPhysic(active);
 
 		for (auto& child : children) {
 			child->setActive(active);
@@ -401,7 +404,7 @@ public:
 
     void updateSelfAndChild(bool controlDirty) override;
 
-    void checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB) override;
+    void checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms) override;
 
     void addChild(Node* p) override;
 
@@ -614,7 +617,7 @@ public:
 
 	void drawShadows(Shader& shader) override;
 
-    void checkIfInFrustrum(std::vector<BoundingBox*>& colliders, std::vector<BoundingBox*>& colliders_RB) override;
+    void checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms) override;
 };
 
 struct Texture;

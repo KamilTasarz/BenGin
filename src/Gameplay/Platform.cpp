@@ -20,7 +20,7 @@ void Platform::onDetach()
 void Platform::onUpdate(float deltaTime)
 {
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		owner->is_physic_active = false;
+		owner->setPhysic(false);
 		timer = 0.25f;
 		//std::cout << "spadanie z platformy, timer: " << timer << std::endl;
 	}
@@ -28,19 +28,19 @@ void Platform::onUpdate(float deltaTime)
 	if (timer > 0.f) {
 		timer -= deltaTime;
 		if (timer <= 0.f) {
-			owner->is_physic_active = true;
+			owner->setPhysic(true);
 			timer = 0.f;
 		}
 	}
 	else {
-		owner->is_physic_active = true;
+		owner->setPhysic(true);
 	}
 }
 
 void Platform::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
-		owner->is_physic_active = false;
+		owner->setPhysic(false);
 		timer = 0.25f;
 
 		//owner->setActive(false);
@@ -51,7 +51,7 @@ void Platform::onCollisionLogic(Node* other)
 void Platform::onExitCollisionLogic(Node* other)
 {
 	//if (other->getTagName() == "Player") {
-	//	//owner->is_physic_active = true;
+	//	//owner->setPhysic(true);
 
 	//	//owner->setActive(true);
 	//	std::cout << "wyjscie z platformy" << std::endl;

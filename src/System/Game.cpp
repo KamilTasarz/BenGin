@@ -106,13 +106,19 @@ void Game::update(float deltaTime)
 
     // Scena
     //sceneGraph->root->checkIfInFrustrum();
-
+	float t = glfwGetTime();
 	PhysicsSystem::instance().updateColliders(sceneGraph);
+    float t2 = glfwGetTime();
 	PhysicsSystem::instance().updateCollisions();
+	float t3 = glfwGetTime();
     sceneGraph->update(deltaTime);
+    float t4 = glfwGetTime();
     sceneGraph->clearDeleteVector();
     // HUD
-    
+	cout << "FPS: " << 1.f / deltaTime << endl;
+    cout << "updateColldiers" << t2 - t << endl;
+	cout << "updateCollisions" << t3 - t2 << endl;
+	cout << "updateSceneGraph" << t4 - t3 << endl;
     //background->update(deltaTime);
     //sprite->update(deltaTime);
     //sprite3->update(deltaTime);
@@ -216,6 +222,9 @@ void Game::init()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
     sceneGraph->root->createComponents();
+	PhysicsSystem::instance().colliders.clear();
+	PhysicsSystem::instance().colliders_RigidBody.clear();  
+	PhysicsSystem::instance().rooms.clear();  
 
 }
 void Game::run()
@@ -238,7 +247,7 @@ void Game::run()
 
         ServiceLocator::getWindow()->updateWindow();
 
-        std::cout << "Fps: " << 1 / ServiceLocator::getWindow()->deltaTime << std::endl;
+        std::cout << "Fps: " << 1.f / ServiceLocator::getWindow()->deltaTime << std::endl;
 	}
 
     if (glfwWindowShouldClose(ServiceLocator::getWindow()->window)) engine_work = false;

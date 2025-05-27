@@ -55,27 +55,27 @@ void PlayerController::onUpdate(float deltaTime)
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_K) == GLFW_PRESS) {
 		rb->is_static = true;
-		owner->is_physic_active = false;
+		owner->setPhysic(false);
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, -50.f * deltaTime, 0.f));
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_I) == GLFW_PRESS) {
 		rb->is_static = true;
-		owner->is_physic_active = false;
+		owner->setPhysic(false);
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 50.f * deltaTime, 0.f));
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_L) == GLFW_PRESS) {
 		rb->is_static = true;
-		owner->is_physic_active = false;
+		owner->setPhysic(false);
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(50.f * deltaTime, 0.f, 0.f));
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_J) == GLFW_PRESS) {
 		rb->is_static = true;
-		owner->is_physic_active = false;
+		owner->setPhysic(false);
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(-50.f * deltaTime, 0.f, 0.f));
 	}
 
 	rb->is_static = false;
-	owner->is_physic_active = true;
+	owner->setPhysic(true);
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		//std::cout << "Gracz probuje skoczyc" << std::endl;
@@ -91,7 +91,7 @@ void PlayerController::onUpdate(float deltaTime)
 		}
 	}
 
-	if (CheckIfInGas()) {
+	/*if (CheckIfInGas()) {
 		gasTimer += deltaTime;
 
 		if (gasTimer > 2.f) {
@@ -100,7 +100,7 @@ void PlayerController::onUpdate(float deltaTime)
 	}
 	else {
 		gasTimer = 0.f;
-	}
+	}*/
 
 	if (virusType != "none") {
 		HandleVirus(deltaTime);

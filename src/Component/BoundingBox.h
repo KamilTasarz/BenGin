@@ -17,7 +17,7 @@ class BoundingBox {
 
 public:
 
-	unsigned int VAO = 0, VBO;
+	unsigned int VAO = 0, VBO = 0;
 
 	glm::vec3 min_point_local; 
 	glm::vec3 max_point_local;
@@ -32,15 +32,26 @@ public:
 
 	bool is_logic = false;
 
+	bool active = true;
+
 	short collison = 0;
 
-	BoundingBox(const glm::mat4& model, Node* _node, glm::vec3 min_point = glm::vec3(-1.f), glm::vec3 max_point = glm::vec3(1.f)) {
+	BoundingBox(const glm::mat4& model, Node* _node, glm::vec3 min_point = glm::vec3(-1.f), glm::vec3 max_point = glm::vec3(1.f), bool set_buffer = true) {
 		min_point_local = min_point;
 		max_point_local = max_point;
 		transformAABB(model);
 		this->model = glm::mat4(model);
 		node = _node;
-		setBuffers();
+		if (set_buffer) setBuffers();
+	}
+	~BoundingBox() {
+
+		if (VAO != 0) {
+			glDeleteVertexArrays(1, &VAO);
+			glDeleteBuffers(1, &VBO);
+			VAO = 0;
+			VBO = 0;
+		}
 	}
 
 	bool isRayIntersects(glm::vec3 direction, glm::vec3 origin, float &t) const; // t - parameter

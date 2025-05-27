@@ -225,9 +225,9 @@ void BoundingBox::setBuffers() {
 }
 
 void BoundingBox::draw(Shader& shader) {
-    //if (VAO == 0) {
+    if (VAO != 0) {
         setBuffers();
-    //}
+
         glBindVertexArray(VAO);
 
         /*glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -235,17 +235,17 @@ void BoundingBox::draw(Shader& shader) {
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);*/
 
-        
-    //}
 
-   
-    
+        //}
 
-    shader.use();
-    shader.setMat4("model", glm::mat4(1.f));
-    
-    glDrawArrays(GL_LINE_STRIP, 0, 10);
-    glDrawArrays(GL_LINES, 10, 6);
-    glBindVertexArray(0);
 
+
+
+        shader.use();
+        shader.setMat4("model", glm::mat4(1.f));
+
+        glDrawArrays(GL_LINE_STRIP, 0, 10);
+        glDrawArrays(GL_LINES, 10, 6);
+        glBindVertexArray(0);
+    }
 }
