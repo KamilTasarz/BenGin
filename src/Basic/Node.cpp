@@ -1090,6 +1090,8 @@ void InstanceManager::updateSelfAndChild(bool controlDirty) {
     }
     float t = glfwGetTime();
     for (int i = 0; i < max_size; i++) {
+        if (particles[head].time < 0.f) break;
+
         if (t - particles[head].time > life_time) {
             removeChild();
         }
