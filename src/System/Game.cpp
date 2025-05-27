@@ -156,8 +156,7 @@ void Game::draw()
 
         if (postProcessData.is_bloom) {
             
-            //glBindFramebuffer(GL_FRAMEBUFFER, bloomFBO);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, bloomFBO);
             glClear(GL_COLOR_BUFFER_BIT);
 
             auto& brightShader = *ResourceManager::Instance().shader_PostProcess_bloom;
@@ -172,11 +171,10 @@ void Game::draw()
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
             ///
-            glEnable(GL_DEPTH_TEST);
-            return;
+            //glEnable(GL_DEPTH_TEST);
+            //return;
             ///
 
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             bool horizontal = true, firstIteration = true;
             int blurPassCount = postProcessData.bloom_blur_passes; // np. 10
@@ -187,6 +185,7 @@ void Game::draw()
 
             for (int i = 0; i < blurPassCount; ++i) {
                 glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+                glClear(GL_COLOR_BUFFER_BIT);
                 blurShader.setInt("horizontal", horizontal ? 1 : 0);
 
                 glActiveTexture(GL_TEXTURE0);
@@ -202,15 +201,12 @@ void Game::draw()
                 horizontal = !horizontal;
                 if (firstIteration) firstIteration = false;
             }
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);  // render to screen
             glDisable(GL_DEPTH_TEST);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glClear(GL_COLOR_BUFFER_BIT);
 
             auto& bloomComposite = *ResourceManager::Instance().shader_PostProcess_bloom_composite;
             bloomComposite.use();
-
             bloomComposite.setInt("sceneTexture", 0);
             bloomComposite.setInt("bloomTexture", 1);
             bloomComposite.setFloat("intensity", postProcessData.bloom_intensity);
@@ -219,7 +215,7 @@ void Game::draw()
             glBindTexture(GL_TEXTURE_2D, colorTexture);
 
             glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, pingpongTexture[!horizontal]);
+            glBindTexture(GL_TEXTURE_2D, pingpongTexture[!horizontal]);  // final blur texture
 
             glBindVertexArray(quadVAO);
             glDrawArrays(GL_TRIANGLES, 0, 6);
