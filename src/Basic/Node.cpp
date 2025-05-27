@@ -205,14 +205,14 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
             dir_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow);
             glClear(GL_DEPTH_BUFFER_BIT);
             root->drawShadows(*ResourceManager::Instance().shader_shadow);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            //glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    //GLenum attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    //glDrawBuffers(2, attachments);
+    GLenum attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers(2, attachments);
 
     glViewport(0, 0, width, height);
     glClearColor(.01f, .01f, .01f, 1.0f);

@@ -1592,6 +1592,14 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
         ImGui::ColorEdit3("CRT Brightness", glm::value_ptr(postProcessData.crt_brightness));
 
+        ImGui::Separator();
+
+        ImGui::Text("SSAO Kernel Samples:");
+        if (ImGui::RadioButton("16", postProcessData.ssao_kernel_samples == 16)) postProcessData.ssao_kernel_samples = 16;
+        if (ImGui::RadioButton("32", postProcessData.ssao_kernel_samples == 32)) postProcessData.ssao_kernel_samples = 32;
+        if (ImGui::RadioButton("64", postProcessData.ssao_kernel_samples == 64)) postProcessData.ssao_kernel_samples = 64;
+        if (ImGui::RadioButton("128", postProcessData.ssao_kernel_samples == 128)) postProcessData.ssao_kernel_samples = 128;
+
     }
 
     ImGui::End();

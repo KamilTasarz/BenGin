@@ -33,10 +33,13 @@ private:
 
 	// SSAO vectors
 	std::vector<glm::vec3> ssao_kernel;
+	// SSAO noise texture
+	GLuint noise_texture;
 
 	SceneGraph* sceneGraph;
 	PostProcessData postProcessData;
-	unsigned int framebuffer, colorTexture, normalTexture, depthRenderbuffer;
+	unsigned int framebuffer, colorTexture, depthTexture, normalTexture, depthRenderbuffer;
+	unsigned int ssaoFBO, ssaoColorBuffer, ssaoBlurFBO, ssaoBlurColorBuffer;
 
 	Animator* animator;
 	Animation* anim;
@@ -49,6 +52,10 @@ public:
 
 	bool play = true;
 	Game(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::shared_ptr<Prefab>>& prefabsref_puzzle);
+
+	std::vector<glm::vec3> updateSSAOKernel(unsigned int samples);
+	void generateNoiseTexture();
+	void debug_print();
 
 	void init();
 	void run();

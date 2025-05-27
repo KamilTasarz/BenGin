@@ -59,7 +59,7 @@ float shininess = 64.f;
 void main() {
 
     vec3 N = normalize(fs_in.Normal);
-    FragNormal = vec4(N * 0.5 + 0.5, 1.0);
+    FragNormal = vec4(N * 0.5 + 0.5, 1.0);  
 
 	if (is_light != 1) {
     

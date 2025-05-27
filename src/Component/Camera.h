@@ -61,8 +61,8 @@ public:
     float Zoom = ZOOM;
 
     float AspectRatio = 16.0f / 9.0f;
-    float NearPlane = 0.1f;
-    float FarPlane = 100.1f;
+    float NearPlane = 23.1f;
+    float FarPlane = 33.1f;
 
 	BoundingBox* AABB = nullptr;
 

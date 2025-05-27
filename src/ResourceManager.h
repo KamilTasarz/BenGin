@@ -52,6 +52,9 @@ private:
         shader_particle = new Shader(vertexPath_particle, fragmentPath_particle);
         
         shader_PostProcess_pass = new Shader(postPath_vert, postPath_pass);
+        shader_PostProcess_ssao = new Shader(postPath_vert, postPath_ssao);
+        shader_PostProcess_ssao_blur = new Shader(postPath_vert, postPath_ssao_blur);
+        shader_PostProcess_bloom = new Shader(postPath_vert, postPath_bloom);
         shader_PostProcess_crt = new Shader(postPath_vert, postPath_crt);
 
     }
@@ -69,6 +72,9 @@ private:
         delete shader_particle;
         
         delete shader_PostProcess_pass;
+        delete shader_PostProcess_ssao;
+        delete shader_PostProcess_ssao_blur;
+        delete shader_PostProcess_bloom;
         delete shader_PostProcess_crt;
 
     }
@@ -91,8 +97,11 @@ private:
     const char* fragmentPath_gas = "res/shaders/gas.frag";
 
     const char* postPath_vert = "res/shaders/pp_vert.vert";
-    const char* postPath_pass = "res/shaders/pp_pass.frag";
-    //const char* postPath_pass = "res/shaders/debug.frag";
+    //const char* postPath_pass = "res/shaders/pp_pass.frag";
+    const char* postPath_pass = "res/shaders/debug.frag";
+    const char* postPath_ssao = "res/shaders/pp_ssao.frag";
+    const char* postPath_ssao_blur = "res/shaders/pp_ssao_blur.frag";
+    const char* postPath_bloom = "res/shaders/pp_bloom.frag";
     const char* postPath_crt = "res/shaders/pp_crt.frag";
 
 public:
@@ -113,6 +122,9 @@ public:
     // Post process shaders
 
     Shader* shader_PostProcess_pass; // pass - just draw framebuffer with no changes
+    Shader* shader_PostProcess_ssao; // ambient occlusion
+    Shader* shader_PostProcess_ssao_blur; // ambient occlusion
+    Shader* shader_PostProcess_bloom; // bloom
     Shader* shader_PostProcess_crt;
 
 	static ResourceManager& Instance() {

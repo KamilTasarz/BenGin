@@ -1064,6 +1064,8 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	j["crt_brightness"] = vec3_to_json(data.crt_brightness);
 
+	j["ssao_kernel_samples"] = data.ssao_kernel_samples;
+
 	std::ofstream file(filename);
 	if (file.is_open()) {
 		file << j.dump(4); // Pretty print with 4 spaces
@@ -1100,6 +1102,8 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 			data.crt_vignette_factor = j.at("crt_vignette_factor");
 
 			data.crt_brightness = json_to_vec3(j.at("crt_brightness"));
+
+			data.ssao_kernel_samples = j.at("ssao_kernel_samples");
 
 		}
 		catch (const std::exception& e) {
