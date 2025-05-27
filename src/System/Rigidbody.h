@@ -33,7 +33,6 @@ public:
 	float length;
 	float width;
 	glm::vec4 side = glm::vec4(1.f, 0.f, 0.f, 0.f);
-	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
 
 	bool isPlayer = false;
 
@@ -46,5 +45,6 @@ public:
 	void onCollision(Node* other) override;
 	void onStayCollision(Node* other) override;
 	void onExitCollision(Node* other) override;
+	bool tryingToMoveAwayFrom(Node* other);
 };
 

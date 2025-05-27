@@ -56,9 +56,8 @@ void BoundingBox::separate(const BoundingBox* other_AABB, float separation_mulit
         collison = 3;
     }
 
-    
-
-    node->transform.setLocalPosition(node->transform.getLocalPosition() + v * separation_mulitplier);
+    glm::vec3 pos = node->transform.getLocalPosition();
+    node->transform.setLocalPosition(pos + v * separation_mulitplier);
     //forceUpdateSelfAndChild();
     
 }
