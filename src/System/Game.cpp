@@ -62,7 +62,7 @@ void Game::draw()
         ResourceManager::Instance().shader_PostProcess_ssao->setMat4("projection", camera->GetProjection());
         ResourceManager::Instance().shader_PostProcess_ssao->setMat4("invProjection", glm::inverse(camera->GetProjection()));
         ResourceManager::Instance().shader_PostProcess_ssao->setVec2("screenSize", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-        ResourceManager::Instance().shader_PostProcess_ssao->setFloat("radius", 2.5f/*postProcessData.ssao_radius*/);
+        ResourceManager::Instance().shader_PostProcess_ssao->setFloat("radius", 5.f/*postProcessData.ssao_radius*/);
 
 
         glActiveTexture(GL_TEXTURE0);
@@ -113,6 +113,7 @@ void Game::draw()
 
         composite.setInt("sceneColor", 0);
         composite.setInt("ssaoMap", 1);
+        composite.setFloat("aoPower", 2.f);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, colorTexture);  // wynik głównego renderingu
