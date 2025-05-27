@@ -43,7 +43,7 @@ void Game::draw()
     sceneGraph->draw(viewWidth, viewHeight, framebuffer);
 
     // SSAO
-    bool is_ssao = false;
+    bool is_ssao = true;
     
     // SSAO pass
     if (is_ssao) {
@@ -90,6 +90,7 @@ void Game::draw()
         auto& blurShader = *ResourceManager::Instance().shader_PostProcess_ssao_blur;
         blurShader.use();
         blurShader.setInt("ssaoInput", 0);
+        blurShader.setVec2("screenSize", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer); // Input: raw SSAO
@@ -106,18 +107,24 @@ void Game::draw()
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        auto& debug = *ResourceManager::Instance().shader_PostProcess_pass;
-        debug.use();
-        debug.setInt("ssaoMap", 0);
+        auto& composite = *ResourceManager::Instance().shader_PostProcess_ssao_composite;
+        
+        composite.use();
+
+        composite.setInt("sceneColor", 0);
+        composite.setInt("ssaoMap", 1);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, ssaoBlurColorBuffer);
+        glBindTexture(GL_TEXTURE_2D, colorTexture);  // wynik głównego renderingu
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, ssaoBlurColorBuffer);  // SSAO po blurze
 
         glBindVertexArray(quadVAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glEnable(GL_DEPTH_TEST);
-        return;  // skip the rest of post‐processing
+        return;
     }
 
     //glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
