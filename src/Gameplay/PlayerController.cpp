@@ -34,6 +34,7 @@ void PlayerController::onStart()
 	rb->isPlayer = true;
 	timerIndicator = owner->getChildById(0);
 	scale_factor = owner->transform.getLocalScale().x;
+	emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -191,22 +192,34 @@ void PlayerController::HandleVirus(float deltaTime)
 bool PlayerController::CheckIfInGas() {
 	bool inGas = false;
 	
-	for (Node* node : owner->scene_graph->root->getAllChildren()) {
-		if (!node->in_frustrum) continue;
-		//Node* node = box->node;
-		if (node->getLayerName() == "Gas") {
-			if (ParticleGasNode* gasNode = dynamic_cast<ParticleGasNode*>(node)) {
-				glm::vec3 gasPos = gasNode->pos;
-				glm::vec3 playerPos = owner->transform.getGlobalPosition();
-				isGravityFlipped ? playerPos.y -= 0.5f : playerPos.y += 0.5f;
+	float minDist = 1000.f, dist = 0.f;
 
-				float distance = glm::distance(playerPos, gasPos);
+	int index = emitter->tail - 1, iterator = 0;
+	glm::vec3 playerPos = owner->transform.getGlobalPosition();
+	isGravityFlipped ? playerPos.y -= 0.5f : playerPos.y += 0.5f;
 
-				if (distance < 0.8f) {
-					inGas = true;
-					break;
-				}
-			}
+	for (int i = 0; i < emitter->size; i++) {
+		dist = glm::distance(glm::vec2(emitter->particles[index].position), glm::vec2(playerPos));
+		if (dist < 0.8f) {
+			
+			inGas = true;
+			break;
+			
+		}
+		index--;
+		if (index < 0) {
+			index += emitter->max_size;
+		}
+		if (dist < minDist) {
+			minDist = dist;
+			iterator = 0;
+		}
+
+		if (iterator > 30) {
+			break;
+		}
+		else {
+			iterator++;
 		}
 	}
 

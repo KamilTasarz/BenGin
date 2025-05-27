@@ -384,14 +384,22 @@ public:
 
 };
 
+struct ParticleGasStruct {
+	glm::vec4 position = glm::vec4(0.f);
+    float time = -1.f;
+};
+
 class InstanceManager : public Node {
 public:
     int size = 0, current_min_id = 0;
-    std::vector<int> free_ids;
+    float life_time = 20.f;
+    //std::vector<int> free_ids;
     int max_size = 1000;
     unsigned int buffer, buffer_offset;
+	ParticleGasStruct particles[1000];
+    int head = 0, tail = 0;
 
-    InstanceManager(std::shared_ptr<Model> model, std::string nameOfNode, int id = 0, int max_size = 1000) : Node(nameOfNode, id), max_size(max_size) {
+    InstanceManager(std::shared_ptr<Model> model, std::string nameOfNode, int id = 0) : Node(nameOfNode, id) {
         pModel = model;
         AABB = nullptr;
         AABB_logic = nullptr;
@@ -406,16 +414,15 @@ public:
 
     void checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms) override;
 
-    void addChild(Node* p) override;
+    void addChild(const ParticleGasStruct& particle);
 
-    Node* find(int id);
+    void updateComponents(float deltaTime) override;
 
-    
-    void removeChild(int id);
+    void removeChild();
 private:
     void prepareBuffer();
 
-    void updateBuffer(Node* p);
+    void updateBuffer(int i);
 };
 
 class Instance : public Node {

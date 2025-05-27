@@ -89,9 +89,9 @@ void Rigidbody::onUpdate(float deltaTime)
 						groundUnderneath = true;
 					}
 				}
-				else if (nodePos.y > position.y) {
+				/*else if (nodePos.y > position.y) {
 					ceilingAbove = true;
-				}
+				}*/
 			}
 		}
 	}
@@ -188,10 +188,7 @@ void Rigidbody::onUpdate(float deltaTime)
 
 // collission with another rigidbody
 void Rigidbody::onCollision(Node* other) {
-	//if (is_static) return;
 
-	//Rigidbody* rb = other->getComponent<Rigidbody>();
-	//if (!rb || rb->is_static) return;
 
 	//// Relative velocity
 	//glm::vec2 relativeVelocity(velocityX - rb->velocityX, velocityY - rb->velocityY);
@@ -223,6 +220,9 @@ void Rigidbody::onCollision(Node* other) {
 
 	//rb->velocityX -= impulse.x * invMassB;
 	//rb->velocityY -= impulse.y * invMassB;
+
+
+
 }
 
 
@@ -238,6 +238,44 @@ void Rigidbody::onStayCollision(Node* other)
 			velocityY = 0.f;
 		}
     }*/
+
+
+	if (is_static || !other->is_physic_active) return;
+
+	
+
+	float sep = 1.f;
+
+	
+
+	Rigidbody* rb = other->getComponent<Rigidbody>();
+	if (rb && !rb->is_static) {
+		sep = 1.f;
+
+	} 
+
+	owner->AABB->separate(other->AABB, sep);
+
+	if (rb && !rb->is_static && owner->AABB->collison == 1) {
+		float mass2 = rb->mass;
+		float velx2 = rb->velocityX;
+		float velx = (velocityX * mass + velx2 * mass2) / (mass + mass2);
+		velocityX = velx;
+		rb->velocityX = velx;
+	}
+	else if (rb && !rb->is_static && owner->AABB->collison == 2) {
+		float mass2 = rb->mass;
+		float vely2 = rb->velocityY;
+		float vely = (velocityY * mass + vely2 * mass2) / (mass + mass2);
+		velocityY = vely;
+		rb->velocityY = vely;
+	}
+
+	if (!(rb && !rb->is_static) && owner->AABB->collison == 1) {
+		velocityX = 0.f;
+	} else if (!(rb && !rb->is_static) && owner->AABB->collison == 2) {
+		velocityY = 0.f;
+	}
 }
 
 void Rigidbody::onExitCollision(Node* other)

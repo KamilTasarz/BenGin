@@ -84,10 +84,6 @@ void PhysicsSystem::updateCollisions()
 					else {
 						comp->onStayCollisionLogic(collider2->node);
 					}
-					
-					if (comp->name._Equal("Rigidbody")) {
-						first = !dynamic_cast<Rigidbody*>(comp.get())->is_static && !collider1->is_logic;
-					}
 				}
 				for (auto& comp : collider2->node->components) {
 					if (!collider2->is_logic)
@@ -97,20 +93,10 @@ void PhysicsSystem::updateCollisions()
 					else {
 						comp->onStayCollisionLogic(collider1->node);
 					}
-					
-					if (comp->name._Equal("Rigidbody")) {
-						second = !dynamic_cast<Rigidbody*>(comp.get())->is_static && !collider2->is_logic;
-					}
 				}
 
-				if (first && !collider2->is_logic) {
-					float sep = 1.f;
-					if (second) {
-						sep = 0.5f;
-						collider2->separate(collider1, sep);
-					}
-					collider1->separate(collider2, sep);
-				}
+
+
 				/*else if (second) {
 
 					float sep = 1.f;

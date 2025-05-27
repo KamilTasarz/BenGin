@@ -1066,13 +1066,15 @@ InstanceManager::~InstanceManager()
     for (Node* child : children) {
         delete child;
     }
+
+    
 }
 
 void InstanceManager::drawSelfAndChild() {
     if (in_frustrum && !scene_graph->is_editing) {
         glStencilMask(0xFF);
         ResourceManager::Instance().shader_instanced->use();
-        pModel->DrawInstanced(*ResourceManager::Instance().shader_instanced, size);
+        pModel->DrawInstanced(*ResourceManager::Instance().shader_instanced, max_size);
         glStencilMask(0x00);
     }
 }
@@ -1086,6 +1088,16 @@ void InstanceManager::updateSelfAndChild(bool controlDirty) {
             forceUpdateSelfAndChild();
         }
     }
+    float t = glfwGetTime();
+    for (int i = 0; i < max_size; i++) {
+        if (t - particles[head].time > life_time) {
+            removeChild();
+        }
+        else {
+            break;
+        }
+    }
+
     /*
     for (auto&& child : children)
     {
@@ -1136,59 +1148,56 @@ void InstanceManager::checkIfInFrustrum(std::unordered_set<BoundingBox*>& collid
     }
 }
 
-void InstanceManager::addChild(Node* p) {
-    //p->name = scene_graph->generateUniqueName(p->name);
 
-
-    children.insert(p);
-    p->parent = this; // Set this as the created child's parent
-    size++;
-    if (free_ids.empty()) {
-        p->id = current_min_id;
-        current_min_id++;
+void InstanceManager::addChild(const ParticleGasStruct& particle)
+{
+    if (size < max_size) {
+        particles[tail] = particle;
+        updateBuffer(tail);
+        tail++;
+        tail %= max_size;
+        size++;
+        
     }
-    else {
-        p->id = free_ids.back();
-        free_ids.pop_back();
-    }
-    
-    updateBuffer(p);
-    increaseCount();
 }
 
-Node* InstanceManager::find(int id) {
-    for (auto&& child : children) {
-        if (child->id == id) {
-            return child;
-        }
+void InstanceManager::updateComponents(float deltaTime)
+{
+    for (auto& component : components) {
+        component->onUpdate(deltaTime);
     }
-    return nullptr;
 }
 
+void InstanceManager::removeChild() {
 
-void InstanceManager::removeChild(int id) {
-
-    Node* temp = find(id);
     
+    float p = -1.f;
     glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
-    glBufferSubData(GL_ARRAY_BUFFER, id * sizeof(float), sizeof(float), nullptr);
+    glBufferSubData(GL_ARRAY_BUFFER, head * sizeof(float), sizeof(float), &p);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferSubData(GL_ARRAY_BUFFER, id * sizeof(glm::vec4), sizeof(glm::vec4), nullptr);
+    glBufferSubData(GL_ARRAY_BUFFER, head * sizeof(glm::vec4), sizeof(glm::vec4), nullptr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    free_ids.push_back(id);
+    head++;
 
-    children.erase(temp);
-    delete temp;
+    head %= max_size;
     
     size--;
 }
 void InstanceManager::prepareBuffer()
 {
+
+    std::vector<float> times;
+    times.reserve(1000);
+
+    for (int i = 0; i < 1000; i++) {
+        times.push_back(particles[i].time);
+    }
+
     glGenBuffers(1, &buffer_offset);
     glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
-    glBufferData(GL_ARRAY_BUFFER, max_size * sizeof(float), nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, times.size() * sizeof(float), times.data() , GL_STATIC_DRAW);
     //glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
     for (unsigned int i = 0; i < pModel->meshes.size(); i++)
@@ -1243,15 +1252,15 @@ void InstanceManager::prepareBuffer()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void InstanceManager::updateBuffer(Node* n) {
+void InstanceManager::updateBuffer(int i) {
 
-    ParticleGasNode* p = dynamic_cast<ParticleGasNode*>(n);
+    
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
-    glBufferSubData(GL_ARRAY_BUFFER, p->id * sizeof(float), sizeof(float), &p->time_offset);
+    glBufferSubData(GL_ARRAY_BUFFER, i * sizeof(float), sizeof(float), &particles[i].time);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferSubData(GL_ARRAY_BUFFER, p->id * sizeof(glm::vec4), sizeof(glm::vec4), &p->pos);
+    glBufferSubData(GL_ARRAY_BUFFER, i * sizeof(glm::vec4), sizeof(glm::vec4), &particles[i].position);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

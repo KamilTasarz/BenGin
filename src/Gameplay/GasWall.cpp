@@ -14,6 +14,7 @@ REGISTER_SCRIPT(GasWall);
 
 void GasWall::onAttach(Node* owner) {
     this->owner = owner;
+    gasCreator = dynamic_cast<InstanceManager*>(owner);
 }
 
 void GasWall::onDetach() {
@@ -108,18 +109,26 @@ void GasWall::spreadCloud() {
             gas->time_offset = 2.5f;*/
             glm::vec4 pos = glm::vec4(newPos.x, newPos.y, 0.f, 1.f); //- glm::vec4(owner->transform.getLocalPosition(), 1.f);
             
-            std::random_device rd;
-            std::mt19937 gen(rd()); // silnik
-            std::uniform_real_distribution<float> dist(0.0f, 3.1415f);
+            //std::random_device rd;
+            //std::mt19937 gen(rd()); // silnik
+            //std::uniform_real_distribution<float> dist(0.0f, 3.1415f);
 
-            float randomValue = dist(gen);
+            //float randomValue = dist(gen);
+            //
+            //ParticleGasNode* gas = new ParticleGasNode(pos, randomValue);
+
+            if (gasCreator) {
+               /* std::shared_ptr<Layer> layer = TagLayerManager::Instance().getLayer("Gas");
+                gas->setLayer(layer);*/
+                ParticleGasStruct p = {pos, glfwGetTime()};
+
+                gasCreator->addChild(p);
+            }
+
+
+
             
-            ParticleGasNode* gas = new ParticleGasNode(pos, randomValue);
 
-            std::shared_ptr<Layer> layer = TagLayerManager::Instance().getLayer("Gas");
-            gas->setLayer(layer);
-
-            owner->scene_graph->addChild(gas, owner);
         }
     }
 }

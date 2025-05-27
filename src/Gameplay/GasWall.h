@@ -4,6 +4,8 @@
 #include <unordered_set>
 #include <queue>
 
+class InstanceManager;
+
 class GasWall : public Script {
 public:
     using SelfType = GasWall;
@@ -23,6 +25,8 @@ public:
     std::unordered_set<std::string> freeButUnused;
 
     int counter = 0;
+
+    InstanceManager* gasCreator;
 
     GasWall() = default;
     ~GasWall() = default;

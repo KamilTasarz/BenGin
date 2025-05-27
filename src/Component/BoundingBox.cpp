@@ -43,17 +43,17 @@ void BoundingBox::separate(const BoundingBox* other_AABB, float separation_mulit
     if (std::abs(v.x) <= std::abs(v.y) && std::abs(v.x) <= std::abs(v.z)) {
         v.y = 0.f;
         v.z = 0.f;
-        collison = v.x > 0.f ? 1 : -1;
+        collison = 1;
     }
     else if (std::abs(v.y) <= std::abs(v.x) && std::abs(v.y) <= std::abs(v.z)) {
         v.x = 0.f;
         v.z = 0.f;
-        collison = v.y > 0.f ? 2 : -2;
+        collison = 2;
     }
     else {
         v.x = 0.f;
         v.y = 0.f;
-        collison = v.z > 0.f ? 3 : -3;
+        collison = 3;
     }
 
     

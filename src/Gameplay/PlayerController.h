@@ -3,6 +3,8 @@
 #include "Script.h"
 #include "../System/Rigidbody.h"
 
+class InstanceManager;
+
 class PlayerController : public Script
 {
 public:
@@ -29,6 +31,7 @@ public:
     float gasTimer;
     float gasCheckTimer;
     Node* timerIndicator;
+    InstanceManager* emitter;
     bool face_right = true;
     float scale_factor = 1.f;
 	bool pressedRight = false;
