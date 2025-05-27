@@ -1,6 +1,6 @@
 #include "Door.h"
-#include "../Basic/Node.h"
-#include "RegisterScript.h"
+#include "../../Basic/Node.h"
+#include "../RegisterScript.h"
 
 REGISTER_SCRIPT(Door);
 

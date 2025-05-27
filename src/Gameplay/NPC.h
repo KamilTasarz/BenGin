@@ -84,6 +84,8 @@ private:
     float currentSpeed = 0.f;
     glm::vec2 smoothedMovementInput{ 0.f, 0.f };
 
+    float updateTimer = 0.2f;
+
     void detectObstacles();
     void detectPlayer();
     void avoidObstacles();

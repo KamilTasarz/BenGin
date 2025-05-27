@@ -1,9 +1,9 @@
 #include "Scale.h"
-#include "../Basic/Node.h"
-#include "RegisterScript.h"
-#include "GameMath.h"
-#include "PlayerController.h"
-#include "../System/PhysicsSystem.h"
+#include "../../Basic/Node.h"
+#include "../RegisterScript.h"
+#include "../GameMath.h"
+#include "../PlayerController.h"
+#include "../../System/PhysicsSystem.h"
 
 REGISTER_SCRIPT(Scale);
 

@@ -25,10 +25,6 @@ void PlayerSpawner::onStart()
 
 void PlayerSpawner::onUpdate(float deltaTime)
 {
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_P) == GLFW_PRESS) {
-
-		spawnPlayer();
-	}
 }
 
 void PlayerSpawner::onEnd()

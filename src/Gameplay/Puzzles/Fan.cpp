@@ -1,8 +1,8 @@
 #include "Fan.h"
-#include "../Basic/Node.h"
-#include "RegisterScript.h"
-#include "../System/Rigidbody.h"
-#include "PlayerController.h"
+#include "../../Basic/Node.h"
+#include "../RegisterScript.h"
+#include "../../System/Rigidbody.h"
+#include "../PlayerController.h"
 
 REGISTER_SCRIPT(Fan);
 

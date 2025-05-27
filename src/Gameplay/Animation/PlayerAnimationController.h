@@ -1,12 +1,11 @@
 #pragma once
 
-#include "Script.h"
-#include "../System/Rigidbody.h"
-#include "PlayerController.h"
+#include "../Script.h"
+#include "../../System/Rigidbody.h"
+#include "../PlayerController.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-//#include <glm/gtx/quaternion.hpp>
 
 class IPlayerAnimState;
 class Animation;
@@ -54,5 +53,7 @@ public:
 	void onUpdate(float deltaTime) override;
 	void onEnd() override;
 	void changeState(IPlayerAnimState* newState);
+	void StartRotation(bool& conditionFlag, bool desiredState, float angleDegrees, const glm::vec3& axis);
+	void UpdateRotation(float deltaTime);
 };
 

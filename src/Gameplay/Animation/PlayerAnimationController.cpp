@@ -1,22 +1,16 @@
 #include "PlayerAnimationController.h"
-#include "../Basic/Node.h"
-#include "../Basic/Animator.h"
-#include "../Basic/Model.h"      // Potrzebne dla owner->pModel
-#include "RegisterScript.h"
+#include "../../Basic/Node.h"
+#include "../../Basic/Animator.h"
+#include "../../Basic/Model.h"
+#include "../RegisterScript.h"
+#include "IPlayerAnimState.h"
 
-// Spróbuj uporz¹dkowaæ tak, aby najpierw by³y te, które s¹ "najmniej zale¿ne"
-// lub te, które s¹ potrzebne jako pierwsze. To jednak nie gwarantuje sukcesu.
-#include "IPlayerAnimState.h" // Zawsze jako pierwszy z interfejsów/stanów
-
-// Stany, które nie tworz¹ tak wielu innych stanów lub s¹ koñcowe/pocz¹tkowe
-#include "FallState.h"   // Tworzy LandState
-#include "JumpState.h"    // Tworzy InAirState
-#include "RiseState.h"    // Tworzy InAirState
-
-// Stany bardziej "centralne" lub z wiêksz¹ liczb¹ przejœæ
-#include "LandState.h"    // Tworzy Idle, Run, Jump
-#include "IdleState.h"    // Tworzy Run, Jump, InAir
-#include "RunState.h"     // Tworzy Jump, Idle
+#include "FallState.h"
+#include "JumpState.h"
+#include "RiseState.h"
+#include "LandState.h"
+#include "IdleState.h"
+#include "RunState.h"
 
 
 REGISTER_SCRIPT(PlayerAnimationController);
@@ -68,7 +62,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	deltaX = owner->transform.getLocalPosition().x - previousPosition.x;
 	deltaY = owner->transform.getLocalPosition().y - previousPosition.y;
 	
-	if (abs(deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
+	/*if (abs(deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
 		isStanding = true;
 	}
 	else if (abs(rb->velocityX) > 0.2f && abs(rb->velocityDeltaX) >= 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
@@ -87,51 +81,26 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 	else {
 		isFalling = false;
-	}
+	}*/
 
 	if (currentState)
 		currentState->update(owner, deltaTime);
 
-	glm::vec3 rotationAxis(0.f, 1.f, 0.f);
-
-	if (!isTurning) {
-		if (facingRight && deltaX < -(4.f * deltaTime)) {
-			facingRight = false;
-			isTurning = true;
-			targetRotation = glm::angleAxis(glm::radians(180.f), rotationAxis) * owner->transform.getLocalRotation();
-		}
-		else if (!facingRight && deltaX > (4.f * deltaTime)) {
-			facingRight = true;
-			isTurning = true;
-			targetRotation = glm::angleAxis(glm::radians(-180.f), rotationAxis) * owner->transform.getLocalRotation();
-		}
+	if (player->pressedLeft && facingRight) {
+		StartRotation(facingRight, false, 180.f, glm::vec3(0.f, 1.f, 0.f));
+	}
+	else if (player->pressedRight && !facingRight) {
+		StartRotation(facingRight, true, -180.f, glm::vec3(0.f, 1.f, 0.f));
 	}
 
-	if (isTurning) {
-		glm::quat currentRotation = owner->transform.getLocalRotation();
-		glm::quat newRotation = glm::slerp(currentRotation, targetRotation, turnSpeed * deltaTime);
-
-		owner->transform.setLocalRotation(newRotation);
-
-		float dot = glm::dot(glm::normalize(newRotation), glm::normalize(targetRotation));
-		if (abs(dot) > 0.999f) {
-			owner->transform.setLocalRotation(targetRotation);
-			isTurning = false;
-		}
+	bool desiredGravityState = owner->getComponent<PlayerController>()->isGravityFlipped;
+	if (gravityFlipped != desiredGravityState) {
+		StartRotation(gravityFlipped, desiredGravityState, 180.f, glm::vec3(1.f, 0.f, 0.f));
 	}
 
-	if (owner->getComponent<PlayerController>()->isGravityFlipped && !gravityFlipped) {
-		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
-		owner->transform.setLocalScale(newScale);
-		gravityFlipped = true;
-	}
-	else if (!owner->getComponent<PlayerController>()->isGravityFlipped && gravityFlipped) {
-		glm::vec3 newScale = owner->transform.getLocalScale() * glm::vec3(1.f, -1.f, 1.f);
-		owner->transform.setLocalScale(newScale);
-		gravityFlipped = false;
-	}
+	UpdateRotation(deltaTime);
 
-	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_Z) == GLFW_PRESS)) {
+	/*if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_Z) == GLFW_PRESS)) {
 		owner->animator->blendAnimation(idle, 100.f, true, true);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_X) == GLFW_PRESS)) {
@@ -154,7 +123,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_H) == GLFW_PRESS) {
 		owner->animator->blendAnimation(run, 100.f, true, true);
-	}
+	}*/
 
 	if (rb->targetVelocityX > 0.f) {
 		std::cout << "gracz siê porusza" << std::endl;
@@ -177,5 +146,30 @@ void PlayerAnimationController::changeState(IPlayerAnimState* newState) {
 
 	if (currentState)
 		currentState->enter(owner);
+}
+
+void PlayerAnimationController::StartRotation(bool& conditionFlag, bool desiredState, float angleDegrees, const glm::vec3& axis)
+{
+	if (!isTurning && conditionFlag != desiredState) {
+		conditionFlag = desiredState;
+		isTurning = true;
+		targetRotation = glm::angleAxis(glm::radians(angleDegrees), axis) * owner->transform.getLocalRotation();
+	}
+}
+
+void PlayerAnimationController::UpdateRotation(float deltaTime)
+{
+	if (!isTurning)
+		return;
+
+	glm::quat currentRotation = owner->transform.getLocalRotation();
+	glm::quat newRotation = glm::slerp(currentRotation, targetRotation, turnSpeed * deltaTime);
+	owner->transform.setLocalRotation(newRotation);
+
+	float dot = glm::dot(glm::normalize(newRotation), glm::normalize(targetRotation));
+	if (abs(dot) > 0.999f) {
+		owner->transform.setLocalRotation(targetRotation);
+		isTurning = false;
+	}
 }
 

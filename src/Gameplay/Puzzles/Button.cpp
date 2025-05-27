@@ -1,6 +1,6 @@
 #include "Button.h"
-#include "../Basic/Node.h"
-#include "RegisterScript.h"
+#include "../../Basic/Node.h"
+#include "../RegisterScript.h"
 #include "Door.h"
 #include "Fan.h"
 

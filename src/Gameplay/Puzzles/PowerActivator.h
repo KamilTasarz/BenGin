@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script.h"
+#include "../Script.h"
 
 class PowerActivator : public Script
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Script.h"
-#include "../System/Rigidbody.h"
+#include "../Script.h"
+#include "../../System/Rigidbody.h"
 
 class Scale : public Script
 {

@@ -36,6 +36,9 @@ void Rigidbody::onStart()
 	targetVelocityY = 0.f;
 
 	startPos = owner->transform.getLocalPosition();
+
+	length = (owner->AABB->max_point_world.y - owner->AABB->min_point_world.y) / 2.f;
+	width = (owner->AABB->max_point_world.x - owner->AABB->min_point_world.x) / 2.f;
 }
 
 void Rigidbody::onUpdate(float deltaTime)
@@ -48,66 +51,68 @@ void Rigidbody::onUpdate(float deltaTime)
 	float lastVelocityY = velocityY;
 
 	// ground detection
-	bool isGravityFlipped = false;
-	//glm::vec3 position = owner->transform.getGlobalPosition();
 	glm::vec3 position = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
-	glm::vec4 down = glm::vec4(0.f, -1.f, 0.f, 0.f);
-	glm::vec4 up = glm::vec4(0.f, 1.f, 0.f, 0.f);
-	//float length = owner->transform.getLocalScale().y / 2.f + 0.03f;
-	float length = (owner->AABB->max_point_world.y - owner->AABB->min_point_world.y) / 2.f + 0.03f;
-	float width = (owner->AABB->max_point_world.x - owner->AABB->min_point_world.x) / 2.f - 0.15f;
-	std::vector<Node*> nodes;
-
-	if (owner->getTagName() == "Player") {
-		PlayerController* player = owner->getComponent<PlayerController>();
-		if (player->isGravityFlipped) {
-			std::swap(down, up);
-			isGravityFlipped = true;
-		}
-	}
-
-	std::vector<Ray> groundRays = {
-		Ray{position + glm::vec3(-width, 0.f, 0.f), down},
-		Ray{position, down},
-		Ray{position + glm::vec3(width, 0.f, 0.f), down}
-	};
-	std::vector<Ray> ceilingRays = {
-		Ray{position + glm::vec3(-width, 0.f, 0.f), up},
-		Ray{position, up},
-		Ray{position + glm::vec3(width, 0.f, 0.f), up}
-	};
 
 	groundUnderneath = false;
 	scaleUnderneath = false;
 	ceilingAbove = false;
+	isPushing = false;
+
+	std::vector<Node*> nodes;
+
+	std::vector<Ray> Rays = {
+		Ray{position + glm::vec3(-width + 0.15f, -length - 0.15f, 0.f), up},
+		Ray{position + glm::vec3(0.f, -length - 0.1f, 0.f), up},
+		Ray{position + glm::vec3(width - 0.15f, -length - 0.15f, 0.f), up}
+	};
+	//std::vector<Ray> ceilingRays = {
+	//	Ray{position + glm::vec3(-width, 0.f, 0.f), up},
+	//	Ray{position + glm::vec3(width, 0.f, 0.f), up}
+	//};
 
 	nodes.clear();
-	if (PhysicsSystem::instance().rayCast(groundRays, nodes, length, owner)) {
+	if (PhysicsSystem::instance().rayCast(Rays, nodes, (length + 0.1f) * 2.f, owner)) {
 		if (nodes.size() > 0) {
 			for (Node* node : nodes) {
-				if (node->getLayerName() == "Scale") {
-					if (node->getComponent<Rigidbody>()->groundUnderneath) {
-						groundUnderneath = true;
+				//if (owner->getComponent<PlayerController>()) std::cout << "Gracz dotyka: " << node->getName() << ", warstwa: " << node->getLayerName() << std::endl;
+
+				glm::vec3 nodePos = node->transform.getGlobalPosition();
+
+				if (nodePos.y < position.y) {
+					if (node->getLayerName() == "Scale") {
+						if (node->getComponent<Rigidbody>()->groundUnderneath)
+							groundUnderneath = true;
+						else
+							scaleUnderneath = true;
 					}
 					else {
-						scaleUnderneath = true;
+						groundUnderneath = true;
 					}
 				}
-				if (node->getLayerName() != "Scale") {
-					groundUnderneath = true;
+				else if (nodePos.y > position.y) {
+					ceilingAbove = true;
 				}
 			}
 		}
 	}
 
-	nodes.clear();
-	if (PhysicsSystem::instance().rayCast(ceilingRays, nodes, length, owner)) {
-		if (nodes.size() > 0) {
-			ceilingAbove = true;
-		}
+	if (isGravityFlipped) {
+		std::swap(groundUnderneath, ceilingAbove);
 	}
 
-	if (startPos == glm::vec3(0.f)) startPos = owner->transform.getLocalPosition();
+ 	if (isPlayer) {
+		std::cout << "kierunek: " << side.x << ", " << side.y << ", " << side.z << ", " << side.w << std::endl;
+
+		Ray ray = Ray{ position, side };
+
+		nodes.clear();
+		if (PhysicsSystem::instance().rayCast(ray, nodes, width + 0.2f, owner)) {
+			if (nodes.size() > 0) {
+				isPushing = true;
+				std::cout << "Gracz pcha obiekt: " << nodes[0]->getName() << std::endl;
+			}
+		}
+	}
 
 	// horizontal movement
 	velocityX = glm::mix(velocityX, targetVelocityX, smoothingFactor * deltaTime);

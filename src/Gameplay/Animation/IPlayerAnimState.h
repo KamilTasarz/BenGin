@@ -1,7 +1,7 @@
 #pragma once
 
 //#include "Script.h"
-#include "../Basic/Node.h"
+#include "../../Basic/Node.h"
 
 class IPlayerAnimState {
 public:
