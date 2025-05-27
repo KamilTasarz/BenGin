@@ -7,7 +7,7 @@
 
 struct PostProcessData {
 
-    bool is_post_process; // Jesli nie to rysuj zwyczajnie quada z tekstura
+    bool is_post_process; // Jesli nie to rysuj po prostu teksture zapisan¹ normalnie do framebuffera
 
     bool is_ssao;
 
@@ -39,6 +39,14 @@ struct PostProcessData {
     //////////////////////////////
 
     unsigned int ssao_kernel_samples; // How many samples to generate the SSAO kernel
+
+    //////////////////////////////
+
+    float bloom_treshold;
+
+    float bloom_intensity;
+
+    int bloom_blur_passes;
 
 };
 

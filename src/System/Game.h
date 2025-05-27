@@ -36,6 +36,12 @@ private:
 	// SSAO noise texture
 	GLuint noise_texture;
 
+	// Bloom
+	GLuint bloomFBO;
+	GLuint brightTexture;
+	GLuint pingpongFBO[2];
+	GLuint pingpongTexture[2];
+
 	SceneGraph* sceneGraph;
 	PostProcessData postProcessData;
 	unsigned int framebuffer, colorTexture, depthTexture, normalTexture, depthRenderbuffer;

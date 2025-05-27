@@ -43,7 +43,7 @@ void Game::draw()
     sceneGraph->draw(viewWidth, viewHeight, framebuffer);
 
     // SSAO
-    bool is_ssao = true;
+    bool is_ssao = false;
     
     // SSAO pass
     if (is_ssao) {
@@ -156,10 +156,79 @@ void Game::draw()
 
         if (postProcessData.is_bloom) {
             
+            //glBindFramebuffer(GL_FRAMEBUFFER, bloomFBO);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glClear(GL_COLOR_BUFFER_BIT);
 
+            auto& brightShader = *ResourceManager::Instance().shader_PostProcess_bloom;
+            brightShader.use();
+            brightShader.setInt("sceneTexture", 0);
+            brightShader.setFloat("bloom_threshold", postProcessData.bloom_treshold);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, colorTexture);
+
+            glBindVertexArray(quadVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            ///
+            glEnable(GL_DEPTH_TEST);
+            return;
+            ///
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            bool horizontal = true, firstIteration = true;
+            int blurPassCount = postProcessData.bloom_blur_passes; // np. 10
+
+            auto& blurShader = *ResourceManager::Instance().shader_PostProcess_gaussian_blur;
+            blurShader.use();
+            blurShader.setVec2("screenSize", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+
+            for (int i = 0; i < blurPassCount; ++i) {
+                glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+                blurShader.setInt("horizontal", horizontal ? 1 : 0);
+
+                glActiveTexture(GL_TEXTURE0);
+                if (firstIteration)
+                    glBindTexture(GL_TEXTURE_2D, brightTexture);
+                else
+                    glBindTexture(GL_TEXTURE_2D, pingpongTexture[!horizontal]);
+                blurShader.setInt("image", 0);
+
+                glBindVertexArray(quadVAO);
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+
+                horizontal = !horizontal;
+                if (firstIteration) firstIteration = false;
+            }
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            glDisable(GL_DEPTH_TEST);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            auto& bloomComposite = *ResourceManager::Instance().shader_PostProcess_bloom_composite;
+            bloomComposite.use();
+
+            bloomComposite.setInt("sceneTexture", 0);
+            bloomComposite.setInt("bloomTexture", 1);
+            bloomComposite.setFloat("intensity", postProcessData.bloom_intensity);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, colorTexture);
+
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, pingpongTexture[!horizontal]);
+
+            glBindVertexArray(quadVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            glEnable(GL_DEPTH_TEST);
+
+            return;
 
         }
-
         if (postProcessData.is_crt_curved) {
 
             ResourceManager::Instance().shader_PostProcess_crt->use();
@@ -191,11 +260,11 @@ void Game::draw()
         //ResourceManager::Instance().shader_PostProcess_pass->setInt("screenTexture", 0);
         //glActiveTexture(GL_TEXTURE0);
         //glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
-        ResourceManager::Instance().shader_PostProcess_pass->setInt("ssaoMap", 0);
+        ResourceManager::Instance().shader_PostProcess_pass->setInt("screenTexture", 0);
         //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, depthTexture);
+        glBindTexture(GL_TEXTURE_2D, colorTexture);
 
         glBindVertexArray(quadVAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -374,6 +443,47 @@ void Game::init()
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+    // ======== BLOOM SETUP ========
+
+// 1) Framebuffer do ekstrakcji jasnych obszarów
+    glGenFramebuffers(1, &bloomFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, bloomFBO);
+
+    // Tekstura bright-pass (RGB16F dla szerokiego zakresu)
+    glGenTextures(1, &brightTexture);
+    glBindTexture(GL_TEXTURE_2D, brightTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, fbWidth, fbHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brightTexture, 0);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cerr << "Bloom FBO not complete!" << std::endl;
+
+    // 2) Ping-pong FBO do Gaussian blur
+    glGenFramebuffers(2, pingpongFBO);
+    glGenTextures(2, pingpongTexture);
+    for (unsigned int i = 0; i < 2; ++i) {
+        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
+        glBindTexture(GL_TEXTURE_2D, pingpongTexture[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, fbWidth, fbHeight, 0, GL_RGB, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongTexture[i], 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            std::cerr << "Pingpong FBO " << i << " not complete!" << std::endl;
+    }
+
+    // Przywróć domyślny FBO
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // ======== END BLOOM SETUP ========
 
     sceneGraph->root->createComponents();
 

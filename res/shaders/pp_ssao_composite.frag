@@ -3,7 +3,7 @@ out vec4 FragColor;
 
 in vec2 vectorUV;
 
-uniform sampler2D sceneColor;  // kolor z g³ównego renderingu
+uniform sampler2D sceneColor;  // kolor z 
 uniform sampler2D ssaoMap;     // rozmyta mapa SSAO
 uniform float aoPower;     // power
 
