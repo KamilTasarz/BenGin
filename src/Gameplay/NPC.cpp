@@ -38,14 +38,6 @@ void NPC::onStart() {
 }
 
 void NPC::onUpdate(float deltaTime) {
-	if (updateTimer > 0.f) {
-		updateTimer -= deltaTime;
-		return;
-	}
-    else {
-        updateTimer = 0.25f;
-    }
-    
     danger.fill(0.f);
     interest.fill(0.f);
 
@@ -89,10 +81,9 @@ void NPC::detectObstacles() {
 }
 
 void NPC::detectPlayer() {
-    // Zak³adamy, ¿e gracz ma tag "Player"
     for (BoundingBox* box : PhysicsSystem::instance().getColliders()) {
         if (box->node && box->node->getTagName() == "Player") {
-			glm::vec3 playerPos = box->node->transform.getGlobalPosition();
+            glm::vec3 playerPos = (box->node->AABB->max_point_world + box->node->AABB->min_point_world) / 2.f;
 			glm::vec3 ownerPos = owner->transform.getGlobalPosition();
             
 			float distance = glm::distance(ownerPos, playerPos);

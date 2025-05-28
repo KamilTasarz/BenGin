@@ -58,12 +58,15 @@ void Rigidbody::onUpdate(float deltaTime)
 	ceilingAbove = false;
 	isPushing = false;
 
+	glm::vec4 down = glm::vec4(0.f, -1.f, 0.f, 0.f);
+	if(isGravityFlipped) down *= -1;
+
 	std::vector<Node*> nodes;
 
 	std::vector<Ray> Rays = {
-		Ray{position + glm::vec3(-width + 0.15f, -length - 0.15f, 0.f), up},
-		Ray{position + glm::vec3(0.f, -length - 0.1f, 0.f), up},
-		Ray{position + glm::vec3(width - 0.15f, -length - 0.15f, 0.f), up}
+		Ray{position + glm::vec3(-width + 0.05f, 0.f, 0.f), down},
+		Ray{position, down},
+		Ray{position + glm::vec3(width - 0.05f, 0.f, 0.f), down}
 	};
 	//std::vector<Ray> ceilingRays = {
 	//	Ray{position + glm::vec3(-width, 0.f, 0.f), up},
@@ -71,37 +74,40 @@ void Rigidbody::onUpdate(float deltaTime)
 	//};
 
 	nodes.clear();
-	if (PhysicsSystem::instance().rayCast(Rays, nodes, (length + 0.1f) * 2.f, owner)) {
+	if (PhysicsSystem::instance().rayCast(Rays, nodes, length + 0.2f, owner)) {
 		if (nodes.size() > 0) {
-			for (Node* node : nodes) {
-				//if (owner->getComponent<PlayerController>()) std::cout << "Gracz dotyka: " << node->getName() << ", warstwa: " << node->getLayerName() << std::endl;
 
-				glm::vec3 nodePos = node->transform.getGlobalPosition();
+			groundUnderneath = true;
 
-				if (nodePos.y < position.y) {
-					if (node->getLayerName() == "Scale") {
-						if (node->getComponent<Rigidbody>()->groundUnderneath)
-							groundUnderneath = true;
-						else
-							scaleUnderneath = true;
-					}
-					else {
-						groundUnderneath = true;
-					}
-				}
-				/*else if (nodePos.y > position.y) {
-					ceilingAbove = true;
-				}*/
-			}
+			//for (Node* node : nodes) {
+			//	//if (owner->getComponent<PlayerController>()) std::cout << "Gracz dotyka: " << node->getName() << ", warstwa: " << node->getLayerName() << std::endl;
+
+			//	glm::vec3 nodePos = node->transform.getGlobalPosition();
+
+			//	if (nodePos.y < position.y) {
+			//		if (node->getLayerName() == "Scale") {
+			//			if (node->getComponent<Rigidbody>()->groundUnderneath)
+			//				groundUnderneath = true;
+			//			else
+			//				scaleUnderneath = true;
+			//		}
+			//		else {
+			//			groundUnderneath = true;
+			//		}
+			//	}
+			//	/*else if (nodePos.y > position.y) {
+			//		ceilingAbove = true;
+			//	}*/
+			//}
 		}
 	}
 
-	if (isGravityFlipped) {
+	/*if (isGravityFlipped) {
 		std::swap(groundUnderneath, ceilingAbove);
-	}
+	}*/
 
  	if (isPlayer) {
-		std::cout << "kierunek: " << side.x << ", " << side.y << ", " << side.z << ", " << side.w << std::endl;
+		//std::cout << "kierunek: " << side.x << ", " << side.y << ", " << side.z << ", " << side.w << std::endl;
 
 		Ray ray = Ray{ position, side };
 
@@ -109,7 +115,7 @@ void Rigidbody::onUpdate(float deltaTime)
 		if (PhysicsSystem::instance().rayCast(ray, nodes, width + 0.2f, owner)) {
 			if (nodes.size() > 0) {
 				isPushing = true;
-				std::cout << "Gracz pcha obiekt: " << nodes[0]->getName() << std::endl;
+				//std::cout << "Gracz pcha obiekt: " << nodes[0]->getName() << std::endl;
 			}
 		}
 	}
@@ -124,7 +130,7 @@ void Rigidbody::onUpdate(float deltaTime)
 		velocityY += gravity * deltaTime;
 		velocityY *= (1.0f - drag * deltaTime);
 	}
-	else if (scaleUnderneath && !groundUnderneath && velocityY < 0.f) {
+	/*else if (scaleUnderneath && !groundUnderneath && velocityY < 0.f) {
 		velocityY = -0.5f;
 		
 		PlayerController* player = owner->getComponent<PlayerController>();
@@ -145,7 +151,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	}
 	else if (velocityY > 0.f && ceilingAbove && !isGravityFlipped) {
 		velocityY = 0.f;
-	}
+	}*/
 	else if (useGravity) {
 		velocityY += gravity * deltaTime;
 		velocityY *= (1.0f - drag * deltaTime);
@@ -228,31 +234,18 @@ void Rigidbody::onCollision(Node* other) {
 
 void Rigidbody::onStayCollision(Node* other)
 {
-	/*if (other->getTagName() == "Player") {
-		if (other->getComponent<PlayerController>()->isGrounded) {
-			velocityY = 0.f;
-		}
-	}
-	else if (other->getLayerName() == "Floor" || other->getLayerName() == "Platform") {
-		if (!overrideVelocityY) {
-			velocityY = 0.f;
-		}
-    }*/
-
-
 	if (is_static || !other->is_physic_active) return;
-
-	
 
 	float sep = 1.f;
 
-	
-
 	Rigidbody* rb = other->getComponent<Rigidbody>();
 	if (rb && !rb->is_static) {
-		sep = 1.f;
+		sep = .5f;
 
-	} 
+		/*if (tryingToMoveAwayFrom(other)) {
+			sep = 1.f;
+		}*/
+	}
 
 	owner->AABB->separate(other->AABB, sep);
 
@@ -270,10 +263,10 @@ void Rigidbody::onStayCollision(Node* other)
 		velocityY = vely;
 		rb->velocityY = vely;
 	}
-
-	if (!(rb && !rb->is_static) && owner->AABB->collison == 1) {
+	else if (!(rb && !rb->is_static) && owner->AABB->collison == 1) {
 		velocityX = 0.f;
-	} else if (!(rb && !rb->is_static) && owner->AABB->collison == 2) {
+	} 
+	else if (!(rb && !rb->is_static) && owner->AABB->collison == 2) {
 		velocityY = 0.f;
 	}
 }
@@ -289,4 +282,14 @@ void Rigidbody::onExitCollision(Node* other)
     if (!rb) return;
 
 	rb->targetVelocityX = 0.f;
+}
+
+bool Rigidbody::tryingToMoveAwayFrom(Node* other) {
+	glm::vec3 diff = owner->transform.getLocalPosition() - other->transform.getLocalPosition();
+	if (std::abs(diff.x) > std::abs(diff.y)) {
+		return (diff.x < 0 && velocityX < 0) || (diff.x > 0 && velocityX > 0);
+	}
+	else {
+		return (diff.y < 0 && velocityY < 0) || (diff.y > 0 && velocityY > 0);
+	}
 }

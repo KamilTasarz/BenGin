@@ -26,6 +26,7 @@ void Scale::onStart()
     std::cout << "start szalek -----------------------------------------------------------" << std::endl;
 
     rb = owner->getComponent<Rigidbody>();
+    rb->drag = 8.f;
     startPos1 = owner->transform.getLocalPosition();
     startPos2 = secondScale->transform.getLocalPosition();
 
@@ -77,19 +78,18 @@ void Scale::onUpdate(float deltaTime)
     glm::vec3 pos1 = owner->transform.getLocalPosition();
     glm::vec3 pos2 = secondScale->transform.getLocalPosition();
 
-    float offset = startPos1.y - pos1.y;
-    glm::vec3 newPos2 = startPos2 + glm::vec3(0.f, offset, 0.f);
-
-    secondScale->transform.setLocalPosition(newPos2);
-
     if (!playerOnTop && returnToPosition) {
         glm::vec3 newPos1 = mix(pos1, startPos1, 0.5f * deltaTime);
         glm::vec3 newPos2 = mix(pos2, startPos2, 0.5f * deltaTime);
 
         owner->transform.setLocalPosition(newPos1);
         secondScale->transform.setLocalPosition(newPos2);
-        return;
     }
+
+    float offset = startPos1.y - pos1.y;
+    glm::vec3 newPos2 = startPos2 + glm::vec3(0.f, offset, 0.f);
+
+    secondScale->transform.setLocalPosition(newPos2);
     
     //// Ruch pionowy
     //float maxDisplacement = 1.0f; // maksymalna ró¿nica wysokoœci miêdzy szalkami
