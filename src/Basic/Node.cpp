@@ -185,6 +185,7 @@ void SceneGraph::setShaders() {
     ResourceManager::Instance().shader_instanced->setMat4("projection", projection);
     ResourceManager::Instance().shader_instanced->setMat4("view", view);
     ResourceManager::Instance().shader_instanced->setFloat("totalTime", glfwGetTime());
+    ResourceManager::Instance().shader_instanced->setFloat("u_time", glfwGetTime());
     ResourceManager::Instance().shader_instanced->setFloat("scaleFactor", 0.2f);
     ResourceManager::Instance().shader_instanced->setInt("point_light_number", point_light_number);
     ResourceManager::Instance().shader_instanced->setInt("directional_light_number", directional_light_number);
