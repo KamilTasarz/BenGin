@@ -1620,6 +1620,8 @@ void Editor::init()
     int fbWidth = previewWidth;
     int fbHeight = previewHeight;
 
+    glfwSwapInterval(1); // Ustawienie V-Sync w GLFW bo gra swiruje na kompie
+
     // 1. Tekstura kolorów
     glGenTextures(1, &colorTexture);
     glBindTexture(GL_TEXTURE_2D, colorTexture);

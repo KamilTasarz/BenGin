@@ -89,6 +89,7 @@ private:
     const char* fragmentPath_particle = "res/shaders/particle.frag";
     const char* vertexPath_gas = "res/shaders/gas.vert";
     const char* fragmentPath_gas = "res/shaders/gas.frag";
+    const char* geometryPath_gas = "res/shaders/gas.geo";
 
     const char* postPath_vert = "res/shaders/pp_vert.vert";
     const char* postPath_pass = "res/shaders/pp_pass.frag";
