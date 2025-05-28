@@ -111,7 +111,10 @@ void Rigidbody::onUpdate(float deltaTime)
 		//velocityY *= (1.0f - drag * deltaTime);
 	}
 
-	if (useGravity/* && !groundUnderneath*/) {
+	if (useGravity && groundUnderneath) {
+		velocityY += gravity * deltaTime * 0.2f;
+	}
+	else if (useGravity) {
 		velocityY += gravity * deltaTime;
 	}
 
@@ -176,7 +179,7 @@ void Rigidbody::onStayCollision(Node* other)
 
 	if (rb_other && !rb_other->is_static) {
 
-		glm::vec3 half_penetration = owner_displacement_by_sep * 0.501f;
+		glm::vec3 half_penetration = owner_displacement_by_sep * 0.5f;
 		owner->transform.setLocalPosition(owner_pos_before_sep + half_penetration);
 		other->transform.setLocalPosition(other_pos_before_sep - half_penetration);
 

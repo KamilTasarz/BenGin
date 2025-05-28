@@ -181,7 +181,7 @@ void PlayerController::HandleVirus(float deltaTime)
 	glm::vec3 newScale = glm::mix(currentScale, targetScale, deltaTime * smoothing);
 	timerIndicator->transform.setLocalScale(newScale);
 	
-	if (abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 1.5f) {
+	if (abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 2.f) {
 		deathTimer = 0.5f;
 	}
 	else {
