@@ -55,7 +55,7 @@ void PlayerAnimationController::onStart()
 
 void PlayerAnimationController::onUpdate(float deltaTime)
 {
-	if (owner->getComponent<Rigidbody>() == nullptr) {
+	if (rb == nullptr || player->isDead) {
 		return;
 	}
 	

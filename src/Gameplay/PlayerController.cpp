@@ -7,6 +7,7 @@
 #include "../Basic/Animator.h"
 #include "../System/PhysicsSystem.h"
 #include "../Component/BoundingBox.h"
+#include "Animation/PlayerAnimationController.h"
 
 //#include "GameMath.h"
 
@@ -151,7 +152,10 @@ void PlayerController::Die(bool freeze, bool electrified)
 	owner->setTag(tag);
 	isDead = true;
 
-	owner->is_animating = false;
+	//owner->is_animating = false;
+	Animation* sleep = owner->getComponent<PlayerAnimationController>()->sleep;
+	sleep->speed = 0.f;
+	owner->animator->playAnimation(sleep, false);
 
 	owner->addComponent(std::make_unique<GroundObject>());
 
@@ -177,7 +181,7 @@ void PlayerController::HandleVirus(float deltaTime)
 	glm::vec3 newScale = glm::mix(currentScale, targetScale, deltaTime * smoothing);
 	timerIndicator->transform.setLocalScale(newScale);
 	
-	if (abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 1.f) {
+	if (abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 1.5f) {
 		deathTimer = 0.5f;
 	}
 	else {

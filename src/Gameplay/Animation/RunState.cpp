@@ -29,7 +29,7 @@ void RunState::update(Node* owner, float deltaTime) {
     else if (/*abs(animation->deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f*/ !player->isRunning && (rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new IdleState());
     }
-    else if (/*abs(rb->velocityY) > 0.2f*/ abs(rb->velocityDeltaY) > 0.f && !(rb->groundUnderneath || rb->scaleUnderneath)) {
+    else if (/*abs(rb->velocityY) > 0.2f*/ abs(animation->deltaY) > 0.f && !(rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new FallState());
     }
 }

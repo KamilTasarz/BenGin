@@ -6,8 +6,11 @@
 class Rigidbody : public Component
 {
 public:
-	float velocityX, velocityY;;
+	float velocityX, velocityY;
+	float velocityXBuffer, velocityYBuffer;
 	float targetVelocityX, targetVelocityY;
+
+	bool isBufferX = false, isBufferY = false;
 
 	bool overrideVelocityX = false, overrideVelocityY = false;
 
@@ -46,5 +49,6 @@ public:
 	void onStayCollision(Node* other) override;
 	void onExitCollision(Node* other) override;
 	bool tryingToMoveAwayFrom(Node* other);
+	bool isMovingTowards(Node* other, float axis);
 };
 

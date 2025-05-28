@@ -28,38 +28,72 @@ bool BoundingBox::isBoundingBoxIntersects(const BoundingBox& other_bounding_box)
          other_bounding_box.min_point_world.z < max_point_world.z && other_bounding_box.max_point_world.z > min_point_world.z;
 }
 
-void BoundingBox::separate(const BoundingBox* other_AABB, float separation_mulitplier)
+void BoundingBox::separate(const BoundingBox* other_AABB, float separation_multiplier)
 {
-    
-
-    float left = (other_AABB->min_point_world.x - max_point_world.x);
-    float right = (other_AABB->max_point_world.x - min_point_world.x);
-    float up = (other_AABB->min_point_world.y - max_point_world.y);
-    float down = (other_AABB->max_point_world.y - min_point_world.y);
-    float front = (other_AABB->min_point_world.z - max_point_world.z);
-    float back = (other_AABB->max_point_world.z - min_point_world.z);
-    glm::vec3 v = glm::vec3(std::abs(left) < std::abs(right) ? left : right, std::abs(up) < std::abs(down) ? up : down, std::abs(front) < std::abs(back) ? front : back);
-
-    if (std::abs(v.x) <= std::abs(v.y) && std::abs(v.x) <= std::abs(v.z)) {
-        v.y = 0.f;
-        v.z = 0.f;
-        collison = 1;
+    if (!node || !other_AABB) {
+        std::cerr << "BoundingBox::separate: Null node or other_AABB." << std::endl;
+        return;
     }
-    else if (std::abs(v.y) <= std::abs(v.x) && std::abs(v.y) <= std::abs(v.z)) {
-        v.x = 0.f;
-        v.z = 0.f;
-        collison = 2;
+
+    // Calculate penetration depths on each axis
+    // Positive value means penetration, negative means separation
+    // For this calculation, it's often "overlap_max - overlap_min"
+    // Let's use the existing logic which calculates separation needed.
+    // left: how much 'this' (owner) needs to move right to separate from other_AABB's left edge
+    // right: how much 'this' needs to move left to separate from other_AABB's right edge
+    float penetration_left = max_point_world.x - other_AABB->min_point_world.x; // Positive if 'this' right edge is past other's left edge
+    float penetration_right = other_AABB->max_point_world.x - min_point_world.x; // Positive if other's right edge is past 'this' left edge
+    float penetration_up = max_point_world.y - other_AABB->min_point_world.y; // Positive if 'this' top edge is past other's bottom edge
+    float penetration_down = other_AABB->max_point_world.y - min_point_world.y; // Positive if other's top edge is past 'this' bottom edge
+    // Similar for Z if 3D
+    float penetration_front = max_point_world.z - other_AABB->min_point_world.z;
+    float penetration_back = other_AABB->max_point_world.z - min_point_world.z;
+
+    // We need the minimum positive penetration.
+    // The original code calculates 'v' as the vector to move 'this' AABB.
+    // 'left' in original was (other_AABB->min_point_world.x - max_point_world.x) which is -penetration_left
+    // So, v.x will be negative if we need to move left, positive if we need to move right.
+
+    float delta_x_to_separate_left = (other_AABB->min_point_world.x - max_point_world.x); // Move this left (negative)
+    float delta_x_to_separate_right = (other_AABB->max_point_world.x - min_point_world.x); // Move this right (positive)
+    float delta_y_to_separate_up = (other_AABB->min_point_world.y - max_point_world.y); // Move this down (negative)
+    float delta_y_to_separate_down = (other_AABB->max_point_world.y - min_point_world.y); // Move this up (positive)
+    float delta_z_to_separate_front = (other_AABB->min_point_world.z - max_point_world.z); // Move this backward (negative)
+    float delta_z_to_separate_back = (other_AABB->max_point_world.z - min_point_world.z); // Move this forward (positive)
+
+    // Choose the smallest magnitude displacement that resolves collision.
+    glm::vec3 separation_vector = glm::vec3(
+        std::abs(delta_x_to_separate_left) < std::abs(delta_x_to_separate_right) ? delta_x_to_separate_left : delta_x_to_separate_right,
+        std::abs(delta_y_to_separate_up) < std::abs(delta_y_to_separate_down) ? delta_y_to_separate_up : delta_y_to_separate_down,
+        std::abs(delta_z_to_separate_front) < std::abs(delta_z_to_separate_back) ? delta_z_to_separate_front : delta_z_to_separate_back
+    );
+
+    // Determine axis of minimum penetration
+    if (std::abs(separation_vector.x) <= std::abs(separation_vector.y) && std::abs(separation_vector.x) <= std::abs(separation_vector.z)) {
+        separation_vector.y = 0.f;
+        separation_vector.z = 0.f;
+        collison = 1; // X-axis collision
+    }
+    else if (std::abs(separation_vector.y) <= std::abs(separation_vector.x) && std::abs(separation_vector.y) <= std::abs(separation_vector.z)) {
+        separation_vector.x = 0.f;
+        separation_vector.z = 0.f;
+        collison = 2; // Y-axis collision
     }
     else {
-        v.x = 0.f;
-        v.y = 0.f;
-        collison = 3;
+        separation_vector.x = 0.f;
+        separation_vector.y = 0.f;
+        collison = 3; // Z-axis collision
     }
 
-    glm::vec3 pos = node->transform.getLocalPosition();
-    node->transform.setLocalPosition(pos + v * separation_mulitplier);
-    //forceUpdateSelfAndChild();
-    
+    // Apply the separation to the node associated with this BoundingBox
+    glm::vec3 current_pos = node->transform.getLocalPosition();
+    // The separation_vector is now the actual displacement needed for 'this' node.
+    // The Rigidbody::onStayCollision will handle splitting this if both are dynamic.
+    node->transform.setLocalPosition(current_pos + separation_vector * separation_multiplier);
+
+    // It's crucial that AABB's world points are updated after changing local position.
+    // This might be handled by a transform update system, or explicitly here.
+    // forceUpdateSelfAndChild(); // Call this if transform changes don't auto-update AABB world points.
 }
 
 
