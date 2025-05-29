@@ -6,6 +6,10 @@
 
 void FallState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
+    auto* player = owner->getComponent<PlayerController>();
+
+    player->isJumping = true;
+
 	animation->fall->speed = 600.f;
     owner->animator->blendAnimation(animation->fall, 200.f, false, false);
 }

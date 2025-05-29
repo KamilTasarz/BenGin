@@ -20,20 +20,49 @@ void Door::onDetach()
 void Door::onStart()
 {
 	std::cout << "Door::onStart::" << owner->name << std::endl;
-	//owner->setActive(!isOpen);
+	startPos = targetPos = owner->transform.getLocalPosition();
 }
 
 void Door::onUpdate(float deltaTime)
 {
-	//std::cout << "Door::onUpdate::" << owner->name << std::endl;
+	/*glm::vec3 currentPos = owner->transform.getLocalPosition();
+	float offset = currentPos.y - targetPos.y;
+	
+	if (abs(offset) > 0.02f) {
+		glm::vec3 newPos = glm::mix(currentPos, targetPos, 5.f * deltaTime);
+		owner->transform.setLocalPosition(newPos);
+	}*/
 
-	//owner->setActive(!isOpen);
+	glm::vec3 currentPos = owner->transform.getLocalPosition();
+	glm::vec3 direction = glm::normalize(targetPos - currentPos);
+	float distance = glm::distance(currentPos, targetPos);
+	float speed = 16.f;
+	float step = speed * deltaTime;
+
+	if (distance > 0.02f) {
+		if (step >= distance) {
+			owner->transform.setLocalPosition(targetPos);
+		}
+		else {
+			glm::vec3 newPos = currentPos + direction * step;
+			owner->transform.setLocalPosition(newPos);
+		}
+	}
+
 }
 
 void Door::ChangeState(bool state)
 {
-	owner->setActive(state);
-	//isOpen = !state;
+	//owner->setActive(state);
+	
+	if (state) {
+		targetPos = startPos;
+		isOpen = false;
+	}
+	else {
+		targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f);
+		isOpen = true;
+	}
 }
 
 

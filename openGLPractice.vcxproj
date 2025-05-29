@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Gameplay\GameManager.cpp" />
     <ClCompile Include="src\Gameplay\Animation\IdleState.cpp" />
     <ClCompile Include="src\Gameplay\Animation\FallState.cpp" />
     <ClCompile Include="src\Gameplay\Animation\IPlayerAnimState.h" />
@@ -130,6 +131,7 @@
     <ClCompile Include="src\Gameplay\Animation\LandState.cpp" />
     <ClCompile Include="src\Gameplay\Animation\PlayerAnimationController.cpp" />
     <ClCompile Include="src\Gameplay\Animation\PushState.cpp" />
+    <ClCompile Include="src\Gameplay\Modifier.cpp" />
     <ClCompile Include="src\Gameplay\NPC.cpp" />
     <ClCompile Include="src\Basic\Model.cpp" />
     <ClCompile Include="src\Gameplay\Puzzles\Electrified.cpp" />
@@ -198,12 +200,14 @@
     <ClCompile Include="Tag.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Gameplay\GameManager.h" />
     <ClInclude Include="src\Gameplay\Animation\IdleState.h" />
     <ClInclude Include="src\Gameplay\Animation\FallState.h" />
     <ClInclude Include="src\Gameplay\Animation\JumpState.h" />
     <ClInclude Include="src\Gameplay\Animation\LandState.h" />
     <ClInclude Include="src\Gameplay\Animation\PlayerAnimationController.h" />
     <ClInclude Include="src\Gameplay\Animation\PushState.h" />
+    <ClInclude Include="src\Gameplay\Modifier.h" />
     <ClInclude Include="src\Gameplay\NPC.h" />
     <ClInclude Include="src\Gameplay\Puzzles\Electrified.h" />
     <ClInclude Include="src\Gameplay\Puzzles\PowerActivator.h" />

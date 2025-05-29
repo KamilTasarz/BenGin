@@ -33,6 +33,7 @@ void PlayerController::onStart()
  	rb = owner->getComponent<Rigidbody>();
 	rb->lockPositionZ = true;
 	rb->isPlayer = true;
+	//rb->smoothingFactor = 10.f;
 	timerIndicator = owner->getChildById(0);
 	scale_factor = owner->transform.getLocalScale().x;
 	emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
@@ -173,7 +174,8 @@ void PlayerController::HandleVirus(float deltaTime)
 		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, 1.f, 0.f));
 	}
 	
-	float smoothing = 10.f; // im wi�ksza, tym szybsze przej�cie
+	float smoothing = 10.f;
+	deathTimer = 0.5f;
 
 	glm::vec3 currentScale = timerIndicator->transform.getLocalScale();
 	glm::vec3 targetScale = glm::vec3(deathTimer * 2.f, 0.2f, 0.2f);
@@ -181,7 +183,7 @@ void PlayerController::HandleVirus(float deltaTime)
 	glm::vec3 newScale = glm::mix(currentScale, targetScale, deltaTime * smoothing);
 	timerIndicator->transform.setLocalScale(newScale);
 	
-	if (abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 2.f) {
+	if (/*abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 2.f*/ isRunning || isJumping) {
 		deathTimer = 0.5f;
 	}
 	else {

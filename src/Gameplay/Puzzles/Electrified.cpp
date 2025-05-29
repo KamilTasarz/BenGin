@@ -8,6 +8,7 @@ REGISTER_SCRIPT(Electrified);
 void Electrified::onAttach(Node* owner)
 {
 	this->owner = owner;
+	this->owner->is_logic_active = true;
 	std::cout << "Electrified::onAttach::" << owner->name << std::endl;
 }
 

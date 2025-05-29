@@ -8,6 +8,8 @@ public:
 	using SelfType = Door;
 
 	VARIABLE(bool, isOpen);
+	glm::vec3 targetPos;
+	glm::vec3 startPos;
 
 	Door() = default;
 	~Door() = default;

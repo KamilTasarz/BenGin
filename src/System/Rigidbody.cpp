@@ -5,6 +5,7 @@
 #include "../Gameplay/GroundObject.h"
 #include "../System/PhysicsSystem.h"
 #include "../Component/BoundingBox.h"
+#include "../Gameplay/GameManager.h"
 
 Rigidbody::Rigidbody(float mass, float gravity, bool isStatic, bool useGravity, bool lockPositionX, bool lockPositionY, bool lockPositionZ)
 {
@@ -50,14 +51,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	//float lastVelocityX = velocityX;
 	//float lastVelocityY = velocityY;
 
-	if (isBufferX) {
-		velocityX = velocityXBuffer;
-		isBufferX = false;
-	}
-	if (isBufferY) {
-		velocityY = velocityYBuffer;
-		isBufferY = false;
-	}
+	smoothingFactor = GameManager::instance->globalSmoothing;
 
 	// ground detection
 	glm::vec3 position = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
@@ -81,8 +75,15 @@ void Rigidbody::onUpdate(float deltaTime)
 	nodes.clear();
 	if (PhysicsSystem::instance().rayCast(Rays, nodes, length + 0.2f, owner)) {
 		if (nodes.size() > 0) {
-
 			groundUnderneath = true;
+
+			for (Node* node : nodes) {
+				if (node->getLayerName() == "Scale") {
+					scaleUnderneath = true;
+					//groundUnderneath = false;
+					break;
+				}
+			}
 		}
 	}
 
@@ -111,10 +112,7 @@ void Rigidbody::onUpdate(float deltaTime)
 		//velocityY *= (1.0f - drag * deltaTime);
 	}
 
-	if (useGravity && groundUnderneath) {
-		velocityY += gravity * deltaTime * 0.2f;
-	}
-	else if (useGravity) {
+	if (useGravity && (scaleUnderneath || !groundUnderneath)) {
 		velocityY += gravity * deltaTime;
 	}
 
@@ -134,16 +132,6 @@ void Rigidbody::onUpdate(float deltaTime)
 	if (lockPositionZ) position.z = startPos.z;
 
     owner->transform.setLocalPosition(position);
-
-	/*if (!isGrounded)
-	{
-		timer -= deltaTime;
-		if (timer <= 0.0f)
-			velocityYResetted = false;
-	}*/
-
-	//velocityDeltaX = velocityX - lastVelocityX;
-	//velocityDeltaY = velocityY - lastVelocityY;
 
 	overrideVelocityY = false;
 	overrideVelocityX = false;
@@ -217,9 +205,11 @@ void Rigidbody::onStayCollision(Node* other)
 	else { // Dynamic vs Static
 		if (collision_axis == 1) {
 			velocityX = 0.f;
+			//velocityX = -velocityX * 0.5f;
 		}
 		else if (collision_axis == 2) {
 			velocityY = 0.f;
+			//velocityY = -velocityY * 0.5f;
 
 			// another way of ground detection
 			/*glm::vec3 owner_center = (owner->AABB->min_point_world + owner->AABB->max_point_world) / 2.0f;
