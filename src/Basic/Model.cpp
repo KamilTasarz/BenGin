@@ -29,12 +29,12 @@ void Model::loadModel(string const& path)
         has_animations = false;
     }
     // process ASSIMP's root node recursively
-    if (!has_animations) {
+    if (!has_animations && move_origin) {
         findAABB(scene->mRootNode, scene);
     }
     processNode(scene->mRootNode, scene);
 
-    if (!has_animations) {
+    if (!has_animations && move_origin) {
         max_points -= min_points;
         min_points = glm::vec3(0.0f, 0.0f, 0.0f);
     }
@@ -122,7 +122,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
         glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
         // positions
-        if (!has_animations) {
+        if (!has_animations && move_origin) {
             vector.x = mesh->mVertices[i].x + translate.x;
             vector.y = mesh->mVertices[i].y + translate.y;
             vector.z = mesh->mVertices[i].z + translate.z;
@@ -134,7 +134,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         }
         vertex.Position = vector;
 
-        if (has_animations) {
+        if (has_animations || !move_origin) {
 
             min_points.x = min(min_points.x, vector.x);
             min_points.y = min(min_points.y, vector.y);
@@ -531,7 +531,7 @@ void Model::loadAnimations()
     }
 }
 
-Model::Model(string const& path, int id, bool gamma) : gammaCorrection(gamma), id(id)
+Model::Model(string const& path, int id, bool move_origin, bool gamma) : gammaCorrection(gamma), id(id), move_origin(move_origin)
 {
     loadModel(path);
     if (has_animations) loadAnimations();

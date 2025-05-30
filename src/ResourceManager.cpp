@@ -50,7 +50,13 @@ void ResourceManager::init(const char* path)
 				knownModelDirs.insert(directory);
 				std::string name = model["name"].get<string>();
 				unsigned int id = model["id"].get<unsigned int>();
-				shared_ptr<Model> modelPtr = std::make_shared<Model>(path + modelsPath + directory + name, id);
+				shared_ptr<Model> modelPtr;
+				if (model.contains("move_origin")) {
+					modelPtr = std::make_shared<Model>(path + modelsPath + directory + name, id, model["move_origin"]);
+				}
+				else {
+					modelPtr = std::make_shared<Model>(path + modelsPath + directory + name, id);
+				}
 				models[id] = modelPtr;
 				cout << "Model loaded: " << path + modelsPath + directory + name << endl;
 				if (highest_id < id) highest_id = id;

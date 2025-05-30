@@ -165,7 +165,12 @@ json save_node(Node* node) {
 	else if (dynamic_cast<InstanceManager*>(node)) {
 		j["type"] = "InstanceManager";
 
-	} else {
+	}
+	else if (dynamic_cast<MirrorNode*>(node)) {
+		j["type"] = "MirrorNode";
+
+	}
+	else {
 		j["type"] = "Node";
 	}
 
@@ -488,6 +493,10 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 			
 			node = new InstanceManager(ResourceManager::Instance().getModel(model_id), name);
 			
+		}
+		else if (type._Equal("MirrorNode")) {
+
+			node = new MirrorNode(ResourceManager::Instance().getModel(model_id), name);
 
 		}
 		else {
@@ -694,6 +703,12 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 		else if (type._Equal("InstanceManager")) {
 
 			node = new InstanceManager(ResourceManager::Instance().getModel(model_id), name);
+
+
+		}
+		else if (type._Equal("MirrorNode")) {
+
+			node = new MirrorNode(ResourceManager::Instance().getModel(model_id), name);
 
 
 		}

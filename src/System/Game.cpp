@@ -7,6 +7,7 @@
 #include "../Component/CameraGlobals.h"
 #include "../ResourceManager.h"
 #include "../System/PhysicsSystem.h"
+#include "../System/LineManager.h"
 #include "../Basic/Animator.h"
 
 void Game::input()
@@ -40,13 +41,13 @@ void Game::draw()
 
     sceneGraph->draw(viewWidth, viewHeight, framebuffer);
 
-
-    //glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    LineManager::Instance().drawLines();
     //background->render(*ResourceManager::Instance().shader_background);
     //sprite2->render(*ResourceManager::Instance().shader_background);
     //sprite3->render(*ResourceManager::Instance().shader_background);
     //sprite->render(*ResourceManager::Instance().shader_background);
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     float time = glfwGetTime();
     float fpsValue = 1.f / ServiceLocator::getWindow()->deltaTime;
@@ -103,7 +104,7 @@ void Game::update(float deltaTime)
 
     // Kamera
     camera->ProcessKeyboard(deltaTime, 0);
-
+    LineManager::Instance().clearLines();
     // Scena
     //sceneGraph->root->checkIfInFrustrum();
 	float t = glfwGetTime();
