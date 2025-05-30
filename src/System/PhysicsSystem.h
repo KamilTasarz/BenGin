@@ -11,6 +11,7 @@ struct RayCastHit {
     Node* node;
     glm::vec3 endPoint;
     float t;
+    bool is_phys = true;
 };
 
 class PhysicsSystem

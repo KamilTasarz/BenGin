@@ -170,19 +170,6 @@ json save_node(Node* node) {
 		j["type"] = "MirrorNode";
 
 	}
-	else if (dynamic_cast<LaserEmitterNode*>(node)) {
-
-		json jray;
-		LaserEmitterNode* l = dynamic_cast<LaserEmitterNode*>(node);
-
-
-		jray["direction"] = vec3_to_json(glm::vec3(l->startRay.direction));
-		jray["origin"] = vec3_to_json(l->startRay.origin);
-		jray["length"] = l->startRay.length;
-
-		j["Ray"] = jray;
-		j["type"] = "LaserEmitterNode";
-	}
 	else {
 		j["type"] = "Node";
 	}
@@ -512,17 +499,6 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 			node = new MirrorNode(ResourceManager::Instance().getModel(model_id), name);
 
 		}
-		else if (type._Equal("LaserEmitterNode")) {
-
-			json jray = j["Ray"];
-
-			Ray ray;
-			ray.direction = glm::vec4(json_to_vec3(jray["direction"]), 1.f);
-			ray.origin = json_to_vec3(jray["origin"]);
-			ray.length = jray["length"];
-			node = new LaserEmitterNode(ResourceManager::Instance().getModel(model_id), name, ray);
-
-		}
 		else {
 			std::cerr << "Unknown node type: " << type << std::endl;
 			return nullptr;
@@ -734,17 +710,6 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 
 			node = new MirrorNode(ResourceManager::Instance().getModel(model_id), name);
 
-
-		}
-		else if (type._Equal("LaserEmitterNode")) {
-
-			json jray = j["Ray"];
-
-			Ray ray;
-			ray.direction = glm::vec4(json_to_vec3(jray["direction"]), 1.f);
-			ray.origin = json_to_vec3(jray["origin"]);
-			ray.length = jray["length"];
-			node = new LaserEmitterNode(ResourceManager::Instance().getModel(model_id), name, ray);
 
 		}
 		else {

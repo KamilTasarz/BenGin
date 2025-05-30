@@ -35,7 +35,7 @@ private:
 	Sprite * icon, * eye_icon, * eye_slashed_icon, *switch_on, *switch_off, * dir_light_icon, * point_light_icon;
 	SceneGraph* sceneGraph;
 	SceneGraph* editor_sceneGraph;
-	LaserEmitterNode* emit;
+	Node* emit;
 
 	PostProcessData postProcessData;
 

@@ -161,7 +161,7 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<RayCastHit>& collide_with, floa
 			float t;
 			glm::vec3 end;
 			if (collider->isRayIntersects(ray.direction, ray.origin, t, end) && collider->node != owner) {
-				RayCastHit r = { collider->node, end, t };
+				RayCastHit r = { collider->node, end, t, dynamic_cast<BoundingBox*>(collider) ? true : false };
 				collide_with.push_back(r);
 			}
 
@@ -182,7 +182,7 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<RayCastHit>& collide_with, floa
 				
 				float distance = glm::length(end - ray.origin);
 				if (distance <= length) {
-					RayCastHit r = { collider->node, end, t };
+					RayCastHit r = { collider->node, end, t, dynamic_cast<BoundingBox*>(collider) ? true : false };
 					collide_with.push_back(r);
 				}
 			}

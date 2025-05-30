@@ -26,6 +26,7 @@
 #include "../Grid.h"
 #include "../Gameplay/ScriptFactory.h"
 #include "../System/PhysicsSystem.h"
+#include "../System/LineManager.h"
 #include "../System/Rigidbody.h"
 #include "../System/Tag.h"
 
@@ -681,11 +682,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
         sceneGraph->addChild(new_node);
         sceneGraph->marked_object = new_node;
     }
-    if (ImGui::Button("ADD_LASER_EMITTER", ImVec2(150, 24))) {
-        Node* new_node = new LaserEmitterNode(ResourceManager::Instance().getModel(20), "LASER", { {0.f, 0.f, 0.f}, {1.f, 0.f, 0.f}, 100.f });
-        sceneGraph->addChild(new_node);
-        sceneGraph->marked_object = new_node;
-    }
+
     if (ImGui::Button("ADD_MIRROR", ImVec2(150, 24))) {
         Node* new_node = new MirrorNode(ResourceManager::Instance().getModel(21), "MIRORR");
         sceneGraph->addChild(new_node);
@@ -1675,7 +1672,7 @@ void Editor::init()
     model = model * quat;
     Ray ray;
     ray.direction = { 1.f, 0.f, 0.f };
-    emit = dynamic_cast<LaserEmitterNode*>(editor_sceneGraph->root->getChildByName("LASER"));
+    emit = editor_sceneGraph->root->getChildByName("LASER");
         // new LaserEmitterNode(ResourceManager::Instance().getModel(4), "LASER", ray);
 
     //mirror = new MirrorNode(ResourceManager::Instance().getModel(13), "mirror");
@@ -1844,6 +1841,8 @@ void Editor::update(float deltaTime) {
     // Kamera
     camera->ProcessKeyboard(deltaTime, direction);
 
+    LineManager::Instance().clearLines();
+
     PhysicsSystem::instance().updateColliders(sceneGraph);
     PhysicsSystem::instance().updateCollisions();
 
@@ -1867,10 +1866,7 @@ void Editor::update(float deltaTime) {
         //sprite3->update(deltaTime);
     }
 
-    // Zaznaczanie obiektów myszką
-    //sceneGraph->root->checkIfInFrustrum();
-
-    /*if (glfwGetKey(window->window, GLFW_KEY_N) == GLFW_PRESS) angle++;
+    if (glfwGetKey(window->window, GLFW_KEY_N) == GLFW_PRESS) angle++;
     if (glfwGetKey(window->window, GLFW_KEY_M) == GLFW_PRESS) angle--;
 
     glm::vec4 direction = glm::rotate(glm::mat4(1.f), glm::radians(angle), glm::vec3(0.f, 0.f, 1.f)) * glm::vec4(1.f, 0.f, 0.f, 1.f);
@@ -1882,39 +1878,45 @@ void Editor::update(float deltaTime) {
     ray.origin = emit->transform.getGlobalPosition();
     ray.length = 100.f;
 
-    emit->startRay = ray;
-    emit->rays[0] = ray;
-    emit->forceUpdateSelfAndChild();
-
-
     std::vector<RayCastHit> nodes;
+    Node* lastNode = nullptr;
+    std::vector<glm::vec3> points;
+    bool checkNext = true;
+    while (checkNext) {
+        checkNext = false;
+        nodes.clear();
+        
+        if (PhysicsSystem::instance().rayCast(ray, nodes)) {
+            int i = 1;
+
+            if (nodes.size() > 1) {
+                points.push_back(ray.origin);
+                if (lastNode && lastNode == nodes[1].node) i = 2;
+                if (dynamic_cast<MirrorNode*>(nodes[i].node)) {
+                    MirrorNode* m = dynamic_cast<MirrorNode*>(nodes[i].node);
+                    checkNext = true;
+                    lastNode = m;
+                    ray.direction = m->reflectDirection(ray);
+                    if (!nodes[i].is_phys)
+                        ray.origin = nodes[i].endPoint;
+                    else
+                        ray.origin = nodes[i + 1].endPoint;
+                    ray.length = 100.f;
+                }
+                if (!checkNext) points.push_back(nodes[i].endPoint);
+            }
+
+            cout << "Przecina i parametr t: " << endl;
+            cout << direction.x << ", " << direction.y << ", " << direction.z << endl;
+            cout << "size: " << nodes.size() << endl;
+        }
+    }
 
     
 
-    if (PhysicsSystem::instance().rayCast(ray, nodes)) {
-        int i = 0;
-        //pairs.push_back(std::make_pair(nodes, t));
+    emit->forceUpdateSelfAndChild();
 
-        if (nodes.size() > 1) {
-            emit->rays[0].length = glm::distance(emit->rays[0].origin, nodes[1].endPoint);
-            if (dynamic_cast<MirrorNode*>(nodes[1].node)) {
-                emit->rays[0].length = glm::distance(emit->rays[0].origin, nodes[i].endPoint);
-            }
-        }
-        for (RayCastHit &r : nodes) {
-            if (dynamic_cast<MirrorNode*>(r.node)) {
-                emit->rays[0].length = glm::distance(emit->rays[0].origin, r.endPoint);
-            }
-            i++;
-        }
-
-        cout << "Przecina i parametr t: " << endl;
-        cout << direction.x << ", " << direction.y << ", " << direction.z << endl;
-        cout << "size: " << nodes.size() << endl;
-    }
-
-    emit->forceUpdateSelfAndChild();*/
-
+    LineManager::Instance().addVertices(points);
     sceneGraph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));
 
     if (ServiceLocator::getWindow()->mouse_pressed && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL)) {
@@ -1963,6 +1965,8 @@ void Editor::draw() {
     ResourceManager::Instance().shader_outline->use();
     ResourceManager::Instance().shader_outline->setVec3("color", glm::vec3(0.f, 0.f, 0.8f));
     camera->AABB->draw(*ResourceManager::Instance().shader_outline);
+
+    LineManager::Instance().drawLines();
 
     //rect->draw(*ResourceManager::Instance().shader_outline);
 

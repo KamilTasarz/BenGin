@@ -685,19 +685,4 @@ public:
         std::unordered_set<Node*>& rooms) override;
 };
 
-class LaserEmitterNode : public Node {
-private:
-    unsigned int VAO = 0, VBO = 0;
-    std::vector<float> vertices;
-    void setBuffer();
-public:
-    //std::vector<Ray> rays;
-    Ray startRay;
-    LaserEmitterNode(std::shared_ptr<Model> model, std::string nameOfNode, Ray start_ray);
-    void addRays(std::vector<glm::vec3>& rays);
-    void forceUpdateSelfAndChild() override;
-    void drawSelfAndChild() override;
-
-};
-
 #endif // !NODE_H
