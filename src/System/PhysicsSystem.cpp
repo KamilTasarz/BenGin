@@ -27,9 +27,17 @@ void PhysicsSystem::updateCollisions()
 	//zmienić na zrobienie listy coliderów z rigdibody i listy coliderów wszystkich (tez z rigidbody)
 	// -> zmniejszenie kolizji + tylko rigidbody ma tak naprawde fizyke
 
-	for (auto& collider1 : colliders_RigidBody) {
+	for (Collider* collider_rb : colliders_RigidBody) {
 		
-		for (auto& collider2 : colliders) {
+		BoundingBox* collider1 = dynamic_cast<BoundingBox*>(collider_rb);
+		if (!collider1) continue;
+
+		for (auto& collider : colliders) {
+
+			BoundingBox* collider2 = dynamic_cast<BoundingBox*>(collider);
+
+			if (!collider2) continue;
+
 			if (collider1->node == collider2->node) continue;
 
 			if (!collider1->active) {
@@ -140,35 +148,56 @@ void PhysicsSystem::updateCollisions()
 	//std::cout << "Sprawdzono: " << counter << std::endl;
 }
 
-bool PhysicsSystem::rayCast(Ray ray, std::vector<Node*>& collide_with, float length, Node* owner)
+bool PhysicsSystem::rayCast(Ray ray, std::vector<RayCastHit>& collide_with, float length, Node* owner)
 {
 	if (length <= 0.f) {
-		for (auto& collider : colliders) {
+		for (Collider* collider : colliders) {
+
+			//if (dynamic_cast<BoundingBox*>(collider)) continue;
+
+			//BoundingBox* collider = dynamic_cast<BoundingBox*>(collider_base);
+
 			if (collider->is_logic || !collider->active) continue;
 			float t;
-			if (collider->isRayIntersects(ray.direction, ray.origin, t) && collider->node != owner) {
-				collide_with.push_back(collider->node);
+			glm::vec3 end;
+			if (collider->isRayIntersects(ray.direction, ray.origin, t, end) && collider->node != owner) {
+				RayCastHit r = { collider->node, end, t };
+				collide_with.push_back(r);
 			}
+
 		}
 	}
 	else {
-		for (auto& collider : colliders) {
+		for (Collider* collider : colliders) {
+
+			//BoundingBox* collider = dynamic_cast<BoundingBox*>(collider_base);
+
+			
+
 			if (collider->is_logic || !collider->active) continue;
 			float t;
-			if (collider->isRayIntersects(ray.direction, ray.origin, t) && collider->node != owner) {
+			glm::vec3 end;
+			if (collider->isRayIntersects(ray.direction, ray.origin, t, end) && collider->node != owner) {
 				
-				glm::vec3 hitPoint = ray.origin + glm::vec3(ray.direction * t);
-				float distance = glm::length(hitPoint - ray.origin);
+				
+				float distance = glm::length(end - ray.origin);
 				if (distance <= length) {
-					collide_with.push_back(collider->node);
+					RayCastHit r = { collider->node, end, t };
+					collide_with.push_back(r);
 				}
 			}
 		}
 	}
+
+	std::sort(collide_with.begin(), collide_with.end(), [&](const RayCastHit& a, const RayCastHit& b) {
+		return a.t < b.t;
+		
+		});
+
 	return collide_with.size() > 0;
 }
 
-bool PhysicsSystem::rayCast(const std::vector<Ray>& rays, std::vector<Node*>& collide_with, float length, Node* owner)
+bool PhysicsSystem::rayCast(const std::vector<Ray>& rays, std::vector<RayCastHit>& collide_with, float length, Node* owner)
 {
 	bool hitAny = false;
 

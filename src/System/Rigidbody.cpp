@@ -61,7 +61,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	glm::vec4 down = glm::vec4(0.f, -1.f, 0.f, 0.f);
 	if(isGravityFlipped) down *= -1;
 
-	std::vector<Node*> nodes;
+	std::vector<RayCastHit> nodes;
 
 	std::vector<Ray> Rays = {
 		Ray{position + glm::vec3(-width + 0.05f, 0.f, 0.f), down},

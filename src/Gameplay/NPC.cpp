@@ -54,7 +54,7 @@ void NPC::detectObstacles() {
     glm::vec3 ownerPos = owner->transform.getGlobalPosition();
 
     obstacles.clear();
-    for (BoundingBox* box : PhysicsSystem::instance().getColliders()) {
+    for (Collider* box : PhysicsSystem::instance().getColliders()) {
         if (box->node) {
             Node* node = box->node;
             if (std::find(obstacleLayer.begin(), obstacleLayer.end(), node->getLayerName()) != obstacleLayer.end()) {
@@ -81,7 +81,7 @@ void NPC::detectObstacles() {
 }
 
 void NPC::detectPlayer() {
-    for (BoundingBox* box : PhysicsSystem::instance().getColliders()) {
+    for (Collider* box : PhysicsSystem::instance().getColliders()) {
         if (box->node && box->node->getTagName() == "Player") {
             glm::vec3 playerPos = (box->node->AABB->max_point_world + box->node->AABB->min_point_world) / 2.f;
 			glm::vec3 ownerPos = owner->transform.getGlobalPosition();
@@ -91,11 +91,11 @@ void NPC::detectPlayer() {
             if (distance <= playerDetectionRadius) {
                 // Sprawdzenie linii widocznoœci
                 glm::vec3 direction = playerPos - ownerPos;
-                Ray ray{ ownerPos, glm::normalize(glm::vec4(direction, 0.f)) };
-                std::vector<Node*> hitNodes;
+                Ray ray{ ownerPos, glm::normalize(direction) };
+                std::vector<RayCastHit> hitNodes;
                 if (PhysicsSystem::instance().rayCast(ray, hitNodes, distance, owner)) {
-                    if (hitNodes.size() > 0 && hitNodes[0]->getTagName() == "Player") {
-                        player = hitNodes[0];
+                    if (hitNodes.size() > 0 && hitNodes[0].node->getTagName() == "Player") {
+                        player = hitNodes[0].node;
                         return;
                     }
                 }

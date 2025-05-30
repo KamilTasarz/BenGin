@@ -62,12 +62,12 @@ void Scale::onUpdate(float deltaTime)
         Ray{position + glm::vec3(width, 0.f, 0.f), up}
     };
 
-    std::vector<Node*> hitNodes;
+    std::vector<RayCastHit> hitNodes;
     bool playerOnTop = false;
     if (PhysicsSystem::instance().rayCast(upRays, hitNodes, length, owner)) {
 		if (hitNodes.size() > 0) {
-			for (Node* node : hitNodes) {
-				if (node->getTagName() == "Player" || node->getTagName() == "Box") {
+			for (RayCastHit r : hitNodes) {
+				if (r.node->getTagName() == "Player" || r.node->getTagName() == "Box") {
 					playerOnTop = true;
 					break;
 				}

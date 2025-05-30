@@ -59,7 +59,7 @@ void GasWall::spreadCloud() {
 
             // SprawdŸ kolizje AABB (osie X i Y)
             bool isBlocked = false;
-            for (BoundingBox* box : PhysicsSystem::instance().getColliders() /*owner->scene_graph->root->getAllChildren()*/) {
+            for (Collider* box : PhysicsSystem::instance().getColliders() /*owner->scene_graph->root->getAllChildren()*/) {
 				if (box->node == nullptr) continue;
 				Node* node = box->node;
                 if (std::find(obstacleLayer.begin(), obstacleLayer.end(), node->getLayerName()) != obstacleLayer.end()) {

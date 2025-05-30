@@ -459,8 +459,20 @@ Node* Node::clone(std::string instance_name, SceneGraph* new_scene_graph) {
 
     // Tworzymy nowego Node'a na podstawie bieżących danych
     if (!dynamic_cast<PointLight*>(this) && !dynamic_cast<DirectionalLight*>(this)) {
-        copy = new Node(instance_name + "_" + this->name, this->id);
 
+        if (dynamic_cast<InstanceManager*>(this)) {
+            copy = new InstanceManager(pModel, instance_name + "_" + this->name, this->id);
+        }
+        else if (dynamic_cast<MirrorNode*>(this)) {
+            copy = new MirrorNode(pModel, instance_name + "_" + this->name);
+        }
+        else if (dynamic_cast<LaserEmitterNode*>(this)) {
+            LaserEmitterNode* p = dynamic_cast<LaserEmitterNode*>(this);
+            copy = new LaserEmitterNode(pModel, instance_name + "_" + this->name, p->startRay);
+        }
+        else {
+            copy = new Node(instance_name + "_" + this->name, this->id);
+        }
         //^ zapewnić kopie instancji prefabów ^
 
         copy->color = this->color;
@@ -602,7 +614,7 @@ void Node::setVariablesNodes(std::string instance_name, Node* root, SceneGraph* 
 }
 
 
-void Node::checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB,
+void Node::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB,
     std::unordered_set<Node*>& rooms) {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
@@ -618,8 +630,8 @@ void Node::checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::u
                 if (is_physic_active) colliders_RB.insert(AABB);
 				else colliders_RB.erase(AABB);
 
-                if (is_logic_active && AABB_logic) colliders_RB.insert(AABB_logic);
-				else colliders_RB.erase(AABB_logic);
+                //if (is_logic_active && AABB_logic) colliders_RB.insert(AABB_logic);
+				//else colliders_RB.erase(AABB_logic);
             }
         }
         else {
@@ -627,7 +639,7 @@ void Node::checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::u
             if (is_logic_active && AABB_logic) colliders.erase(AABB_logic);
             if (has_RB) {
                 if (is_physic_active) colliders_RB.erase(AABB);
-                if (is_logic_active && AABB_logic) colliders_RB.erase(AABB_logic);
+                //if (is_logic_active && AABB_logic) colliders_RB.erase(AABB_logic);
             }
         }
     }
@@ -641,7 +653,7 @@ void Node::checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::u
     }
 }
 
-void Node::checkIfInFrustrumLogic(std::unordered_set<BoundingBox*>& colliders_logic, std::unordered_set<BoundingBox*>& colliders_RB_logic)
+void Node::checkIfInFrustrumLogic(std::unordered_set<Collider*>& colliders_logic, std::unordered_set<Collider*>& colliders_RB_logic)
 {
     if (AABB_logic) {
         
@@ -662,8 +674,8 @@ void Node::mark(Ray rayWorld, float& marked_depth) {
 
     for (auto&& child : children) {
         float t;
-
-        if (child->AABB != nullptr && child->in_frustrum && child->AABB->isRayIntersects(rayWorld.direction, rayWorld.origin, t)) {
+        glm::vec3 end;
+        if (child->AABB != nullptr && child->in_frustrum && child->AABB->isRayIntersects(rayWorld.direction, rayWorld.origin, t, end)) {
 
             if (t < marked_depth) {
 
@@ -873,7 +885,7 @@ void Node::drawSelfAndChild(Transform& parent)
 
         if (scene_graph->is_editing) {
 
-            //AABB->draw(*ResourceManager::Instance().shader_outline);
+            AABB->draw(*ResourceManager::Instance().shader_outline);
         }
 
 
@@ -1112,8 +1124,8 @@ void InstanceManager::updateSelfAndChild(bool controlDirty) {
     }*/
 }
 
-void InstanceManager::checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, 
-    std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms)
+void InstanceManager::checkIfInFrustrum(std::unordered_set<Collider*>& colliders,
+    std::unordered_set<Collider*>& colliders_RB, std::unordered_set<Node*>& rooms)
 {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
@@ -1129,8 +1141,8 @@ void InstanceManager::checkIfInFrustrum(std::unordered_set<BoundingBox*>& collid
                 if (is_physic_active) colliders_RB.insert(AABB);
                 else colliders_RB.erase(AABB);
 
-                if (is_logic_active && AABB_logic) colliders_RB.insert(AABB_logic);
-                else colliders_RB.erase(AABB_logic);
+                //if (is_logic_active && AABB_logic) colliders_RB.insert(AABB_logic);
+                //else colliders_RB.erase(AABB_logic);
             }
         }
         else {
@@ -1423,7 +1435,7 @@ void PrefabInstance::drawShadows(Shader& shader)
 	}
 }
 
-void PrefabInstance::checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms)
+void PrefabInstance::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB, std::unordered_set<Node*>& rooms)
 {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
@@ -1441,11 +1453,11 @@ void PrefabInstance::checkIfInFrustrum(std::unordered_set<BoundingBox*>& collide
                 }
 
                 if (child->AABB_logic && child->is_logic_active) {
-                    if (child->has_RB) colliders_RB.insert(child->AABB_logic);
+                    //if (child->has_RB) colliders_RB.insert(child->AABB_logic);
                     colliders.insert(child->AABB_logic);
 				}
                 else {
-                    if (child->has_RB) colliders_RB.erase(child->AABB_logic);
+                    //if (child->has_RB) colliders_RB.erase(child->AABB_logic);
                     colliders.erase(child->AABB_logic);
                 }
             }
@@ -1459,7 +1471,7 @@ void PrefabInstance::checkIfInFrustrum(std::unordered_set<BoundingBox*>& collide
                     colliders.erase(child->AABB);
                 }
                 if (child->AABB_logic && child->is_logic_active) {
-                    if (child->has_RB) colliders_RB.erase(child->AABB_logic);
+                    //if (child->has_RB) colliders_RB.erase(child->AABB_logic);
                     colliders.erase(child->AABB_logic);
                 }
             }
@@ -1809,4 +1821,246 @@ unsigned int ParticleEmitter::firstUnusedParticle() {
     }
     last_used_particle = 0;
     return 0;
+}
+
+MirrorNode::MirrorNode(std::shared_ptr<Model> model, std::string nameOfNode) : Node(model, nameOfNode, 0, {-1.f, 0.f, -1.f}, {1.f, 0.f, 1.f}) {
+   mirrorCollider = new RectOBB(transform.getModelMatrix(), this);
+}
+
+glm::vec3 MirrorNode::reflectDirection(Ray ray)
+{
+    glm::vec3 reflected = ray.direction - 2.0f * glm::dot(ray.direction, mirrorCollider->normalGlobal) * mirrorCollider->normalGlobal;
+    return reflected;
+}
+
+void MirrorNode::forceUpdateSelfAndChild()
+{
+    if (parent) {
+        transform.computeModelMatrix(parent->transform.getModelMatrix());
+    }
+    else {
+        transform.computeModelMatrix();
+    }
+    if (AABB != nullptr) {
+        AABB->transformAABB(transform.getModelMatrix());
+    }
+    if (AABB_logic != nullptr) {
+        AABB_logic->transformAABB(transform.getModelMatrix());
+    }
+    if (mirrorCollider) {
+        mirrorCollider->transform(transform.getModelMatrix());
+    }
+}
+
+void MirrorNode::drawSelfAndChild()
+{
+    if (pModel && is_visible && in_frustrum) {
+
+        ResourceManager::Instance().shader->use();
+        ResourceManager::Instance().shader->setMat4("model", transform.getModelMatrix());
+        ResourceManager::Instance().shader_tile->setMat4("model", transform.getModelMatrix());
+        
+
+        ResourceManager::Instance().shader->setInt("is_animating", 0);
+        
+        if (is_marked) {
+            glStencilMask(0xFF);
+        }
+        
+        ResourceManager::Instance().shader->setInt("is_light", 0);
+        
+        pModel->Draw(*ResourceManager::Instance().shader);
+
+        glStencilMask(0x00);
+
+        ResourceManager::Instance().shader_outline->use();
+
+        ResourceManager::Instance().shader_outline->setInt("is_animating", 0);
+     
+        glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
+        ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+
+        if (scene_graph->is_editing) {
+            AABB->draw(*ResourceManager::Instance().shader_outline);
+        }
+        dynamic_color = glm::vec3(0.f, 0.8f, 0.f);
+        ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+        if (scene_graph->is_editing && AABB_logic) {
+            AABB_logic->draw(*ResourceManager::Instance().shader_outline);
+        }
+
+        dynamic_color = glm::vec3(0.6f, 0.6f, 0.f);
+        ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+
+        if (scene_graph->is_editing && mirrorCollider) {
+            mirrorCollider->draw(*ResourceManager::Instance().shader_outline);
+        }
+    }
+}
+
+void MirrorNode::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB,
+    std::unordered_set<Node*>& rooms) {
+    if (AABB) {
+        in_frustrum = camera->isInFrustrum(AABB);
+        //in_frustrum = true;
+        if (in_frustrum) {
+            if (is_physic_active) colliders.insert(AABB);
+            else colliders.erase(AABB);
+
+            if (is_logic_active && AABB_logic) colliders.insert(AABB_logic);
+            else colliders.erase(AABB_logic);
+
+            if (mirrorCollider) {
+                colliders.insert(mirrorCollider);
+            }
+
+            if (has_RB) {
+                if (is_physic_active) colliders_RB.insert(AABB);
+                else colliders_RB.erase(AABB);
+
+                //if (is_logic_active && AABB_logic) colliders_RB.insert(AABB_logic);
+                //else colliders_RB.erase(AABB_logic);
+
+            }
+
+            
+        }
+        else {
+            if (is_physic_active) colliders.erase(AABB);
+            if (is_logic_active && AABB_logic) colliders.erase(AABB_logic);
+            if (mirrorCollider) colliders.erase(mirrorCollider);
+            if (has_RB) {
+                if (is_physic_active) colliders_RB.erase(AABB);
+                //if (is_logic_active && AABB_logic) colliders_RB.erase(AABB_logic);
+               
+            }
+        }
+    }
+    else {
+        in_frustrum = true;
+
+    }
+
+}
+
+void LaserEmitterNode::setBuffer()
+{
+
+    if (VAO != 0 && VBO != 0) {
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
+        glBindVertexArray(0);
+    }
+    else {
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+        glBindVertexArray(0);
+    }
+
+}
+
+LaserEmitterNode::LaserEmitterNode(std::shared_ptr<Model> model, std::string nameOfNode, Ray start_ray) : Node(model, nameOfNode)
+{
+    startRay = start_ray;
+    startRay.direction = glm::normalize(startRay.direction);
+    startRay.length = 100.f;
+    startRay.origin = transform.getGlobalPosition();
+    //rays.push_back(start_ray);
+    std::vector<glm::vec3> v = { startRay.origin, startRay.origin + startRay.direction * startRay.length };
+    addRays(v);
+    setBuffer();
+}
+
+void LaserEmitterNode::addRays(std::vector<glm::vec3>& rays)
+{
+    vertices.clear();
+
+    if (rays.size() > 1) {
+        vertices.push_back(rays[0].x);
+        vertices.push_back(rays[0].y);
+        vertices.push_back(rays[0].z);
+        for (int i = 0; i < rays.size(); ++i) {
+
+            vertices.push_back(rays[i].x);
+            vertices.push_back(rays[i].y); //koniec poprzedniej
+            vertices.push_back(rays[i].z);
+
+        }
+    }
+    setBuffer();
+}
+
+void LaserEmitterNode::forceUpdateSelfAndChild()
+{
+    if (parent) {
+        transform.computeModelMatrix(parent->transform.getModelMatrix());
+    }
+    else {
+        transform.computeModelMatrix();
+    }
+    if (AABB != nullptr) {
+        AABB->transformAABB(transform.getModelMatrix());
+    }
+    if (AABB_logic != nullptr) {
+        AABB_logic->transformAABB(transform.getModelMatrix());
+    }
+    startRay.origin = transform.getGlobalPosition();
+    setBuffer();
+}
+
+void LaserEmitterNode::drawSelfAndChild()
+{
+    if (pModel && is_visible && in_frustrum) {
+
+        ResourceManager::Instance().shader->use();
+        ResourceManager::Instance().shader->setMat4("model", transform.getModelMatrix());
+        ResourceManager::Instance().shader_tile->setMat4("model", transform.getModelMatrix());
+
+
+        ResourceManager::Instance().shader->setInt("is_animating", 0);
+
+        if (is_marked) {
+            glStencilMask(0xFF);
+        }
+
+        ResourceManager::Instance().shader->setInt("is_light", 0);
+
+        pModel->Draw(*ResourceManager::Instance().shader);
+
+        glStencilMask(0x00);
+
+        ResourceManager::Instance().shader_outline->use();
+
+        ResourceManager::Instance().shader_outline->setInt("is_animating", 0);
+
+        glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
+        ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+
+        if (scene_graph->is_editing) {
+            AABB->draw(*ResourceManager::Instance().shader_outline);
+        }
+        dynamic_color = glm::vec3(0.f, 0.8f, 0.f);
+        ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+        if (scene_graph->is_editing && AABB_logic) {
+            AABB_logic->draw(*ResourceManager::Instance().shader_outline);
+        }
+
+        dynamic_color = glm::vec3(0.6f, 0.6f, 0.f);
+        ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+
+
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_LINE_STRIP, 0, vertices.size() / 3);
+        glBindVertexArray(0);
+    }
+
+
 }

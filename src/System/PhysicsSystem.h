@@ -4,14 +4,20 @@
 
 class BoundingBox;
 class SceneGraph;
+class Collider;
 class Node;
 struct Ray;
+struct RayCastHit {
+    Node* node;
+    glm::vec3 endPoint;
+    float t;
+};
 
 class PhysicsSystem
 {
 public:
-    std::unordered_set<BoundingBox*> colliders;
-    std::unordered_set<BoundingBox*> colliders_RigidBody;
+    std::unordered_set<Collider*> colliders;
+    std::unordered_set<Collider*> colliders_RigidBody;
     std::unordered_set<Node*> rooms;
 
     //std::vector<BoundingBox*> colliders_logic;
@@ -25,10 +31,10 @@ public:
     //sprawdza kolizje
     void updateCollisions();
 
-    bool rayCast(Ray ray, std::vector<Node*>& collide_with, float length = -1.f, Node* owner = nullptr);
-    bool rayCast(const std::vector<Ray>& rays, std::vector<Node*>& collide_with, float length = -1.f, Node* owner = nullptr);
+    bool rayCast(Ray ray, std::vector<RayCastHit>& collide_with, float length = -1.f, Node* owner = nullptr);
+    bool rayCast(const std::vector<Ray>& rays, std::vector<RayCastHit>& collide_with, float length = -1.f, Node* owner = nullptr);
 
-	std::unordered_set<BoundingBox*>& getColliders() {
+	std::unordered_set<Collider*>& getColliders() {
 		return colliders;
 	}
 };

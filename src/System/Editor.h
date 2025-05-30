@@ -14,6 +14,7 @@ class Node;
 class BoundingBox;
 class Animator;
 class Animation;
+class LaserEmitterNode;
 
 struct Ray;
 
@@ -34,6 +35,7 @@ private:
 	Sprite * icon, * eye_icon, * eye_slashed_icon, *switch_on, *switch_off, * dir_light_icon, * point_light_icon;
 	SceneGraph* sceneGraph;
 	SceneGraph* editor_sceneGraph;
+	LaserEmitterNode* emit;
 
 	PostProcessData postProcessData;
 
@@ -62,6 +64,8 @@ private:
 	float fps = 0.0f;
 	float fps_timer = 0.0f;
 	int frames = 0;
+
+	float angle = 0.f;
 
 	Animator* animator;
 	Animation* anim;

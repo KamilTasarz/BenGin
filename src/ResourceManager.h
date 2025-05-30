@@ -41,6 +41,7 @@ private:
     ResourceManager() {
 
         shader = new Shader(vertexPath, fragmentPath);
+        shader_line = new Shader(vertexPath, fragmentPath);
         shader_tile = new Shader(vertexPath_tile, fragmentPath);
         shader_instanced = new Shader(vertexPath_gas, fragmentPath_gas);
         shader_instanced_outline = new Shader(vertexPath_instanced, fragmentPath_outline);
@@ -58,6 +59,7 @@ private:
     ~ResourceManager() {
 
         delete shader;
+        delete shader_line;
         delete shader_tile;
         delete shader_instanced;
         delete shader_instanced_outline;
@@ -101,6 +103,7 @@ public:
     // Normal shaders
 
     Shader* shader;
+    Shader* shader_line;
     Shader* shader_tile;
     Shader* shader_instanced;
     Shader* shader_instanced_outline;

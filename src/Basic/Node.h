@@ -17,6 +17,7 @@
 //#include "../System/Tag.h"
 
 class BoundingBox;
+class Collider;
 class Model;
 class ResourceManager;
 class Grid;
@@ -24,6 +25,7 @@ class Shader;
 class Tag;
 class Layer;
 class ParticleEmitter;
+class RectOBB;
 struct Particle;    
 struct ParticleInstanceData;
 
@@ -31,7 +33,7 @@ struct ParticleInstanceData;
 
 struct Ray {
 	glm::vec3 origin;
-	glm::vec4 direction;
+	glm::vec3 direction;
     float length = 1.f;
 };
 
@@ -331,8 +333,8 @@ public:
         return nullptr;
     }
 
-    virtual void checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms);
-    virtual void checkIfInFrustrumLogic(std::unordered_set<BoundingBox*>& colliders_logic, std::unordered_set<BoundingBox*>& colliders_RB_logic);
+    virtual void checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB, std::unordered_set<Node*>& rooms);
+    virtual void checkIfInFrustrumLogic(std::unordered_set<Collider*>& colliders_logic, std::unordered_set<Collider*>& colliders_RB_logic);
 
     void collectAllChildren(std::set<Node*>& out) {
         for (Node* child : children) {
@@ -412,7 +414,7 @@ public:
 
     void updateSelfAndChild(bool controlDirty) override;
 
-    void checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms) override;
+    void checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB, std::unordered_set<Node*>& rooms) override;
 
     void addChild(const ParticleGasStruct& particle);
 
@@ -624,7 +626,7 @@ public:
 
 	void drawShadows(Shader& shader) override;
 
-    void checkIfInFrustrum(std::unordered_set<BoundingBox*>& colliders, std::unordered_set<BoundingBox*>& colliders_RB, std::unordered_set<Node*>& rooms) override;
+    void checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB, std::unordered_set<Node*>& rooms) override;
 };
 
 struct Texture;
@@ -670,6 +672,32 @@ public:
     }
 
     virtual ~ParticleGasNode() = default;
+};
+
+class MirrorNode : public Node {
+public:
+    RectOBB* mirrorCollider;
+    MirrorNode(std::shared_ptr<Model> model, std::string nameOfNode);
+    glm::vec3 reflectDirection(Ray ray);
+    void forceUpdateSelfAndChild() override;
+    void drawSelfAndChild() override;
+    void checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB, 
+        std::unordered_set<Node*>& rooms) override;
+};
+
+class LaserEmitterNode : public Node {
+private:
+    unsigned int VAO = 0, VBO = 0;
+    std::vector<float> vertices;
+    void setBuffer();
+public:
+    //std::vector<Ray> rays;
+    Ray startRay;
+    LaserEmitterNode(std::shared_ptr<Model> model, std::string nameOfNode, Ray start_ray);
+    void addRays(std::vector<glm::vec3>& rays);
+    void forceUpdateSelfAndChild() override;
+    void drawSelfAndChild() override;
+
 };
 
 #endif // !NODE_H
