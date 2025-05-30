@@ -1873,7 +1873,7 @@ void Editor::update(float deltaTime) {
     
 
 
-    Ray ray;
+    /*Ray ray;
     ray.direction = direction;
     ray.origin = emit->transform.getGlobalPosition();
     ray.length = 100.f;
@@ -1917,7 +1917,7 @@ void Editor::update(float deltaTime) {
     emit->forceUpdateSelfAndChild();
 
     LineManager::Instance().addVertices(points);
-    sceneGraph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));
+    sceneGraph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));*/
 
     if (ServiceLocator::getWindow()->mouse_pressed && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL)) {
         if (sceneGraph->marked_object != nullptr)

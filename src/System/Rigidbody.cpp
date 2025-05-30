@@ -77,7 +77,8 @@ void Rigidbody::onUpdate(float deltaTime)
 		if (nodes.size() > 0) {
 			groundUnderneath = true;
 
-			for (Node* node : nodes) {
+			for (RayCastHit hit : nodes) {
+				Node* node = hit.node;
 				if (node->getLayerName() == "Scale") {
 					scaleUnderneath = true;
 					//groundUnderneath = false;
