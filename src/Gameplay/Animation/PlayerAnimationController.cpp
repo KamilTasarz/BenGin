@@ -100,7 +100,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 
 	UpdateRotation(deltaTime);
 
-	/*if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_Z) == GLFW_PRESS)) {
+	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_Z) == GLFW_PRESS)) {
 		owner->animator->blendAnimation(idle, 100.f, true, true);
 	}
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_X) == GLFW_PRESS)) {
@@ -122,8 +122,8 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 		owner->animator->blendAnimation(fall, 100.f, true, true);
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_H) == GLFW_PRESS) {
-		owner->animator->blendAnimation(run, 100.f, true, true);
-	}*/
+		owner->animator->blendAnimation(push, 100.f, true, true);
+	}
 
 	if (rb->targetVelocityX > 0.f) {
 		std::cout << "gracz siê porusza" << std::endl;

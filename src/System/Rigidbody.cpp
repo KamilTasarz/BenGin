@@ -57,7 +57,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	glm::vec3 position = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
 
 	groundUnderneath = false;
-	//scaleUnderneath = false;
+	scaleUnderneath = false;
 	//ceilingAbove = false;
 	isPushing = false;
 

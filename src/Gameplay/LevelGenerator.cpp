@@ -35,19 +35,79 @@ void LevelGenerator::onUpdate(float deltaTime)
 
 void LevelGenerator::GenerateLevel()
 {
+	int directionLength = 0;
+	std::string roomName;
+	int levelIndex;
+	std::vector<int> usedIndexes;
+	
 	for (int i = 0; i < levelCount; ++i) {
-		int levelIndex = GameMath::RandomInt(3, 6);
-		std::string levelName = "room_" + std::to_string(levelIndex);
+		float changeDirection = GameMath::RandomFloat(0, 1);
+		
+		if (goingRight) {
+			// change direction
+			if ((changeDirection < directionChangeChance && directionLength > minimalHorizontalLevelCount) || directionLength > maximalHorizontalLevelCount) {
+				roomName = "room_right_up_";
+				levelIndex = 1;
+				directionLength = 0;
 
+				usedIndexes.clear();
+				goingRight = false;
+				goingUp = true;
+			}
+			// go right
+			else {
+				roomName = "room_";
+				levelIndex = GameMath::RandomInt(1, levelsRightCount) + 2;
+
+				if (usedIndexes.size() >= levelsRightCount) {
+					usedIndexes.clear();
+				}
+
+				do {
+					levelIndex = GameMath::RandomInt(1, levelsRightCount) + 2;
+				} while (std::find(usedIndexes.begin(), usedIndexes.end(), levelIndex) != usedIndexes.end());
+
+				usedIndexes.push_back(levelIndex);
+				directionLength++;
+			}
+		}
+		else if (goingUp) {
+			// change direction
+			if ((changeDirection < directionChangeChance && directionLength < minimalVerticalLevelCount) || directionLength > maximalVerticalLevelCount) {
+				roomName = "room_up_right_";
+				levelIndex = 1;
+				directionLength = 0;
+
+				usedIndexes.clear();
+				goingRight = true;
+				goingUp = false;
+			}
+			// go up
+			else {
+				roomName = "room_up_";
+				levelIndex = GameMath::RandomInt(1, levelsUpCount);
+
+				if (usedIndexes.size() >= levelsUpCount) {
+					usedIndexes.clear();
+				}
+
+				do {
+					levelIndex = GameMath::RandomInt(1, levelsUpCount);
+				} while (std::find(usedIndexes.begin(), usedIndexes.end(), levelIndex) != usedIndexes.end());
+
+				usedIndexes.push_back(levelIndex);
+
+				directionLength++;
+			}
+		}
+
+		std::string levelName = roomName + std::to_string(levelIndex);
 		PrefabInstance* pref = new PrefabInstance(PrefabRegistry::FindRoomByName(levelName), owner->scene_graph, std::to_string(i + 20));
 
-		//Node* player = pref->prefab_root->getChildByTag("Player");
-		//player->transform.setLocalPosition(owner->getTransform().getLocalPosition());
 		owner->scene_graph->addChild(pref);
 		pref->transform.setLocalPosition(owner->getTransform().getLocalPosition());
 
 		glm::vec3 levelOffset = pref->prefab_root->getChildByTag("Exit")->transform.getLocalPosition();
 		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + levelOffset);
-		//owner->forceUpdateSelfAndChild();
 	}
 }

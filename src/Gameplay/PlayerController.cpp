@@ -30,6 +30,7 @@ void PlayerController::onDetach()
 void PlayerController::onStart()
 {
 	isGravityFlipped = false;
+	deathTimer = 0.5f;
  	rb = owner->getComponent<Rigidbody>();
 	rb->lockPositionZ = true;
 	rb->isPlayer = true;
@@ -167,23 +168,24 @@ void PlayerController::Die(bool freeze, bool electrified)
 
 void PlayerController::HandleVirus(float deltaTime)
 {
-	if (isGravityFlipped) {
-		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, -1.f, 0.f));
+	/*if (isGravityFlipped) {
+		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, 0.f, -1.f));
 	}
 	else {
-		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, 1.f, 0.f));
-	}
+		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, 0.f, 1.f));
+	}*/
 	
 	float smoothing = 10.f;
-	deathTimer = 0.5f;
 
 	glm::vec3 currentScale = timerIndicator->transform.getLocalScale();
-	glm::vec3 targetScale = glm::vec3(deathTimer * 2.f, 0.2f, 0.2f);
+	glm::vec3 targetScale = glm::vec3(0.2f, deathTimer * 4.f, 0.2f);
 
 	glm::vec3 newScale = glm::mix(currentScale, targetScale, deltaTime * smoothing);
 	timerIndicator->transform.setLocalScale(newScale);
 	
-	if (/*abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 2.f*/ isRunning || isJumping) {
+	std::cout << "Gracz biegnie: " << isRunning << ", gracz skacze: " << isJumping << std::endl;
+
+	if (/*abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 2.f*/ isRunning || !rb->groundUnderneath) {
 		deathTimer = 0.5f;
 	}
 	else {
