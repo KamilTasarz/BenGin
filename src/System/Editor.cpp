@@ -1843,8 +1843,8 @@ void Editor::update(float deltaTime) {
 
     LineManager::Instance().clearLines();
 
-    PhysicsSystem::instance().updateColliders(sceneGraph);
-    PhysicsSystem::instance().updateCollisions();
+    //PhysicsSystem::instance().updateColliders(sceneGraph);
+    //PhysicsSystem::instance().updateCollisions();
 
 
     // Scena
@@ -1869,7 +1869,7 @@ void Editor::update(float deltaTime) {
     if (glfwGetKey(window->window, GLFW_KEY_N) == GLFW_PRESS) angle++;
     if (glfwGetKey(window->window, GLFW_KEY_M) == GLFW_PRESS) angle--;
 
-    glm::vec4 direction = glm::rotate(glm::mat4(1.f), glm::radians(angle), glm::vec3(0.f, 0.f, 1.f)) * glm::vec4(1.f, 0.f, 0.f, 1.f);
+    //glm::vec4 direction = glm::rotate(glm::mat4(1.f), glm::radians(angle), glm::vec3(0.f, 0.f, 1.f)) * glm::vec4(1.f, 0.f, 0.f, 1.f);
     
 
 
@@ -1916,8 +1916,8 @@ void Editor::update(float deltaTime) {
 
     emit->forceUpdateSelfAndChild();
 
-    LineManager::Instance().addVertices(points);
-    sceneGraph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));*/
+    LineManager::Instance().addVertices(points);*/
+    sceneGraph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));
 
     if (ServiceLocator::getWindow()->mouse_pressed && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL)) {
         if (sceneGraph->marked_object != nullptr)
