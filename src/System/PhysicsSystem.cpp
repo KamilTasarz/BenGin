@@ -31,6 +31,7 @@ void PhysicsSystem::updateCollisions()
 		
 		BoundingBox* collider1 = dynamic_cast<BoundingBox*>(collider_rb);
 		if (!collider1) continue;
+		if (collider1->is_logic) continue;
 
 		for (auto& collider : colliders) {
 

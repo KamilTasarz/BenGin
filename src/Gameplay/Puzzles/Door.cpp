@@ -25,14 +25,6 @@ void Door::onStart()
 
 void Door::onUpdate(float deltaTime)
 {
-	/*glm::vec3 currentPos = owner->transform.getLocalPosition();
-	float offset = currentPos.y - targetPos.y;
-	
-	if (abs(offset) > 0.02f) {
-		glm::vec3 newPos = glm::mix(currentPos, targetPos, 5.f * deltaTime);
-		owner->transform.setLocalPosition(newPos);
-	}*/
-
 	glm::vec3 currentPos = owner->transform.getLocalPosition();
 	glm::vec3 direction = glm::normalize(targetPos - currentPos);
 	float distance = glm::distance(currentPos, targetPos);
@@ -60,7 +52,8 @@ void Door::ChangeState(bool state)
 		isOpen = false;
 	}
 	else {
-		targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f);
+		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f);
+		else targetPos = startPos + glm::vec3(3.5f, 0.f, 0.f);
 		isOpen = true;
 	}
 }

@@ -116,10 +116,10 @@ void Game::update(float deltaTime)
     float t4 = glfwGetTime();
     sceneGraph->clearDeleteVector();
     // HUD
-	cout << "FPS: " << 1.f / deltaTime << endl;
-    cout << "updateColldiers" << t2 - t << endl;
-	cout << "updateCollisions" << t3 - t2 << endl;
-	cout << "updateSceneGraph" << t4 - t3 << endl;
+	//cout << "FPS: " << 1.f / deltaTime << endl;
+    //cout << "updateColldiers" << t2 - t << endl;
+	//cout << "updateCollisions" << t3 - t2 << endl;
+	//cout << "updateSceneGraph" << t4 - t3 << endl;
     //background->update(deltaTime);
     //sprite->update(deltaTime);
     //sprite3->update(deltaTime);
@@ -248,7 +248,7 @@ void Game::run()
 
         ServiceLocator::getWindow()->updateWindow();
 
-        std::cout << "Fps: " << 1.f / ServiceLocator::getWindow()->deltaTime << std::endl;
+        //std::cout << "Fps: " << 1.f / ServiceLocator::getWindow()->deltaTime << std::endl;
 	}
 
     if (glfwWindowShouldClose(ServiceLocator::getWindow()->window)) engine_work = false;

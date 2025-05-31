@@ -38,6 +38,8 @@ void NPC::onStart() {
 }
 
 void NPC::onUpdate(float deltaTime) {
+    if (!isActive) return;
+    
     danger.fill(0.f);
     interest.fill(0.f);
 
@@ -48,6 +50,16 @@ void NPC::onUpdate(float deltaTime) {
 
     glm::vec2 direction = getMoveDirection();
     move(direction, deltaTime);
+}
+
+void NPC::onCollision(Node* other)
+{
+    if (other->getTagName() == "Player") {
+        isActive = false;
+        owner->setPhysic(false);
+
+        owner->getComponent<Rigidbody>()->is_static = true;
+    }
 }
 
 void NPC::detectObstacles() {
@@ -95,6 +107,12 @@ void NPC::detectPlayer() {
                 std::vector<RayCastHit> hitNodes;
                 if (PhysicsSystem::instance().rayCast(ray, hitNodes, distance, owner)) {
                     if (hitNodes.size() > 0 && hitNodes[0].node->getTagName() == "Player") {
+                        
+                        for (auto hit : hitNodes) {
+                            std::cout << hit.node->getTagName() << std::endl;
+                        }
+                        
+                        
                         player = hitNodes[0].node;
                         return;
                     }

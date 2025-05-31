@@ -8,6 +8,7 @@ public:
 	using SelfType = Door;
 
 	VARIABLE(bool, isOpen);
+	VARIABLE(bool, openToSide);
 	glm::vec3 targetPos;
 	glm::vec3 startPos;
 
@@ -21,7 +22,8 @@ public:
 
 	std::vector<Variable*> getFields() const override {
 		static Variable isOpenVar = getField_isOpen();
-		return { &isOpenVar };
+		static Variable openToSideVar = getField_openToSide();
+		return { &isOpenVar, &openToSideVar };
 	}
 };
 

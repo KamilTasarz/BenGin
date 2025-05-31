@@ -11,6 +11,7 @@ public:
     using SelfType = NPC;
 
     // Parametry konfigurowalne w edytorze
+    VARIABLE(bool, isActive);
     VARIABLE(bool, isFleeing);
     VARIABLE(float, detectionRadius);
     VARIABLE(float, playerDetectionRadius);
@@ -34,8 +35,10 @@ public:
     void onDetach() override;
     void onStart() override;
     void onUpdate(float deltaTime) override;
+    void onCollision(Node* other) override;
 
     std::vector<Variable*> getFields() const override {
+		static Variable isActiveVar = getField_isActive();
 		static Variable isFleeingVar = getField_isFleeing();
 		static Variable detectionRadiusVar = getField_detectionRadius();
 		static Variable playerDetectionRadiusVar = getField_playerDetectionRadius();
@@ -51,7 +54,8 @@ public:
 		static Variable accelerationVar = getField_acceleration();
 		static Variable deaccelerationVar = getField_deacceleration();
 		static Variable directionSmoothTimeVar = getField_directionSmoothTime();
-		return { &isFleeingVar, &detectionRadiusVar, &playerDetectionRadiusVar, &avoidanceRadiusVar,
+
+		return { &isActiveVar, &isFleeingVar, &detectionRadiusVar, &playerDetectionRadiusVar, &avoidanceRadiusVar,
 				 &agentColliderSizeVar, &fleeAngleVar, &continueFleeTimeVar, &minMoveTimeVar,
 				 &maxMoveTimeVar, &minWaitTimeVar, &maxWaitTimeVar, &maxSpeedVar,
 				 &accelerationVar, &deaccelerationVar, &directionSmoothTimeVar };
