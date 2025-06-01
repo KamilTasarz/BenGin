@@ -36,7 +36,8 @@ void Rigidbody::onStart()
 	velocityY = 0.f;
 	targetVelocityY = 0.f;
 
-	startPos = owner->transform.getLocalPosition();
+	startPos = owner->transform.getGlobalPosition();
+	//is_static = true;
 
 	length = (owner->AABB->max_point_world.y - owner->AABB->min_point_world.y) / 2.f;
 	width = (owner->AABB->max_point_world.x - owner->AABB->min_point_world.x) / 2.f;
@@ -45,7 +46,7 @@ void Rigidbody::onStart()
 void Rigidbody::onUpdate(float deltaTime)
 {
 	if (is_static) {
-        return;
+		return;
     }
 
 	//float lastVelocityX = velocityX;

@@ -26,6 +26,8 @@ public:
 	Animation* fall;
 	Animation* land;
 	Animation* push;
+	Animation* deathLeft;
+	Animation* deathRight;
 
 	glm::vec3 previousPosition;
 	float deltaX, deltaY;

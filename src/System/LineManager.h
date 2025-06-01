@@ -5,6 +5,8 @@ class LineManager
 {
 private:
 	std::vector<float> vertices;
+	std::vector<std::vector<glm::vec3>> allLines;
+
 	unsigned int iterator, size, VAO = 0, VBO = 0;
 	LineManager() {
 

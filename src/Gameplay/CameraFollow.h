@@ -12,7 +12,7 @@ public:
 	VARIABLE(float, offsetZ);
 	VARIABLE(float, smoothing);
 
-	float positionZ;
+	float verticalOffset = 3.f;
 
 	CameraFollow() = default;
 	virtual ~CameraFollow() = default;
@@ -21,6 +21,8 @@ public:
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
 	void onEnd() override;
+
+	void HandleGravityVirus(float deltaTime);
 
 	std::vector<Variable*> getFields() const override {
 		static Variable playerVar = getField_player();

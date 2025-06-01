@@ -48,7 +48,8 @@ void PlayerAnimationController::onStart()
 	fall = owner->pModel->getAnimationByName("JumpFall");
 	land = owner->pModel->getAnimationByName("JumpEnd");
 	push = owner->pModel->getAnimationByName("PushFinal");
-	//fall = owner->pModel->getAnimationByName("JumpEnd");
+	deathLeft = owner->pModel->getAnimationByName("DeathFinLeft");
+	deathRight = owner->pModel->getAnimationByName("DeathFinRight");
 
 	changeState(new IdleState());
 }

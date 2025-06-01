@@ -161,7 +161,7 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<RayCastHit>& collide_with, floa
 			if (collider->is_logic || !collider->active) continue;
 			float t;
 			glm::vec3 end;
-			if (collider->isRayIntersects(ray.direction, ray.origin, t, end) && collider->node != owner) {
+			if (collider->isRayIntersects(ray.direction, ray.origin, t, end) && collider->node != owner && collider->node->parent != owner) {
 				RayCastHit r = { collider->node, end, t, dynamic_cast<BoundingBox*>(collider) ? true : false };
 				collide_with.push_back(r);
 			}

@@ -38,6 +38,8 @@ void NPC::onStart() {
 }
 
 void NPC::onUpdate(float deltaTime) {
+    std::cout << "NPC " << owner->getName() << " is active: " << isActive << std::endl;
+    
     if (!isActive) return;
     
     danger.fill(0.f);

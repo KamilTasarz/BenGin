@@ -20,7 +20,7 @@ void CameraFollow::onDetach()
 
 void CameraFollow::onStart()
 {
-	positionZ = owner->transform.getLocalPosition().z;
+	//positionZ = owner->transform.getLocalPosition().z;
 }
 
 void CameraFollow::onUpdate(float deltaTime)
@@ -31,8 +31,10 @@ void CameraFollow::onUpdate(float deltaTime)
 		player = owner->scene_graph->root->getChildByTag("Player");
 		//std::cout << "current player: " << player->getName() << ", tag: " << player->getTagName() << std::endl;
 
-		glm::vec3 origin = glm::vec3(0.f, 3.f, 0.f);
-		glm::vec3 offset = glm::vec3(0.f, offsetY, offsetZ);
+		glm::vec3 origin = glm::vec3(0.f, 0.f, 0.f);
+		glm::vec3 offset = glm::vec3(0.f, 0.f, offsetZ);
+		verticalOffset = 3.f;
+
 		camera->setObjectToFollow(owner, origin);
 		camera->setOffsetToFollowingObject(offset);
 	}
@@ -40,6 +42,8 @@ void CameraFollow::onUpdate(float deltaTime)
 		//std::cout << "following player: " << player->getName() << std::endl;
 
 		glm::vec3 targetPosition = player->transform.getLocalPosition();
+		targetPosition.y += verticalOffset;
+
 		glm::vec3 currentPosition = owner->transform.getLocalPosition();
 		glm::vec3 newPosition = glm::mix(currentPosition, targetPosition, smoothing * deltaTime);
 		owner->transform.setLocalPosition(newPosition);
@@ -47,11 +51,15 @@ void CameraFollow::onUpdate(float deltaTime)
 		//std::cout << "Following: " << player->getName() << ", tag: " << player->getTagName() <<   std::endl;
 	}
 
-	glm::vec3 pos = owner->transform.getLocalPosition();
-	owner->transform.setLocalPosition(glm::vec3(pos.x, pos.y, positionZ));
+	//glm::vec3 pos = owner->transform.getLocalPosition();
+	//owner->transform.setLocalPosition(glm::vec3(pos.x, pos.y, positionZ));
 }
 
 void CameraFollow::onEnd()
 {
 	// Cleanup if needed
+}
+
+void CameraFollow::HandleGravityVirus(float deltaTime) {
+
 }

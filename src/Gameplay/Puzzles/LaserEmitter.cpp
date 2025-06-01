@@ -33,50 +33,59 @@ void LaserEmitter::onUpdate(float deltaTime)
     ray.origin = owner->transform.getGlobalPosition();
     ray.length = 100.f;
 
+    std::vector<glm::vec3> points;
     std::vector<RayCastHit> nodes;
     Node* lastNode = nullptr;
-    std::vector<glm::vec3> points;
-    bool checkNext = true;
-    while (checkNext) {
-        checkNext = false;
+
+    bool continueReflection = true;
+    while (continueReflection) {
+        continueReflection = false;
         nodes.clear();
 
-        if (PhysicsSystem::instance().rayCast(ray, nodes)) {
-            int i = 1;
+        if (PhysicsSystem::instance().rayCast(ray, nodes, -1, owner)) {
+            // Dodaj punkt pocz¹tkowy
+            points.push_back(ray.origin);
 
-            if (nodes.size() > 1) {
-                points.push_back(ray.origin);
+            for (size_t i = 0; i < nodes.size(); ++i) {
+                Node* hitNode = nodes[i].node;
 
-                if (lastNode && lastNode == nodes[1].node) i = 2;
+                // Pomijamy powtórne trafienia tego samego obiektu, np. w pêtli odbiæ
+                if (hitNode == lastNode) continue;
 
-                if (dynamic_cast<MirrorNode*>(nodes[i].node)) {
-                    MirrorNode* m = dynamic_cast<MirrorNode*>(nodes[i].node);
-                    checkNext = true;
-                    lastNode = m;
-                    ray.direction = m->reflectDirection(ray);
+                glm::vec3 hitPoint = nodes[i].endPoint;
 
-                    if (!nodes[i].is_phys)
-                        ray.origin = nodes[i].endPoint;
-                    else
-                        ray.origin = nodes[i + 1].endPoint;
-
+                if (auto mirror = dynamic_cast<MirrorNode*>(hitNode)) {
+                    // Lustro: refleksja
+                    ray.origin = hitPoint;
+                    ray.direction = mirror->reflectDirection(ray);
                     ray.length = 100.f;
-                }
-                else if (nodes[i].node->getLayerName() == "Observer") {
-                    nodes[i].node->getComponent<LaserObserver>()->Activate();
-                }
+                    lastNode = hitNode;
 
-                if (!checkNext) points.push_back(nodes[i].endPoint);
+                    points.push_back(hitPoint); // dodaj miejsce odbicia
+                    continueReflection = true;
+                    break; // przerywamy tê iteracjê, bo mamy nowy kierunek
+                }
+                else {
+                    // Trafienie w obiekt niebêd¹cy lustrem
+                    if (hitNode->getLayerName() == "Observer") {
+                        if (auto obs = hitNode->getComponent<LaserObserver>())
+                            obs->Activate();
+                    }
+
+                    points.push_back(hitPoint);
+                    continueReflection = false;
+                    break; // zakoñcz odbicia
+                }
             }
-
-            //cout << "Przecina i parametr t: " << endl;
-            //cout << direction.x << ", " << direction.y << ", " << direction.z << endl;
-            //cout << "size: " << nodes.size() << endl;
+        }
+        else {
+            // Promieñ nie trafi³ w nic — opcjonalnie mo¿na dodaæ koñcowy punkt
+            points.push_back(ray.origin + ray.direction * ray.length);
         }
     }
 
     owner->forceUpdateSelfAndChild();
 
     LineManager::Instance().addVertices(points);
-    //owner->scene_graph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));
 }
+

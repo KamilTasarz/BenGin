@@ -21,6 +21,10 @@ void PushState::update(Node* owner, float deltaTime) {
     auto* rb = owner->getComponent<Rigidbody>();
     auto* player = owner->getComponent<PlayerController>();
 
+    /*float speed = abs(rb->velocityX) * 350.f;
+    if (speed < 150.f) speed = 0.f;
+    animation->push->speed = speed;*/
+
     if (player->isJumping) {
         animation->changeState(new JumpState());
         return;

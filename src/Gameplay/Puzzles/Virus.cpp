@@ -3,6 +3,8 @@
 #include "../RegisterScript.h"
 #include "../PlayerController.h"
 #include "../../System/Rigidbody.h"
+#include "../../Component/CameraGlobals.h"
+#include "../CameraFollow.h"
 
 REGISTER_SCRIPT(Virus);
 
@@ -57,6 +59,7 @@ void Virus::ApplyEffect(Node* target)
 	player->isGravityFlipped = false;
 	player->jumpForce = 19.f;
 	player->virusType = "none";
+	camera->object_to_follow->getComponent<CameraFollow>()->verticalOffset = 3.f;
 
 	VirusEffect(target);
 
@@ -77,6 +80,7 @@ void Virus::VirusEffect(Node* target)
 	else if (green) {
 		target->changeColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
+		camera->object_to_follow->getComponent<CameraFollow>()->verticalOffset = -1.f;
 		player->isGravityFlipped = true;
 		target->getComponent<Rigidbody>()->gravity = 32.f;
 		player->virusType = "green";

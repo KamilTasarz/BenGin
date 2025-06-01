@@ -8,6 +8,7 @@
 #include "../System/PhysicsSystem.h"
 #include "../Component/BoundingBox.h"
 #include "Animation/PlayerAnimationController.h"
+#include "GameMath.h"
 
 //#include "GameMath.h"
 
@@ -155,11 +156,13 @@ void PlayerController::Die(bool freeze, bool electrified)
 	isDead = true;
 
 	//owner->is_animating = false;
-	Animation* sleep = owner->getComponent<PlayerAnimationController>()->sleep;
-	sleep->speed = 0.f;
-	owner->animator->playAnimation(sleep, false);
+	Animation* death;
+	if (GameMath::RandomInt(0, 1) == 0) death = owner->getComponent<PlayerAnimationController>()->deathLeft;
+	else death = owner->getComponent<PlayerAnimationController>()->deathRight;
+	death->speed = 500.f;
+	owner->animator->playAnimation(death, false);
 
-	owner->addComponent(std::make_unique<GroundObject>());
+	//owner->addComponent(std::make_unique<GroundObject>());
 
 	// spawn new player
 	Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");

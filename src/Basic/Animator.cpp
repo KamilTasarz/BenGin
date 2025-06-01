@@ -76,7 +76,7 @@ void Animator::updateAnimation(float delta_time)
                 if (blend_time > blend_duration) alpha = 1.f;
             }
 
-            cout << alpha << endl;
+            //cout << alpha << endl;
 
             if (alpha < 1.f) {
 
