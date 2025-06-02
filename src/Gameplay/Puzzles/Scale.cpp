@@ -42,13 +42,13 @@ void Scale::onStart()
 void Scale::onUpdate(float deltaTime)
 {
     if (secondScale == nullptr) return;
-    else if (startPos2 == glm::vec3(0.f)) startPos2 = secondScale->transform.getLocalPosition();
+    //else if (startPos2 == glm::vec3(0.f)) startPos2 = secondScale->transform.getLocalPosition();
 
-    if (setStartPos) {
+    /*if (setStartPos) {
         startPos1 = owner->transform.getLocalPosition();
         startPos2 = secondScale->transform.getLocalPosition();
         setStartPos = false;
-    }
+    }*/
 
     // Wykrywanie gracza (promieñ w górê)
     glm::vec3 position = owner->transform.getGlobalPosition();

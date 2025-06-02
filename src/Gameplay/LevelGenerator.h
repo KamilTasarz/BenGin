@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Script.h"
+#include <deque>
 
 class LevelGenerator : public Script
 {
@@ -21,6 +22,11 @@ public:
 	bool goingRight = true;
 	bool goingUp = false;
 	bool goingDown = false;
+
+	int directionLength = 0;
+	int roomNumber = 0;
+	std::vector<int> usedIndexes;
+	std::deque<Node*> currentRooms;
 
 	using SelfType = LevelGenerator;
 	LevelGenerator() = default;

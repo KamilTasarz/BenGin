@@ -41,4 +41,6 @@ void PlayerSpawner::spawnPlayer()
 	Node* player = pref->prefab_root->getChildByTag("Player");
 	player->transform.setLocalPosition(owner->getTransform().getLocalPosition());
  	owner->scene_graph->addChild(player);
+
+	currentPlayer = player;
 }

@@ -37,6 +37,9 @@ public:
 	bool pressedRight = false;
 	bool pressedLeft = false;
 
+    bool debugMode = false;
+    bool debugTogglePressed = false;
+
     PlayerController() = default;
     virtual ~PlayerController() = default;
 

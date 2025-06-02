@@ -36,7 +36,7 @@ void Rigidbody::onStart()
 	velocityY = 0.f;
 	targetVelocityY = 0.f;
 
-	startPos = owner->transform.getGlobalPosition();
+	startPos = owner->transform.getLocalPosition();
 	//is_static = true;
 
 	length = (owner->AABB->max_point_world.y - owner->AABB->min_point_world.y) / 2.f;

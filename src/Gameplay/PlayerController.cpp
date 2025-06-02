@@ -71,29 +71,35 @@ void PlayerController::onUpdate(float deltaTime)
 	if (pressedRight) rb->side = glm::vec4(1.f, 0.f, 0.f, 0.f);
 	else if (pressedLeft) rb->side = glm::vec4(-1.f, 0.f, 0.f, 0.f);
 
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_K) == GLFW_PRESS) {
-		rb->is_static = true;
-		owner->setPhysic(false);
-		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, -50.f * deltaTime, 0.f));
-	}
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_I) == GLFW_PRESS) {
-		rb->is_static = true;
-		owner->setPhysic(false);
-		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(0.f, 50.f * deltaTime, 0.f));
-	}
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_L) == GLFW_PRESS) {
-		rb->is_static = true;
-		owner->setPhysic(false);
-		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(50.f * deltaTime, 0.f, 0.f));
-	}
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_J) == GLFW_PRESS) {
-		rb->is_static = true;
-		owner->setPhysic(false);
-		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + glm::vec3(-50.f * deltaTime, 0.f, 0.f));
+	// DebugMode
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS && !debugTogglePressed) {
+		debugMode = !debugMode;
+		debugTogglePressed = true;
+
+		rb->is_static = debugMode;
+		owner->setPhysic(!debugMode);
 	}
 
-	rb->is_static = false;
-	owner->setPhysic(true);
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_RELEASE) {
+		debugTogglePressed = false;
+	}
+
+	if (debugMode) {
+		glm::vec3 move(0.0f);
+
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_W) == GLFW_PRESS)
+			move.y += 1.0f;
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_S) == GLFW_PRESS)
+			move.y -= 1.0f;
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS)
+			move.x += 1.0f;
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS)
+			move.x -= 1.0f;
+
+		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + move * 50.f * deltaTime);
+
+		return;
+	}
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		//std::cout << "Gracz probuje skoczyc" << std::endl;

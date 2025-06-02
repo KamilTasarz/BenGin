@@ -3,6 +3,7 @@
 #include "Script.h"
 #include <unordered_set>
 #include <queue>
+#include "GameManager.h"
 
 class InstanceManager;
 

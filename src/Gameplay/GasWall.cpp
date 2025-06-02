@@ -32,6 +32,8 @@ void GasWall::onStart() {
 void GasWall::onUpdate(float deltaTime) {
     if (!spreading || spreadQueue.empty()) return;
 
+    spreadInterval = GameManager::instance->gasSpreadingSpeed;
+
     timer += deltaTime;
     if (timer >= spreadInterval * spreadSpeed) {
         spreadCloud();

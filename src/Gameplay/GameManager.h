@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Script.h"
+#include "../Basic/Node.h"
 
 class GameManager : public Script
 {
@@ -8,6 +9,10 @@ public:
 	static GameManager* instance;
 
 	float globalSmoothing = 10.f;
+	float gasSpreadingSpeed = 1.f;
+	Node* playerSpawner;
+	Node* levelGenerator;
+	InstanceManager* emitter;
 
 	GameManager() = default;
 	~GameManager() = default;
@@ -15,5 +20,7 @@ public:
 	void onDetach() override;
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
+	void CalculateGasSpreadingSpeed(float deltaTime);
+	void HandleLevelGeneration();
 };
 

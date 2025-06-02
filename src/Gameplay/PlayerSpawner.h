@@ -8,6 +8,7 @@ public:
 	using SelfType = PlayerSpawner;
 
 	int i = 0;
+	Node* currentPlayer;
 
 	PlayerSpawner() = default;
 	virtual ~PlayerSpawner() = default;
