@@ -6,6 +6,7 @@ uniform sampler2D ssaoInput;
 uniform vec2 screenSize;
 
 void main() {
+
     float result = 0.0;
     vec2 texelSize = 1.0 / screenSize;
 
@@ -16,6 +17,8 @@ void main() {
             result += texture(ssaoInput, vectorUV + offset).r;
         }
     }
+
     result /= 9.0;
     FragColor = result;
+
 }

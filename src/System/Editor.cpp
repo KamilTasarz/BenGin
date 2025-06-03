@@ -1128,7 +1128,7 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
         ImGui::Text("Position: "); ImGui::SameLine();
         ImGui::PushID("pos");
         ImGui::PushItemWidth(field_width);
-        if (ImGui::InputFloat("X##pos", &position_buffer.x, 0.0f, 0.0f, "%.3f")) {
+        if (ImGui::DragFloat("X##pos", &position_buffer.x, 1.0f, -1000000.f, 1000000.f, "%.1f")) {
             T.setLocalPosition(position_buffer);
         }
         ImGui::PopItemWidth(); ImGui::SameLine();
@@ -1558,59 +1558,84 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
             ImGui::Text("--none--");
         }
     }
+
+    /// --- POST - PROCESS --- ///
+
     else {
 
         ImGui::Checkbox("Post-Process Enable/Disable", &postProcessData.is_post_process);
-        ImGui::Separator();
-
-        ImGui::Checkbox("Bloom Enable/Disable", &postProcessData.is_bloom);
-        ImGui::Checkbox("CRT Enable/Disable", &postProcessData.is_crt_curved);
-
-        ImGui::Text("SSAO Kernel Samples:");
-        if (ImGui::RadioButton("16", postProcessData.ssao_kernel_samples == 16)) postProcessData.ssao_kernel_samples = 16;
-        if (ImGui::RadioButton("32", postProcessData.ssao_kernel_samples == 32)) postProcessData.ssao_kernel_samples = 32;
-        if (ImGui::RadioButton("64", postProcessData.ssao_kernel_samples == 64)) postProcessData.ssao_kernel_samples = 64;
-        if (ImGui::RadioButton("128", postProcessData.ssao_kernel_samples == 128)) postProcessData.ssao_kernel_samples = 128;
-
-        ImGui::Separator();
-
-        if (postProcessData.is_bloom) {
         
-            ImGui::DragFloat("Bloom Treshold", &postProcessData.bloom_treshold, 0.01f, 0.0f, 1.0f, "%.2f");
+        if (postProcessData.is_post_process) {
 
+            ImGui::Separator();
+
+            ImGui::Checkbox("SSAO Enable/Disable", &postProcessData.is_ssao);
+
+            if (postProcessData.is_ssao) {
+
+                ImGui::Separator();
+
+                ImGui::Text("SSAO Kernel Samples:");
+                if (ImGui::RadioButton("16", postProcessData.ssao_kernel_samples == 16)) postProcessData.ssao_kernel_samples = 16;
+                if (ImGui::RadioButton("32", postProcessData.ssao_kernel_samples == 32)) postProcessData.ssao_kernel_samples = 32;
+                if (ImGui::RadioButton("64", postProcessData.ssao_kernel_samples == 64)) postProcessData.ssao_kernel_samples = 64;
+                if (ImGui::RadioButton("128", postProcessData.ssao_kernel_samples == 128)) postProcessData.ssao_kernel_samples = 128;
+
+                ImGui::SliderFloat("SSAO Radius", &postProcessData.ssao_radius, 0.01f, 5.0f, "%.2f");
+
+                ImGui::SliderFloat("SSAO Bias", &postProcessData.ssao_bias, 0.001f, 0.5f, "%.3f");
+
+                ImGui::Separator();
+
+            }
+
+            ImGui::Checkbox("Bloom Enable/Disable", &postProcessData.is_bloom);
+
+            if (postProcessData.is_bloom) {
+
+                ImGui::Separator();
+
+                ImGui::SliderFloat("Bloom Treshold", &postProcessData.bloom_treshold, 0.0f, 1.0f, "%.2f");
+
+                ImGui::Separator();
+
+            }
+
+            ImGui::Checkbox("CRT Enable/Disable", &postProcessData.is_crt_curved);
+
+            if (postProcessData.is_crt_curved) {
+
+                ImGui::Separator();
+
+                ImGui::Text("CRT Curvature:");
+                ImGui::DragFloat("X", &postProcessData.crt_curvature.x, 0.1f, 1.0f, 15.0f, "%.1f");
+                ImGui::DragFloat("Y", &postProcessData.crt_curvature.y, 0.1f, 1.0f, 10.0f, "%.1f");
+
+                ImGui::ColorEdit3("CRT Outline", glm::value_ptr(postProcessData.crt_outline_color));
+
+                ImGui::Separator();
+
+                ImGui::Text("CRT Lines:");
+                ImGui::DragFloat("X Resolution", &postProcessData.crt_screen_resolution.x, 1.0f, 0.0f, 1000.0f, "%.1f");
+                ImGui::DragFloat("Y Resolution", &postProcessData.crt_screen_resolution.y, 1.0f, 0.0f, 1000.0f, "%.1f");
+
+                ImGui::DragFloat("X Factor", &postProcessData.crt_lines_sinusoid_factor.x, 0.1f, 0.01f, 3.0f, "%.2f");
+                ImGui::DragFloat("Y Factor", &postProcessData.crt_lines_sinusoid_factor.y, 0.1f, 0.01f, 3.0f, "%.2f");
+
+                ImGui::Separator();
+
+                ImGui::Text("Vignette:");
+
+                ImGui::DragFloat("X Radius", &postProcessData.crt_vignette_radius, 1.0f, 0.0f, 1000.0f, "%.1f");
+
+                ImGui::DragFloat("Power Factor", &postProcessData.crt_vignette_factor, 0.1f, 0.01f, 6.0f, "%.2f");
+
+                ImGui::Separator();
+
+                ImGui::ColorEdit3("CRT Brightness", glm::value_ptr(postProcessData.crt_brightness));
+
+            }
         }
-
-        if (postProcessData.is_crt_curved) {
-
-            ImGui::Text("CRT Curvature:");
-            ImGui::DragFloat("X", &postProcessData.crt_curvature.x, 0.1f, 1.0f, 15.0f, "%.1f");
-            ImGui::DragFloat("Y", &postProcessData.crt_curvature.y, 0.1f, 1.0f, 10.0f, "%.1f");
-
-            ImGui::ColorEdit3("CRT Outline", glm::value_ptr(postProcessData.crt_outline_color));
-
-            ImGui::Separator();
-
-            ImGui::Text("CRT Lines:");
-            ImGui::DragFloat("X Resolution", &postProcessData.crt_screen_resolution.x, 1.0f, 0.0f, 1000.0f, "%.1f");
-            ImGui::DragFloat("Y Resolution", &postProcessData.crt_screen_resolution.y, 1.0f, 0.0f, 1000.0f, "%.1f");
-
-            ImGui::DragFloat("X Factor", &postProcessData.crt_lines_sinusoid_factor.x, 0.1f, 0.01f, 3.0f, "%.2f");
-            ImGui::DragFloat("Y Factor", &postProcessData.crt_lines_sinusoid_factor.y, 0.1f, 0.01f, 3.0f, "%.2f");
-
-            ImGui::Separator();
-
-            ImGui::Text("Vignette:");
-
-            ImGui::DragFloat("X Radius", &postProcessData.crt_vignette_radius, 1.0f, 0.0f, 1000.0f, "%.1f");
-
-            ImGui::DragFloat("Power Factor", &postProcessData.crt_vignette_factor, 0.1f, 0.01f, 6.0f, "%.2f");
-
-            ImGui::Separator();
-
-            ImGui::ColorEdit3("CRT Brightness", glm::value_ptr(postProcessData.crt_brightness));
-
-        }
-        
     }
 
     ImGui::End();

@@ -1,10 +1,10 @@
-﻿#version 330 core
+#version 330 core
 out vec4 FragColor;
 in vec2 vectorUV;
 
 uniform sampler2D sceneTexture;
 uniform sampler2D bloomTexture;
-uniform float intensity; // np. 1.0
+uniform float intensity; 
 
 void main() {
     vec3 scene = texture(sceneTexture, vectorUV).rgb;

@@ -40,6 +40,10 @@ struct PostProcessData {
 
     unsigned int ssao_kernel_samples; // How many samples to generate the SSAO kernel
 
+    float ssao_radius; // Jak duzy jest promien tego efektu, im wiekszy tym te szpary bardziej przesadzone
+
+    float ssao_bias; // delikatne przesuniecie aby redukowac czarne plamy
+
     //////////////////////////////
 
     float bloom_treshold;

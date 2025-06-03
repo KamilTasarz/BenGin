@@ -1047,6 +1047,8 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	j["is_pp"] = data.is_post_process;
 
+	j["is_ssao"] = data.is_ssao;
+
 	j["is_crt"] = data.is_crt_curved;
 
 	j["is_bloom"] = data.is_bloom;
@@ -1066,7 +1068,15 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	j["crt_brightness"] = vec3_to_json(data.crt_brightness);
 
+	// SSAO uniforms
+
 	j["ssao_kernel_samples"] = data.ssao_kernel_samples;
+
+	j["ssao_radius"] = data.ssao_radius;
+
+	j["ssao_bias"] = data.ssao_bias;
+
+	// Bloom uniforms
 
 	j["bloom_treshold"] = data.bloom_treshold;
 
@@ -1093,11 +1103,17 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 
 			file >> j;
 
+			// Booleans
+
 			data.is_post_process = j.at("is_pp");
+
+			data.is_ssao = j.at("is_ssao");
 
 			data.is_bloom = j.at("is_bloom");
 
 			data.is_crt_curved = j.at("is_crt");
+
+			// CRT uniforms
 
 			data.crt_curvature = json_to_vec2(j.at("crt_curvature"));
 
@@ -1113,7 +1129,15 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 
 			data.crt_brightness = json_to_vec3(j.at("crt_brightness"));
 
+			// SSAO uniforms
+
 			data.ssao_kernel_samples = j.at("ssao_kernel_samples");
+
+			data.ssao_radius = j.at("ssao_radius");
+
+			data.ssao_bias = j.at("ssao_bias");
+
+			// Bloom uniforms
 
 			data.bloom_treshold = j.at("bloom_treshold");
 

@@ -32,130 +32,99 @@ void Game::input()
     }
 
 }
+
 void Game::draw()
 {
-
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-    glClearColor(.01f, .01f, .01f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-    glEnable(GL_DEPTH_TEST);
-    sceneGraph->draw(viewWidth, viewHeight, framebuffer);
-
-    // SSAO
-    bool is_ssao = false;
-    
-    // SSAO pass
-    if (is_ssao) {
-
-        glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        ResourceManager::Instance().shader_PostProcess_ssao->use();
-
-        // Uniformy:
-        ResourceManager::Instance().shader_PostProcess_ssao->setInt("kernelSize", postProcessData.ssao_kernel_samples);
-        for (unsigned int i = 0; i < postProcessData.ssao_kernel_samples; ++i) {
-            ResourceManager::Instance().shader_PostProcess_ssao->setVec3("samples[" + std::to_string(i) + "]", ssao_kernel[i]);
-        }
-
-        ResourceManager::Instance().shader_PostProcess_ssao->setMat4("projection", camera->GetProjection());
-        ResourceManager::Instance().shader_PostProcess_ssao->setMat4("invProjection", glm::inverse(camera->GetProjection()));
-        ResourceManager::Instance().shader_PostProcess_ssao->setVec2("screenSize", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-        ResourceManager::Instance().shader_PostProcess_ssao->setFloat("radius", 5.f/*postProcessData.ssao_radius*/);
-
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, depthTexture);
-        ResourceManager::Instance().shader_PostProcess_ssao->setInt("gDepth", 0);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, normalTexture);
-        ResourceManager::Instance().shader_PostProcess_ssao->setInt("gNormal", 1);
-
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, noise_texture);
-        ResourceManager::Instance().shader_PostProcess_ssao->setInt("texNoise", 2);
-
-        // Narysuj fullscreen quad:
-        glBindVertexArray(quadVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        // SSAO blur pass
-        glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        auto& blurShader = *ResourceManager::Instance().shader_PostProcess_ssao_blur;
-        blurShader.use();
-        blurShader.setInt("ssaoInput", 0);
-        blurShader.setVec2("screenSize", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer); // Input: raw SSAO
-
-        glBindVertexArray(quadVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    }
-
-    if (is_ssao) {
-        glDisable(GL_DEPTH_TEST);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        auto& composite = *ResourceManager::Instance().shader_PostProcess_ssao_composite;
-        
-        composite.use();
-
-        composite.setInt("sceneColor", 0);
-        composite.setInt("ssaoMap", 1);
-        composite.setFloat("aoPower", 2.f);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, colorTexture);  // wynik głównego renderingu
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, ssaoBlurColorBuffer);  // SSAO po blurze
-
-        glBindVertexArray(quadVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        glEnable(GL_DEPTH_TEST);
-        return;
-    }
-
-    //glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    //background->render(*ResourceManager::Instance().shader_background);
-    //sprite2->render(*ResourceManager::Instance().shader_background);
-    //sprite3->render(*ResourceManager::Instance().shader_background);
-    //sprite->render(*ResourceManager::Instance().shader_background);
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     float time = glfwGetTime();
     float fpsValue = 1.f / ServiceLocator::getWindow()->deltaTime;
 
-    //text->renderText("Fps: " + to_string(fpsValue), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *ResourceManager::Instance().shader_text, glm::vec3(1.f, 0.3f, 0.3f));
-    //text->renderText("We have text render!", 200, 200, *ResourceManager::Instance().shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
+    // Render sceny do framebuffera
 
-    // Tu gdzieś ustawić uniformy dla shadera/shaderów SSAO i użyć
+    glEnable(GL_DEPTH_TEST);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    glDisable(GL_DEPTH_TEST);
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    // glClearColor(.01f, .01f, .01f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    //glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+    sceneGraph->draw(viewWidth, viewHeight, framebuffer); // Po tym etapie mamy gotowe color texture 
+    
+    GLuint current_texture = colorTexture;
 
-    glBindVertexArray(quadVAO);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, colorTexture);
-    //glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+    if (postProcessData.is_post_process) {
+    
+        // SSAO pass
+        if (postProcessData.is_ssao) {
 
-    if(postProcessData.is_post_process) {
+            glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            ResourceManager::Instance().shader_PostProcess_ssao->use();
+
+            // Uniformy:
+
+            ResourceManager::Instance().shader_PostProcess_ssao->setMat4("projection", camera->GetProjection());
+            ResourceManager::Instance().shader_PostProcess_ssao->setMat4("invProjection", glm::inverse(camera->GetProjection()));
+            ResourceManager::Instance().shader_PostProcess_ssao->setVec2("screenSize", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+
+            ResourceManager::Instance().shader_PostProcess_ssao->setInt("kernelSize", postProcessData.ssao_kernel_samples);
+            for (unsigned int i = 0; i < postProcessData.ssao_kernel_samples; ++i) {
+                ResourceManager::Instance().shader_PostProcess_ssao->setVec3("samples[" + std::to_string(i) + "]", ssao_kernel[i]);
+            }
+
+            ResourceManager::Instance().shader_PostProcess_ssao->setFloat("radius", postProcessData.ssao_radius);
+            ResourceManager::Instance().shader_PostProcess_ssao->setFloat("bias", postProcessData.ssao_bias);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, depthTexture);
+            ResourceManager::Instance().shader_PostProcess_ssao->setInt("gDepth", 0);
+
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, normalTexture);
+            ResourceManager::Instance().shader_PostProcess_ssao->setInt("gNormal", 1);
+
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, noise_texture);
+            ResourceManager::Instance().shader_PostProcess_ssao->setInt("texNoise", 2);
+
+            glBindVertexArray(quadVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            // SSAO blur pass
+            glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            auto& blurShader = *ResourceManager::Instance().shader_PostProcess_ssao_blur;
+            blurShader.use();
+            blurShader.setInt("ssaoInput", 0);
+            blurShader.setVec2("screenSize", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+
+            renderQuadWithTexture(ssaoColorBuffer);
+
+            glDisable(GL_DEPTH_TEST);
+            glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+            auto& composite = *ResourceManager::Instance().shader_PostProcess_ssao_composite;
+
+            composite.use();
+
+            composite.setInt("sceneColor", 0);
+            composite.setInt("ssaoMap", 1);
+            composite.setFloat("aoPower", 2.f);
+
+            renderQuadWithTextures(current_texture, ssaoBlurColorBuffer);
+            current_texture = colorTexture;
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glEnable(GL_DEPTH_TEST);
+
+        }
 
         if (postProcessData.is_bloom) {
-            
+
             glBindFramebuffer(GL_FRAMEBUFFER, bloomFBO);
             glClear(GL_COLOR_BUFFER_BIT);
 
@@ -164,20 +133,10 @@ void Game::draw()
             brightShader.setInt("sceneTexture", 0);
             brightShader.setFloat("bloom_threshold", postProcessData.bloom_treshold);
 
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, colorTexture);
-
-            glBindVertexArray(quadVAO);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-
-            ///
-            //glEnable(GL_DEPTH_TEST);
-            //return;
-            ///
-
+            renderQuadWithTexture(current_texture);
 
             bool horizontal = true, firstIteration = true;
-            int blurPassCount = postProcessData.bloom_blur_passes; // np. 10
+            int blurPassCount = postProcessData.bloom_blur_passes;
 
             auto& blurShader = *ResourceManager::Instance().shader_PostProcess_gaussian_blur;
             blurShader.use();
@@ -200,10 +159,13 @@ void Game::draw()
 
                 horizontal = !horizontal;
                 if (firstIteration) firstIteration = false;
-            }
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);  // render to screen
+            }  
+
+            // Composite bloom onto scene
             glDisable(GL_DEPTH_TEST);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+            // glClear(GL_COLOR_BUFFER_BIT);
 
             auto& bloomComposite = *ResourceManager::Instance().shader_PostProcess_bloom_composite;
             bloomComposite.use();
@@ -211,21 +173,18 @@ void Game::draw()
             bloomComposite.setInt("bloomTexture", 1);
             bloomComposite.setFloat("intensity", postProcessData.bloom_intensity);
 
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, colorTexture);
+            renderQuadWithTextures(colorTexture, pingpongTexture[!horizontal]);
 
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, pingpongTexture[!horizontal]);  // final blur texture
-
-            glBindVertexArray(quadVAO);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glEnable(GL_DEPTH_TEST);
 
-            return;
+            current_texture = colorTexture;
 
         }
+
         if (postProcessData.is_crt_curved) {
+
+            glDisable(GL_DEPTH_TEST);
 
             ResourceManager::Instance().shader_PostProcess_crt->use();
             ResourceManager::Instance().shader_PostProcess_crt->setInt("screenTexture", 0);
@@ -238,40 +197,50 @@ void Game::draw()
 
             ResourceManager::Instance().shader_PostProcess_crt->setVec2("lines_sinusoid_factor", postProcessData.crt_lines_sinusoid_factor);
             ResourceManager::Instance().shader_PostProcess_crt->setFloat("vignette_factor", postProcessData.crt_vignette_factor);
-            
+
             ResourceManager::Instance().shader_PostProcess_crt->setVec3("brightness", postProcessData.crt_brightness);
 
             ResourceManager::Instance().shader_PostProcess_crt->setFloat("time", time);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, current_texture);
+            
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glEnable(GL_DEPTH_TEST);
+
+            glEnable(GL_DEPTH_TEST);
+            return;
+
         }
 
     }
-    else {
 
-        // glDisable(GL_DEPTH_TEST);
+    //glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    //background->render(*ResourceManager::Instance().shader_background);
+    //sprite2->render(*ResourceManager::Instance().shader_background);
+    //sprite3->render(*ResourceManager::Instance().shader_background);
+    //sprite->render(*ResourceManager::Instance().shader_background);
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glClear(GL_COLOR_BUFFER_BIT);
+    //text->renderText("Fps: " + to_string(fpsValue), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *ResourceManager::Instance().shader_text, glm::vec3(1.f, 0.3f, 0.3f));
+    //text->renderText("We have text render!", 200, 200, *ResourceManager::Instance().shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
+
+
+    glDisable(GL_DEPTH_TEST);
+
+    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // glClear(GL_COLOR_BUFFER_BIT);
         
-        ResourceManager::Instance().shader_PostProcess_pass->use();
-        //ResourceManager::Instance().shader_PostProcess_pass->setInt("screenTexture", 0);
-        //glActiveTexture(GL_TEXTURE0);
-        //glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
-        ResourceManager::Instance().shader_PostProcess_pass->setInt("screenTexture", 0);
-        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    ResourceManager::Instance().shader_PostProcess_pass->use();
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, colorTexture);
+    ResourceManager::Instance().shader_PostProcess_pass->setInt("screenTexture", 0);
 
-        glBindVertexArray(quadVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+    renderQuadWithTexture(current_texture);
 
-        return;
-    }
-
-    glDrawArrays(GL_TRIANGLES, 0, 6);
     glEnable(GL_DEPTH_TEST);
 
 }
+
 void Game::update(float deltaTime)
 {
     auto* window = ServiceLocator::getWindow();
@@ -588,4 +557,20 @@ void Game::debug_print() {
     }
 
 
+}
+
+void Game::renderQuadWithTexture(GLuint tex) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void Game::renderQuadWithTextures(GLuint tex0, GLuint tex1) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex0);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, tex1);
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
