@@ -59,6 +59,7 @@ private:
         shader_PostProcess_gaussian_blur = new Shader(postPath_vert, postPath_gaussian_blur);
         shader_PostProcess_bloom_composite = new Shader(postPath_vert, postPath_bloom_composite);
         shader_PostProcess_crt = new Shader(postPath_vert, postPath_crt);
+        shader_PostProcess_noise = new Shader(postPath_vert, postPath_noise);
 
     }
     ~ResourceManager() {
@@ -82,6 +83,7 @@ private:
         delete shader_PostProcess_gaussian_blur;
         delete shader_PostProcess_bloom_composite;
         delete shader_PostProcess_crt;
+        delete shader_PostProcess_noise;
 
     }
 
@@ -112,6 +114,7 @@ private:
     const char* postPath_gaussian_blur = "res/shaders/pp_blur.frag";
     const char* postPath_bloom_composite = "res/shaders/pp_bloom_composite.frag";
     const char* postPath_crt = "res/shaders/pp_crt.frag";
+    const char* postPath_noise = "res/shaders/pp_noise.frag";
 
 public:
 
@@ -138,6 +141,7 @@ public:
     Shader* shader_PostProcess_gaussian_blur;
     Shader* shader_PostProcess_bloom_composite;
     Shader* shader_PostProcess_crt;
+    Shader* shader_PostProcess_noise;
 
 	static ResourceManager& Instance() {
 		static ResourceManager instance;

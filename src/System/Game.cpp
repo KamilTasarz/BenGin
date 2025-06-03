@@ -186,6 +186,9 @@ void Game::draw()
 
             glDisable(GL_DEPTH_TEST);
 
+            if (alpha < 1.f) {
+                glBindFramebuffer(GL_FRAMEBUFFER, crtFBO);
+            }
             ResourceManager::Instance().shader_PostProcess_crt->use();
             ResourceManager::Instance().shader_PostProcess_crt->setInt("screenTexture", 0);
 
@@ -204,11 +207,28 @@ void Game::draw()
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, current_texture);
-            
+            glBindVertexArray(quadVAO);
             glDrawArrays(GL_TRIANGLES, 0, 6);
-            glEnable(GL_DEPTH_TEST);
+            glBindVertexArray(0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-            glEnable(GL_DEPTH_TEST);
+
+            if (alpha < 1.f) {
+                alpha += 0.01f;
+
+                ResourceManager::Instance().shader_PostProcess_noise->use();
+                ResourceManager::Instance().shader_PostProcess_noise->setInt("image", 0);
+                ResourceManager::Instance().shader_PostProcess_noise->setFloat("time", glfwGetTime());
+                ResourceManager::Instance().shader_PostProcess_noise->setFloat("alpha", alpha);
+                ResourceManager::Instance().shader_PostProcess_noise->setVec2("resolution", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, crtColorBuffer);
+                glBindVertexArray(quadVAO);
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+                glBindVertexArray(0);
+                glEnable(GL_DEPTH_TEST);
+            }
             return;
 
         }
@@ -224,6 +244,8 @@ void Game::draw()
 
     //text->renderText("Fps: " + to_string(fpsValue), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *ResourceManager::Instance().shader_text, glm::vec3(1.f, 0.3f, 0.3f));
     //text->renderText("We have text render!", 200, 200, *ResourceManager::Instance().shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
+
+
 
 
     glDisable(GL_DEPTH_TEST);
@@ -297,6 +319,7 @@ void Game::init()
 	camera->setObjectToFollow(sceneGraph->root->getChildByName("camera_follow"), origin);
 	camera->changeMode(FOLLOWING);
 	
+    alpha = 0.f;
 
     int fbWidth = viewWidth;
     int fbHeight = viewHeight;
@@ -449,6 +472,27 @@ void Game::init()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // ======== END BLOOM SETUP ========
+
+    // ======== NOISE START ========
+    
+    glGenFramebuffers(1, &crtFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, crtFBO);
+
+    glGenTextures(1, &crtColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, crtColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fbWidth, fbHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, crtColorBuffer, 0);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cerr << "CRT FBO not complete!" << std::endl;
+    
+    
+    // ======== NOISE END ========
+
 
     sceneGraph->root->createComponents();
 

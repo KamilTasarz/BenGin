@@ -38,6 +38,7 @@ private:
 
 	// Bloom
 	GLuint bloomFBO;
+	GLuint crtFBO;
 	GLuint brightTexture;
 	GLuint pingpongFBO[2];
 	GLuint pingpongTexture[2];
@@ -45,7 +46,9 @@ private:
 	SceneGraph* sceneGraph;
 	PostProcessData postProcessData;
 	unsigned int framebuffer, colorTexture, depthTexture, normalTexture, depthRenderbuffer;
-	unsigned int ssaoFBO, ssaoColorBuffer, ssaoBlurFBO, ssaoBlurColorBuffer;
+	unsigned int ssaoFBO, ssaoColorBuffer, ssaoBlurFBO, ssaoBlurColorBuffer, crtColorBuffer;
+
+	float alpha = 0.f;
 
 	Animator* animator;
 	Animation* anim;
