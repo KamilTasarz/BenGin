@@ -78,8 +78,9 @@ public:
 	}
 
 
-	virtual void render(Shader& shader) {
-
+	virtual void render(Shader& shader, float x, float y, float size) {
+		scale = size;
+		setPosition(x, y);
 		shader.use();
 		shader.setMat4("projection", screen_projection);
 		shader.setInt("background", 0);
@@ -279,7 +280,11 @@ public:
 		glBindVertexArray(0);
 	}
 
-	void render(Shader &shader) override {
+	void render(Shader &shader, float x, float y, float size) override {
+
+		scale = size;
+		setPosition(x, y);
+
 		shader.use();
 		shader.setMat4("projection", screen_projection);
 		shader.setInt("background", 0);
