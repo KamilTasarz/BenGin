@@ -75,7 +75,7 @@ public:
 		return instance;
 	}
 
-	void init();
+	void init(const char* path = "res/");
 	void update(float delta_time);
 	void draw();
 
