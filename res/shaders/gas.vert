@@ -50,7 +50,7 @@ void main() {
 		//Position = vec3(aModel * vec4(scaledPos, 1.0));
 		gl_Position = projection * view * worldPos;
 	} else {
-		gl_Position = glm::vec4(0.f);
+		gl_Position = vec4(0.f);
 	}
 
 }
