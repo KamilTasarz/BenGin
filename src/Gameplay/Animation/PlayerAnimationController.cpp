@@ -127,7 +127,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 
 	if (rb->targetVelocityX > 0.f) {
-		std::cout << "gracz siê porusza" << std::endl;
+		std::cout << "gracz siï¿½ porusza" << std::endl;
 	}
 
 	previousPosition = owner->transform.getLocalPosition();
