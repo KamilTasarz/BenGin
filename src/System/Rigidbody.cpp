@@ -114,7 +114,10 @@ void Rigidbody::onUpdate(float deltaTime)
 		//velocityY *= (1.0f - drag * deltaTime);
 	}
 
-	if (useGravity && (scaleUnderneath || !groundUnderneath)) {
+	if (useGravity && scaleUnderneath) {
+		velocityY += gravity * deltaTime * 0.5f;
+	}
+	else if (useGravity && !groundUnderneath) {
 		velocityY += gravity * deltaTime;
 	}
 

@@ -34,11 +34,11 @@ void NPC::onStart() {
 
     rb = owner->getComponent<Rigidbody>();
 	rb->smoothingFactor = 5.f;
-    obstacleLayer = { "Wall", "Floor" };
+    obstacleLayer = { "Wall", "Floor", "Door" };
 }
 
 void NPC::onUpdate(float deltaTime) {
-    std::cout << "NPC " << owner->getName() << " is active: " << isActive << std::endl;
+    //std::cout << "NPC " << owner->getName() << " is active: " << isActive << std::endl;
     
     if (!isActive) return;
     
@@ -65,7 +65,7 @@ void NPC::onCollision(Node* other)
 }
 
 void NPC::detectObstacles() {
-    glm::vec3 ownerPos = owner->transform.getGlobalPosition();
+    glm::vec3 ownerPos = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
 
     obstacles.clear();
     for (Collider* box : PhysicsSystem::instance().getColliders()) {
@@ -78,15 +78,6 @@ void NPC::detectObstacles() {
                 float distance = glm::distance(glm::vec2(ownerPos), glm::vec2(pos));
 
                 if (distance <= detectionRadius) {
-                    // Opcjonalnie mo¿esz zostawiæ sprawdzanie "czy w œrodku" jako drugi warunek
-                    /*float halfW = scale.x / 2.f;
-                    float halfH = scale.y / 2.f;
-
-                    if (ownerPos.x >= pos.x - halfW && ownerPos.x <= pos.x + halfW &&
-                        ownerPos.y >= pos.y - halfH && ownerPos.y <= pos.y + halfH) {
-                        obstacles.push_back(node);
-                    }*/
-
                     obstacles.push_back(node);
                 }
             }
@@ -98,7 +89,7 @@ void NPC::detectPlayer() {
     for (Collider* box : PhysicsSystem::instance().getColliders()) {
         if (box->node && box->node->getTagName() == "Player") {
             glm::vec3 playerPos = (box->node->AABB->max_point_world + box->node->AABB->min_point_world) / 2.f;
-			glm::vec3 ownerPos = owner->transform.getGlobalPosition();
+			glm::vec3 ownerPos = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
             
 			float distance = glm::distance(ownerPos, playerPos);
             
@@ -129,7 +120,7 @@ void NPC::avoidObstacles() {
     for (Node* obstacle : obstacles) {
         glm::vec3 obstaclePos = obstacle->transform.getGlobalPosition();
         glm::vec3 obstacleHalfExtents = obstacle->transform.getLocalScale() * 0.5f;
-        glm::vec3 ownerPos = owner->transform.getGlobalPosition();
+        glm::vec3 ownerPos = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
 
         glm::vec3 closestPoint = getClosestPointOnAABB(ownerPos, obstaclePos, obstacleHalfExtents);
         glm::vec2 directionToObstacle = glm::vec2(closestPoint) - glm::vec2(ownerPos);
@@ -177,7 +168,7 @@ void NPC::getSteering(float deltaTime) {
     }
 
     if (playerVisible || isFleeingWithoutTarget) {
-		glm::vec3 ownerPos = owner->transform.getGlobalPosition();
+		glm::vec3 ownerPos = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
 
         glm::vec2 directionToTarget = playerPositionCached - glm::vec2(ownerPos);
         glm::vec2 fleeDirection = isFleeing ? -glm::normalize(directionToTarget) : glm::normalize(directionToTarget);
@@ -245,7 +236,7 @@ glm::vec2 NPC::getMoveDirection() {
         interest[i] = std::clamp(interest[i] - danger[i], 0.f, 1.f);
 
         if (danger[i] < 0.1f) interest[i] += 0.2f;
-        if (danger[i] < 0.2f && interest[i] < 0.1f) interest[i] += 0.3f;
+        if (danger[i] < 0.25f && interest[i] < 0.1f) interest[i] += 0.3f;
     }
 
     glm::vec2 output{ 0.f, 0.f };

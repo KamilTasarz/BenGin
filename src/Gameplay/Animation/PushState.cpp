@@ -29,7 +29,7 @@ void PushState::update(Node* owner, float deltaTime) {
         animation->changeState(new JumpState());
         return;
     }
-    else if (/*abs(animation->deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f*/ !player->isRunning && (rb->groundUnderneath || rb->scaleUnderneath)) {
+    else if (!player->isRunning && (rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new IdleState());
     }
    
@@ -37,7 +37,7 @@ void PushState::update(Node* owner, float deltaTime) {
 		return;
 	}
     
-    if (abs(rb->velocityX) > 0.2f && abs(rb->velocityDeltaX) >= 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
+    if (player->isRunning && (rb->groundUnderneath || rb->scaleUnderneath)) {
         animation->changeState(new RunState());
     }
     else if (abs(rb->velocityDeltaY) > 0.f && !(rb->groundUnderneath || rb->scaleUnderneath)) {

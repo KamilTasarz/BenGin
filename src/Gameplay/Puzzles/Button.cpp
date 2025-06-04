@@ -45,6 +45,9 @@ void Button::ChangeState(bool state)
 	else if (object->getComponent<Fan>() != nullptr) {
 		object->getComponent<Fan>()->isActive = state;
 	}
+	else if (object->getChildByName("gate_up") != nullptr) {
+		object->getChildByName("gate_up")->getComponent<Door>()->ChangeState(state);
+	}
 }
 
 void Button::onStayCollisionLogic(Node* other)

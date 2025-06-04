@@ -75,6 +75,8 @@ void Virus::VirusEffect(Node* target)
 
 		player->isGravityFlipped = false;
 		target->getComponent<Rigidbody>()->gravity = -32.f;
+		target->getComponent<Rigidbody>()->mass = 0.4f;
+		player->jumpForce *= 1.2f;
 		player->virusType = "blue";
 	}
 	else if (green) {
@@ -88,7 +90,7 @@ void Virus::VirusEffect(Node* target)
 	else if (black) {
 		target->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-		target->getComponent<Rigidbody>()->mass = 15.f;
+		target->getComponent<Rigidbody>()->mass = 25.f;
 		player->speed *= 0.7f;
 		player->jumpForce *= 0.8f;
 		player->virusType = "black";
