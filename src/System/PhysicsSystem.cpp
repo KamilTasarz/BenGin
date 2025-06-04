@@ -86,6 +86,7 @@ void PhysicsSystem::updateCollisions()
 
 				bool first = false, second = false;
 				for (auto& comp : collider1->node->components) {
+					if (collider2->is_logic && dynamic_cast<Rigidbody*>(comp.get())) continue;
 					if (!collider1->is_logic)
 					{
 						comp->onStayCollision(collider2->node);
