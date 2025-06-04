@@ -12,7 +12,7 @@ enum ObjectType {
 class GuiObject {
 public:
 	int order_id;
-	virtual ~GuiObject() = 0;
+	virtual ~GuiObject() {}
 	virtual void render() = 0;
 	virtual ObjectType getType() = 0;
 };
@@ -23,9 +23,9 @@ public:
 	glm::vec2 pos;
 	float size;
 	
-	unsigned int id;
-	SpriteObject(std::shared_ptr<Sprite> s, glm::vec2 pos, float size, int order_id, unsigned int id)
-		: sprite(s), pos(pos), size(size), id(id) {
+	unsigned int id, sprite_id;
+	SpriteObject(std::shared_ptr<Sprite> s, unsigned int s_id, glm::vec2 pos, float size, int order_id, unsigned int id)
+		: sprite(s), pos(pos), size(size), id(id), sprite_id(s_id) {
 		this->order_id = order_id;
 	}
 	~SpriteObject() override = default;
@@ -39,9 +39,9 @@ public:
 	glm::vec2 pos;
 	std::string value;
 	glm::vec3 color = glm::vec3(0.f);
-	unsigned int id;
-	TextObject(std::shared_ptr<Text> t, glm::vec2 pos, std::string value, int order_id, unsigned int id, glm::vec3 color = { 0.f, 0.f, 0.f })
-		: text(t), pos(pos), value(value), color(color), id(id) {
+	unsigned int id, text_id;
+	TextObject(std::shared_ptr<Text> t, unsigned int t_id, glm::vec2 pos, std::string value, int order_id, unsigned int id, glm::vec3 color = { 0.f, 0.f, 0.f })
+		: text(t), pos(pos), value(value), color(color), id(id), text_id(t_id) {
 		this->order_id = order_id;
 	}
 	
@@ -51,11 +51,16 @@ public:
 };
 
 enum Text_names {
-	ARIAL_48
+	ARIAL_16, 
+	ARIAL_32, 
+	ARIAL_48, 
+	ARIAL_64
 };
 
 enum Sprite_names {
-	PIRATE
+	HEART,
+	PIRATE,
+	GHOST
 };
 
 class GuiManager
@@ -64,12 +69,12 @@ private:
 	std::unordered_map<unsigned int, std::shared_ptr<Sprite>> sprites;
 	std::unordered_map<unsigned int, std::shared_ptr<Text>> texts;
 
-	unsigned int max_id;
-	std::vector<unsigned int> free_ids;
-
 	std::vector<GuiObject*> objects;
 	
 public:
+	unsigned int max_id;
+	std::vector<unsigned int> free_ids;
+
 	static GuiManager& Instance() {
 		static GuiManager instance;
 		return instance;
@@ -78,6 +83,10 @@ public:
 	void init(const char* path = "res/");
 	void update(float delta_time);
 	void draw();
+
+	std::vector<GuiObject*> getObjects() {
+		return objects;
+	}
 
 	// add text object to render
 	void text(std::string value, float x, float y, Text_names text_id, int order_id = -1);

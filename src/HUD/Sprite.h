@@ -16,6 +16,8 @@ public:
 	glm::vec2 pos;
 	float scale;
 
+	std::string name;
+
 	virtual ~Sprite() {}
 
 	Sprite() {
@@ -33,7 +35,7 @@ public:
 	Sprite(float width, float height, const char* sprite_path, float x, float y, float scale = 1.0f) : scale(scale) {
 		screen_projection = glm::ortho(0.0f, width, 0.0f, height);
 		sprite_id = textureFromFile(sprite_path);
-
+		name = std::string(sprite_path);
 		glBindTexture(GL_TEXTURE_2D, sprite_id);
 
 		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &sprite_w);
@@ -107,6 +109,7 @@ public:
 	float current_time = 0.0f, duration;
 	unsigned int sprite_num, sprite_id, atlas_w, atlas_h;
 	UV* uvs;
+	
 
 	~AnimatedSprite() override {
 		delete[] uvs;
@@ -117,7 +120,7 @@ public:
 		screen_projection = glm::ortho(0.0f, window_width, 0.0f, window_height);
 		this->scale = scale;
 		uvs = new UV[sprite_number];
-
+		name = std::string(paths_to_sprites[0]);
 		GLint maxTextureSize;
 		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 
@@ -207,7 +210,7 @@ public:
 	// ile lacznie i offset po y do poczatku nastepnych
 	AnimatedSprite(float window_width, float window_height, float duration, const char* path_to_atlas,
 		int row_number, int sprites_per_row, int sprite_number, float x, float y, float scale = 1.f) : Sprite(), duration(duration) {
-		
+		name = std::string(path_to_atlas);
 		screen_projection = glm::ortho(0.0f, window_width, 0.0f, window_height);
 		this->scale = scale;
 

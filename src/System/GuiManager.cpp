@@ -2,10 +2,11 @@
 #include "../Text/Text.h"
 #include "../HUD/Sprite.h"
 #include "../ResourceManager.h"
+#include "../System/Window.h"
 
 void GuiManager::init(const char* path)
 {
-	/*std::string pathStr(path);
+	std::string pathStr(path);
 	if (fs::exists(pathStr + "config.json")) {
 		std::ifstream file(pathStr + "config.json");
 		if (!file) {
@@ -16,145 +17,62 @@ void GuiManager::init(const char* path)
 		file >> spriteData;
 		file.close();
 
-		string texturesPath = "sprites/";
+		string spritePath = pathStr + "sprites/";
 		if (spriteData.contains("sprites")) {
 
-			for (json sprite : spriteData["sprites"]) {
-				const char* name = sprite["path"].get<string>().c_str();
-				
-				shared_ptr<Texture> texture = std::make_shared<Texture>(id, type, pathStr + texturesPath + name);
-				textures[logic_id] = texture;
-				highest_id_text = std::max(highest_id_text, logic_id);
-				cout << "Texture loaded: " << pathStr + texturesPath + name << endl;
-			}
-		}
+			for (json sprite_json : spriteData["sprites"]) {
+				shared_ptr<Sprite> sprite;
+				std::string type = sprite_json["type"];
+				if (type == "Sprite") {
 
-		string modelsPath = "models/";
-		if (resourceData.contains("models")) {
-
-			for (json model : resourceData["models"]) {
-				std::string directory = model["directory"].get<string>();
-				knownModelDirs.insert(directory);
-				std::string name = model["name"].get<string>();
-				unsigned int id = model["id"].get<unsigned int>();
-				shared_ptr<Model> modelPtr;
-				if (model.contains("move_origin")) {
-					modelPtr = std::make_shared<Model>(path + modelsPath + directory + name, id, model["move_origin"]);
+					std::string s = (spritePath + (std::string)sprite_json["name"][0]);
+					const char* path = s.c_str();
+					sprite = std::make_shared<Sprite>(WINDOW_WIDTH, WINDOW_HEIGHT, path, 0, 0, 1.f);
 				}
 				else {
-					modelPtr = std::make_shared<Model>(path + modelsPath + directory + name, id);
-				}
-				models[id] = modelPtr;
-				cout << "Model loaded: " << path + modelsPath + directory + name << endl;
-				if (highest_id < id) highest_id = id;
-			}
+					float duration = sprite_json["duration"].get<float>();
+					int frames = sprite_json["frames"].get<int>();
 
-		}
-
-		if (resourceData.contains("builtin_models")) {
-
-			for (json model : resourceData["builtin_models"]) {
-				std::string type = model["type"].get<string>();
-				unsigned int id = model["id"].get<unsigned int>();
-
-				if (type == "directional_light") {
-					shared_ptr<ViewLight> light = std::make_shared<ViewLight>(id, type);
-					lights[id] = light;
-					std::cout << "Light loaded: " << type << " id: " << id << std::endl;
-				}
-				else if (type == "point_light") {
-					shared_ptr<ViewLight> light = std::make_shared<ViewLight>(id, type);
-					lights[id] = light;
-					std::cout << "Light loaded: " << type << " id: " << id << std::endl;
-				}
-				else {
-
-					json textures = model["textures_id"];
-					std::vector<shared_ptr<Texture>> textures_ptr;
-					for (int i = 0; i < textures.size(); i++) {
-						textures_ptr.push_back(getTexture(textures[i].get<unsigned int>()));
+					if (sprite_json["name"].size() == 1) {
+						std::string s = (spritePath + (std::string)sprite_json["name"][0]);
+						const char* path = s.c_str();
+						int rows = sprite_json["rows"].get<int>();
+						int frames = sprite_json["frames"].get<int>();
+						int f_per_r = sprite_json["frames_per_row"].get<int>();
+						sprite = std::make_shared<AnimatedSprite>(WINDOW_WIDTH, WINDOW_HEIGHT, duration, path, rows, f_per_r, frames, 0, 0, 1.f);
 					}
-					shared_ptr<Model> modelPtr = std::make_shared<Model>(std::move(textures_ptr), id, type);
-					models[id] = modelPtr;
-					cout << "Model loaded: " << type << " id: " << id << endl;
-					if (highest_id < id) highest_id = id;
-
-				}
-			}
-		}
-
-		for (const auto& dirEntry : fs::directory_iterator(pathStr + modelsPath)) {
-			if (dirEntry.is_directory()) {
-				std::string folderName = dirEntry.path().filename().string();
-				if (knownModelDirs.find(folderName + "/") == knownModelDirs.end()) {
-
-					for (const auto& file : fs::directory_iterator(dirEntry.path())) {
-						if (file.path().extension() == ".obj" || file.path().extension() == ".gltf") {
-							std::string fileName = file.path().filename().string();
-							unsigned int newId = highest_id + 1;
-
-							highest_id++;
-
-							resourceData["models"].push_back({
-								{ "directory", folderName + "/" },
-								{ "name", fileName },
-								{ "id", newId }
-								});
-
-							shared_ptr<Model> modelPtr = std::make_shared<Model>(pathStr + modelsPath + folderName + "/" + fileName, newId);
-							models[newId] = modelPtr;
-							std::cout << "[NEW] Model found and loaded: " << folderName << "/" << fileName << "\n";
-							break;
+					else {
+						std::vector<std::string> strings;
+						const char** paths = new const char* [frames];
+						for (int i = 0; i < frames; i++) {
+							strings.push_back((spritePath + (std::string)sprite_json["name"][i]));
+							paths[i] = strings.back().c_str();
 						}
+						sprite = std::make_shared<AnimatedSprite>(WINDOW_WIDTH, WINDOW_HEIGHT, duration, paths, frames, 0, 0, 1.f);
+						delete[] paths;
 					}
+
+					
 				}
+
+				sprites[sprite_json["id"].get<unsigned int>()] = sprite;
+
+			}
+		}
+		string textPath = pathStr + "fonts/";
+		if (spriteData.contains("texts")) {
+
+			for (json text_json : spriteData["texts"]) {
+				std::string s = (textPath + (std::string)text_json["name"]);
+				const char* path = s.c_str();
+				int size = text_json["size"].get<int>();
+				shared_ptr<Text> text = make_shared<Text>(path, size);
+
+				texts[text_json["id"].get<unsigned int>()] = text;
 			}
 		}
 
-		for (const auto& file : fs::directory_iterator(pathStr + texturesPath)) {
-			if (file.is_regular_file()) {
-				std::string texName = file.path().filename().string();
-				if (knownTextures.find(texName) == knownTextures.end()) {
-
-					unsigned int newId = highest_id_text + 1;
-					highest_id_text++;
-					std::string type = "diffuse"; //wiekszosc jest diffuse
-
-					unsigned int id = textureFromFile(texName.c_str(), pathStr + texturesPath);
-					shared_ptr<Texture> texPtr = std::make_shared<Texture>(id, type, pathStr + texturesPath + texName);
-					textures[newId] = texPtr;
-
-					resourceData["textures"].push_back({
-						{ "name", texName },
-						{ "type", type },
-						{ "id", newId }
-						});
-
-					std::cout << "[NEW] Texture found and loaded: " << texName << "\n";
-				}
-			}
-		}
-		/*if (resourceData.contains("sprites")) {
-			for (json sprite : resourceData["sprites"]) {
-				string type = sprite["type"].get<string>();
-				if (type._Equal("sprite")) {
-					unique_ptr<Sprite> spritePtr = std::make_unique<Sprite>(sprite["width"].get<float>(), sprite["height"].get<float>(), sprite["path"].get<string>(), sprite["x"].get<float>(), sprite["y"].get<float>(), sprite["scale"].get<float>());
-				}
-				else if (type._Equal("animated_sprite")) {
-
-				}
-			}
-		}*/
-
-	/*std::ofstream outFile(pathStr + "config.json");
-	if (outFile.is_open()) {
-		outFile << resourceData.dump(4); // 4 spaces for indentation
-		outFile.close();
 	}
-	else {
-		std::cerr << "Error opening file for writing: " << pathStr + "config.json" << std::endl;
-	}
-}*/
 }
 
 void GuiManager::update(float delta_time)
@@ -169,8 +87,8 @@ void GuiManager::update(float delta_time)
 
 void GuiManager::draw()
 {
-	std::sort(objects.begin(), objects.end(), [&](const GuiObject& a, const GuiObject& b) {
-		return a.order_id < b.order_id;
+	std::sort(objects.begin(), objects.end(), [&](GuiObject* a, GuiObject* b) {
+		return a->order_id < b->order_id;
 		});
 
 
@@ -182,11 +100,11 @@ void GuiManager::draw()
 void GuiManager::text(std::string value, float x, float y, Text_names text_id, int order_id)
 {
 	if (free_ids.empty()) {
-		objects.push_back(new TextObject(texts[text_id], glm::vec2(x, y), value, order_id, max_id));
+		objects.push_back(new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, max_id));
 		max_id++;
 	}
 	else {
-		objects.push_back(new TextObject(texts[text_id], glm::vec2(x, y), value, order_id, free_ids.back()));
+		objects.push_back(new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, free_ids.back()));
 		free_ids.pop_back();
 	}
 }
@@ -194,11 +112,11 @@ void GuiManager::text(std::string value, float x, float y, Text_names text_id, i
 void GuiManager::sprite(float x, float y, float size, Sprite_names sprite_id, int order_id)
 {
 	if (free_ids.empty()) {
-		objects.push_back(new SpriteObject(sprites[sprite_id], glm::vec2(x, y), size, order_id, max_id));
+		objects.push_back(new SpriteObject(sprites[sprite_id], sprite_id, glm::vec2(x, y), size, order_id, max_id));
 		max_id++;
 	}
 	else {
-		objects.push_back(new SpriteObject(sprites[sprite_id], glm::vec2(x, y), size, order_id, free_ids.back()));
+		objects.push_back(new SpriteObject(sprites[sprite_id], sprite_id, glm::vec2(x, y), size, order_id, free_ids.back()));
 		free_ids.pop_back();
 	}
 }

@@ -43,7 +43,7 @@ private:
 
 	unsigned int framebuffer, colorTexture, depthRenderbuffer;
 
-	bool isHUD = false, isInPreview = false, pressed_add = false, scene_editor = true, is_initialized = false, AABB_changing = false;
+	bool isHUD = false, isInPreview = false, pressed_add = false, scene_editor = true, is_initialized = false, AABB_changing = false, show_gui = false;
 	glm::vec3* local_point;
 
 	bool isSnapped = false, is_static = true, lockPositionX = false, lockPositionY = false, lockPositionZ = false, puzz = true;

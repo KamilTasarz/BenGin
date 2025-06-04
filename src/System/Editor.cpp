@@ -29,6 +29,7 @@
 #include "../System/LineManager.h"
 #include "../System/Rigidbody.h"
 #include "../System/Tag.h"
+#include "../System/GuiManager.h"
 
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -1697,7 +1698,7 @@ void Editor::run() {
                 ServiceLocator::getWindow()->deltaTime = 0.0f;
             }
 
-
+            
             
 
             frames++;
@@ -1842,7 +1843,7 @@ void Editor::update(float deltaTime) {
     camera->ProcessKeyboard(deltaTime, direction);
 
     LineManager::Instance().clearLines();
-
+    GuiManager::Instance().update(ServiceLocator::getWindow()->deltaTime);
     //PhysicsSystem::instance().updateColliders(sceneGraph);
     //PhysicsSystem::instance().updateCollisions();
 
@@ -1967,6 +1968,9 @@ void Editor::draw() {
     camera->AABB->draw(*ResourceManager::Instance().shader_outline);
 
     LineManager::Instance().drawLines();
+    if (show_gui) {
+        GuiManager::Instance().draw();
+    }
 
     //rect->draw(*ResourceManager::Instance().shader_outline);
 

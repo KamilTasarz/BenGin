@@ -7,6 +7,7 @@
 #include "../ResourceManager.h"
 #include "../Component/CameraGlobals.h"
 #include "PrefabRegistry.h"
+#include "../System/GuiManager.h"
 
 
 
@@ -19,6 +20,8 @@ void Engine::init()
 	PhysicsSystem::instance();
 
 	ResourceManager::Instance().init();
+
+	GuiManager::Instance().init();
 
 	loadTagLayers();
 	loadPrefabs(prefabs, prefabs_puzzle);

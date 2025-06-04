@@ -9,6 +9,7 @@
 #include "../System/PhysicsSystem.h"
 #include "../System/LineManager.h"
 #include "../Basic/Animator.h"
+#include "../System/GuiManager.h"
 
 void Game::input()
 {
@@ -43,6 +44,9 @@ void Game::draw()
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     LineManager::Instance().drawLines();
+
+    GuiManager::Instance().draw();
+
     //background->render(*ResourceManager::Instance().shader_background);
     //sprite2->render(*ResourceManager::Instance().shader_background);
     //sprite3->render(*ResourceManager::Instance().shader_background);
@@ -115,6 +119,9 @@ void Game::update(float deltaTime)
     sceneGraph->update(deltaTime);
     float t4 = glfwGetTime();
     sceneGraph->clearDeleteVector();
+
+    GuiManager::Instance().update(ServiceLocator::getWindow()->deltaTime);
+
     // HUD
 	//cout << "FPS: " << 1.f / deltaTime << endl;
     //cout << "updateColldiers" << t2 - t << endl;

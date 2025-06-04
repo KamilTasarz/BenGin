@@ -12,6 +12,7 @@
 #include "../System/Component.h"
 #include "../System/Rigidbody.h"
 #include "../System/Tag.h"
+#include "../System/GuiManager.h"
 
 //using namespace std;
 std::vector<std::pair<Node*, std::pair<std::string, std::string>>> script_nodes;
@@ -55,7 +56,37 @@ int saveScene(const std::string& filename, SceneGraph*& scene) {
 
 	//sceneData["models"] = modelData;
 
-	
+	json GuiData;
+	json freeID;
+	for (int i = 0; i < GuiManager::Instance().free_ids.size(); i++) {
+		freeID.push_back(GuiManager::Instance().free_ids[i]);
+	}
+	GuiData["free_id"] = freeID;
+	GuiData["max_id"] = GuiManager::Instance().max_id;
+	json objects;
+	for (GuiObject* o : GuiManager::Instance().getObjects()) {
+		json object;
+		if (o->getType() == SpriteType) {
+			SpriteObject* s = static_cast<SpriteObject*>(o);
+			object["ptr_id"] = s->sprite_id;
+			object["id"] = s->id;
+			object["x"] = s->pos.x;
+			object["y"] = s->pos.y;
+			object["size"] = s->size;
+		}
+		else {
+			TextObject* t = static_cast<TextObject*>(o);
+			object["ptr_id"] = t->text_id;
+			object["id"] = t->id;
+			object["x"] = t->pos.x;
+			object["y"] = t->pos.y;
+			object["value"] = t->value;
+			object["color"] = vec3_to_json(t->color);
+		}
+		objects.push_back(object);
+	}
+	GuiData["objects"] = objects;
+	sceneData["GUI"] = GuiData;
 
 	json cameraData;
 	cameraData["position"] = vec3_to_json(camera->cameraPos);
@@ -300,6 +331,9 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 	json sceneData;
 	file >> sceneData;
 	file.close();
+
+
+
 
 	/*json modelData;
 

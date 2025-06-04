@@ -26,7 +26,7 @@ public:
     unsigned int VAO, VBO;
     glm::mat4 screen_projection;
 
-	Text(const char* font_path) {
+	Text(const char* font_path, int size = 48) {
         
         if (FT_Init_FreeType(&ft))
             std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
@@ -36,7 +36,7 @@ public:
         if (FT_New_Face(ft, font_path, 0, &face))
             std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 
-        FT_Set_Pixel_Sizes(face, 0, 48);
+        FT_Set_Pixel_Sizes(face, 0, size);
         loadCharacters();
         FT_Done_Face(face);
         FT_Done_FreeType(ft);
