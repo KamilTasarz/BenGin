@@ -1585,6 +1585,11 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
                 ImGui::SliderFloat("SSAO Bias", &postProcessData.ssao_bias, 0.001f, 0.5f, "%.3f");
 
+                ImGui::SliderFloat("SSAO Intensity", &postProcessData.ssao_intensity, 0.0f, 5.0f, "%.1f");
+
+                ImGui::SliderFloat("SSAO Noise Scale X", &postProcessData.ssao_noise_scale.x, 0.1f, 1000.0f, "%.1f");
+                ImGui::SliderFloat("SSAO Noise Scale Y", &postProcessData.ssao_noise_scale.y, 0.1f, 1000.0f, "%.1f");
+
                 ImGui::Separator();
 
             }

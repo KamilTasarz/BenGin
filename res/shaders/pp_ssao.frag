@@ -18,6 +18,8 @@ uniform vec2 screenSize;
 
 uniform float radius; // promien hemisfery
 uniform float bias; // delikatne przesuniecie - redukcja artefaktow
+uniform float intensity; // sila efektu
+uniform vec2 noise_scale; // czestotliwosc powtarzania sie efektu
 
 vec3 getViewPos(vec2 uv, float depth);
 
@@ -31,7 +33,7 @@ void main() {
 
     // Get vector from noise texture
     vec3 randomVec = normalize(
-        texture(texNoise, vectorUV * screenSize / 4.0).xyz
+        texture(texNoise, vectorUV * noise_scale/*screenSize / 4.0*/).xyz
     );
 
     // Oblicz macierz TBN
@@ -66,7 +68,7 @@ void main() {
     }
 
     // Get final occlusion color
-    FragColor = 1.0 - (occlusion / float(kernelSize));
+    FragColor = 1.0 - (occlusion / float(kernelSize)) * intensity;
 }
 
 vec3 getViewPos(vec2 uv, float depth) {

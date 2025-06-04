@@ -75,6 +75,8 @@ void Game::draw()
 
             ResourceManager::Instance().shader_PostProcess_ssao->setFloat("radius", postProcessData.ssao_radius);
             ResourceManager::Instance().shader_PostProcess_ssao->setFloat("bias", postProcessData.ssao_bias);
+            ResourceManager::Instance().shader_PostProcess_ssao->setFloat("intensity", postProcessData.ssao_intensity);
+            ResourceManager::Instance().shader_PostProcess_ssao->setVec2("noise_scale", postProcessData.ssao_noise_scale);
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, depthTexture);
