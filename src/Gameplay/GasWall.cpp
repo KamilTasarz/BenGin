@@ -54,6 +54,9 @@ void GasWall::spreadCloud() {
         spreadQueue.pop();
 
         for (const auto& dir : directions) {
+			float spreadChance = rand() % 100 / 100.f;
+			if (dir.x != 0 && dir.y != 0 && spreadChance > 0.3f) continue;
+            
             glm::ivec2 newPos = current + dir;
             std::string key = posKey(newPos);
 
