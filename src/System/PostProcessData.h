@@ -38,11 +38,16 @@ struct PostProcessData {
 
     //////////////////////////////
 
-    unsigned int ssao_kernel_samples; // How many samples to generate the SSAO kernel
+    unsigned int ssao_kernel_samples; // How many samples to generate the SSAO kernel (za malo powoduje
+                                      //  ziarnisty efekt, za duzo skutkuje spadkami wydajnosci)
 
     float ssao_radius; // Jak duzy jest promien tego efektu, im wiekszy tym te szpary bardziej przesadzone
 
     float ssao_bias; // delikatne przesuniecie aby redukowac czarne plamy
+
+    float ssao_intensity; // jak intensywne jest zaciemnienie
+
+    glm::vec2 ssao_noise_scale; // jak czesto powtarza sie wzor zaciemnienia
 
     //////////////////////////////
 
