@@ -7,7 +7,11 @@
 
 struct PostProcessData {
 
-    bool is_post_process; // Jesli nie to rysuj zwyczajnie quada z tekstura
+    bool is_post_process; // Jesli nie to rysuj po prostu teksture zapisan¹ normalnie do framebuffera
+
+    bool is_ssao;
+
+    bool is_bloom;
 
     bool is_crt_curved; // Shader crt do zakrzywienia ekranu
 
@@ -31,6 +35,22 @@ struct PostProcessData {
 
     // Caloekranowy filtr kolorystyczny
     glm::vec3 crt_brightness;
+
+    //////////////////////////////
+
+    unsigned int ssao_kernel_samples; // How many samples to generate the SSAO kernel
+
+    float ssao_radius; // Jak duzy jest promien tego efektu, im wiekszy tym te szpary bardziej przesadzone
+
+    float ssao_bias; // delikatne przesuniecie aby redukowac czarne plamy
+
+    //////////////////////////////
+
+    float bloom_treshold;
+
+    float bloom_intensity;
+
+    int bloom_blur_passes;
 
 };
 
