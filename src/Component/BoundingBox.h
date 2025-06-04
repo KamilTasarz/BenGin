@@ -127,7 +127,7 @@ public:
 	glm::vec3 normal, normalGlobal;
 	glm::vec3 minLocal, maxLocal, minGlobal, maxGlobal;
 
-	RectOBB(glm::mat4 model, Node* owner, glm::vec3 min = glm::vec3(-1.f, 0.f, -1.f), glm::vec3 max = glm::vec3(1.f, 0.f, 1.f)) : Collider(owner) {
+	RectOBB(glm::mat4 model, Node* owner, glm::vec3 min = glm::vec3(-.5f, 0.f, -.5f), glm::vec3 max = glm::vec3(.5f, 0.f, .5f)) : Collider(owner) {
 		this->minLocal = min;
 		this->maxLocal = max;
 		normal = glm::normalize(glm::cross(glm::normalize(max - min), glm::vec3(0.f, 0.f, -1.f)));

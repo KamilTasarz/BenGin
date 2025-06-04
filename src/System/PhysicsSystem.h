@@ -12,6 +12,7 @@ struct RayCastHit {
     glm::vec3 endPoint;
     float t;
     bool is_phys = true;
+	Collider* collider = nullptr;
 };
 
 class PhysicsSystem

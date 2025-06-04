@@ -92,6 +92,8 @@ void Rigidbody::onUpdate(float deltaTime)
  	if (isPlayer) {
 		//std::cout << "kierunek: " << side.x << ", " << side.y << ", " << side.z << ", " << side.w << std::endl;
 
+		std::cout << "Gracz stoi na podlozu: " << groundUnderneath << ", stoi na skali: " << scaleUnderneath << std::endl;
+
 		Ray ray = Ray{ position, side };
 
 		nodes.clear();
@@ -132,8 +134,14 @@ void Rigidbody::onUpdate(float deltaTime)
 	glm::vec3 deltaPosition = glm::vec3(velocityX * deltaTime, velocityY * deltaTime, 0.f);
 	position += deltaPosition;
 
-	if (lockPositionX) position.x = startPos.x;
-	if (lockPositionY) position.y = startPos.y;
+	if (lockPositionX) {
+		position.x = startPos.x;
+		velocityX = 0.f;
+	}
+	if (lockPositionY) {
+		position.y = startPos.y;
+		velocityY = 0.f;
+	}
 	if (lockPositionZ) position.z = startPos.z;
 
     owner->transform.setLocalPosition(position);
@@ -217,14 +225,14 @@ void Rigidbody::onStayCollision(Node* other)
 			//velocityY = -velocityY * 0.5f;
 
 			// another way of ground detection
-			/*glm::vec3 owner_center = (owner->AABB->min_point_world + owner->AABB->max_point_world) / 2.0f;
+			glm::vec3 owner_center = (owner->AABB->min_point_world + owner->AABB->max_point_world) / 2.0f;
 			glm::vec3 other_center = (other->AABB->min_point_world + other->AABB->max_point_world) / 2.0f;
 
 			if (owner_center.y > other_center.y) {
 				if (velocityY < 0) {
-					isGrounded = true;
+					groundUnderneath = true;
 				}
-			}*/
+			}
 		}
 	}
 }

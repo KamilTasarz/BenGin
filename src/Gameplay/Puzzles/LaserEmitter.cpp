@@ -4,6 +4,7 @@
 #include "../../System/PhysicsSystem.h"
 #include "../../System/LineManager.h"
 #include "LaserObserver.h"
+#include "../../Component/BoundingBox.h"
 
 REGISTER_SCRIPT(LaserEmitter);
 
@@ -42,7 +43,7 @@ void LaserEmitter::onUpdate(float deltaTime)
         continueReflection = false;
         nodes.clear();
 
-        if (PhysicsSystem::instance().rayCast(ray, nodes, -1, owner)) {
+        if (PhysicsSystem::instance().rayCast(ray, nodes, 100.f, owner)) {
             // Dodaj punkt pocz¹tkowy
             points.push_back(ray.origin);
 
@@ -53,9 +54,12 @@ void LaserEmitter::onUpdate(float deltaTime)
                 if (hitNode == lastNode) continue;
 
                 glm::vec3 hitPoint = nodes[i].endPoint;
+				Collider* collider = nodes[i].collider;
 
                 if (auto mirror = dynamic_cast<MirrorNode*>(hitNode)) {
                     // Lustro: refleksja
+                    //if (dynamic_cast<BoundingBox*>(collider)) continue;
+
                     ray.origin = hitPoint;
                     ray.direction = mirror->reflectDirection(ray);
                     ray.length = 100.f;

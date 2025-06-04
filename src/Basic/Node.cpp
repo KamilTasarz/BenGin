@@ -1900,15 +1900,15 @@ void MirrorNode::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std
         in_frustrum = camera->isInFrustrum(AABB);
         //in_frustrum = true;
         if (in_frustrum) {
+            if (mirrorCollider) {
+                colliders.insert(mirrorCollider);
+            }
+
             if (is_physic_active) colliders.insert(AABB);
             else colliders.erase(AABB);
 
             if (is_logic_active && AABB_logic) colliders.insert(AABB_logic);
             else colliders.erase(AABB_logic);
-
-            if (mirrorCollider) {
-                colliders.insert(mirrorCollider);
-            }
 
             if (has_RB) {
                 if (is_physic_active) colliders_RB.insert(AABB);

@@ -14,6 +14,11 @@ public:
 	Node* levelGenerator;
 	InstanceManager* emitter;
 
+	// run variables
+	float runTime = 0.f;
+	int deathCount = 0;
+	float score = 0.f;
+
 	GameManager() = default;
 	~GameManager() = default;
 	void onAttach(Node* owner) override;

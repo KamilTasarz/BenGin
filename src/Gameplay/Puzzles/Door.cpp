@@ -46,7 +46,7 @@ void Door::onUpdate(float deltaTime)
 
 void Door::ChangeState(bool state)
 {
-	//owner->setActive(state);
+	if (overrideState) return;
 	
 	if (state) {
 		targetPos = startPos;
@@ -56,6 +56,14 @@ void Door::ChangeState(bool state)
 		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
 		else targetPos = startPos + glm::vec3(3.5f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
 		isOpen = true;
+	}
+}
+
+void Door::onCollisionLogic(Node* other)
+{
+	if (other->getTagName() == "Player") {
+		ChangeState(true);
+		overrideState = true;
 	}
 }
 

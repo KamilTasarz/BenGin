@@ -28,6 +28,9 @@ void GameManager::onStart()
 
 void GameManager::onUpdate(float deltaTime)
 {
+	runTime += deltaTime;
+	score += deltaTime * 10.f / gasSpreadingSpeed;
+    
     CalculateGasSpreadingSpeed(deltaTime);
     HandleLevelGeneration();
 }

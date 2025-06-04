@@ -9,6 +9,7 @@
 #include "../Component/BoundingBox.h"
 #include "Animation/PlayerAnimationController.h"
 #include "GameMath.h"
+#include "GameManager.h"
 
 //#include "GameMath.h"
 
@@ -173,6 +174,8 @@ void PlayerController::Die(bool freeze, bool electrified)
 	// spawn new player
 	Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
 	playerSpawner->getComponent<PlayerSpawner>()->spawnPlayer();
+
+	GameManager::instance->deathCount++;
 }
 
 void PlayerController::HandleVirus(float deltaTime)
