@@ -1091,6 +1091,10 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	j["ssao_bias"] = data.ssao_bias;
 
+	j["ssao_intensity"] = data.ssao_intensity;
+
+	j["ssao_noise_scale"] = vec2_to_json(data.ssao_noise_scale);
+
 	// Bloom uniforms
 
 	j["bloom_treshold"] = data.bloom_treshold;
@@ -1151,6 +1155,10 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 			data.ssao_radius = j.at("ssao_radius");
 
 			data.ssao_bias = j.at("ssao_bias");
+
+			data.ssao_intensity = j.at("ssao_intensity");
+
+			data.ssao_noise_scale = json_to_vec2(j.at("ssao_noise_scale"));
 
 			// Bloom uniforms
 
