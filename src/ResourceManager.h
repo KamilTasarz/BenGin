@@ -53,7 +53,14 @@ private:
         shader_particle = new Shader(vertexPath_particle, fragmentPath_particle);
         
         shader_PostProcess_pass = new Shader(postPath_vert, postPath_pass);
+        shader_PostProcess_ssao = new Shader(postPath_vert, postPath_ssao);
+        shader_PostProcess_ssao_blur = new Shader(postPath_vert, postPath_ssao_blur);
+        shader_PostProcess_ssao_composite = new Shader(postPath_vert, postPath_ssao_composite);
+        shader_PostProcess_bloom = new Shader(postPath_vert, postPath_bloom);
+        shader_PostProcess_gaussian_blur = new Shader(postPath_vert, postPath_gaussian_blur);
+        shader_PostProcess_bloom_composite = new Shader(postPath_vert, postPath_bloom_composite);
         shader_PostProcess_crt = new Shader(postPath_vert, postPath_crt);
+        shader_PostProcess_noise = new Shader(postPath_vert, postPath_noise);
 
     }
     ~ResourceManager() {
@@ -71,7 +78,14 @@ private:
         delete shader_particle;
         
         delete shader_PostProcess_pass;
+        delete shader_PostProcess_ssao;
+        delete shader_PostProcess_ssao_blur;
+        delete shader_PostProcess_ssao_composite;
+        delete shader_PostProcess_bloom;
+        delete shader_PostProcess_gaussian_blur;
+        delete shader_PostProcess_bloom_composite;
         delete shader_PostProcess_crt;
+        delete shader_PostProcess_noise;
 
     }
 
@@ -99,7 +113,14 @@ private:
     const char* postPath_vert = "res/shaders/pp_vert.vert";
     const char* postPath_pass = "res/shaders/pp_pass.frag";
     //const char* postPath_pass = "res/shaders/debug.frag";
+    const char* postPath_ssao = "res/shaders/pp_ssao.frag";
+    const char* postPath_ssao_blur = "res/shaders/pp_ssao_blur.frag";
+    const char* postPath_ssao_composite = "res/shaders/pp_ssao_composite.frag";
+    const char* postPath_bloom = "res/shaders/pp_bloom.frag";
+    const char* postPath_gaussian_blur = "res/shaders/pp_blur.frag";
+    const char* postPath_bloom_composite = "res/shaders/pp_bloom_composite.frag";
     const char* postPath_crt = "res/shaders/pp_crt.frag";
+    const char* postPath_noise = "res/shaders/pp_noise.frag";
 
 public:
 
@@ -120,7 +141,14 @@ public:
     // Post process shaders
 
     Shader* shader_PostProcess_pass; // pass - just draw framebuffer with no changes
+    Shader* shader_PostProcess_ssao; // ambient occlusion
+    Shader* shader_PostProcess_ssao_blur; // ambient occlusion
+    Shader* shader_PostProcess_ssao_composite; // ambient occlusion
+    Shader* shader_PostProcess_bloom; // bloom
+    Shader* shader_PostProcess_gaussian_blur;
+    Shader* shader_PostProcess_bloom_composite;
     Shader* shader_PostProcess_crt;
+    Shader* shader_PostProcess_noise;
 
 	static ResourceManager& Instance() {
 		static ResourceManager instance;

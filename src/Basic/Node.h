@@ -433,7 +433,7 @@ class Instance : public Node {
 
 
 
-const unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
+const unsigned int SHADOW_WIDTH = 8192, SHADOW_HEIGHT = 8192;
 
 class Light : public Node {
 public:

@@ -7,7 +7,6 @@ uniform float u_time;
 
 out vec4 FragColor;
 
-// prosta funkcja hashująca — da pseudo losowy szum
 float hash(vec3 p) {
     return fract(sin(dot(p ,vec3(12.9898,78.233, 37.719))) * 43758.5453);
 }
@@ -17,13 +16,14 @@ void main() {
         vec4 pos = gl_in[i].gl_Position;
 
         vec3 offsetDir = normalize(pos.xyz);
-        float noise = hash(pos.xyz + u_time);  // zależne od czasu
+        float noise = hash(pos.xyz + u_time); 
 
         float magnitude = 0.15; // jak bardzo wypychać
         vec3 distortion = offsetDir * (noise * magnitude);
 
         vec4 displaced = vec4(pos.xyz + distortion, 1.0);
         gl_Position = displaced;
+
         EmitVertex();
     }
     EndPrimitive();
