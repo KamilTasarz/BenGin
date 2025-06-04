@@ -36,7 +36,7 @@ void Game::input()
 
 void Game::draw()
 {
-
+    float t = glfwGetTime();
 
     float time = glfwGetTime();
     float fpsValue = 1.f / ServiceLocator::getWindow()->deltaTime;
@@ -235,6 +235,11 @@ void Game::draw()
                 glBindVertexArray(0);
                 glEnable(GL_DEPTH_TEST);
             }
+
+            float t2 = glfwGetTime();
+
+			std::cout << "draw time: " << t2 - t << std::endl;
+
             return;
 
         }
@@ -267,6 +272,9 @@ void Game::draw()
 
     glEnable(GL_DEPTH_TEST);
 
+    float t2 = glfwGetTime();
+
+    std::cout << "draw time: " << t2 - t << std::endl;
 }
 
 
@@ -291,9 +299,9 @@ void Game::update(float deltaTime)
     sceneGraph->clearDeleteVector();
     // HUD
 	cout << "FPS: " << 1.f / deltaTime << endl;
-    //cout << "updateColldiers" << t2 - t << endl;
-	//cout << "updateCollisions" << t3 - t2 << endl;
-	//cout << "updateSceneGraph" << t4 - t3 << endl;
+    cout << "updateColldiers" << t2 - t << endl;
+	cout << "updateCollisions" << t3 - t2 << endl;
+	cout << "updateSceneGraph" << t4 - t3 << endl;
     //background->update(deltaTime);
     //sprite->update(deltaTime);
     //sprite3->update(deltaTime);
@@ -529,13 +537,25 @@ void Game::run()
             ServiceLocator::getWindow()->deltaTime = 0.0f;
         }
 
+        float t3 = glfwGetTime();
+
         input();
+
+        float t4 = glfwGetTime();
+        cout << "Input time" << t4 - t3 << endl;
+        
         update(ServiceLocator::getWindow()->deltaTime);
+
         draw();
+     
+        float t = glfwGetTime();
 
         ServiceLocator::getWindow()->updateWindow();
 
-        std::cout << "Fps: " << 1.f / ServiceLocator::getWindow()->deltaTime << std::endl;
+        float t2 = glfwGetTime();
+        cout << "Draw time" << t2 - t << endl;
+
+        std::cout << "DeltaTime: " << ServiceLocator::getWindow()->deltaTime << std::endl;
 	}
 
     if (glfwWindowShouldClose(ServiceLocator::getWindow()->window)) engine_work = false;
