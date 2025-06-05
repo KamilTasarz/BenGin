@@ -339,7 +339,10 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 		if (GuiData.contains("free_id") && !GuiData["free_id"].is_null()) {
 			json freeID = GuiData["free_id"];
 			for (int i = 0; i < freeID.size(); i++) {
-				GuiManager::Instance().free_ids.push_back(freeID[i]);
+				if (GuiManager::Instance().free_ids.end() == std::find(GuiManager::Instance().free_ids.begin(), GuiManager::Instance().free_ids.end(), freeID[i])) {
+					GuiManager::Instance().free_ids.push_back(freeID[i]);
+				}
+				
 			}
 		}
 
