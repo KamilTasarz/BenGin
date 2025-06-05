@@ -92,7 +92,7 @@ void Rigidbody::onUpdate(float deltaTime)
  	if (isPlayer) {
 		//std::cout << "kierunek: " << side.x << ", " << side.y << ", " << side.z << ", " << side.w << std::endl;
 
-		std::cout << "Gracz stoi na podlozu: " << groundUnderneath << ", stoi na skali: " << scaleUnderneath << std::endl;
+		//std::cout << "Gracz stoi na podlozu: " << groundUnderneath << ", stoi na skali: " << scaleUnderneath << std::endl;
 
 		Ray ray = Ray{ position, side };
 

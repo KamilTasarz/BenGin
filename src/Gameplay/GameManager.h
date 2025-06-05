@@ -3,6 +3,8 @@
 #include "Script.h"
 #include "../Basic/Node.h"
 
+class TextObject;
+
 class GameManager : public Script
 {
 public:
@@ -18,6 +20,16 @@ public:
 	float runTime = 0.f;
 	int deathCount = 0;
 	float score = 0.f;
+
+	TextObject* scoreText;
+	TextObject* deathCountText;
+	TextObject* runTimeText;
+	TextObject* fpsText;
+
+	float fpsAccumulator = 0.f;
+	int frameCount = 0;
+	float timeSinceLastUpdate = 0.f;
+	const float updateInterval = 0.5f;
 
 	GameManager() = default;
 	~GameManager() = default;

@@ -5,6 +5,7 @@
 
 class InstanceManager;
 class TextObject;
+class SpriteObject;
 
 class PlayerController : public Script
 {
@@ -26,7 +27,10 @@ public:
     bool isRunning = false;
     bool canJump = true;
 
-    TextObject* t;
+    TextObject* virusTypeText;
+    TextObject* virusEffectText;
+    SpriteObject* cheeseSprite;
+	std::string lastVirusType = "null";
 
     //bool inGas = false;
     bool is_pressed = false;

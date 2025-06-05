@@ -3,6 +3,7 @@
 #include "RegisterScript.h"
 #include "PlayerSpawner.h"
 #include "LevelGenerator.h"
+#include "../System/GuiManager.h"
 
 REGISTER_SCRIPT(GameManager);
 
@@ -24,6 +25,15 @@ void GameManager::onStart()
     playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
     levelGenerator = owner->scene_graph->root->getChildByTag("LevelGenerator");
     emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
+
+    scoreText = GuiManager::Instance().findText(0);
+	runTimeText = GuiManager::Instance().findText(1);
+	deathCountText = GuiManager::Instance().findText(2);
+	fpsText = GuiManager::Instance().findText(5);
+
+	runTime = 0.f;
+	score = 0.f;
+	deathCount = 0;
 }
 
 void GameManager::onUpdate(float deltaTime)
@@ -31,6 +41,33 @@ void GameManager::onUpdate(float deltaTime)
 	runTime += deltaTime;
 	score += deltaTime * 10.f / gasSpreadingSpeed;
     
+	int minutes = static_cast<int>(runTime) / 60;
+	int seconds = static_cast<int>(runTime) % 60;
+
+	std::string minutesText = minutes < 10 ? "0" + std::to_string(minutes) : std::to_string(minutes);
+	std::string secondsText = seconds < 10 ? "0" + std::to_string(seconds) : std::to_string(seconds);
+	runTimeText->value = minutesText + ":" + secondsText;
+
+    std::string scoreWithZeros = std::format("{:05}", static_cast<int>(score));
+	scoreText->value = "SCORE:" + scoreWithZeros;
+
+	deathCountText->value = "DEATHS:" + std::to_string(deathCount);
+
+    timeSinceLastUpdate += deltaTime;
+    fpsAccumulator += 1.f / deltaTime; // fps dla tej jednej klatki
+    frameCount++;
+
+    // co 0.5 sekundy aktualizujemy wynik
+    if (timeSinceLastUpdate >= updateInterval) {
+        float avgFps = fpsAccumulator / frameCount;
+        fpsText->value = "FPS: " + std::to_string(static_cast<int>(avgFps));
+
+        // resetujemy akumulator
+        timeSinceLastUpdate = 0.f;
+        fpsAccumulator = 0.f;
+        frameCount = 0;
+    }
+
     CalculateGasSpreadingSpeed(deltaTime);
     HandleLevelGeneration();
 }

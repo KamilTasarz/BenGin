@@ -14,6 +14,78 @@
 
 //#include "GameMath.h"
 
+enum class UIAnimState {
+	Hidden,
+	Entering,
+	Visible,
+	Exiting
+};
+
+struct UIAnimator {
+	UIAnimState state = UIAnimState::Hidden;
+	float timer = 0.f;
+	float duration = .2f;
+	glm::vec2 hiddenPos;
+	glm::vec2 overshootPos;
+	glm::vec2 targetPos;
+
+	UIAnimator(glm::vec2 target)
+		: targetPos(target) {
+		overshootPos = target - glm::vec2(50.f, 0.f);
+		hiddenPos = target + glm::vec2(50.f, 0.f);
+	}
+
+	void Show() {
+		state = UIAnimState::Entering;
+		timer = 0.f;
+	}
+
+	void Hide() {
+		state = UIAnimState::Exiting;
+		timer = 0.f;
+	}
+
+	void Update(float deltaTime, GuiObject* element) {
+		timer += deltaTime;
+
+		float t = glm::clamp(timer / duration, 0.f, 1.f);
+
+		if (state == UIAnimState::Entering) {
+			if (t < 0.5f) {
+				float subT = t / 0.5f;
+				element->pos = glm::mix(hiddenPos, overshootPos, subT);
+			}
+			else {
+				float subT = (t - 0.5f) / 0.5f;
+				element->pos = glm::mix(overshootPos, targetPos, subT);
+			}
+
+			if (t >= 1.f) {
+				state = UIAnimState::Visible;
+			}
+		}
+		else if (state == UIAnimState::Exiting) {
+			if (t < 0.5f) {
+				float subT = t / 0.5f;
+				element->pos = glm::mix(targetPos, overshootPos, subT);
+			}
+			else {
+				float subT = (t - 0.5f) / 0.5f;
+				element->pos = glm::mix(overshootPos, hiddenPos, subT);
+			}
+
+			if (t >= 1.f) {
+				element->pos = glm::vec2(2000, 2000);
+				state = UIAnimState::Hidden;
+			}
+		}
+	}
+};
+
+UIAnimator virusTypeAnimator(glm::vec2(1305, 115));
+UIAnimator virusEffectAnimator(glm::vec2(1375, 180));
+UIAnimator cheeseSpriteAnimator(glm::vec2(1705, 125));
+
 REGISTER_SCRIPT(PlayerController);
 
 void PlayerController::onAttach(Node* owner)
@@ -41,7 +113,9 @@ void PlayerController::onStart()
 	timerIndicator = owner->getChildById(0);
 	scale_factor = owner->transform.getLocalScale().x;
 	emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
-	t = GuiManager::Instance().findText(0);
+	virusTypeText = GuiManager::Instance().findText(6);
+	virusEffectText = GuiManager::Instance().findText(7);
+	cheeseSprite = GuiManager::Instance().findSprite(8);
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -140,7 +214,36 @@ void PlayerController::onUpdate(float deltaTime)
 		gasCheckTimer += deltaTime;
 	}
 
-	t->value = "Score: " + std::to_string(glfwGetTime());
+	// opis sera
+	if (virusType == "none" && lastVirusType != virusType) {
+		virusTypeAnimator.Hide();
+		virusEffectAnimator.Hide();
+		cheeseSpriteAnimator.Hide();
+	}
+	else if (lastVirusType != virusType) {
+		if (virusType == "blue") {
+			virusTypeText->value = "Feather Feta";
+			virusEffectText->value = "decreased weight";
+		}
+		else if (virusType == "green") {
+			virusTypeText->value = "Gravity Gouda";
+			virusEffectText->value = "inverted gravity";
+		}
+		else if (virusType == "black") {
+			virusTypeText->value = "Heavy Havarti";
+			virusEffectText->value = "increased weight";
+		}
+
+		virusTypeAnimator.Show();
+		virusEffectAnimator.Show();
+		cheeseSpriteAnimator.Show();
+	}
+
+	virusTypeAnimator.Update(deltaTime, virusTypeText);
+	virusEffectAnimator.Update(deltaTime, virusEffectText);
+	cheeseSpriteAnimator.Update(deltaTime, cheeseSprite);
+
+	lastVirusType = virusType;
 }
 
 
