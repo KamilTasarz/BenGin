@@ -43,12 +43,15 @@ void LaserEmitter::onUpdate(float deltaTime)
         continueReflection = false;
         nodes.clear();
 
-        if (PhysicsSystem::instance().rayCast(ray, nodes, 100.f, owner)) {
+        if (PhysicsSystem::instance().rayCast(ray, nodes, 50.f, owner)) {
             // Dodaj punkt pocz¹tkowy
             points.push_back(ray.origin);
 
             for (size_t i = 0; i < nodes.size(); ++i) {
                 Node* hitNode = nodes[i].node;
+
+
+				std::cout << "obiekt: " << owner->getName() << " trafi³ w: " << hitNode->getName() << std::endl;
 
                 // Pomijamy powtórne trafienia tego samego obiektu, np. w pêtli odbiæ
                 if (hitNode == lastNode) continue;
@@ -58,7 +61,10 @@ void LaserEmitter::onUpdate(float deltaTime)
 
                 if (auto mirror = dynamic_cast<MirrorNode*>(hitNode)) {
                     // Lustro: refleksja
-                    //if (dynamic_cast<BoundingBox*>(collider)) continue;
+                    if (dynamic_cast<BoundingBox*>(collider)) {
+                        std::cout << "LaserEmitter::onUpdate: Trafiono w lustro: " << hitNode->getName() << std::endl;
+                        //continue;
+                    }
 
                     ray.origin = hitPoint;
                     ray.direction = mirror->reflectDirection(ray);

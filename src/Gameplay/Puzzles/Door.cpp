@@ -21,6 +21,11 @@ void Door::onStart()
 {
 	std::cout << "Door::onStart::" << owner->name << std::endl;
 	startPos = targetPos = owner->transform.getLocalPosition();
+
+	if (isOpen) {
+		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+		else targetPos = startPos + glm::vec3(3.5f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+	}
 }
 
 void Door::onUpdate(float deltaTime)
