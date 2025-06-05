@@ -11,7 +11,7 @@ class SceneGraph;
 class BoundingBox;
 class Animator;
 class Animation;
-
+struct Ray;
 
 class Game
 {
@@ -50,6 +50,8 @@ private:
 
 	float alpha = 0.f;
 
+	glm::vec2 normalizedMouse;
+
 	Animator* animator;
 	Animation* anim;
 
@@ -68,6 +70,7 @@ public:
 
 	void renderQuadWithTexture(GLuint tex);
 	void renderQuadWithTextures(GLuint tex0, GLuint tex1);
+	Ray getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection);
 
 	void init();
 	void run();

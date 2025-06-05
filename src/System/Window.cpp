@@ -16,6 +16,8 @@ void mouseCallback(GLFWwindow* window, double posX, double posY) {
 	float x = static_cast<float>(posX);
 	float y = static_cast<float>(posY);
 
+    
+
 	if (ServiceLocator::getWindow()->firstMouseMovement) {
 		ServiceLocator::getWindow()->lastX = x;
 		ServiceLocator::getWindow()->lastY = y;

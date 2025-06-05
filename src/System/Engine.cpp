@@ -7,6 +7,7 @@
 #include "../ResourceManager.h"
 #include "../Component/CameraGlobals.h"
 #include "PrefabRegistry.h"
+#include "../System/GuiManager.h"
 
 
 

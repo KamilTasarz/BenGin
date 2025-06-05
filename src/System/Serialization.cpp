@@ -12,6 +12,7 @@
 #include "../System/Component.h"
 #include "../System/Rigidbody.h"
 #include "../System/Tag.h"
+#include "../System/GuiManager.h"
 
 //using namespace std;
 std::vector<std::pair<Node*, std::pair<std::string, std::string>>> script_nodes;
@@ -31,31 +32,40 @@ int saveScene(const std::string& filename, SceneGraph*& scene) {
 
 	sceneData["scene"] = save_node(scene->root);
 
-	//json modelData;
-
-	//for (auto model = models.begin(); model != models.end(); model++) {
-	//	json modelJson;
-	//	modelJson["id"] = model->id;
-	//	if (model->directory.empty()) {
-	//		//kostki i plane'y
-	//		modelJson["mode"] = model->mode;
-	//		for (int i = 0; i < model->textures_loaded.size(); i++) {
-	//			/*json textureJson;
-	//			textureJson["path"] = model->textures_loaded[i].path;
-	//			modelJson["textures"].push_back(textureJson);*/
-	//			modelJson["textures"].push_back(model->textures_loaded[i].path);
-	//		}
-	//	}
-	//	else {
-	//		//kutasiarz i cos
-	//		modelJson["directory"] = model->exact_path;
-	//	}
-	//	modelData.push_back(modelJson);
-	//}
-
-	//sceneData["models"] = modelData;
-
-	
+	json GuiData;
+	json freeID;
+	for (int i = 0; i < GuiManager::Instance().free_ids.size(); i++) {
+		freeID.push_back(GuiManager::Instance().free_ids[i]);
+	}
+	GuiData["free_id"] = freeID;
+	GuiData["max_id"] = GuiManager::Instance().max_id;
+	json objects;
+	for (GuiObject* o : GuiManager::Instance().getObjects()) {
+		json object;
+		object["order"] = o->order_id;
+		if (o->getType() == SpriteType) {
+			SpriteObject* s = static_cast<SpriteObject*>(o);
+			object["type"] = "sprite";
+			object["ptr_id"] = s->sprite_id; // id sprite'u z gui manager
+			object["id"] = s->id; // unikalne id do odwoływania się w kodzie do obiektu, analogicznie przy text
+			object["x"] = s->pos.x;
+			object["y"] = s->pos.y;
+			object["size"] = s->size;
+		}
+		else {
+			TextObject* t = static_cast<TextObject*>(o);
+			object["type"] = "text";
+			object["ptr_id"] = t->text_id;
+			object["id"] = t->id;
+			object["x"] = t->pos.x;
+			object["y"] = t->pos.y;
+			object["value"] = t->value;
+			object["color"] = vec3_to_json(t->color);
+		}
+		objects.push_back(object);
+	}
+	GuiData["objects"] = objects;
+	sceneData["GUI"] = GuiData;
 
 	json cameraData;
 	cameraData["position"] = vec3_to_json(camera->cameraPos);
@@ -301,44 +311,41 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 	file >> sceneData;
 	file.close();
 
-	/*json modelData;
-
-	modelData = sceneData["models"];
-
-	for (json& modelJson : modelData) {
-		if (modelJson.contains("directory")) {
-			//kutasiarz i cos
-			std::string directory = modelJson["directory"].get<string>();
-			Model model(directory, modelJson["id"].get<int>());
-			models.push_back(model);
-		}
-		else {
-			//kostki i plane'y
-			int texture_count = modelJson["textures"].size();
-
-			const char** texture_names;
-			if (texture_count == 0) {
-				texture_names = nullptr;
+	if (sceneData.contains("GUI")) {
+		json GuiData = sceneData["GUI"];
+		if (GuiData.contains("objects") && !GuiData["objects"].is_null()) {
+			json objects = GuiData["objects"];
+			for (json& object : objects) {
+				int order = object["order"];
+				if (object["type"] == "sprite") {
+					int obj_id = object["ptr_id"];
+					unsigned int id = object["id"];
+					float x = object["x"], y = object["y"];
+					float size = object["size"];
+					GuiManager::Instance().sprite(x, y, size, (Sprite_names) obj_id, order, id);
+				}
+				else {
+					int obj_id = object["ptr_id"];
+					unsigned int id = object["id"];
+					float x = object["x"], y = object["y"];
+					std::string val = object["value"];
+					glm::vec3 col = json_to_vec3(object["color"]);
+					GuiManager::Instance().text(val, x, y, (Text_names)obj_id, col, order, id);
+				}
+				
 			}
-			else {
-				texture_names = new const char* [texture_count];
-			}
-			std::vector<std::string> texture_storage;
-
-			for (int i = 0; i < texture_count; i++) {
-				texture_storage.push_back(modelJson["textures"][i]);
-				texture_names[i] = texture_storage.back().c_str(); // Pobieramy const char*
-			}
-
-			std::string mode = modelJson["mode"];
-			Model model(texture_names, texture_count, modelJson["id"].get<int>(), mode);
-			models.push_back(model);
 		}
 
+		if (GuiData.contains("free_id") && !GuiData["free_id"].is_null()) {
+			json freeID = GuiData["free_id"];
+			for (int i = 0; i < freeID.size(); i++) {
+				GuiManager::Instance().free_ids.push_back(freeID[i]);
+			}
+		}
 
-	}*/
-
-
+		if (GuiData.contains("max_id")) GuiManager::Instance().max_id = GuiData["max_id"];
+	
+	}
 
 	scene = new SceneGraph();
 

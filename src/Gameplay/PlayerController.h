@@ -4,6 +4,7 @@
 #include "../System/Rigidbody.h"
 
 class InstanceManager;
+class TextObject;
 
 class PlayerController : public Script
 {
@@ -24,6 +25,9 @@ public:
     bool isDead = false;
     bool isRunning = false;
     bool canJump = true;
+
+    TextObject* t;
+
     //bool inGas = false;
     bool is_pressed = false;
 	std::string virusType = "none";

@@ -10,6 +10,7 @@
 #include "Animation/PlayerAnimationController.h"
 #include "GameMath.h"
 #include "GameManager.h"
+#include "../System/GuiManager.h"
 
 //#include "GameMath.h"
 
@@ -40,6 +41,7 @@ void PlayerController::onStart()
 	timerIndicator = owner->getChildById(0);
 	scale_factor = owner->transform.getLocalScale().x;
 	emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
+	t = GuiManager::Instance().findText(0);
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -137,6 +139,8 @@ void PlayerController::onUpdate(float deltaTime)
 	else {
 		gasCheckTimer += deltaTime;
 	}
+
+	t->value = "Score: " + std::to_string(glfwGetTime());
 }
 
 

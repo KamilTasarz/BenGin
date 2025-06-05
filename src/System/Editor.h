@@ -39,22 +39,24 @@ private:
 
 	PostProcessData postProcessData;
 
-	char tag_name[128], layer_name[128], new_prefab_name[128], new_prefab_name_puzz[128];
+	char tag_name[128], layer_name[128], new_prefab_name[128], new_prefab_name_puzz[128], UI_text[256];
 
 	unsigned int framebuffer, colorTexture, depthRenderbuffer;
 
-	bool isHUD = false, isInPreview = false, pressed_add = false, scene_editor = true, is_initialized = false, AABB_changing = false;
+	bool isHUD = false, isInPreview = false, pressed_add = false, scene_editor = true, is_initialized = false, AABB_changing = false, show_gui = false;
 	glm::vec3* local_point;
 
 	bool isSnapped = false, is_static = true, lockPositionX = false, lockPositionY = false, lockPositionZ = false, puzz = true;
 	glm::vec3 lastSnapOffset;
 	glm::vec3 snapedPosition;
 	glm::vec3 edit_camera_pos;
+	glm::vec3 color = { 0.f, 0.f, 0.f };
 
-	float mass = 1.f, gravity = 1.f;
+	float mass = 1.f, gravity = 1.f, pos_x = 0.f, pos_y = 0.f, size = 1.f;
+
 	
 	int current_prefab = 0, current_puzzle = 0, current_opt1 = 0, current_opt2 = 0, direction = 0, prefab_inst_to_add = 0, 
-		prefab_to_duplicate = 0, puzzle_inst_to_add = 0, puzzle_to_duplicate = 0;
+		prefab_to_duplicate = 0, puzzle_inst_to_add = 0, puzzle_to_duplicate = 0, text_sprite = 0, text_id = 0, sprite_id = 0, order_id = 0;
 	int current_component = 0, current_script = 0;
 
 	//std::vector<BoundingBox*> colliders;

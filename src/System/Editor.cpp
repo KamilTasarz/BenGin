@@ -29,6 +29,7 @@
 #include "../System/LineManager.h"
 #include "../System/Rigidbody.h"
 #include "../System/Tag.h"
+#include "../System/GuiManager.h"
 
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -100,9 +101,6 @@ Ray Editor::getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::m
 
         return { glm::vec3(worldPos), direction };
     }
-
-
-
 }
 
 void Editor::DrawNodeBlock(Node* node, int depth)
@@ -1570,6 +1568,203 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
     else {
 
+        ImGui::Text("GUI EDITOR");
+        ImGui::Checkbox("GUI Show Enable/Disable", &show_gui);
+
+        std::vector<const char*> items;
+        std::vector<const char*> sprites;
+        std::vector<const char*> texts;
+
+        items.push_back("Text");
+        items.push_back("Sprite");
+
+        ImGui::Combo("Choose object type: ", &text_sprite, items.data(), items.size());
+
+        auto& _t = GuiManager::Instance().getText();
+        for (auto& o : _t) {
+            texts.push_back(o.second->name.c_str());
+        }
+
+        auto& _s = GuiManager::Instance().getSprites();
+        for (auto& o : _s) {
+            sprites.push_back(o.second->name.c_str());
+        }
+        
+        if (text_sprite == 0) { //Text
+
+
+            ImGui::Combo("Choose font and size: ", &text_id, texts.data(), texts.size());
+            ImGui::DragFloat("Pos x ", &pos_x);
+            ImGui::DragFloat("Pos y ", &pos_y);
+            ImGui::DragInt("Order id ", &order_id, 1, 0, 1000);
+            float colors[3] = { color.x, color.y, color.z };
+            if (ImGui::ColorEdit3("Text Color ", colors)) {
+                color.x = colors[0];
+                color.y = colors[1];
+                color.z = colors[2];
+            }
+            ImGui::InputText("Text value ", UI_text, 256);
+
+            if (ImGui::Button("ADD Text")) {
+                GuiManager::Instance().text(string(UI_text), pos_x, pos_y, (Text_names) text_id, color, order_id);
+            }
+        }
+        else { //Sprite
+
+
+            ImGui::Combo("Choose font and size: ", &sprite_id, sprites.data(), sprites.size());
+            ImGui::DragFloat("Pos x ", &pos_x);
+            ImGui::DragFloat("Pos y ", &pos_y);
+            ImGui::DragFloat("Size ", &size, 1.f, 0.001f, 100.f);
+            ImGui::DragInt("Order id ", &order_id, 1, 0, 1000);
+
+            if (ImGui::Button("ADD Sprite")) {
+                GuiManager::Instance().sprite(pos_x, pos_y, size, (Sprite_names)sprite_id, order_id);
+            }
+        }
+        ImGui::Separator();
+        
+        auto& objects = GuiManager::Instance().getObjects();
+
+        float before = -1, depth = 20.f;
+        int _size = objects.size();
+        for (int i = 0; i < _size; i++) {
+            ImGui::PushID(i);
+
+            if (objects[i]->order_id > before) {
+                ImGui::Text(("Layer " + std::to_string(objects[i]->order_id)).c_str());
+                before = objects[i]->order_id;
+            }
+
+            ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+            ImVec2 itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+            ImGui::SetCursorScreenPos(itemPos);
+
+            if (objects[i]->getType() == TextType) {
+                TextObject* t = static_cast<TextObject*>(objects[i]);
+                ImGui::Text(("ID: " + std::to_string(t->id) + " : Text").c_str());
+
+                ImGui::SameLine();
+                if (ImGui::SmallButton("Delete")) {
+                    GuiManager::Instance().deleteText(t->id);
+                    i--;
+                    _size--;
+                    ImGui::PopID();
+                    continue;
+                }
+                
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+                int index = t->text_id, order_index = t->order_id;
+                glm::vec2 pos = t->pos;
+                if (ImGui::Combo("Font and size: ", &index, texts.data(), texts.size())) {
+                    t->text_id = index;
+                    t->text = GuiManager::Instance().getText()[index];
+                }
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                ImGui::DragFloat("Pos x ", &pos.x);
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                ImGui::DragFloat("Pos y ", &pos.y);
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                ImGui::InputInt("Order id ", &order_index);
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                float colors[3] = { t->color.x, t->color.y, t->color.z };
+                if (ImGui::ColorEdit3("Text Color ", colors)) {
+                    t->color.x = colors[0];
+                    t->color.y = colors[1];
+                    t->color.z = colors[2];
+                }
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                char value[256];
+                strncpy_s(value, t->value.c_str(), sizeof(value));
+                value[sizeof(value) - 1] = '\0';
+                ImGui::InputText("Text value ", value, 256);
+
+                t->value = string(value);
+                t->pos = pos;
+                t->order_id = order_index;
+            }
+            else {
+                SpriteObject* s = static_cast<SpriteObject*>(objects[i]);
+                ImGui::Text(("ID: " + std::to_string(s->id) + " : Sprite").c_str());
+
+                ImGui::SameLine();
+                if (ImGui::SmallButton("Delete")) {
+                    GuiManager::Instance().deleteSprite(s->id);
+                    i--;
+                    _size--;
+                    ImGui::PopID();
+                    continue;
+                }
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+                int index = s->sprite_id, order_index = s->order_id;
+                glm::vec2 pos = s->pos;
+                float size_s = s->size;
+                if (ImGui::Combo("Sprite: ", &index, sprites.data(), sprites.size())) {
+                    s->sprite_id = index;
+                    s->sprite = GuiManager::Instance().getSprites()[index];
+                }
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                ImGui::DragFloat("Pos x ", &pos.x);
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                ImGui::DragFloat("Pos y ", &pos.y);
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                ImGui::InputInt("Order id ", &order_index);
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                ImGui::DragFloat("Size ", &size_s, 1.f, 0.001f, 100.f);
+
+                s->size = size_s;
+                s->pos = pos;
+                s->order_id = order_index;
+            }
+
+            ImGui::PopID();
+            ImGui::Separator();
+        }
+
+        //ImGui::Separator();
+        ImGui::Text("POSTPROCESS");
+
         ImGui::Checkbox("Post-Process Enable/Disable", &postProcessData.is_post_process);
         
         if (postProcessData.is_post_process) {
@@ -1667,6 +1862,8 @@ void Editor::init()
     );
     ImGui_ImplOpenGL3_Init("#version 330");        // (6) backend renderera
 
+    GuiManager::Instance().init();
+
     loadScene("res/scene/scene.json", editor_sceneGraph, prefabs, puzzle_prefabs);
 
     loadPostProcessData("res/scene/postprocess_data.json", postProcessData);
@@ -1681,7 +1878,7 @@ void Editor::init()
     // 1. Tekstura kolorów
     glGenTextures(1, &colorTexture);
     glBindTexture(GL_TEXTURE_2D, colorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fbWidth, fbHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fbWidth, fbHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1746,7 +1943,7 @@ void Editor::run() {
                 ServiceLocator::getWindow()->deltaTime = 0.0f;
             }
 
-
+            
             
 
             frames++;
@@ -1891,7 +2088,7 @@ void Editor::update(float deltaTime) {
     camera->ProcessKeyboard(deltaTime, direction);
 
     LineManager::Instance().clearLines();
-
+    GuiManager::Instance().update(ServiceLocator::getWindow()->deltaTime);
     //PhysicsSystem::instance().updateColliders(sceneGraph);
     //PhysicsSystem::instance().updateCollisions();
 
@@ -1987,6 +2184,7 @@ void Editor::draw() {
     glStencilFunc(GL_ALWAYS, 1, 0xFF);
     glStencilMask(0x00);
 
+
     sceneGraph->draw(previewWidth, previewHeight, framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
@@ -1997,28 +2195,15 @@ void Editor::draw() {
     sceneGraph->drawMarkedObject();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    if (isHUD) {
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-        //background->render(*ResourceManager::Instance().shader_background);
-        //sprite2->render(*ResourceManager::Instance().shader_background);
-        //sprite3->render(*ResourceManager::Instance().shader_background);
-        //sprite->render(*ResourceManager::Instance().shader_background);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        float fpsValue = 1.f / ServiceLocator::getWindow()->deltaTime;
-        //text->renderText("Fps: " + to_string(fpsValue), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *ResourceManager::Instance().shader_text, glm::vec3(1.f, 0.3f, 0.3f));
-        //text->renderText("We have text render!", 200, 200, *ResourceManager::Instance().shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
-    }
-
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     ResourceManager::Instance().shader_outline->use();
     ResourceManager::Instance().shader_outline->setVec3("color", glm::vec3(0.f, 0.f, 0.8f));
     camera->AABB->draw(*ResourceManager::Instance().shader_outline);
 
     LineManager::Instance().drawLines();
-
-    //rect->draw(*ResourceManager::Instance().shader_outline);
-
+    if (show_gui) {
+        GuiManager::Instance().draw();
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

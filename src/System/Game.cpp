@@ -10,6 +10,20 @@
 #include "../System/LineManager.h"
 #include "../Basic/Animator.h"
 #include <random>
+#include "../System/GuiManager.h"
+
+Ray Game::getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
+
+    glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, 0.0f, 1.0f);
+    glm::vec4 worldPos = glm::inverse(_projection * _view) * rayClip;
+    worldPos /= worldPos.w;
+
+    // 2. Kierunek: w ortho zawsze „w głąb kamery” — z= -1 w view space
+    glm::vec4 direction = glm::normalize(glm::vec4(glm::inverse(_view) * glm::vec4(0, 0, -1, 0)));
+
+    return { glm::vec3(worldPos), direction };
+    
+}
 
 void Game::input()
 {
@@ -55,6 +69,11 @@ void Game::draw()
     
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     LineManager::Instance().drawLines();
+	
+	glEnable(GL_BLEND);
+
+    GuiManager::Instance().draw();
+	
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     GLuint current_texture = colorTexture;
@@ -299,6 +318,9 @@ void Game::update(float deltaTime)
     sceneGraph->update(deltaTime);
     float t4 = glfwGetTime();
     sceneGraph->clearDeleteVector();
+
+    GuiManager::Instance().update(ServiceLocator::getWindow()->deltaTime);
+
     // HUD
 	cout << "FPS: " << 1.f / deltaTime << endl;
     cout << "updateColldiers" << t2 - t << endl;
@@ -323,6 +345,8 @@ void Game::init()
 {
 
 	is_initialized = true;
+
+    GuiManager::Instance().init();
 
 	loadScene("res/scene/scene.json", sceneGraph, prefabs, puzzle_prefabs);
 
