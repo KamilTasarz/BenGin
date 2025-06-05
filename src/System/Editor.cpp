@@ -1649,6 +1649,7 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                     GuiManager::Instance().deleteText(t->id);
                     i--;
                     _size--;
+                    ImGui::PopID();
                     continue;
                 }
                 
