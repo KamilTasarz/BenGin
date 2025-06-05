@@ -101,9 +101,6 @@ Ray Editor::getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::m
 
         return { glm::vec3(worldPos), direction };
     }
-
-
-
 }
 
 void Editor::DrawNodeBlock(Node* node, int depth)

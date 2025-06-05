@@ -11,6 +11,19 @@
 #include "../Basic/Animator.h"
 #include "../System/GuiManager.h"
 
+Ray Game::getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
+
+    glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, 0.0f, 1.0f);
+    glm::vec4 worldPos = glm::inverse(_projection * _view) * rayClip;
+    worldPos /= worldPos.w;
+
+    // 2. Kierunek: w ortho zawsze „w głąb kamery” — z= -1 w view space
+    glm::vec4 direction = glm::normalize(glm::vec4(glm::inverse(_view) * glm::vec4(0, 0, -1, 0)));
+
+    return { glm::vec3(worldPos), direction };
+    
+}
+
 void Game::input()
 {
     if (ServiceLocator::getInputManager()) {

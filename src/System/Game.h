@@ -11,7 +11,7 @@ class SceneGraph;
 class BoundingBox;
 class Animator;
 class Animation;
-
+struct Ray;
 
 class Game
 {
@@ -38,6 +38,8 @@ private:
 	PostProcessData postProcessData;
 	unsigned int framebuffer, colorTexture, normalTexture, depthRenderbuffer;
 
+	glm::vec2 normalizedMouse;
+
 	Animator* animator;
 	Animation* anim;
 
@@ -49,6 +51,8 @@ public:
 
 	bool play = true;
 	Game(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::shared_ptr<Prefab>>& prefabsref_puzzle);
+
+	Ray getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection);
 
 	void init();
 	void run();
