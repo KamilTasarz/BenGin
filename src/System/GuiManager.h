@@ -84,20 +84,31 @@ public:
 	void update(float delta_time);
 	void draw();
 
-	std::vector<GuiObject*> getObjects() {
+	std::vector<GuiObject*>& getObjects() {
+		//std::sort(objects.begin(), objects.end(), [&](GuiObject* a, GuiObject* b) { return a->order_id < b->order_id; });
 		return objects;
 	}
 
+	std::unordered_map<unsigned int, std::shared_ptr<Sprite>>& getSprites() {
+		return sprites;
+	}
+
+	std::unordered_map<unsigned int, std::shared_ptr<Text>>& getText() {
+		return texts;
+	}
+
 	// add text object to render
-	void text(std::string value, float x, float y, Text_names text_id, int order_id = -1);
+	void text(std::string value, float x, float y, Text_names text_id, glm::vec3 color = {0.f, 0.f, 0.f}, int order_id = -1, int id = -1);
 
 	// add sprite or animated sprite object to render
-	void sprite(float x, float y, float size, Sprite_names sprite_id, int order_id = -1);
+	void sprite(float x, float y, float size, Sprite_names sprite_id, int order_id = -1, int id = -1);
 
 	TextObject* findText(unsigned int id);
 	SpriteObject* findSprite(unsigned int id);
 
 	void deleteText(unsigned int id);
 	void deleteSprite(unsigned int id);
+
+
 };
 

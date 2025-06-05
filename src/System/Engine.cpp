@@ -21,8 +21,6 @@ void Engine::init()
 
 	ResourceManager::Instance().init();
 
-	GuiManager::Instance().init();
-
 	loadTagLayers();
 	loadPrefabs(prefabs, prefabs_puzzle);
 

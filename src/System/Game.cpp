@@ -45,8 +45,11 @@ void Game::draw()
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     LineManager::Instance().drawLines();
 
+    glEnable(GL_BLEND);
+
     GuiManager::Instance().draw();
 
+    glDisable(GL_BLEND);
     //background->render(*ResourceManager::Instance().shader_background);
     //sprite2->render(*ResourceManager::Instance().shader_background);
     //sprite3->render(*ResourceManager::Instance().shader_background);
@@ -146,6 +149,8 @@ void Game::init()
 {
 
 	is_initialized = true;
+
+    GuiManager::Instance().init();
 
 	loadScene("res/scene/scene.json", sceneGraph, prefabs, puzzle_prefabs);
 

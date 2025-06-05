@@ -6,6 +6,10 @@
 
 void GuiManager::init(const char* path)
 {
+	objects.clear();
+	sprites.clear();
+	texts.clear();
+
 	std::string pathStr(path);
 	if (fs::exists(pathStr + "config.json")) {
 		std::ifstream file(pathStr + "config.json");
@@ -97,21 +101,27 @@ void GuiManager::draw()
 	}
 }
 
-void GuiManager::text(std::string value, float x, float y, Text_names text_id, int order_id)
+void GuiManager::text(std::string value, float x, float y, Text_names text_id, glm::vec3 color, int order_id, int id)
 {
-	if (free_ids.empty()) {
-		objects.push_back(new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, max_id));
+	if (id != -1) {
+		objects.push_back(new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, id, color));
+	}
+	else if (free_ids.empty()) {
+		objects.push_back(new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, max_id, color));
 		max_id++;
 	}
 	else {
-		objects.push_back(new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, free_ids.back()));
+		objects.push_back(new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, free_ids.back(), color));
 		free_ids.pop_back();
 	}
 }
 
-void GuiManager::sprite(float x, float y, float size, Sprite_names sprite_id, int order_id)
+void GuiManager::sprite(float x, float y, float size, Sprite_names sprite_id, int order_id, int id)
 {
-	if (free_ids.empty()) {
+	if (id != -1) {
+		objects.push_back(new SpriteObject(sprites[sprite_id], sprite_id, glm::vec2(x, y), size, order_id, id));
+	}
+	else if (free_ids.empty()) {
 		objects.push_back(new SpriteObject(sprites[sprite_id], sprite_id, glm::vec2(x, y), size, order_id, max_id));
 		max_id++;
 	}
@@ -181,7 +191,7 @@ ObjectType SpriteObject::getType()
 
 void TextObject::render()
 {
-	text.lock()->renderText(value, pos.x, pos.y, *ResourceManager::Instance().shader_background, color);
+	text.lock()->renderText(value, pos.x, pos.y, *ResourceManager::Instance().shader_text, color);
 }
 
 ObjectType TextObject::getType()
