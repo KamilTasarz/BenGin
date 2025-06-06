@@ -172,6 +172,7 @@ void SceneGraph::setShaders() {
     ResourceManager::Instance().shader->setMat4("view", view);
     ResourceManager::Instance().shader->setInt("point_light_number", point_light_number);
     ResourceManager::Instance().shader->setInt("directional_light_number", directional_light_number);
+    ResourceManager::Instance().shader->setFloat("far_plane", 30.f);
     
     ResourceManager::Instance().shader_tile->use();
     setLights(ResourceManager::Instance().shader_tile);
@@ -179,6 +180,7 @@ void SceneGraph::setShaders() {
     ResourceManager::Instance().shader_tile->setMat4("view", view);
     ResourceManager::Instance().shader_tile->setInt("point_light_number", point_light_number);
     ResourceManager::Instance().shader_tile->setInt("directional_light_number", directional_light_number);
+    ResourceManager::Instance().shader_tile->setFloat("far_plane", 30.f);
 
     ResourceManager::Instance().shader_instanced->use();
     setLights(ResourceManager::Instance().shader_instanced);
@@ -189,12 +191,14 @@ void SceneGraph::setShaders() {
     ResourceManager::Instance().shader_instanced->setFloat("scaleFactor", 0.2f);
     ResourceManager::Instance().shader_instanced->setInt("point_light_number", point_light_number);
     ResourceManager::Instance().shader_instanced->setInt("directional_light_number", directional_light_number);
+    ResourceManager::Instance().shader_instanced->setFloat("far_plane", 30.f);
 
     ResourceManager::Instance().shader_outline->use();
     ResourceManager::Instance().shader_outline->setMat4("projection", projection);
     ResourceManager::Instance().shader_outline->setMat4("view", view);
     ResourceManager::Instance().shader_outline->setInt("point_light_number", point_light_number);
     ResourceManager::Instance().shader_outline->setInt("directional_light_number", directional_light_number);
+    ResourceManager::Instance().shader_outline->setFloat("far_plane", 30.f);
 }
 
 void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
@@ -209,6 +213,16 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
             //glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
     }
+
+	for (auto& point_light : point_lights) {
+		if (point_light->is_shining) {
+            //for (int i = 0; i < 6; i++) {
+                point_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow, 0);
+                root->drawShadows(*ResourceManager::Instance().shader_shadow);
+                //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            //}
+		}
+	}
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
@@ -288,9 +302,13 @@ void SceneGraph::setLights(Shader* shader) {
                 shader->setVec3("point_lights[" + index + "].diffuse", glm::vec3({ 0.f, 0.f, 0.f }));
                 shader->setVec3("point_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
             }
+			
+            glActiveTexture(GL_TEXTURE8);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, point_light->depthCubemap);
+            shader->setInt("shadow_maps", 8);
             i++;
         }
-        if (i >= 100) break;
+		if (i >= 16) break; // Limit 16 swiatel we frustum
     }
     i = 0;
     for (auto& dir_light : directional_lights) {
@@ -309,12 +327,13 @@ void SceneGraph::setLights(Shader* shader) {
             shader->setInt("useShadows", 0);
         }
         
-        glActiveTexture(GL_TEXTURE3 + i);
+        
+        glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, dir_light->depthMap);
         
-        i++;
-        shader->setMat4("light_view_projection" + to_string(i), dir_light->getMatrix());
-        shader->setInt("shadow_map" + to_string(i), 2 + i);
+        //i++;
+        shader->setMat4("light_view_projection", dir_light->getMatrix());
+        shader->setInt("shadow_map1", 3);
     }
 
 
@@ -1540,14 +1559,18 @@ void DirectionalLight::updateSelfAndChild(bool controlDirty)
 PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
     : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
 
-    glGenTextures(1, &depthMapBack);
-    glBindTexture(GL_TEXTURE_2D, depthMapBack);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-        SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glGenTextures(1, &depthCubemap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
+    for (unsigned int i = 0; i < 6; ++i)
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
+            SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
 PointLight::~PointLight()
@@ -1555,43 +1578,48 @@ PointLight::~PointLight()
     scene_graph->point_lights.remove(this);
 	scene_graph->point_light_number--;
     glDeleteTextures(1, &depthMap);
-    glDeleteTextures(1, &depthMapBack);
+    glDeleteTextures(1, &depthCubemap);
 }
 
-void PointLight::render(unsigned int depthMapFBO, Shader& shader)
+void PointLight::render(unsigned int depthMapFBO, Shader& shader, int index)
 {
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
-    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
     shader.use();
     updateMatrix();
-    shader.setMat4("view_projection", view_projection);
+    shader.setMat4("shadowMatrices[0]", shadowTransforms[0]);
+    shader.setMat4("shadowMatrices[1]", shadowTransforms[1]);
+    shader.setMat4("shadowMatrices[2]", shadowTransforms[2]);
+    shader.setMat4("shadowMatrices[3]", shadowTransforms[3]);
+    shader.setMat4("shadowMatrices[4]", shadowTransforms[4]);
+    shader.setMat4("shadowMatrices[5]", shadowTransforms[5]);
+	glm::vec3 lightPos = transform.getGlobalPosition();
+    shader.setVec3("lightPos", lightPos);
+    shader.setFloat("far_plane", 30.f);
 
 }
 
-void PointLight::renderBack(unsigned int depthMapFBO, Shader& shader)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMapBack, 0);
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-    shader.use();
-    updateMatrix();
-    shader.setMat4("view_projection", view_projection_back);
-
-}
 
 void PointLight::updateMatrix()
 {
-    view = glm::lookAt(transform.getGlobalPosition() + glm::vec3(0.0f, 0.5f, 0.0f), transform.getGlobalPosition() + glm::vec3(0.0f, -2.0f, 0.0f), glm::vec3(0.f, 0.f, 1.f));
-    view_back = glm::lookAt(transform.getGlobalPosition() + glm::vec3(0.0f, -0.5f, 0.0f), transform.getGlobalPosition() + glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.f, 0.f, -1.f));
-
-    projection = glm::perspective(glm::radians(170.f), 1.f, 0.5f, 40.f);
-    view_projection = projection * view;
-    view_projection_back = projection * view_back;
+    
+    glm::vec3 lightPos = transform.getGlobalPosition();
+    
+    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 30.f);
+    shadowTransforms.clear();
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0))); // +X
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0))); // -X
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1))); // +Y
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1))); // -Y
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0))); // +Z
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))); // -Z
 }
 
 Prefab::Prefab(std::string name, PrefabType prefab_type)

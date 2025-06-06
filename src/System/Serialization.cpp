@@ -483,8 +483,8 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 			glm::vec3 diffuse = json_to_vec3(j["directional_light"]["diffuse"]);
 			glm::vec3 direction = json_to_vec3(j["directional_light"]["direction"]);
 			bool is_shining = true;
-			if (j["point_light"].contains("is_shining")) {
-				is_shining = j["point_light"]["is_shining"];
+			if (j["directional_light"].contains("is_shining")) {
+				is_shining = j["directional_light"]["is_shining"];
 			}
 			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, is_shining, direction, ambient, diffuse, specular);
 		}
@@ -705,8 +705,8 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			glm::vec3 diffuse = json_to_vec3(j["directional_light"]["diffuse"]);
 			glm::vec3 direction = json_to_vec3(j["directional_light"]["direction"]);
 			bool is_shining = true;
-			if (j["point_light"].contains("is_shining")) {
-				is_shining = j["point_light"]["is_shining"];
+			if (j["directional_light"].contains("is_shining")) {
+				is_shining = j["directional_light"]["is_shining"];
 			}
 			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, is_shining, direction, ambient, diffuse, specular);
 		}

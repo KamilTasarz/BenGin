@@ -20,9 +20,7 @@ out VS_OUT {
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
-uniform mat4 light_view_projection1;
-//uniform mat4 light_view_projection3;
-//uniform mat4 light_view_projection_back;
+uniform mat4 light_view_projection; //pozwala na 1 z kierunkowego + 96 / 6 = 16 z punktowych
 
 const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
@@ -47,8 +45,6 @@ void main()
 		}
 	}
 	
-
-
 	if (length(pos) == 0.0) {
 		pos = vec4(aPos, 1.0);
 	}
@@ -61,27 +57,11 @@ void main()
 		vs_out.Normal = normalize(mat3(transpose(inverse(model))) * localNormal);
 	}
 
-
-	vs_out.Light_Perspective_Pos = light_view_projection1 * vec4(vs_out.Pos, 1.0f);
-	//vs_out.Light_Perspective_Pos2 = light_view_projection_back * vec4(vs_out.Pos, 1.0f);
-	//vs_out.Light_Perspective_Pos3 = light_view_projection3 * vec4(vs_out.Pos, 1.0f);
-
+	//for (int i = 0; i < directional_light_number + 6 * point_light_number; i++) {
+	vs_out.Light_Perspective_Pos = light_view_projection * vec4(vs_out.Pos, 1.0f);
+	//}
 	
 	vec3 scale = vec3(length(model[0].xyz), length(model[1].xyz), length(model[2].xyz));
 	vs_out.Cords = aTexCord;
-/*if (abs(scale.x - scale.y) < 0.001 && abs(scale.x - scale.z) < 0.001) {
-    vs_out.Cords = aTexCord;
-} else {
-    if (abs(vs_out.Normal.y) > 0.9) {
-        vs_out.Cords = aTexCord * scale.xz;
-    } else if (abs(vs_out.Normal.x) > 0.9) {
-        vs_out.Cords = aTexCord * scale.yz;
-    } else if (abs(vs_out.Normal.z) > 0.9) {
-        vs_out.Cords = aTexCord * scale.xy;
-    } 
-}*/
-
-	//float scaleFinal = max(scale.x, max(scale.y, scale.z));
-	//vs_out.Cords = aTexCord;
 	
 }

@@ -433,7 +433,7 @@ class Instance : public Node {
 
 
 
-const unsigned int SHADOW_WIDTH = 8192, SHADOW_HEIGHT = 8192;
+const unsigned int SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
 
 class Light : public Node {
 public:
@@ -447,7 +447,6 @@ public:
     glm::vec3 specular;
 
     glm::mat4 view_projection;
-    glm::mat4 view_projection_back;
     glm::mat4 view;
     glm::mat4 projection;
 
@@ -498,24 +497,22 @@ public:
     float quadratic;
     float linear;
     float constant;
+    std::vector<glm::mat4> shadowTransforms;
 
-    unsigned int depthMapBack = 0;
-    glm::mat4 view_back;
+    GLuint depthCubemap;
 
     //PointLight() : Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
 
     PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
     ~PointLight() override;
 
-    void render(unsigned int depthMapFBO, Shader& shader);
-
-    void renderBack(unsigned int depthMapFBO, Shader& shader);
+    void render(unsigned int depthMapFBO, Shader& shader, int index);
 
     void updateMatrix();
 
-    glm::mat4& getMatrix() {
+    std::vector<glm::mat4>& getMatrix() {
         updateMatrix();
-        return view_projection;
+        return shadowTransforms;
     }
 };
 

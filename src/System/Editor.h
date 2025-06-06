@@ -31,6 +31,10 @@ private:
 	ImGuizmo::OPERATION currentOperation = ImGuizmo::OPERATION::TRANSLATE;
 	bool uniformScale = false;
 
+	//debug
+	GLuint fbo, debugColorTex;
+	unsigned int quadVAO, quadVBO;
+
 	glm::vec2 normalizedMouse;
 	Sprite * icon, * eye_icon, * eye_slashed_icon, *switch_on, *switch_off, * dir_light_icon, * point_light_icon;
 	SceneGraph* sceneGraph;

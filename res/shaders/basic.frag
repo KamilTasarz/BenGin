@@ -5,8 +5,6 @@ in VS_OUT {
 	vec2 Cords;
 	vec3 Normal;
 	vec4 Light_Perspective_Pos;
-	//vec4 Light_Perspective_Pos2;
-	//vec4 Light_Perspective_Pos3;
 	//mat3 TBN;
 } fs_in;
 
@@ -32,7 +30,8 @@ struct DirectionLight {
 
 mat3 calculatePointLight(vec3 viewDir, PointLight light);
 mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light);
-float calulateShadow(vec4 position_from_light_perpective, sampler2D map);
+float calculateShadow(vec4 position_from_light_perpective, sampler2D map);
+float calculateShadowPointLight(PointLight p, samplerCube map);
 
 // uniformy
 
@@ -40,16 +39,16 @@ uniform int is_light;
 uniform int point_light_number;
 uniform int directional_light_number;
 
-uniform PointLight point_lights[100];
-uniform DirectionLight directional_lights[10];
+uniform PointLight point_lights[16];
+uniform DirectionLight directional_lights[1];
 
 uniform int useShadows;
+uniform float far_plane;
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 uniform sampler2D shadow_map1;
-//uniform sampler2D shadow_map3;
-//uniform sampler2D shadow_map_back;
+uniform samplerCube shadow_maps;
 
 uniform vec3 cameraPosition;
 
@@ -80,10 +79,15 @@ void main() {
 
         
 
-        float shadow = calulateShadow(fs_in.Light_Perspective_Pos, shadow_map1);
-        //float shadow1 = 0.f;//min(calulateShadow(fs_in.Light_Perspective_Pos, shadow_map), calulateShadow(fs_in.Light_Perspective_Pos2, shadow_map_back));
-        
-        //float shadow = clamp(shadow1+shadow2, 0.f, 1.f);
+        float shadow = 0.f;//= calculateShadow(fs_in.Light_Perspective_Pos, shadow_map1);
+
+        //for (int i = 0; i < point_light_number; i++) {
+            //shadow += calculateShadowPointLight(point_lights[i], shadow_maps[i]);
+        //}
+
+        shadow = calculateShadowPointLight(point_lights[0], shadow_maps);
+
+        //shadow = clamp(shadow, 0.f, 1.f);
 
 
         FragColor = vec4((res[0] + (res[1] + res[2]) * (1.f - shadow)), 1.f);
@@ -125,7 +129,7 @@ mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light) {
     return mat3(ambient, diffuse, specular);
 }
 
-float calulateShadow(vec4 position_from_light_perpective, sampler2D map) {
+float calculateShadow(vec4 position_from_light_perpective, sampler2D map) {
     
     if (useShadows == 0) return 1.f;
 
@@ -146,6 +150,20 @@ float calulateShadow(vec4 position_from_light_perpective, sampler2D map) {
         }
     }
     shadow /= 25.0f; 
+
+    return shadow;
+}
+
+float calculateShadowPointLight(PointLight p, samplerCube map)
+{
+    vec3 fragToLight = (fs_in.Pos - p.position);
+    float currentDepth = length(fragToLight);
+    //fragToLight = normalize(fragToLight);
+
+    float closestDepth = texture(map, fragToLight).r * far_plane;
+    
+    float bias = 0.05f;
+    float shadow = currentDepth - bias > closestDepth ? 1.0f : 0.0f;
 
     return shadow;
 }
