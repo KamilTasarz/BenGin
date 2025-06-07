@@ -15,8 +15,6 @@
 
 using namespace std;
 
-std::string sound1 = "res/sounds/bonk.ogg";
-
 struct Vector3 {
     float x;
     float y;
@@ -50,6 +48,8 @@ struct Implementation {
 class CAudioEngine {
 
 public:
+
+    std::string sound1 = "res/sounds/bonk.ogg";
 
     static void Init();
     static void Update();
