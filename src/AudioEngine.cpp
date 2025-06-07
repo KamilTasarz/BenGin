@@ -145,7 +145,16 @@ void CAudioEngine::UnloadSound(const string& strSoundName)
     sgpImplementation->mSounds.erase(tFoundIt);
 }
 
-int CAudioEngine::PlaySounds(const string& strSoundName, const Vector3& vPosition, float fVolumedB)
+void CAudioEngine::Set3dListenerAndOrientation(const glm::vec3& vPos, const glm::vec3& vVel, const glm::vec3& vFor, const glm::vec3& vUp) {
+    FMOD_VECTOR fmodPos = glmToFmod(vPos);
+    FMOD_VECTOR fmodVel = glmToFmod(vVel);
+    FMOD_VECTOR fmodForward = glmToFmod(vFor);
+    FMOD_VECTOR fmodUp = glmToFmod(vUp);
+
+    sgpImplementation->mpSystem->set3DListenerAttributes(0, &fmodPos, &fmodVel, &fmodForward, &fmodUp);
+}
+
+int CAudioEngine::PlayMusic(const string& strSoundName, float volumePercent, const glm::vec3& vPosition)
 {
     // Set channel id
     int nChannelId = sgpImplementation->mnNextChannelId++;
@@ -171,17 +180,23 @@ int CAudioEngine::PlaySounds(const string& strSoundName, const Vector3& vPositio
         tFoundIt->second->getMode(&currMode);
         if (currMode & FMOD_3D) {
             // If the sound is 3D we set the position
-            FMOD_VECTOR position = VectorToFmod(vPosition);
+            FMOD_VECTOR position = glmToFmod(vPosition);
             CAudioEngine::ErrorCheck(pChannel->set3DAttributes(&position, nullptr));
         }
         // Other settings (volume and paused - unpause)
-        CAudioEngine::ErrorCheck(pChannel->setVolume(dbToVolume(fVolumedB)));
+        float dB_from_percent = percentToDb(volumePercent);
+        CAudioEngine::ErrorCheck(pChannel->setVolume(dbToVolume(dB_from_percent)));
         CAudioEngine::ErrorCheck(pChannel->setPaused(false));
         // Add channel to channel map
         sgpImplementation->mChannels[nChannelId] = pChannel;
     }
     // And return the id so we can refer to it later
     return nChannelId;
+}
+
+void CAudioEngine::PlaySFX(const string& strSoundName, float volumePercent, const glm::vec3& vPosition) {
+    int temp;
+    temp = PlayMusic(strSoundName, volumePercent, vPosition);
 }
 
 void CAudioEngine::PlayEvent(const string& strEventName)
@@ -227,14 +242,14 @@ void CAudioEngine::StopEvent(const string& strEventName, bool bImmediate)
 //    CAudioEngine::ErrorCheck(pParameter->getValue(parameter));
 //}
 
-void CAudioEngine::SetChannel3dPosition(int nChannelId, const Vector3& vPosition)
+void CAudioEngine::SetChannel3dPosition(int nChannelId, const glm::vec3& vPosition)
 {
     // Find channel by id
     auto tFoundIt = sgpImplementation->mChannels.find(nChannelId);
     if (tFoundIt == sgpImplementation->mChannels.end()) { return; }
 
     // Make an Fmod vector from our struct Vector3
-    FMOD_VECTOR position = VectorToFmod(vPosition);
+    FMOD_VECTOR position = glmToFmod(vPosition);
     // We set position (velocity as null)
     CAudioEngine::ErrorCheck(tFoundIt->second->set3DAttributes(&position, NULL));
 }
@@ -266,6 +281,15 @@ bool CAudioEngine::IsEventPlaying(const string& strEventName) const
 FMOD_VECTOR CAudioEngine::VectorToFmod(const Vector3& vPosition)
 {
     // Make an Fmod vector from our struct Vector3
+    FMOD_VECTOR fVec;
+    fVec.x = vPosition.x;
+    fVec.y = vPosition.y;
+    fVec.z = vPosition.z;
+    return fVec;
+}
+
+FMOD_VECTOR CAudioEngine::glmToFmod(const glm::vec3& vPosition)
+{
     FMOD_VECTOR fVec;
     fVec.x = vPosition.x;
     fVec.y = vPosition.y;
@@ -315,6 +339,21 @@ void CAudioEngine::resumeSound(int nChannelId)
     CAudioEngine::ErrorCheck(tFoundIt->second->setPaused(false));
 }
 
+float CAudioEngine::percentToDb(float percent)
+{
+    float silence = -80.0f;
+    float max_vol = 0.0f;
+    if (percent <= 0.0f) {
+        return silence;
+    }
+    else if (percent >= 100.0f) {
+        return max_vol;
+    }
+    else {
+        return silence + (percent / 100.0f) * 80.0f;
+    }
+}
+
 float CAudioEngine::dbToVolume(float dB)
 {
     return powf(10.0f, 0.05f * dB);
@@ -323,4 +362,10 @@ float CAudioEngine::dbToVolume(float dB)
 float CAudioEngine::VolumeTodB(float volume)
 {
     return 20.0f * log10f(volume);
+}
+
+void CAudioEngine::loadAllGameSounds() {
+    LoadSound(sound1, false, false, false);
+	LoadSound(button_down, false, false, false);
+	LoadSound(button_up, false, false, false);
 }

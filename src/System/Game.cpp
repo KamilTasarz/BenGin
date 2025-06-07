@@ -9,6 +9,7 @@
 #include "../System/PhysicsSystem.h"
 #include "../System/LineManager.h"
 #include "../Basic/Animator.h"
+#include "../AudioEngine.h"
 #include <random>
 #include "../System/GuiManager.h"
 
@@ -154,7 +155,6 @@ void Game::draw()
         }
 
         if (postProcessData.is_bloom) {
-
             glBindFramebuffer(GL_FRAMEBUFFER, bloomFBO);
             glClear(GL_COLOR_BUFFER_BIT);
 
@@ -304,6 +304,9 @@ void Game::draw()
 void Game::update(float deltaTime)
 {
     auto* window = ServiceLocator::getWindow();
+    auto* audio = ServiceLocator::getAudioEngine();
+    
+    audio->Update();
 
     // Kamera
     camera->ProcessKeyboard(deltaTime, 0);
@@ -542,6 +545,8 @@ void Game::init()
     
     // ======== NOISE END ========
 
+    ServiceLocator::getAudioEngine()->Init();
+    loadSounds();
 
     sceneGraph->root->createComponents();
 	PhysicsSystem::instance().colliders.clear();
@@ -683,4 +688,12 @@ void Game::renderQuadWithTextures(GLuint tex0, GLuint tex1) {
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+}
+
+void Game::loadSounds() {
+    
+    auto* audio = ServiceLocator::getAudioEngine();
+
+    audio->loadAllGameSounds();
+    
 }

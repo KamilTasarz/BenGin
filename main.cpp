@@ -53,10 +53,10 @@ int main() {
     audioEngine.LoadSound(track2, true, true, true);
     audioEngine.LoadSound(sound_effect, false, false, true);
 
-    int current_track_id = 0;//audioEngine.PlaySounds(track1, Vector3{ 0.0f }, -10.0);
+    int current_track_id = 0;//audioEngine.PlayMusic(track1, Vector3{ 0.0f }, -10.0);
     bool paused = false;
 
-    // When we want to call PlaySounds and don't care about the channel number
+    // When we want to call PlayMusic and don't care about the channel number
     int useless_garbage;*/
 
     // --- //

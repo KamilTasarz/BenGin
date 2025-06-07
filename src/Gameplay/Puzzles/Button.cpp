@@ -1,6 +1,7 @@
 #include "Button.h"
 #include "../../Basic/Node.h"
 #include "../RegisterScript.h"
+#include "../../Component/BoundingBox.h"
 #include "Door.h"
 #include "Fan.h"
 
@@ -24,6 +25,7 @@ void Button::onStart()
 {
 	// Initialize the button state
 	isPressed = false;
+	pressingObjects = 0;
 	originalSize = owner->transform.getLocalScale();
 }
 
@@ -50,25 +52,53 @@ void Button::ChangeState(bool state)
 	}
 }
 
-void Button::onStayCollisionLogic(Node* other)
-{
+void Button::onCollisionLogic(Node* other) {
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
-		//std::cout << "Button pressed - " << owner->name << std::endl;
-		isPressed = true;
-		glm::vec3 newScale = originalSize * glm::vec3(1.f, 0.3f, 1.f);
-		owner->transform.setLocalScale(newScale);
+		if (pressingObjects == 0) {
+			auto* audio = ServiceLocator::getAudioEngine();
+			audio->PlaySFX(audio->button_down, 100.f);
 
-		ChangeState(activate);
+			glm::vec3 newScale = originalSize * glm::vec3(1.f, 0.3f, 1.f);
+			owner->transform.setLocalScale(newScale);
+
+			owner->AABB_logic->min_point_local.y *= 1.f / 0.3f;
+			owner->AABB_logic->max_point_local.y *= 1.f / 0.3f;
+
+			ChangeState(activate);
+		}
+
+		pressingObjects++;
+		isPressed = true;
 	}
 }
 
-void Button::onExitCollisionLogic(Node* other)
+void Button::onStayCollisionLogic(Node* other)
 {
-	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
-		//std::cout << "Button released - " << owner->name << std::endl;
-		isPressed = false;
-		owner->transform.setLocalScale(originalSize);
+	//if (other->getTagName() == "Player" || other->getTagName() == "Box") {
+	//	//std::cout << "Button pressed - " << owner->name << std::endl;
+	//	isPressed = true;
+	//	glm::vec3 newScale = originalSize * glm::vec3(1.f, 0.3f, 1.f);
+	//	owner->transform.setLocalScale(newScale);
 
-		ChangeState(!activate);
+	//	ChangeState(activate);
+	//}
+}
+
+void Button::onExitCollisionLogic(Node* other) {
+	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
+		pressingObjects = std::max(0, pressingObjects - 1);
+
+		if (pressingObjects == 0) {
+			isPressed = false;
+			owner->transform.setLocalScale(originalSize);
+
+			owner->AABB_logic->min_point_local.y /= 1.f / 0.3f;
+			owner->AABB_logic->max_point_local.y /= 1.f / 0.3f;
+
+			auto* audio = ServiceLocator::getAudioEngine();
+			audio->PlaySFX(audio->button_up, 100.f);
+
+			ChangeState(!activate);
+		}
 	}
 }

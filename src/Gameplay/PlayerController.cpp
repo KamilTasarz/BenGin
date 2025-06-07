@@ -125,6 +125,7 @@ void PlayerController::onUpdate(float deltaTime)
 	//std::cout << "tag aktualnego gracza" << owner->getTagName() << std::endl;
 
 	glm::vec3 position = owner->transform.getLocalPosition();
+	//CAudioEngine::Set3dListenerAndOrientation(position, glm::vec3(rb->velocityX, rb->velocityY, 0.f), glm::vec3(rb->velocityX, rb->velocityY, 0.f), glm::vec3(0, 1, 0));
 
 	if (!rb) return;
 
@@ -159,6 +160,10 @@ void PlayerController::onUpdate(float deltaTime)
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_RELEASE) {
 		debugTogglePressed = false;
+	}
+
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_9) == GLFW_PRESS) {
+		int temp = ServiceLocator::getAudioEngine()->PlayMusic("res/audios/sounds/bonk.ogg");
 	}
 
 	if (debugMode) {
