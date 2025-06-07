@@ -50,6 +50,13 @@ void Button::ChangeState(bool state)
 	}
 }
 
+void Button::onCollisionLogic(Node* other) {
+	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
+		auto* audio = ServiceLocator::getAudioEngine();
+		audio->PlaySFX(audio->button_down, 100.f);
+	}
+}
+
 void Button::onStayCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
@@ -69,6 +76,9 @@ void Button::onExitCollisionLogic(Node* other)
 		isPressed = false;
 		owner->transform.setLocalScale(originalSize);
 
+		auto* audio = ServiceLocator::getAudioEngine();
+		audio->PlaySFX(audio->button_up, 100.f);
+		
 		ChangeState(!activate);
 	}
 }

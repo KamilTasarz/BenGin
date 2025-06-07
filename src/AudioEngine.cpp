@@ -366,4 +366,6 @@ float CAudioEngine::VolumeTodB(float volume)
 
 void CAudioEngine::loadAllGameSounds() {
     LoadSound(sound1, false, false, false);
+	LoadSound(button_down, false, false, false);
+	LoadSound(button_up, false, false, false);
 }

@@ -19,6 +19,7 @@ public:
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
 	void ChangeState(bool state);
+	void onCollisionLogic(Node* other);
 	void onStayCollisionLogic(Node* other) override;
 	void onExitCollisionLogic(Node* other) override;
 	//void onEnd() override;
