@@ -85,7 +85,7 @@ void PlayerController::onUpdate(float deltaTime)
 	}
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_9) == GLFW_PRESS) {
-		ServiceLocator::getAudioEngine()->PlaySounds();
+		int temp = ServiceLocator::getAudioEngine()->PlaySounds("res/audios/sounds/bonk.ogg");
 	}
 
 	if (debugMode) {

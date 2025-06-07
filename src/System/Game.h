@@ -66,6 +66,8 @@ public:
 	void generateNoiseTexture();
 	void debug_print();
 
+	void loadSounds();
+
 	void renderQuadWithTexture(GLuint tex);
 	void renderQuadWithTextures(GLuint tex0, GLuint tex1);
 

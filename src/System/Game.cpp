@@ -663,3 +663,11 @@ void Game::renderQuadWithTextures(GLuint tex0, GLuint tex1) {
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 }
+
+void Game::loadSounds() {
+    
+    auto* audio = ServiceLocator::getAudioEngine();
+
+    audio->LoadSound("res/audios/sounds/bonk.ogg", false, false, true);
+
+}
