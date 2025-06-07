@@ -7,6 +7,7 @@
 #include "Game.h"
 
 class Window;
+class CAudioEngine;
 
 class Engine {
 private:
@@ -17,6 +18,7 @@ public:
 	Editor* editor;
 	Game* game;
 	Window* window;
+	CAudioEngine* audio;
 
 	Engine() = default;
 	~Engine() = default;

@@ -135,7 +135,6 @@ void Game::draw()
         }
 
         if (postProcessData.is_bloom) {
-
             glBindFramebuffer(GL_FRAMEBUFFER, bloomFBO);
             glClear(GL_COLOR_BUFFER_BIT);
 
@@ -285,6 +284,9 @@ void Game::draw()
 void Game::update(float deltaTime)
 {
     auto* window = ServiceLocator::getWindow();
+    auto* audio = ServiceLocator::getAudioEngine();
+    
+    audio->Update();
 
     // Kamera
     camera->ProcessKeyboard(deltaTime, 0);
@@ -518,6 +520,7 @@ void Game::init()
     
     // ======== NOISE END ========
 
+    ServiceLocator::getAudioEngine()->Init();
 
     sceneGraph->root->createComponents();
 	PhysicsSystem::instance().colliders.clear();

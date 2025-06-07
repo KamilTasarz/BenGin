@@ -84,6 +84,10 @@ void PlayerController::onUpdate(float deltaTime)
 		debugTogglePressed = false;
 	}
 
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_9) == GLFW_PRESS) {
+		ServiceLocator::getAudioEngine()->PlaySounds();
+	}
+
 	if (debugMode) {
 		glm::vec3 move(0.0f);
 

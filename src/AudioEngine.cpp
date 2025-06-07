@@ -145,7 +145,7 @@ void CAudioEngine::UnloadSound(const string& strSoundName)
     sgpImplementation->mSounds.erase(tFoundIt);
 }
 
-int CAudioEngine::PlaySounds(const string& strSoundName, const Vector3& vPosition, float fVolumedB)
+int CAudioEngine::PlaySounds(const string& strSoundName, const Vector3& vPosition, float volumePercent)
 {
     // Set channel id
     int nChannelId = sgpImplementation->mnNextChannelId++;
@@ -175,7 +175,8 @@ int CAudioEngine::PlaySounds(const string& strSoundName, const Vector3& vPositio
             CAudioEngine::ErrorCheck(pChannel->set3DAttributes(&position, nullptr));
         }
         // Other settings (volume and paused - unpause)
-        CAudioEngine::ErrorCheck(pChannel->setVolume(dbToVolume(fVolumedB)));
+        float dB_from_percent = percentToDb(volumePercent);
+        CAudioEngine::ErrorCheck(pChannel->setVolume(dbToVolume(dB_from_percent)));
         CAudioEngine::ErrorCheck(pChannel->setPaused(false));
         // Add channel to channel map
         sgpImplementation->mChannels[nChannelId] = pChannel;
@@ -313,6 +314,21 @@ void CAudioEngine::resumeSound(int nChannelId)
 
     // Unpauses the sound
     CAudioEngine::ErrorCheck(tFoundIt->second->setPaused(false));
+}
+
+float CAudioEngine::percentToDb(float percent)
+{
+    float silence = -80.0f;
+    float max_vol = 0.0f;
+    if (percent <= 0.0f) {
+        return silence;
+    }
+    else if (percent >= 100.0f) {
+        return max_vol;
+    }
+    else {
+        return silence + (percent / 100.0f) * 80.0f;
+    }
 }
 
 float CAudioEngine::dbToVolume(float dB)

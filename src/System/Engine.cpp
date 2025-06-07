@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "ServiceLocator.h"
 #include "Window.h"
+#include "../AudioEngine.h"
 #include "PhysicsSystem.h"
 #include "../Input/InputManager.h"
 #include "../System/Serialization.h"
@@ -8,14 +9,14 @@
 #include "../Component/CameraGlobals.h"
 #include "PrefabRegistry.h"
 
-
-
-
 void Engine::init()
 {
-	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Alpha Version 1.1.2");
+	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Beta Version 1.2.0");
 	ServiceLocator::provide(window);
 	
+	audio = new CAudioEngine();
+	ServiceLocator::provide(audio);
+
 	PhysicsSystem::instance();
 
 	ResourceManager::Instance().init();
