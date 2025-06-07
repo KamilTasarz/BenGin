@@ -145,16 +145,16 @@ void CAudioEngine::UnloadSound(const string& strSoundName)
     sgpImplementation->mSounds.erase(tFoundIt);
 }
 
-void CAudioEngine::Set3dListenerAndOrientation(const Vector3& vPos, const Vector3& vVel, const Vector3& vFor, const Vector3& vUp) {
-    FMOD_VECTOR fmodPos = VectorToFmod(vPos);
-    FMOD_VECTOR fmodVel = VectorToFmod(vVel);
-    FMOD_VECTOR fmodForward = VectorToFmod(vFor);
-    FMOD_VECTOR fmodUp = VectorToFmod(vUp);
+void CAudioEngine::Set3dListenerAndOrientation(const glm::vec3& vPos, const glm::vec3& vVel, const glm::vec3& vFor, const glm::vec3& vUp) {
+    FMOD_VECTOR fmodPos = glmToFmod(vPos);
+    FMOD_VECTOR fmodVel = glmToFmod(vVel);
+    FMOD_VECTOR fmodForward = glmToFmod(vFor);
+    FMOD_VECTOR fmodUp = glmToFmod(vUp);
 
     sgpImplementation->mpSystem->set3DListenerAttributes(0, &fmodPos, &fmodVel, &fmodForward, &fmodUp);
 }
 
-int CAudioEngine::PlayMusic(const string& strSoundName, const Vector3& vPosition, float volumePercent)
+int CAudioEngine::PlayMusic(const string& strSoundName, float volumePercent, const glm::vec3& vPosition)
 {
     // Set channel id
     int nChannelId = sgpImplementation->mnNextChannelId++;
@@ -180,7 +180,7 @@ int CAudioEngine::PlayMusic(const string& strSoundName, const Vector3& vPosition
         tFoundIt->second->getMode(&currMode);
         if (currMode & FMOD_3D) {
             // If the sound is 3D we set the position
-            FMOD_VECTOR position = VectorToFmod(vPosition);
+            FMOD_VECTOR position = glmToFmod(vPosition);
             CAudioEngine::ErrorCheck(pChannel->set3DAttributes(&position, nullptr));
         }
         // Other settings (volume and paused - unpause)
@@ -194,9 +194,9 @@ int CAudioEngine::PlayMusic(const string& strSoundName, const Vector3& vPosition
     return nChannelId;
 }
 
-void CAudioEngine::PlaySFX(const string& strSoundName, const Vector3& vPosition, float volumePercent) {
+void CAudioEngine::PlaySFX(const string& strSoundName, float volumePercent, const glm::vec3& vPosition) {
     int temp;
-    temp = PlayMusic(strSoundName, vPosition, volumePercent);
+    temp = PlayMusic(strSoundName, volumePercent, vPosition);
 }
 
 void CAudioEngine::PlayEvent(const string& strEventName)
@@ -242,14 +242,14 @@ void CAudioEngine::StopEvent(const string& strEventName, bool bImmediate)
 //    CAudioEngine::ErrorCheck(pParameter->getValue(parameter));
 //}
 
-void CAudioEngine::SetChannel3dPosition(int nChannelId, const Vector3& vPosition)
+void CAudioEngine::SetChannel3dPosition(int nChannelId, const glm::vec3& vPosition)
 {
     // Find channel by id
     auto tFoundIt = sgpImplementation->mChannels.find(nChannelId);
     if (tFoundIt == sgpImplementation->mChannels.end()) { return; }
 
     // Make an Fmod vector from our struct Vector3
-    FMOD_VECTOR position = VectorToFmod(vPosition);
+    FMOD_VECTOR position = glmToFmod(vPosition);
     // We set position (velocity as null)
     CAudioEngine::ErrorCheck(tFoundIt->second->set3DAttributes(&position, NULL));
 }
@@ -281,6 +281,15 @@ bool CAudioEngine::IsEventPlaying(const string& strEventName) const
 FMOD_VECTOR CAudioEngine::VectorToFmod(const Vector3& vPosition)
 {
     // Make an Fmod vector from our struct Vector3
+    FMOD_VECTOR fVec;
+    fVec.x = vPosition.x;
+    fVec.y = vPosition.y;
+    fVec.z = vPosition.z;
+    return fVec;
+}
+
+FMOD_VECTOR CAudioEngine::glmToFmod(const glm::vec3& vPosition)
+{
     FMOD_VECTOR fVec;
     fVec.x = vPosition.x;
     fVec.y = vPosition.y;

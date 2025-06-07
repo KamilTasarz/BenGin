@@ -11,6 +11,7 @@
 #include <vector>
 #include <math.h>
 #include <iostream>
+#include <glm/vec3.hpp>
 
 using namespace std;
 
@@ -59,15 +60,16 @@ public:
     void LoadEvent(const string& strEventName);
     void LoadSound(const string& strSoundName, bool b3d = true, bool bLooping = false, bool bStream = false);
     void UnloadSound(const string& strSoundName);
-    void Set3dListenerAndOrientation(const Vector3& vPos, const Vector3& vVel, const Vector3& vFor, const Vector3& vUp);
-    int PlaySounds(const string& strSoundName, const Vector3& vPosition = Vector3{ 0, 0, 0 }, float volumePercent = 100.0f);
+    void Set3dListenerAndOrientation(const glm::vec3& vPos, const glm::vec3& vVel, const glm::vec3& vFor, const glm::vec3& vUp);
+    int PlayMusic(const string& strSoundName, float volumePercent = 100.0f, const glm::vec3& vPosition = glm::vec3{ 0, 0, 0 });
+    void PlaySFX(const string& strSoundName, float volumePercent = 100.0f, const glm::vec3& vPosition = glm::vec3{ 0, 0, 0 });
     void PlayEvent(const string& strEventName);
     void StopChannel(int nChannelId);
     void StopEvent(const string& strEventName, bool bImmediate = false);
     //void GetEventParameter(const string& strEventName, const string& strEventParameter, float* parameter);
     //void SetEventParameter(const string& strEventName, const string& strParameterName, float fValue);
     //void StopAllChannels();
-    void SetChannel3dPosition(int nChannelId, const Vector3& vPosition);
+    void SetChannel3dPosition(int nChannelId, const glm::vec3& vPosition);
     void SetChannelvolume(int nChannelId, float fVolumedB);
     //bool IsPlaying(int nChannelId) const;
     bool IsEventPlaying(const string& strEventName) const;
@@ -75,6 +77,7 @@ public:
     float dbToVolume(float db);
     float VolumeTodB(float volume);
     FMOD_VECTOR VectorToFmod(const Vector3& vPosition);
+    FMOD_VECTOR glmToFmod(const glm::vec3& vPosition);
 
     void loadAllGameSounds();
     
