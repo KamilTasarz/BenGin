@@ -10,6 +10,8 @@ public:
 	VARIABLE(Node*, object);
 	VARIABLE(bool, activate)
 	VARIABLE(bool, isPressed);
+
+	int pressingObjects = 0;
 	glm::vec3 originalSize;
 
 	Button() = default;
