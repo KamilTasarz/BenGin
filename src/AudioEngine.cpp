@@ -145,6 +145,15 @@ void CAudioEngine::UnloadSound(const string& strSoundName)
     sgpImplementation->mSounds.erase(tFoundIt);
 }
 
+void CAudioEngine::Set3dListenerAndOrientation(const Vector3& vPos, const Vector3& vVel, const Vector3& vFor, const Vector3& vUp) {
+    FMOD_VECTOR fmodPos = VectorToFmod(vPos);
+    FMOD_VECTOR fmodVel = VectorToFmod(vVel);
+    FMOD_VECTOR fmodForward = VectorToFmod(vFor);
+    FMOD_VECTOR fmodUp = VectorToFmod(vUp);
+
+    sgpImplementation->mpSystem->set3DListenerAttributes(0, &fmodPos, &fmodVel, &fmodForward, &fmodUp);
+}
+
 int CAudioEngine::PlaySounds(const string& strSoundName, const Vector3& vPosition, float volumePercent)
 {
     // Set channel id
@@ -339,4 +348,8 @@ float CAudioEngine::dbToVolume(float dB)
 float CAudioEngine::VolumeTodB(float volume)
 {
     return 20.0f * log10f(volume);
+}
+
+void CAudioEngine::loadAllGameSounds() {
+    LoadSound(sound1, false, false, false);
 }

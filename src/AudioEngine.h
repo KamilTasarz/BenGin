@@ -14,6 +14,8 @@
 
 using namespace std;
 
+std::string sound1 = "res/sounds/bonk.ogg";
+
 struct Vector3 {
     float x;
     float y;
@@ -57,7 +59,7 @@ public:
     void LoadEvent(const string& strEventName);
     void LoadSound(const string& strSoundName, bool b3d = true, bool bLooping = false, bool bStream = false);
     void UnloadSound(const string& strSoundName);
-    //void Set3dListenerAndOrientation(const Vector3& vPos = Vector3{ 0, 0, 0 }, float fVolumedB = 0.0f);
+    void Set3dListenerAndOrientation(const Vector3& vPos, const Vector3& vVel, const Vector3& vFor, const Vector3& vUp);
     int PlaySounds(const string& strSoundName, const Vector3& vPosition = Vector3{ 0, 0, 0 }, float volumePercent = 100.0f);
     void PlayEvent(const string& strEventName);
     void StopChannel(int nChannelId);
@@ -74,6 +76,8 @@ public:
     float VolumeTodB(float volume);
     FMOD_VECTOR VectorToFmod(const Vector3& vPosition);
 
+    void loadAllGameSounds();
+    
     // Not from tutorial so potentially some real garbage code
     void stopSound(int nChannelId);
     void pauseSound(int nChannelId);

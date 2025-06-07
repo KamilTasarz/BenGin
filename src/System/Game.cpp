@@ -521,6 +521,7 @@ void Game::init()
     // ======== NOISE END ========
 
     ServiceLocator::getAudioEngine()->Init();
+    loadSounds();
 
     sceneGraph->root->createComponents();
 	PhysicsSystem::instance().colliders.clear();
@@ -668,6 +669,6 @@ void Game::loadSounds() {
     
     auto* audio = ServiceLocator::getAudioEngine();
 
-    audio->LoadSound("res/audios/sounds/bonk.ogg", false, false, true);
+    audio->loadAllGameSounds();
 
 }
