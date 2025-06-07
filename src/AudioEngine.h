@@ -49,9 +49,9 @@ class CAudioEngine {
 
 public:
 
-    std::string sound1 = "res/sounds/bonk.ogg";
-    std::string button_down = "res/sounds/button_down.mp3";
-    std::string button_up = "res/sounds/button_up.mp3";
+    std::string sound1 = "res/audios/sounds/bonk.ogg";
+    std::string button_down = "res/audios/sounds/button_down.mp3";
+    std::string button_up = "res/audios/sounds/button_up.mp3";
 
     static void Init();
     static void Update();
