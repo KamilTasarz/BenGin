@@ -154,7 +154,7 @@ void CAudioEngine::Set3dListenerAndOrientation(const Vector3& vPos, const Vector
     sgpImplementation->mpSystem->set3DListenerAttributes(0, &fmodPos, &fmodVel, &fmodForward, &fmodUp);
 }
 
-int CAudioEngine::PlaySounds(const string& strSoundName, const Vector3& vPosition, float volumePercent)
+int CAudioEngine::PlayMusic(const string& strSoundName, const Vector3& vPosition, float volumePercent)
 {
     // Set channel id
     int nChannelId = sgpImplementation->mnNextChannelId++;
@@ -192,6 +192,11 @@ int CAudioEngine::PlaySounds(const string& strSoundName, const Vector3& vPositio
     }
     // And return the id so we can refer to it later
     return nChannelId;
+}
+
+void CAudioEngine::PlaySFX(const string& strSoundName, const Vector3& vPosition, float volumePercent) {
+    int temp;
+    temp = PlayMusic(strSoundName, vPosition, volumePercent);
 }
 
 void CAudioEngine::PlayEvent(const string& strEventName)
