@@ -24,7 +24,7 @@ void LaserEmitter::onStart()
     auto* audio = ServiceLocator::getAudioEngine();
     sfxId = audio->PlayMusic(audio->fan, 90.f, pos);
 
-	audio->pauseSound(sfxId);
+	//audio->pauseSound(sfxId);
 }
 
 void LaserEmitter::onUpdate(float deltaTime)
@@ -76,6 +76,9 @@ void LaserEmitter::onUpdate(float deltaTime)
                     ray.length = 100.f;
                     lastNode = hitNode;
 
+                    auto* audio = ServiceLocator::getAudioEngine();
+                    audio->SetChannel3dPosition(sfxId, hitPoint);
+
                     points.push_back(hitPoint); // dodaj miejsce odbicia
                     continueReflection = true;
                     break; // przerywamy tê iteracjê, bo mamy nowy kierunek
@@ -86,11 +89,8 @@ void LaserEmitter::onUpdate(float deltaTime)
                         if (auto obs = hitNode->getComponent<LaserObserver>())
                             obs->Activate();
                     }
-                    else {
-                        auto* audio = ServiceLocator::getAudioEngine();
-                        audio->SetChannel3dPosition(sfxId, hitPoint);
-                        audio->resumeSound(sfxId);
-                    }
+                    auto* audio = ServiceLocator::getAudioEngine();
+                    audio->SetChannel3dPosition(sfxId, hitPoint);
 
                     points.push_back(hitPoint);
                     continueReflection = false;
