@@ -56,7 +56,7 @@ void Button::onCollisionLogic(Node* other) {
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
 		if (pressingObjects == 0) {
 			auto* audio = ServiceLocator::getAudioEngine();
-			audio->PlaySFX(audio->button_down, 100.f);
+			audio->PlaySFX(audio->button_down, 80.f);
 
 			glm::vec3 newScale = originalSize * glm::vec3(1.f, 0.3f, 1.f);
 			owner->transform.setLocalScale(newScale);
@@ -96,7 +96,7 @@ void Button::onExitCollisionLogic(Node* other) {
 			owner->AABB_logic->max_point_local.y /= 1.f / 0.3f;
 
 			auto* audio = ServiceLocator::getAudioEngine();
-			audio->PlaySFX(audio->button_up, 100.f);
+			audio->PlaySFX(audio->button_up, 80.f);
 
 			ChangeState(!activate);
 		}

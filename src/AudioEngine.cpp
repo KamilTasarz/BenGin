@@ -368,4 +368,14 @@ void CAudioEngine::loadAllGameSounds() {
     LoadSound(sound1, false, false, false);
 	LoadSound(button_down, false, false, false);
 	LoadSound(button_up, false, false, false);
+	LoadSound(gate_open, true, false, true);
+	LoadSound(activation, true, false, false);
+	LoadSound(electricity, true, true, false);
+	LoadSound(electrified, false, false, false);
+	LoadSound(jumping, false, false, false);
+	LoadSound(landing, false, false, false);
+	LoadSound(laser_hit, true, true, false);
+	LoadSound(pushing, false, false, false);
+	LoadSound(wind_blow, false, false, false);
+	LoadSound(fan, true, true, true);
 }

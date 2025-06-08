@@ -12,6 +12,7 @@ public:
 	glm::vec3 targetPos;
 	glm::vec3 startPos;
 	bool overrideState = false;
+	int sfxId = -1;
 
 	Door() = default;
 	~Door() = default;

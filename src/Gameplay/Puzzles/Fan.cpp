@@ -20,8 +20,9 @@ void Fan::onDetach()
 
 void Fan::onStart()
 {
-	// Initialize the fan state
-	// isActive = false;
+	glm::vec3 pos = owner->transform.getGlobalPosition();
+	auto* audio = ServiceLocator::getAudioEngine();
+	//sfxId = audio->PlayMusic(audio->fan, 90.f, pos);
 }
 
 void Fan::onUpdate(float deltaTime)
@@ -29,12 +30,26 @@ void Fan::onUpdate(float deltaTime)
 	wavyPower = verticalPower;
 
 	wavyPower += sin(glfwGetTime() * 0.2);
+
+	if (!isActive) {
+		if (sfxId != -1) {
+			auto* audio = ServiceLocator::getAudioEngine();
+			//audio->pauseSound(sfxId);
+		}
+
+		return;
+	}
+
+	auto* audio = ServiceLocator::getAudioEngine();
+	//audio->resumeSound(sfxId);
 }
 
 void Fan::onStayCollisionLogic(Node* other)
 {
-	if (!isActive) return;
-	
+	if (!isActive) {
+		return;
+	}
+
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
 		if (other->getTagName() == "Player") {
 			if (other->getComponent<PlayerController>()->virusType == "black") {
@@ -56,16 +71,12 @@ void Fan::onStayCollisionLogic(Node* other)
 	}
 }
 
-void Fan::onExitCollisionLogic(Node* other)
+void Fan::onCollisionLogic(Node* other)
 {
-	//if (other->getTagName() == "Player" || other->getTagName() == "Box") {
-	//	Rigidbody* rb = other->getComponent<Rigidbody>();
-	//	if (rb) {
-	//		//rb->overrideVelocityY = false;
-	//		rb->velocityX -= horizontalPower;
-	//		rb->velocityY -= verticalPower;
-	//	}
-	//}
+	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
+		auto* audio = ServiceLocator::getAudioEngine();
+		//sfxId = audio->PlayMusic(audio->wind_blow, 70.f);
+	}
 }
 
 

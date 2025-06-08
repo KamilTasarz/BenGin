@@ -12,6 +12,7 @@ public:
 	VARIABLE(bool, isActive);
 
 	float wavyPower;
+	int sfxId = -1;
 
 	Fan() = default;
 	virtual ~Fan() = default;
@@ -20,8 +21,7 @@ public:
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
 	void onStayCollisionLogic(Node* other) override;
-	void onExitCollisionLogic(Node* other) override;
-	//void onEnd() override;
+	void onCollisionLogic(Node* other);
 
 	std::vector<Variable*> getFields() const override {
 		static Variable verticalPowerVar = getField_verticalPower();

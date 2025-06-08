@@ -18,10 +18,22 @@ void Electrified::onDetach()
 	owner = nullptr;
 }
 
+void Electrified::onStart()
+{
+	if (owner->getTagName() != "Player") {
+		glm::vec3 pos = owner->transform.getGlobalPosition();
+		auto* audio = ServiceLocator::getAudioEngine();
+		audio->PlayMusic(audio->electricity, 100.f, pos);
+	}
+}
+
 void Electrified::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
 		other->addComponent(std::make_unique<Electrified>());
 		other->getComponent<PlayerController>()->Die(false, true);
+
+		auto* audio = ServiceLocator::getAudioEngine();
+		audio->PlaySFX(audio->electrified, 70.f);
 	}
 }

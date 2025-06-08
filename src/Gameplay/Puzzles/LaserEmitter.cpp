@@ -20,6 +20,11 @@ void LaserEmitter::onDetach()
 
 void LaserEmitter::onStart()
 {
+    glm::vec3 pos = owner->transform.getGlobalPosition();
+    auto* audio = ServiceLocator::getAudioEngine();
+    sfxId = audio->PlayMusic(audio->fan, 90.f, pos);
+
+	audio->pauseSound(sfxId);
 }
 
 void LaserEmitter::onUpdate(float deltaTime)
@@ -81,9 +86,15 @@ void LaserEmitter::onUpdate(float deltaTime)
                         if (auto obs = hitNode->getComponent<LaserObserver>())
                             obs->Activate();
                     }
+                    else {
+                        auto* audio = ServiceLocator::getAudioEngine();
+                        audio->SetChannel3dPosition(sfxId, hitPoint);
+                        audio->resumeSound(sfxId);
+                    }
 
                     points.push_back(hitPoint);
                     continueReflection = false;
+
                     break; // zakoñcz odbicia
                 }
             }

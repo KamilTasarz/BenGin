@@ -62,6 +62,15 @@ void Door::ChangeState(bool state)
 		else targetPos = startPos + glm::vec3(3.5f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
 		isOpen = true;
 	}
+
+	if (sfxId != -1) {
+		auto* audio = ServiceLocator::getAudioEngine();
+		audio->stopSound(sfxId);
+	}
+
+	glm::vec3 pos = owner->transform.getLocalPosition();
+	auto* audio = ServiceLocator::getAudioEngine();
+	sfxId = audio->PlayMusic(audio->gate_open, 100.f, pos);
 }
 
 void Door::onCollisionLogic(Node* other)

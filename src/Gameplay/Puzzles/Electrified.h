@@ -13,7 +13,7 @@ public:
 	~Electrified() = default;
 	void onAttach(Node* owner) override;
 	void onDetach() override;
-	//void onStart() override;
+	void onStart() override;
 	//void onUpdate(float deltaTime) override;
 	void onCollisionLogic(Node* other) override;
 	/*std::vector<Variable*> getFields() const override {

@@ -11,6 +11,8 @@ public:
 	glm::vec3 targetPos;
 	glm::vec3 startPos;
 
+	int sfxId = -1;
+
 	LaserEmitter() = default;
 	~LaserEmitter() = default;
 	void onAttach(Node* owner) override;
