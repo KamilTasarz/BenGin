@@ -9,6 +9,8 @@ public:
 	VARIABLE(float, damage);
 	VARIABLE(float, duration);*/
 
+	int sfxId = -1;
+
 	Electrified() = default;
 	~Electrified() = default;
 	void onAttach(Node* owner) override;

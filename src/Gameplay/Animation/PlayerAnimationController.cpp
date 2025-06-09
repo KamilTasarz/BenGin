@@ -57,6 +57,11 @@ void PlayerAnimationController::onStart()
 void PlayerAnimationController::onUpdate(float deltaTime)
 {
 	if (rb == nullptr || player->isDead) {
+		if (currentState) {
+			currentState->exit(owner);
+			delete currentState;
+			currentState = nullptr;
+		}
 		return;
 	}
 	

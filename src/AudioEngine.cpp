@@ -41,6 +41,7 @@ void Implementation::Update() {
     }
     // We call the update of the system
     CAudioEngine::ErrorCheck(mpStudioSystem->update());
+    CAudioEngine::ErrorCheck(mpSystem->update());
 }
 
 Implementation* sgpImplementation = nullptr;
@@ -257,8 +258,12 @@ void CAudioEngine::SetChannel3dPosition(int nChannelId, const glm::vec3& vPositi
 void CAudioEngine::SetChannel3dMinMaxDistance(int nChannelId, float minDistance, float maxDistance)
 {
     auto tFoundIt = sgpImplementation->mChannels.find(nChannelId);
-    if (tFoundIt == sgpImplementation->mChannels.end()) return;
+    if (tFoundIt == sgpImplementation->mChannels.end()) {
+		std::cout << "CAudioEngine::SetChannel3dMinMaxDistance: Channel with id " << nChannelId << " not found." << std::endl;
+        return;
+    }
 
+    CAudioEngine::ErrorCheck(tFoundIt->second->setMode(FMOD_3D_LINEARROLLOFF));
     CAudioEngine::ErrorCheck(tFoundIt->second->set3DMinMaxDistance(minDistance, maxDistance));
 }
 
@@ -392,7 +397,7 @@ void CAudioEngine::loadAllGameSounds() {
     LoadSound(sound1, false, false, false);
 	LoadSound(button_down, false, false, false);
 	LoadSound(button_up, false, false, false);
-	LoadSound(gate_open, true, false, true);
+	LoadSound(gate_open, true, false, false);
 	LoadSound(activation, true, false, false);
 	LoadSound(electricity, true, true, false);
 	LoadSound(electrified, false, false, false);
@@ -401,8 +406,8 @@ void CAudioEngine::loadAllGameSounds() {
 	LoadSound(laser_hit, true, true, false);
 	LoadSound(pushing, false, false, false);
 	LoadSound(wind_blow, false, false, false);
-	LoadSound(fan, true, true, true);
+	LoadSound(fan, true, true, false);
 	LoadSound(death, false, false, false);
 	LoadSound(death_spikes, false, false, false);
-	LoadSound(running, false, true, true);
+	LoadSound(running, false, true, false);
 }

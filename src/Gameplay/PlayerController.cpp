@@ -126,9 +126,21 @@ void PlayerController::onUpdate(float deltaTime)
 	//std::cout << "tag aktualnego gracza" << owner->getTagName() << std::endl;
 
 	glm::vec3 position = owner->transform.getLocalPosition();
+	glm::vec3 globalPosition = owner->transform.getGlobalPosition();
 	
+	glm::vec3 listenerForward;
+	if (rb->side.x > 0) {
+		listenerForward = glm::vec3(0.0f, 0.0f, 1.0f); // Patrzy w prawo
+	}
+	else if (rb->side.x < 0) {
+		listenerForward = glm::vec3(0.0f, 0.0f, -1.0f); // Patrzy w lewo
+	}
+	else {
+		listenerForward = glm::vec3(rb->side.x, 0.0f, 0.0f);
+	}
+
 	auto* audio = ServiceLocator::getAudioEngine();
-	audio->Set3dListenerAndOrientation(position, glm::vec3(rb->velocityX, rb->velocityY, 0.f), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0));
+	audio->Set3dListenerAndOrientation(globalPosition, glm::vec3(rb->velocityX, rb->velocityY, 0.f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0, 1, 0));
 
 	if (!rb) return;
 

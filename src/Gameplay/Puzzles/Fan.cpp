@@ -1,4 +1,4 @@
-#include "Fan.h"
+﻿#include "Fan.h"
 #include "../../Basic/Node.h"
 #include "../RegisterScript.h"
 #include "../../System/Rigidbody.h"
@@ -24,26 +24,28 @@ void Fan::onStart()
 	glm::vec3 pos = owner->transform.getGlobalPosition();
 	auto* audio = ServiceLocator::getAudioEngine();
 	sfxId = audio->PlayMusic(audio->fan, /*GameManager::instance->sfxVolume **/ 100.f, pos);
-	audio->SetChannel3dMinMaxDistance(sfxId, 4.0f, 12.0f);
+	audio->SetChannel3dMinMaxDistance(sfxId, 3.f, 20.0f);
 }
 
 void Fan::onUpdate(float deltaTime)
 {
 	wavyPower = verticalPower;
-
 	wavyPower += sin(glfwGetTime() * 0.2);
 
+	auto* audio = ServiceLocator::getAudioEngine();
+
+	// Wentylator NIEaktywny → zatrzymaj dźwięk, jeśli gra
 	if (!isActive) {
-		if (sfxId != -1) {
-			auto* audio = ServiceLocator::getAudioEngine();
+		if (sfxId != -1 && audio->IsPlaying(sfxId)) {
 			audio->pauseSound(sfxId);
 		}
-
 		return;
 	}
 
-	auto* audio = ServiceLocator::getAudioEngine();
-	audio->resumeSound(sfxId);
+	// Wentylator aktywny → wznowienie tylko jeśli NIE gra
+	if (sfxId != -1 && !audio->IsPlaying(sfxId)) {
+		audio->resumeSound(sfxId);
+	}
 }
 
 void Fan::onStayCollisionLogic(Node* other)

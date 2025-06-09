@@ -69,10 +69,10 @@ void Door::ChangeState(bool state)
 		audio->stopSound(sfxId);
 	}
 
-	glm::vec3 pos = owner->transform.getLocalPosition();
+	glm::vec3 pos = owner->transform.getGlobalPosition();
 	auto* audio = ServiceLocator::getAudioEngine();
-	sfxId = audio->PlayMusic(audio->gate_open, GameManager::instance->sfxVolume * 90.f, pos);
-	audio->SetChannel3dMinMaxDistance(sfxId, 4.0f, 20.0f);
+	sfxId = audio->PlayMusic(audio->gate_open, GameManager::instance->sfxVolume * 80.f, pos);
+	audio->SetChannel3dMinMaxDistance(sfxId, 3.0f, 20.0f);
 }
 
 void Door::onCollisionLogic(Node* other)
@@ -82,7 +82,3 @@ void Door::onCollisionLogic(Node* other)
 		overrideState = true;
 	}
 }
-
-
-
-

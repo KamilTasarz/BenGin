@@ -23,14 +23,17 @@ void LaserEmitter::onStart()
 {
     glm::vec3 pos = owner->transform.getGlobalPosition();
     auto* audio = ServiceLocator::getAudioEngine();
-    sfxId = audio->PlayMusic(audio->laser_hit, /*GameManager::instance->sfxVolume **/ 85.f, pos);
-    audio->SetChannel3dMinMaxDistance(sfxId, 3.0f, 8.0f);
+    sfxId = audio->PlayMusic(audio->laser_hit, /*GameManager::instance->sfxVolume **/ 80.f, pos);
+    audio->SetChannel3dMinMaxDistance(sfxId, 1.0f, 20.0f);
 
 	//audio->pauseSound(sfxId);
 }
 
 void LaserEmitter::onUpdate(float deltaTime)
 {
+    auto* audio = ServiceLocator::getAudioEngine();
+	audio->SetChannel3dPosition(sfxId, owner->transform.getGlobalPosition());
+    
     Ray ray;
 
     glm::vec3 upVector(0.f, 1.f, 0.f);
