@@ -362,7 +362,7 @@ void Game::init()
 
 	sceneGraph->forcedUpdate();
 
-	sceneGraph->is_editing = false;
+    sceneGraph->is_editing = false;
 
 	camera->Pitch = 0.0f;
 	camera->Yaw = -90.0f;
@@ -547,6 +547,8 @@ void Game::init()
 
     ServiceLocator::getAudioEngine()->Init();
     loadSounds();
+
+    sceneGraph->forcedUpdate();
 
     sceneGraph->root->createComponents();
 	PhysicsSystem::instance().colliders.clear();

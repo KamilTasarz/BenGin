@@ -1290,7 +1290,7 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
 
-    forceUpdateSelfAndChild();
+    updateSelfAndChild(true);
 
     if (!scene_graph->is_editing) prefab_root->createComponents();
 
@@ -1311,9 +1311,9 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
-    prefab_root->transform.setLocalPosition(position);
+    transform.setLocalPosition(position);
 
-    forceUpdateSelfAndChild();
+    updateSelfAndChild(true);
 
     if (!scene_graph->is_editing)prefab_root->createComponents();
 
