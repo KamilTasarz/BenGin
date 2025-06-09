@@ -12,6 +12,7 @@ public:
 
 	float globalSmoothing = 10.f;
 	float gasSpreadingSpeed = 1.f;
+	Node* currentPlayer;
 	Node* playerSpawner;
 	Node* levelGenerator;
 	InstanceManager* emitter;
@@ -30,6 +31,9 @@ public:
 	int frameCount = 0;
 	float timeSinceLastUpdate = 0.f;
 	const float updateInterval = 0.5f;
+
+	float musicVolume = 1.f;
+	float sfxVolume = 1.f;
 
 	GameManager() = default;
 	~GameManager() = default;

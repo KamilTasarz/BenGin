@@ -2,6 +2,7 @@
 #include "../Basic/Node.h"
 #include "../System/PrefabRegistry.h"
 #include "RegisterScript.h"
+#include "GameManager.h"
 
 REGISTER_SCRIPT(PlayerSpawner);
 
@@ -20,7 +21,7 @@ void PlayerSpawner::onDetach()
 void PlayerSpawner::onStart()
 {
 	i = 12;
-	spawnPlayer();
+	//spawnPlayer();
 }
 
 void PlayerSpawner::onUpdate(float deltaTime)
@@ -43,4 +44,5 @@ void PlayerSpawner::spawnPlayer()
  	owner->scene_graph->addChild(player);
 
 	currentPlayer = player;
+	GameManager::instance->currentPlayer = player;
 }

@@ -63,6 +63,9 @@ public:
 	std::string pushing = "res/audios/sounds/pushing.mp3";
 	std::string wind_blow = "res/audios/sounds/wind_blow.mp3";
 	std::string fan = "res/audios/sounds/fan.mp3";
+	std::string death = "res/audios/sounds/death.mp3";
+	std::string death_spikes = "res/audios/sounds/spikes_death.mp3";
+	std::string running = "res/audios/sounds/running.mp3";
 
 
     static void Init();
@@ -84,9 +87,11 @@ public:
     //void SetEventParameter(const string& strEventName, const string& strParameterName, float fValue);
     //void StopAllChannels();
     void SetChannel3dPosition(int nChannelId, const glm::vec3& vPosition);
+    void SetChannel3dMinMaxDistance(int nChannelId, float minDistance, float maxDistance);
     void SetChannelvolume(int nChannelId, float fVolumedB);
     //bool IsPlaying(int nChannelId) const;
     bool IsEventPlaying(const string& strEventName) const;
+    bool IsPlaying(int nChannelId) const;
     float percentToDb(float percent);
     float dbToVolume(float db);
     float VolumeTodB(float volume);

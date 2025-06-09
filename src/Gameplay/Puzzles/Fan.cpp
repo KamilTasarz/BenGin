@@ -3,6 +3,7 @@
 #include "../RegisterScript.h"
 #include "../../System/Rigidbody.h"
 #include "../PlayerController.h"
+#include "../GameManager.h"
 
 REGISTER_SCRIPT(Fan);
 
@@ -22,7 +23,8 @@ void Fan::onStart()
 {
 	glm::vec3 pos = owner->transform.getGlobalPosition();
 	auto* audio = ServiceLocator::getAudioEngine();
-	//sfxId = audio->PlayMusic(audio->fan, 90.f, pos);
+	sfxId = audio->PlayMusic(audio->fan, /*GameManager::instance->sfxVolume **/ 100.f, pos);
+	audio->SetChannel3dMinMaxDistance(sfxId, 4.0f, 12.0f);
 }
 
 void Fan::onUpdate(float deltaTime)
@@ -34,14 +36,14 @@ void Fan::onUpdate(float deltaTime)
 	if (!isActive) {
 		if (sfxId != -1) {
 			auto* audio = ServiceLocator::getAudioEngine();
-			//audio->pauseSound(sfxId);
+			audio->pauseSound(sfxId);
 		}
 
 		return;
 	}
 
 	auto* audio = ServiceLocator::getAudioEngine();
-	//audio->resumeSound(sfxId);
+	audio->resumeSound(sfxId);
 }
 
 void Fan::onStayCollisionLogic(Node* other)

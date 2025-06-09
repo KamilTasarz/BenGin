@@ -2,6 +2,7 @@
 #include "../../Basic/Node.h"
 #include "../RegisterScript.h"
 #include "../PlayerController.h"
+#include "../GameManager.h"
 
 REGISTER_SCRIPT(Electrified);
 
@@ -23,8 +24,9 @@ void Electrified::onStart()
 	if (owner->getTagName() != "Player") {
 		glm::vec3 pos = owner->transform.getGlobalPosition();
 		auto* audio = ServiceLocator::getAudioEngine();
-		audio->PlayMusic(audio->electricity, 100.f, pos);
-	}
+		int sfxId = audio->PlayMusic(audio->electricity, GameManager::instance->sfxVolume * 90.f, pos);
+		audio->SetChannel3dMinMaxDistance(sfxId, 3.0f, 12.0f);
+	}	
 }
 
 void Electrified::onCollisionLogic(Node* other)
@@ -34,6 +36,6 @@ void Electrified::onCollisionLogic(Node* other)
 		other->getComponent<PlayerController>()->Die(false, true);
 
 		auto* audio = ServiceLocator::getAudioEngine();
-		audio->PlaySFX(audio->electrified, 70.f);
+		audio->PlaySFX(audio->electrified, GameManager::instance->sfxVolume * 70.f);
 	}
 }

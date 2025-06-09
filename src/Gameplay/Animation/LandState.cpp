@@ -6,12 +6,15 @@
 #include "JumpState.h"
 #include "../../System/Rigidbody.h"
 #include "../../Basic/Animator.h"
+#include "../GameManager.h"
 
 void LandState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
     animation->land->speed = 1500.f;
-    //owner->animator->playAnimation(animation->land, false);
     owner->animator->blendAnimation(animation->fall, 50.f, true, false);
+
+    auto* audio = ServiceLocator::getAudioEngine();
+    audio->PlaySFX(audio->landing, GameManager::instance->sfxVolume * 90.f);
 }
 
 void LandState::update(Node* owner, float deltaTime) {

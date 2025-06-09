@@ -48,6 +48,8 @@ public:
     bool debugMode = false;
     bool debugTogglePressed = false;
 
+    int sfxId = -1;
+
     PlayerController() = default;
     virtual ~PlayerController() = default;
 

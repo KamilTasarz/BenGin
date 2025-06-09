@@ -23,6 +23,8 @@ void GameManager::onStart()
 {
     GameManager::instance = this;
     playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
+	playerSpawner->getComponent<PlayerSpawner>()->spawnPlayer();
+
     levelGenerator = owner->scene_graph->root->getChildByTag("LevelGenerator");
     emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
 
@@ -87,7 +89,7 @@ void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
 }
 
 void GameManager::HandleLevelGeneration() {
-    glm::vec3 playerPos = playerSpawner->getComponent<PlayerSpawner>()->currentPlayer->transform.getGlobalPosition();
+    glm::vec3 playerPos = currentPlayer->transform.getGlobalPosition();
     glm::vec3 generatorPos = levelGenerator->transform.getGlobalPosition();
 
     float distanceToLevelGen = glm::distance(playerPos, generatorPos);

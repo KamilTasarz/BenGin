@@ -5,6 +5,7 @@
 #include "../../System/LineManager.h"
 #include "LaserObserver.h"
 #include "../../Component/BoundingBox.h"
+#include "../GameManager.h"
 
 REGISTER_SCRIPT(LaserEmitter);
 
@@ -22,7 +23,8 @@ void LaserEmitter::onStart()
 {
     glm::vec3 pos = owner->transform.getGlobalPosition();
     auto* audio = ServiceLocator::getAudioEngine();
-    sfxId = audio->PlayMusic(audio->fan, 90.f, pos);
+    sfxId = audio->PlayMusic(audio->laser_hit, /*GameManager::instance->sfxVolume **/ 85.f, pos);
+    audio->SetChannel3dMinMaxDistance(sfxId, 3.0f, 8.0f);
 
 	//audio->pauseSound(sfxId);
 }

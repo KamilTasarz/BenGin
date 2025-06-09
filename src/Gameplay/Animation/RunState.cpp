@@ -7,12 +7,16 @@
 #include "PushState.h"
 #include "../../System/Rigidbody.h"
 #include "../../Basic/Animator.h"
+#include "../GameManager.h"
 
 void RunState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
     auto* player = owner->getComponent<PlayerController>();
     animation->run->speed = player->virusType == "black" ? 700.f : 1000.f;
     owner->animator->blendAnimation(animation->run, 50.f, true, true);
+
+    auto* audio = ServiceLocator::getAudioEngine();
+    sfxId = audio->PlayMusic(audio->running, GameManager::instance->sfxVolume * 75.f);
 }
 
 void RunState::update(Node* owner, float deltaTime) {
@@ -34,4 +38,8 @@ void RunState::update(Node* owner, float deltaTime) {
     }
 }
 
-void RunState::exit(Node* owner) {}
+void RunState::exit(Node* owner) {
+    auto* audio = ServiceLocator::getAudioEngine();
+    audio->stopSound(sfxId);
+    sfxId = -1;
+}

@@ -1,6 +1,7 @@
 #include "Door.h"
 #include "../../Basic/Node.h"
 #include "../RegisterScript.h"
+#include "../GameManager.h"
 
 REGISTER_SCRIPT(Door);
 
@@ -70,7 +71,8 @@ void Door::ChangeState(bool state)
 
 	glm::vec3 pos = owner->transform.getLocalPosition();
 	auto* audio = ServiceLocator::getAudioEngine();
-	sfxId = audio->PlayMusic(audio->gate_open, 100.f, pos);
+	sfxId = audio->PlayMusic(audio->gate_open, GameManager::instance->sfxVolume * 90.f, pos);
+	audio->SetChannel3dMinMaxDistance(sfxId, 4.0f, 20.0f);
 }
 
 void Door::onCollisionLogic(Node* other)

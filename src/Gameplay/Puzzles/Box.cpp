@@ -1,6 +1,7 @@
 #include "Box.h"
 #include "../../Basic/Node.h"
 #include "../RegisterScript.h"
+#include "../GameManager.h"
 
 REGISTER_SCRIPT(Box);
 
@@ -21,9 +22,7 @@ void Box::onStart()
 	rb = owner->getComponent<Rigidbody>();
 
 	auto* audio = ServiceLocator::getAudioEngine();
-	sfxId = audio->PlayMusic(audio->pushing, 65.f);
-
-	//audio->pauseSound(sfxId);
+	sfxId = audio->PlayMusic(audio->pushing, /*GameManager::instance->sfxVolume **/ 65.f);
 }
 
 void Box::onUpdate(float deltaTime)

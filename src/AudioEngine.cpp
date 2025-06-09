@@ -254,6 +254,14 @@ void CAudioEngine::SetChannel3dPosition(int nChannelId, const glm::vec3& vPositi
     CAudioEngine::ErrorCheck(tFoundIt->second->set3DAttributes(&position, NULL));
 }
 
+void CAudioEngine::SetChannel3dMinMaxDistance(int nChannelId, float minDistance, float maxDistance)
+{
+    auto tFoundIt = sgpImplementation->mChannels.find(nChannelId);
+    if (tFoundIt == sgpImplementation->mChannels.end()) return;
+
+    CAudioEngine::ErrorCheck(tFoundIt->second->set3DMinMaxDistance(minDistance, maxDistance));
+}
+
 void CAudioEngine::SetChannelvolume(int nChannelId, float fVolumedB)
 {
     // Find channel by id
@@ -274,6 +282,22 @@ bool CAudioEngine::IsEventPlaying(const string& strEventName) const
     FMOD_STUDIO_PLAYBACK_STATE* state = NULL;
     if (tFoundIt->second->getPlaybackState(state) == FMOD_STUDIO_PLAYBACK_PLAYING) {
         return true;
+    }
+    return false;
+}
+
+bool CAudioEngine::IsPlaying(int nChannelId) const
+{
+    auto it = sgpImplementation->mChannels.find(nChannelId);
+    if (it != sgpImplementation->mChannels.end())
+    {
+        bool isPlaying = false;
+        if (it->second)
+        {
+            FMOD_RESULT result = it->second->isPlaying(&isPlaying);
+            if (result == FMOD_OK)
+                return isPlaying;
+        }
     }
     return false;
 }
@@ -378,4 +402,7 @@ void CAudioEngine::loadAllGameSounds() {
 	LoadSound(pushing, false, false, false);
 	LoadSound(wind_blow, false, false, false);
 	LoadSound(fan, true, true, true);
+	LoadSound(death, false, false, false);
+	LoadSound(death_spikes, false, false, false);
+	LoadSound(running, false, true, true);
 }
