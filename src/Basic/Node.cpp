@@ -1284,14 +1284,16 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
 
     prefab->prefab_instances.push_back(this);
 
-    
+
 
     //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
+
+    forceUpdateSelfAndChild();
+
     if (!scene_graph->is_editing) prefab_root->createComponents();
-    //}
-    prefab_root->forceUpdateSelfAndChild();
+
     set_prefab_colliders(prefab_root);
 }
 
@@ -1300,22 +1302,22 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     this->prefab = prefab;
     AABB = new BoundingBox(transform.getModelMatrix(), this);
 
-	scene_graph = _scene_graph;
-    
+    scene_graph = _scene_graph;
+
     prefab->prefab_instances.push_back(this);
 
 
-    
+
     //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
-	prefab_root->transform.setLocalPosition(position);
-    prefab_root->forceUpdateSelfAndChild();
+    prefab_root->transform.setLocalPosition(position);
+
+    forceUpdateSelfAndChild();
+
     if (!scene_graph->is_editing)prefab_root->createComponents();
 
     set_prefab_colliders(prefab_root);
-
-    //}
 }
 
 void PrefabInstance::set_prefab_colliders(Node* node)
