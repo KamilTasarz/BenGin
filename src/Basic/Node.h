@@ -363,6 +363,9 @@ public:
 
     // Draw self and children
     void virtual drawSelfAndChild();
+    void drawSelf();
+    void addRenderQueue();
+    void addRenderQueueAndChild();
 
 	// Draw self and children for prefabs -> computing model matrix
     void virtual drawSelfAndChild(Transform &parent);
@@ -624,6 +627,8 @@ public:
 	void drawShadows(Shader& shader) override;
 
     void checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB, std::unordered_set<Node*>& rooms) override;
+
+    
 };
 
 struct Texture;

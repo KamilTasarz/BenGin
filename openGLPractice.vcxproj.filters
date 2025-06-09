@@ -80,6 +80,9 @@
     <ClCompile Include="src\Gameplay\Puzzles\LaserEmitter.cpp" />
     <ClCompile Include="src\Gameplay\Puzzles\LaserObserver.cpp" />
     <ClCompile Include="src\Gameplay\Puzzles\MirrorRotator.cpp" />
+    <ClCompile Include="src\HUD\GuiButton.cpp" />
+    <ClCompile Include="src\System\GuiManager.cpp" />
+    <ClCompile Include="src\System\RenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -187,6 +190,9 @@
     <ClInclude Include="src\Gameplay\Puzzles\LaserEmitter.h" />
     <ClInclude Include="src\Gameplay\Puzzles\LaserObserver.h" />
     <ClInclude Include="src\Gameplay\Puzzles\MirrorRotator.h" />
+    <ClInclude Include="src\HUD\GuiButton.h" />
+    <ClInclude Include="src\System\GuiManager.h" />
+    <ClInclude Include="src\System\RenderSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic.frag" />
@@ -229,6 +235,7 @@
     <None Include="res\shaders\pp_blur.frag" />
     <None Include="res\shaders\pp_bloom_composite.frag" />
     <None Include="res\shaders\pp_noise.frag" />
+    <None Include="res\shaders\shadow.geo" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />

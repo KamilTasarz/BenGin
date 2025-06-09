@@ -48,7 +48,7 @@ uniform float far_plane;
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 uniform sampler2D shadow_map1;
-uniform samplerCube shadow_maps;
+uniform samplerCube shadow_maps[16];
 
 uniform vec3 cameraPosition;
 
@@ -74,7 +74,7 @@ void main() {
             res += calculatePointLight(viewDir, point_lights[i]);
         }
         for (int i = 0; i < directional_light_number; i++) {
-            res += calculateDirectionalLight(viewDir, directional_lights[i]);
+            //res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
 
         
@@ -85,13 +85,13 @@ void main() {
             //shadow += calculateShadowPointLight(point_lights[i], shadow_maps[i]);
         //}
 
-        shadow = calculateShadowPointLight(point_lights[0], shadow_maps);
+        shadow = calculateShadowPointLight(point_lights[0], shadow_maps[0]);
 
         //shadow = clamp(shadow, 0.f, 1.f);
 
 
-        FragColor = vec4((res[0] + (res[1] + res[2]) * (1.f - shadow)), 1.f);
-
+        vec3 finalColor = (res[0] + (res[1] + res[2]) * (1.f - shadow));
+        FragColor = vec4(finalColor, 1.0);
     } else {
         FragColor = vec4(1.f);
     }
@@ -106,8 +106,9 @@ mat3 calculatePointLight(vec3 viewDir, PointLight light) {
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(fs_in.Normal, halfwayDir), 0.0), shininess);
 
-    float distance = distance(light.position, fs_in.Pos);
-    float attenuation = 1.0f / (light.quadratic * distance * distance + light.linear * distance + light.constant);
+    float _distance = distance(light.position, fs_in.Pos);
+    float attenuation = 1.0f / (light.quadratic * _distance * _distance + light.linear * _distance + light.constant);
+
 
     vec3 ambient = light.ambient * vec3(texture(texture_diffuse1, fs_in.Cords)) * attenuation;
     vec3 diffuse = light.diffuse * diff * vec3(texture(texture_diffuse1, fs_in.Cords)) * attenuation;
