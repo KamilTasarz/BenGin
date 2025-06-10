@@ -71,6 +71,13 @@
             "id": 31,
             "textures_id": [],
             "type": "point_light"
+        },
+        {
+            "id": 45,
+            "textures_id": [
+                11
+            ],
+            "type": "cube"
         }
     ],
     "models": [
@@ -133,13 +140,13 @@
             "directory": "gate_up/",
             "id": 19,
             "move_origin": false,
-            "name": "Gate.fbx"
+            "name": "Gate.gltf"
         },
         {
             "directory": "gate_down/",
             "id": 22,
             "move_origin": false,
-            "name": "GateDown.fbx"
+            "name": "Gate_down.gltf"
         },
         {
             "directory": "gouda/",
@@ -206,6 +213,60 @@
             "id": 35,
             "move_origin": false,
             "name": "camera_recorder.gltf"
+        },
+        {
+            "directory": "gate_vertical/",
+            "id": 36,
+            "move_origin": false,
+            "name": "Gate_top.gltf"
+        },
+        {
+            "directory": "gate_vertical/",
+            "id": 37,
+            "move_origin": false,
+            "name": "Gate_bottom.gltf"
+        },
+        {
+            "directory": "laser/",
+            "id": 38,
+            "move_origin": false,
+            "name": "Laser.gltf"
+        },
+        {
+            "directory": "laser/",
+            "id": 39,
+            "move_origin": false,
+            "name": "Laser_end.gltf"
+        },
+        {
+            "directory": "scale/",
+            "id": 40,
+            "move_origin": false,
+            "name": "winda.gltf"
+        },
+        {
+            "directory": "spikes/",
+            "id": 41,
+            "move_origin": false,
+            "name": "kolce.gltf"
+        },
+        {
+            "directory": "przycisk/base_active/",
+            "id": 42,
+            "move_origin": false,
+            "name": "Button_active.gltf"
+        },
+        {
+            "directory": "przycisk/base_inactive/",
+            "id": 43,
+            "move_origin": false,
+            "name": "Button_off.gltf"
+        },
+        {
+            "directory": "przycisk/button/",
+            "id": 44,
+            "move_origin": false,
+            "name": "Button_top.gltf"
         }
     ],
     "sprites": [
@@ -347,6 +408,11 @@
         {
             "id": 10,
             "name": "raindrop.png",
+            "type": "diffuse"
+        },
+        {
+            "id": 11,
+            "name": "CeramicBack.png",
             "type": "diffuse"
         }
     ]

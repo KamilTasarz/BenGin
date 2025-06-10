@@ -29,8 +29,12 @@ void Implementation::Update() {
     for (auto it = mChannels.begin(), itEnd = mChannels.end(); it != itEnd; ++it)
     {
         bool bIsPlaying = false;
+        bool bIsPaused = false;
+
         it->second->isPlaying(&bIsPlaying);
-        if (!bIsPlaying)
+        it->second->getPaused(&bIsPaused);
+
+        if (!bIsPlaying && !bIsPaused)
         {
             pStoppedChannels.push_back(it);
         }

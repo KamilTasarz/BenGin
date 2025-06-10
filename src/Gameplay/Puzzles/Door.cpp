@@ -21,33 +21,86 @@ void Door::onDetach()
 void Door::onStart()
 {
 	std::cout << "Door::onStart::" << owner->name << std::endl;
-	startPos = targetPos = owner->transform.getLocalPosition();
+	door1 = owner->getChildById(0);
+	door2 = owner->getChildById(1);
+
+	if (!door1 || !door2) return;
+
+	startPos = targetPos = door1->transform.getLocalPosition();
+	startPos2 = targetPos2 = door2->transform.getLocalPosition();
 
 	if (isOpen) {
 		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
-		else targetPos = startPos + glm::vec3(3.5f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+		else {
+			targetPos = startPos + glm::vec3(2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+			targetPos2 = startPos2 + glm::vec3(-2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+		}
 	}
 }
 
 void Door::onUpdate(float deltaTime)
 {
-	glm::vec3 currentPos = owner->transform.getLocalPosition();
-	glm::vec3 direction = glm::normalize(targetPos - currentPos);
-	float distance = glm::distance(currentPos, targetPos);
+	if (door1 == nullptr || door2 == nullptr) {
+		door1 = owner->getChildById(0);
+		door2 = owner->getChildById(1);
 
-	if (distance > 0.02f) {
-		float speed = 16.f * 1.f / owner->parent->transform.getLocalScale().y;
-		float step = speed * deltaTime;
+		if (!door1 || !door2) return;
 
-		if (step >= distance) {
-			owner->transform.setLocalPosition(targetPos);
-		}
-		else {
-			glm::vec3 newPos = currentPos + direction * step;
-			owner->transform.setLocalPosition(newPos);
+		startPos = targetPos = door1->transform.getLocalPosition();
+		startPos2 = targetPos2 = door2->transform.getLocalPosition();
+
+		if (isOpen) {
+			if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+			else {
+				targetPos = startPos + glm::vec3(2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+				targetPos2 = startPos2 + glm::vec3(-2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+			}
 		}
 	}
 
+	if (!openToSide) {
+		glm::vec3 currentPos = door1->transform.getLocalPosition();
+		glm::vec3 direction = glm::normalize(targetPos - currentPos);
+		float distance = glm::distance(currentPos, targetPos);
+
+		if (distance > 0.02f) {
+			float speed = 16.f * 1.f / owner->transform.getLocalScale().y;
+			float step = speed * deltaTime;
+
+			if (step >= distance) {
+				door1->transform.setLocalPosition(targetPos);
+			}
+			else {
+				glm::vec3 newPos = currentPos + direction * step;
+				door1->transform.setLocalPosition(newPos);
+			}
+		}
+	}
+	else {
+		glm::vec3 currentPos1 = door1->transform.getLocalPosition();
+		glm::vec3 currentPos2 = door2->transform.getLocalPosition();
+		glm::vec3 direction1 = glm::normalize(targetPos - currentPos1);
+		glm::vec3 direction2 = glm::normalize(targetPos2 - currentPos2);
+
+		float distance1 = glm::distance(currentPos1, targetPos);
+		float distance2 = glm::distance(currentPos2, targetPos2);
+
+		if (distance1 > 0.02f) {
+			float speed = 16.f * 1.f / owner->transform.getLocalScale().y;
+			float step = speed * deltaTime;
+			if (step >= distance1) {
+				door1->transform.setLocalPosition(targetPos);
+				door2->transform.setLocalPosition(targetPos2);
+			}
+			else {
+				glm::vec3 newPos = currentPos1 + direction1 * step;
+				door1->transform.setLocalPosition(newPos);
+
+				newPos = currentPos2 + direction2 * step;
+				door2->transform.setLocalPosition(newPos);
+			}
+		}
+	}
 }
 
 void Door::ChangeState(bool state)
@@ -60,7 +113,10 @@ void Door::ChangeState(bool state)
 	}
 	else {
 		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
-		else targetPos = startPos + glm::vec3(3.5f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+		else {
+			targetPos = startPos + glm::vec3(2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+			targetPos2 = startPos2 + glm::vec3(-2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+		}
 		isOpen = true;
 	}
 

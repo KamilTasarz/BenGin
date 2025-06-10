@@ -1,0 +1,103 @@
+{
+    "children": [
+        {
+            "id": 0,
+            "is_logic_active": false,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 36,
+            "name": "gate_up",
+            "no_textures": false,
+            "position": {
+                "x": 0.0,
+                "y": -3.5,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "tag": "Default",
+            "type": "Node"
+        },
+        {
+            "id": 0,
+            "is_logic_active": false,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 37,
+            "name": "gate_down",
+            "no_textures": false,
+            "position": {
+                "x": 0.0,
+                "y": -3.5,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "tag": "Default",
+            "type": "Node"
+        }
+    ],
+    "components": [
+        {
+            "name": "Door",
+            "variables": [
+                {
+                    "field_type": "bool",
+                    "name": "isOpen",
+                    "value": false
+                },
+                {
+                    "field_type": "bool",
+                    "name": "openToSide",
+                    "value": true
+                }
+            ]
+        }
+    ],
+    "id": 0,
+    "is_logic_active": false,
+    "is_physic_active": true,
+    "is_visible": true,
+    "layer": "Default",
+    "model.id": -1,
+    "name": "Door_vertical",
+    "no_textures": true,
+    "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotation": {
+        "w": 0.7071067690849304,
+        "x": 0.0,
+        "y": -0.7071067690849304,
+        "z": 0.0
+    },
+    "scale": {
+        "x": 0.44999998807907104,
+        "y": 0.7149999737739563,
+        "z": 0.5
+    },
+    "tag": "Default",
+    "type": "Node"
+}

@@ -11,8 +11,13 @@ public:
 	VARIABLE(bool, openToSide);
 	glm::vec3 targetPos;
 	glm::vec3 startPos;
+	glm::vec3 targetPos2;
+	glm::vec3 startPos2;
 	bool overrideState = false;
 	int sfxId = -1;
+
+	Node* door1 = nullptr;
+	Node* door2 = nullptr;
 
 	Door() = default;
 	~Door() = default;

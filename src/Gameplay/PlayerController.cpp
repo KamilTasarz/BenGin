@@ -127,6 +127,7 @@ void PlayerController::onUpdate(float deltaTime)
 
 	glm::vec3 position = owner->transform.getLocalPosition();
 	glm::vec3 globalPosition = owner->transform.getGlobalPosition();
+	globalPosition.z -= 2.f;
 	
 	glm::vec3 listenerForward;
 	if (rb->side.x > 0) {
