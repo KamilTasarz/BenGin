@@ -21,8 +21,8 @@ void Door::onDetach()
 void Door::onStart()
 {
 	std::cout << "Door::onStart::" << owner->name << std::endl;
-	door1 = owner->getChildById(0);
-	door2 = owner->getChildById(1);
+	door1 = owner->getChildByNamePart("gate_up");
+	door2 = owner->getChildByNamePart("gate_down");
 
 	if (!door1 || !door2) return;
 
@@ -30,10 +30,10 @@ void Door::onStart()
 	startPos2 = targetPos2 = door2->transform.getLocalPosition();
 
 	if (isOpen) {
-		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->transform.getLocalScale().y;
 		else {
-			targetPos = startPos + glm::vec3(2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
-			targetPos2 = startPos2 + glm::vec3(-2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+			targetPos = startPos + glm::vec3(0.f, 3.f, 0.f) * 1.f / owner->transform.getLocalScale().y;
+			targetPos2 = startPos2 + glm::vec3(0.f, -3.f, 0.f) * 1.f / owner->transform.getLocalScale().y;
 		}
 	}
 }
@@ -41,21 +41,7 @@ void Door::onStart()
 void Door::onUpdate(float deltaTime)
 {
 	if (door1 == nullptr || door2 == nullptr) {
-		door1 = owner->getChildById(0);
-		door2 = owner->getChildById(1);
-
-		if (!door1 || !door2) return;
-
-		startPos = targetPos = door1->transform.getLocalPosition();
-		startPos2 = targetPos2 = door2->transform.getLocalPosition();
-
-		if (isOpen) {
-			if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
-			else {
-				targetPos = startPos + glm::vec3(2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
-				targetPos2 = startPos2 + glm::vec3(-2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
-			}
-		}
+		return;
 	}
 
 	if (!openToSide) {
@@ -86,7 +72,7 @@ void Door::onUpdate(float deltaTime)
 		float distance2 = glm::distance(currentPos2, targetPos2);
 
 		if (distance1 > 0.02f) {
-			float speed = 16.f * 1.f / owner->transform.getLocalScale().y;
+			float speed = 10.f * 1.f / owner->transform.getLocalScale().y;
 			float step = speed * deltaTime;
 			if (step >= distance1) {
 				door1->transform.setLocalPosition(targetPos);
@@ -109,13 +95,14 @@ void Door::ChangeState(bool state)
 	
 	if (state) {
 		targetPos = startPos;
+		targetPos2 = startPos2;
 		isOpen = false;
 	}
 	else {
-		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->transform.getLocalScale().y;
 		else {
-			targetPos = startPos + glm::vec3(2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
-			targetPos2 = startPos2 + glm::vec3(-2.f, 0.f, 0.f) * 1.f / owner->parent->transform.getLocalScale().y;
+			targetPos = startPos + glm::vec3(0.f, 3.f, 0.f) * 1.f / owner->transform.getLocalScale().y;
+			targetPos2 = startPos2 + glm::vec3(0.f, -3.f, 0.f) * 1.f / owner->transform.getLocalScale().y;
 		}
 		isOpen = true;
 	}

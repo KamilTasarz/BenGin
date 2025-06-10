@@ -310,6 +310,8 @@ public:
     // Get child by its name
     Node* getChildByName(const std::string& name);
 
+    Node* getChildByNamePart(const std::string& namePart);
+
     Node* getChildById(int id);
 
 	Node* getChildByTag(std::string tag);

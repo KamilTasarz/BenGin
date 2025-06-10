@@ -424,6 +424,22 @@ Node* Node::getChildByName(const std::string& name) {
     return nullptr;
 }
 
+Node* Node::getChildByNamePart(const std::string& namePart) {
+    for (auto& child : children) {
+        // Jeśli nazwa zawiera poszukiwany fragment
+        if (child->name.find(namePart) != std::string::npos) {
+            return child;
+        }
+
+        // Rekurencyjnie przeszukaj dzieci
+        Node* foundChild = child->getChildByName(namePart);
+        if (foundChild != nullptr) {
+            return foundChild;
+        }
+    }
+    return nullptr;
+}
+
 Node* Node::getChildById(int id) {
     for (auto child : children) {
         if (child->id == id) {
