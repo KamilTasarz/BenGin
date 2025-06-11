@@ -21,16 +21,24 @@ void Fan::onDetach()
 
 void Fan::onStart()
 {
-	//glm::vec3 pos = owner->transform.getGlobalPosition();
-	//auto* audio = ServiceLocator::getAudioEngine();
-	//sfxId = audio->PlayMusic(audio->fan, /*GameManager::instance->sfxVolume **/ 100.f, pos);
-	//audio->SetChannel3dMinMaxDistance(sfxId, 3.f, 20.0f);
+	fan = owner->parent->getChildByNamePart("fan");
 }
 
 void Fan::onUpdate(float deltaTime)
 {
 	wavyPower = verticalPower;
 	wavyPower += sin(glfwGetTime() * 0.2);
+
+	// gradually start/stop rotating the fan
+	float smoothing = 2.f;
+	fanSpeed += (targetFanSpeed - fanSpeed) * smoothing * deltaTime;
+		
+	if (fanSpeed > 0.01f && fan != owner) {
+		glm::quat currentRotation = fan->transform.getLocalRotation();
+		float rotationAnlge = fanSpeed * deltaTime;
+		currentRotation = glm::rotate(currentRotation, rotationAnlge, glm::vec3(0.f, 0.f, 1.f));
+		fan->transform.setLocalRotation(currentRotation);
+	}
 
 	auto* audio = ServiceLocator::getAudioEngine();
 
@@ -39,6 +47,8 @@ void Fan::onUpdate(float deltaTime)
 		if (sfxId != -1 && audio->IsPlaying(sfxId)) {
 			audio->pauseSound(sfxId);
 			sfxId = -1;
+
+			targetFanSpeed = 0.f;
 		}
 		return;
 	}
@@ -46,8 +56,10 @@ void Fan::onUpdate(float deltaTime)
 	// Wentylator aktywny → wznowienie tylko jeśli NIE gra
 	if (sfxId == -1) {
 		glm::vec3 pos = owner->transform.getGlobalPosition();
-		sfxId = audio->PlayMusic(audio->fan, GameManager::instance->sfxVolume * 100.f, pos);
+		sfxId = audio->PlayMusic(audio->fan, GameManager::instance->sfxVolume * 90.f, pos);
 		audio->SetChannel3dMinMaxDistance(sfxId, 3.f, 20.0f);
+
+		targetFanSpeed = 10.f;
 	}
 }
 

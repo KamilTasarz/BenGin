@@ -2,24 +2,14 @@
     "children": [
         {
             "AABB_logic_max": {
-                "x": 0.5,
-                "y": 20.0,
-                "z": 0.5
+                "x": 0.9942881464958191,
+                "y": 1.9730554819107056,
+                "z": 4.161988735198975
             },
             "AABB_logic_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
-            },
-            "AABB_max": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "AABB_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
+                "x": -1.0057119131088257,
+                "y": -0.02694450505077839,
+                "z": -0.24490806460380554
             },
             "components": [
                 {
@@ -28,7 +18,7 @@
                         {
                             "field_type": "float",
                             "name": "verticalPower",
-                            "value": 20.0
+                            "value": 15.0
                         },
                         {
                             "field_type": "float",
@@ -45,16 +35,16 @@
             ],
             "id": 0,
             "is_logic_active": true,
-            "is_physic_active": false,
+            "is_physic_active": true,
             "is_visible": true,
             "layer": "Default",
-            "model.id": 3,
-            "name": "fan",
+            "model.id": 48,
+            "name": "body",
             "no_textures": false,
             "position": {
                 "x": 0.0,
                 "y": 0.0,
-                "z": 0.0
+                "z": 0.25
             },
             "rotation": {
                 "w": 1.0,
@@ -63,9 +53,37 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 3.200000047683716,
-                "y": 0.30000001192092896,
-                "z": 3.200000047683716
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "tag": "Default",
+            "type": "Node"
+        },
+        {
+            "id": 0,
+            "is_logic_active": false,
+            "is_physic_active": false,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 52,
+            "name": "fan",
+            "no_textures": false,
+            "position": {
+                "x": 0.0,
+                "y": 0.999856173992157,
+                "z": 0.1749996393918991
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             },
             "tag": "Default",
             "type": "Node"
@@ -81,18 +99,18 @@
     "no_textures": true,
     "position": {
         "x": 0.0,
-        "y": 0.0,
-        "z": 0.0
+        "y": -8.940698137394065e-08,
+        "z": 1.5
     },
     "rotation": {
-        "w": 1.0,
-        "x": 0.0,
-        "y": 0.0,
+        "w": 0.7071067690849304,
+        "x": -0.7071067690849304,
+        "y": -0.0,
         "z": 0.0
     },
     "scale": {
-        "x": 1.0,
-        "y": 1.0,
+        "x": 1.5,
+        "y": 1.5,
         "z": 1.0
     },
     "tag": "Default",

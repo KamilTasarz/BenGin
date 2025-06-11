@@ -1,6 +1,26 @@
 {
     "children": [
         {
+            "AABB_logic_max": {
+                "x": 1.2179006338119507,
+                "y": 0.7137764096260071,
+                "z": 1.1647834777832031
+            },
+            "AABB_logic_min": {
+                "x": -0.5993744730949402,
+                "y": -1.0,
+                "z": -1.0
+            },
+            "AABB_max": {
+                "x": 1.2136895656585693,
+                "y": 0.7136908173561096,
+                "z": 0.9185939431190491
+            },
+            "AABB_min": {
+                "x": -0.5993744730949402,
+                "y": -1.0,
+                "z": -1.0
+            },
             "components": [
                 {
                     "name": "Virus",
@@ -21,6 +41,16 @@
                             "value": true
                         }
                     ]
+                },
+                {
+                    "name": "RotateObject",
+                    "variables": [
+                        {
+                            "field_type": "float",
+                            "name": "rotationSpeed",
+                            "value": 0.5
+                        }
+                    ]
                 }
             ],
             "id": 0,
@@ -28,13 +58,13 @@
             "is_physic_active": false,
             "is_visible": true,
             "layer": "Default",
-            "model.id": 12,
-            "name": "cheese",
+            "model.id": 24,
+            "name": "havarti",
             "no_textures": false,
             "position": {
-                "x": -0.5,
+                "x": 0.0,
                 "y": 0.0,
-                "z": -1.0
+                "z": 0.0
             },
             "rotation": {
                 "w": 1.0,
@@ -43,24 +73,12 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 2.0,
-                "y": 0.10000000149011612,
-                "z": 2.0
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             },
             "tag": "Default",
             "type": "Node"
-        }
-    ],
-    "components": [
-        {
-            "name": "RotateObject",
-            "variables": [
-                {
-                    "field_type": "float",
-                    "name": "rotationSpeed",
-                    "value": 0.5
-                }
-            ]
         }
     ],
     "id": 0,
@@ -74,7 +92,7 @@
     "position": {
         "x": 0.0,
         "y": 0.0,
-        "z": -1.0
+        "z": 0.0
     },
     "rotation": {
         "w": 1.0,
@@ -83,9 +101,9 @@
         "z": 0.0
     },
     "scale": {
-        "x": 1.0,
-        "y": 1.0,
-        "z": 1.0
+        "x": 0.6000000238418579,
+        "y": 0.6000000238418579,
+        "z": 0.6000000238418579
     },
     "tag": "Default",
     "type": "Node"

@@ -1,25 +1,43 @@
 {
     "children": [
         {
+            "id": 0,
+            "is_logic_active": false,
+            "is_physic_active": false,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 43,
+            "name": "body",
+            "no_textures": false,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "tag": "Default",
+            "type": "Node"
+        },
+        {
             "AABB_logic_max": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
+                "x": 0.6299999952316284,
+                "y": 0.4125591516494751,
+                "z": 0.6299999952316284
             },
             "AABB_logic_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
-            },
-            "AABB_max": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "AABB_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
+                "x": -0.6299999952316284,
+                "y": 0.06699995696544647,
+                "z": -0.6299999952316284
             },
             "components": [
                 {
@@ -36,6 +54,16 @@
                             "value": false
                         },
                         {
+                            "field_type": "Node*",
+                            "name": "secondObject",
+                            "value": "null"
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "activateSecond",
+                            "value": false
+                        },
+                        {
                             "field_type": "bool",
                             "name": "isPressed",
                             "value": false
@@ -48,12 +76,12 @@
             "is_physic_active": false,
             "is_visible": true,
             "layer": "Default",
-            "model.id": 4,
+            "model.id": 44,
             "name": "button",
             "no_textures": false,
             "position": {
                 "x": 0.0,
-                "y": 0.0,
+                "y": 0.05000000074505806,
                 "z": 0.0
             },
             "rotation": {
@@ -63,11 +91,11 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 2.0,
-                "y": 0.800000011920929,
-                "z": 2.0
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             },
-            "tag": "Box",
+            "tag": "Default",
             "type": "Node"
         }
     ],
@@ -91,9 +119,9 @@
         "z": 0.0
     },
     "scale": {
-        "x": 1.0,
-        "y": 1.0,
-        "z": 1.0
+        "x": 1.25,
+        "y": 1.25,
+        "z": 1.25
     },
     "tag": "Default",
     "type": "Node"

@@ -1,38 +1,22 @@
 {
     "children": [
         {
-            "AABB_logic_max": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "AABB_logic_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
-            },
             "AABB_max": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
+                "x": 2.0,
+                "y": 0.3499999940395355,
+                "z": 2.0
             },
             "AABB_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
+                "x": -2.0,
+                "y": 1.4901161193847656e-08,
+                "z": -2.0
             },
-            "components": [
-                {
-                    "name": "GroundObject",
-                    "variables": null
-                }
-            ],
             "id": 0,
             "is_logic_active": false,
             "is_physic_active": true,
             "is_visible": true,
             "layer": "Default",
-            "model.id": 5,
+            "model.id": 40,
             "name": "locked_scale",
             "no_textures": false,
             "position": {
@@ -47,33 +31,23 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 4.0,
+                "x": 1.0,
                 "y": 1.0,
-                "z": 2.0
+                "z": 1.0
             },
             "tag": "Default",
             "type": "Node"
         },
         {
-            "AABB_logic_max": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "AABB_logic_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
-            },
             "AABB_max": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
+                "x": 2.0,
+                "y": 0.3499999940395355,
+                "z": 2.0
             },
             "AABB_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
+                "x": -2.0,
+                "y": 1.4901161193847656e-08,
+                "z": -2.0
             },
             "components": [
                 {
@@ -102,10 +76,6 @@
                     ]
                 },
                 {
-                    "name": "GroundObject",
-                    "variables": null
-                },
-                {
                     "name": "Rigidbody",
                     "properties": {
                         "gravity": 0.0,
@@ -121,9 +91,9 @@
             "is_logic_active": false,
             "is_physic_active": true,
             "is_visible": true,
-            "layer": "Scale",
-            "model.id": 5,
-            "name": "movable_scale",
+            "layer": "Default",
+            "model.id": 40,
+            "name": "moving_scale",
             "no_textures": false,
             "position": {
                 "x": -3.0,
@@ -137,9 +107,9 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 4.0,
+                "x": 1.0,
                 "y": 1.0,
-                "z": 2.0
+                "z": 1.0
             },
             "tag": "Default",
             "type": "Node"

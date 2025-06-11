@@ -5,6 +5,7 @@
 #include "Door.h"
 #include "Fan.h"
 #include "../GameManager.h"
+#include "../../ResourceManager.h"
 
 REGISTER_SCRIPT(Button);
 
@@ -12,8 +13,6 @@ void Button::onAttach(Node* owner)
 {
 	this->owner = owner;
 	std::cout << "Button::onAttach::" << owner->name << std::endl;
-
-	originalSize = owner->transform.getLocalScale();
 }
 
 void Button::onDetach()
@@ -25,22 +24,41 @@ void Button::onDetach()
 void Button::onStart()
 {
 	// Initialize the button state
+	button = owner;
+	body = owner->parent->getChildByNamePart("body");
+
+	if (button == nullptr) {
+		button = owner;
+	}
+
 	isPressed = false;
 	pressingObjects = 0;
-	originalSize = owner->transform.getLocalScale();
+	startPos = owner->transform.getLocalPosition();
 }
 
 void Button::onUpdate(float deltaTime)
 {
-	if (isPressed) {
-		//std::cout << "Button pressed" << std::endl;
-	}
-	else {
-		//std::cout << "Button not pressed" << std::endl;
+	if (button == nullptr) return;
+	
+	glm::vec3 currentPos = button->transform.getLocalPosition();
+	glm::vec3 direction = glm::normalize(targetPos - currentPos);
+	float distance = glm::distance(currentPos, targetPos);
+
+	if (distance > 0.02f) {
+		float speed = 2.f * 1.f / owner->transform.getLocalScale().y;
+		float step = speed * deltaTime;
+
+		if (step >= distance) {
+			button->transform.setLocalPosition(targetPos);
+		}
+		else {
+			glm::vec3 newPos = currentPos + direction * step;
+			button->transform.setLocalPosition(newPos);
+		}
 	}
 }
 
-void Button::ChangeState(bool state)
+void Button::ChangeState(bool state, Node* object)
 {
 	if (object->getComponent<Door>() != nullptr) {
 		object->getComponent<Door>()->ChangeState(state);
@@ -59,13 +77,13 @@ void Button::onCollisionLogic(Node* other) {
 			auto* audio = ServiceLocator::getAudioEngine();
 			audio->PlaySFX(audio->button_down, GameManager::instance->sfxVolume * 70.f);
 
-			glm::vec3 newScale = originalSize * glm::vec3(1.f, 0.3f, 1.f);
-			owner->transform.setLocalScale(newScale);
+			targetPos = startPos - glm::vec3(0.f, 0.15f, 0.f) / owner->transform.getLocalScale().y;
 
-			owner->AABB_logic->min_point_local.y *= 1.f / 0.3f;
-			owner->AABB_logic->max_point_local.y *= 1.f / 0.3f;
+			auto model = ResourceManager::Instance().getModel(42);
+			body->pModel = model;
 
-			ChangeState(activate);
+			ChangeState(activate, object);
+			if (secondObject) ChangeState(activateSecond, secondObject);
 		}
 
 		pressingObjects++;
@@ -91,15 +109,16 @@ void Button::onExitCollisionLogic(Node* other) {
 
 		if (pressingObjects == 0) {
 			isPressed = false;
-			owner->transform.setLocalScale(originalSize);
 
-			owner->AABB_logic->min_point_local.y /= 1.f / 0.3f;
-			owner->AABB_logic->max_point_local.y /= 1.f / 0.3f;
+			targetPos = startPos;
+			auto model = ResourceManager::Instance().getModel(43);
+			body->pModel = model;
 
 			auto* audio = ServiceLocator::getAudioEngine();
 			audio->PlaySFX(audio->button_up, 70.f);
 
-			ChangeState(!activate);
+			ChangeState(!activate, object);
+			if (secondObject) ChangeState(!activateSecond, secondObject);
 		}
 	}
 }

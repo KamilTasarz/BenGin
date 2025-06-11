@@ -30,10 +30,10 @@ void Door::onStart()
 	startPos2 = targetPos2 = door2->transform.getLocalPosition();
 
 	if (isOpen) {
-		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->transform.getLocalScale().y;
+		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) / owner->transform.getLocalScale().y;
 		else {
-			targetPos = startPos + glm::vec3(0.f, 3.f, 0.f) * 1.f / owner->transform.getLocalScale().y;
-			targetPos2 = startPos2 + glm::vec3(0.f, -3.f, 0.f) * 1.f / owner->transform.getLocalScale().y;
+			targetPos = startPos + glm::vec3(0.f, 3.f, 0.f) / owner->transform.getLocalScale().y;
+			targetPos2 = startPos2 + glm::vec3(0.f, -3.f, 0.f) / owner->transform.getLocalScale().y;
 		}
 	}
 }
@@ -50,7 +50,7 @@ void Door::onUpdate(float deltaTime)
 		float distance = glm::distance(currentPos, targetPos);
 
 		if (distance > 0.02f) {
-			float speed = 16.f * 1.f / owner->transform.getLocalScale().y;
+			float speed = 16.f / owner->transform.getLocalScale().y;
 			float step = speed * deltaTime;
 
 			if (step >= distance) {
@@ -99,10 +99,10 @@ void Door::ChangeState(bool state)
 		isOpen = false;
 	}
 	else {
-		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) * 1.f / owner->transform.getLocalScale().y;
+		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) / owner->transform.getLocalScale().y;
 		else {
-			targetPos = startPos + glm::vec3(0.f, 3.f, 0.f) * 1.f / owner->transform.getLocalScale().y;
-			targetPos2 = startPos2 + glm::vec3(0.f, -3.f, 0.f) * 1.f / owner->transform.getLocalScale().y;
+			targetPos = startPos + glm::vec3(0.f, 3.f, 0.f) / owner->transform.getLocalScale().y;
+			targetPos2 = startPos2 + glm::vec3(0.f, -3.f, 0.f) / owner->transform.getLocalScale().y;
 		}
 		isOpen = true;
 	}

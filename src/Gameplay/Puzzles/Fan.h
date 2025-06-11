@@ -13,6 +13,9 @@ public:
 
 	float wavyPower;
 	int sfxId = -1;
+	Node* fan = nullptr;
+	float fanSpeed = 0.0f;
+	float targetFanSpeed = 0.0f;
 
 	Fan() = default;
 	virtual ~Fan() = default;

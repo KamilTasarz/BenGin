@@ -26,7 +26,7 @@ void Electrified::onStart()
 		
 		glm::vec3 pos = owner->transform.getGlobalPosition();
 		auto* audio = ServiceLocator::getAudioEngine();
-		sfxId = audio->PlayMusic(audio->electricity, GameManager::instance->sfxVolume * 85.f, pos);
+		sfxId = audio->PlayMusic(audio->electricity, GameManager::instance->sfxVolume * 70.f, pos);
 		audio->SetChannel3dMinMaxDistance(sfxId, 3.0f, 20.0f);
 	}	
 }
