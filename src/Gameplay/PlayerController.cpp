@@ -236,12 +236,12 @@ void PlayerController::onUpdate(float deltaTime)
 	}
 
 	// opis sera
-	if (virusType == "none" && lastVirusType != virusType) {
+	if (virusType == "none" && virusTypeAnimator.state == UIAnimState::Visible) {
 		virusTypeAnimator.Hide();
 		virusEffectAnimator.Hide();
 		cheeseSpriteAnimator.Hide();
 	}
-	else if (lastVirusType != virusType) {
+	else if (virusType != "none" && virusTypeAnimator.state == UIAnimState::Hidden || virusType != "none" && lastVirusType != virusType) {
 		if (virusType == "blue") {
 			virusTypeText->value = "Feather Feta";
 			virusEffectText->value = "decreased weight";
