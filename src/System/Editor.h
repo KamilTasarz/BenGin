@@ -5,6 +5,13 @@
 
 #include "../config.h"
 
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
+#include "imgui/imgui_internal.h"
+
+#include <imguizmo/ImGuizmo.h>
+
 #include "PostProcessData.h"
 
 class Sprite;
@@ -30,6 +37,10 @@ private:
 
 	ImGuizmo::OPERATION currentOperation = ImGuizmo::OPERATION::TRANSLATE;
 	bool uniformScale = false;
+
+	//debug
+	GLuint fbo, debugColorTex;
+	unsigned int quadVAO, quadVBO;
 
 	glm::vec2 normalizedMouse;
 	Sprite * icon, * eye_icon, * eye_slashed_icon, *switch_on, *switch_off, * dir_light_icon, * point_light_icon;

@@ -12,6 +12,7 @@
 #include "../AudioEngine.h"
 #include <random>
 #include "../System/GuiManager.h"
+#include "../System/RenderSystem.h"
 
 Ray Game::getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
 
@@ -52,7 +53,7 @@ void Game::input()
 void Game::draw()
 {
 	
-    float t = glfwGetTime();
+    //float t = glfwGetTime();
 
     float time = glfwGetTime();
     float fpsValue = 1.f / ServiceLocator::getWindow()->deltaTime;
@@ -66,8 +67,14 @@ void Game::draw()
     // glClearColor(.01f, .01f, .01f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+    float t = glfwGetTime();
+
     sceneGraph->draw(viewWidth, viewHeight, framebuffer); // Po tym etapie mamy gotowe color texture 
     
+    float t2 = glfwGetTime();
+
+    std::cout << "DRAW: " << t2 - t << std::endl;
+
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     LineManager::Instance().drawLines();
 	
@@ -79,6 +86,7 @@ void Game::draw()
 
     GLuint current_texture = colorTexture;
 
+    RenderSystem::Instance().clear();
 
     if (postProcessData.is_post_process) {
     
@@ -262,7 +270,7 @@ void Game::draw()
 
             float t2 = glfwGetTime();
 
-			std::cout << "draw time: " << t2 - t << std::endl;
+			//std::cout << "draw time: " << t2 - t << std::endl;
 
             return;
 
@@ -296,9 +304,11 @@ void Game::draw()
 
     glEnable(GL_DEPTH_TEST);
 
-    float t2 = glfwGetTime();
+    t2 = glfwGetTime();
 
-    std::cout << "draw time: " << t2 - t << std::endl;
+    std::cout << "DRAW: " << t2 - t << std::endl;
+
+	
 }
 
 void Game::update(float deltaTime)
@@ -365,6 +375,7 @@ void Game::init()
     sceneGraph->is_editing = false;
 
 	camera->Pitch = 0.0f;
+	camera->FarPlane = 33.1f;
 	camera->Yaw = -90.0f;
 	camera->setPosition(glm::vec3(0.f, 0.f, 0.f));
     glm::vec3 origin = glm::vec3(0.f);
@@ -575,7 +586,7 @@ void Game::run()
         input();
 
         float t4 = glfwGetTime();
-        cout << "Input time" << t4 - t3 << endl;
+        //cout << "Input time" << t4 - t3 << endl;
         
         update(ServiceLocator::getWindow()->deltaTime);
 
@@ -586,9 +597,9 @@ void Game::run()
         ServiceLocator::getWindow()->updateWindow();
 
         float t2 = glfwGetTime();
-        cout << "Draw time" << t2 - t << endl;
+        //cout << "Draw time" << t2 - t << endl;
 
-        std::cout << "DeltaTime: " << ServiceLocator::getWindow()->deltaTime << std::endl;
+        //std::cout << "DeltaTime: " << ServiceLocator::getWindow()->deltaTime << std::endl;
 	}
 
     if (glfwWindowShouldClose(ServiceLocator::getWindow()->window)) engine_work = false;

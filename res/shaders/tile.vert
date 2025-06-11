@@ -20,7 +20,7 @@ out VS_OUT {
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
-uniform mat4 light_view_projection1;
+uniform mat4 light_view_projection;
 
 void main()
 {
@@ -31,7 +31,7 @@ void main()
 	vs_out.Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
 	
 
-	vs_out.Light_Perspective_Pos = light_view_projection1 * vec4(vs_out.Pos, 1.0f);
+	vs_out.Light_Perspective_Pos = light_view_projection * vec4(vs_out.Pos, 1.0f);
 
 	
 	vec3 scale = vec3(length(model[0].xyz), length(model[1].xyz), length(model[2].xyz));

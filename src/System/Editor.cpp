@@ -1873,6 +1873,8 @@ void Editor::init()
     int fbWidth = previewWidth;
     int fbHeight = previewHeight;
 
+    camera->FarPlane = 100.f;
+
     glfwSwapInterval(0); // Ustawienie V-Sync w GLFW bo gra swiruje na kompie
 
     // 1. Tekstura kolorów
@@ -1923,6 +1925,43 @@ void Editor::init()
 
     //mirror = new MirrorNode(ResourceManager::Instance().getModel(13), "mirror");
     //editor_sceneGraph->addChild(emit);
+
+
+
+    glGenTextures(1, &debugColorTex);
+    glBindTexture(GL_TEXTURE_2D, debugColorTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, debugColorTex, 0);
+
+
+    float quadVertices[] = {
+        // positions   // texCoords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+
+        -1.0f,  1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f
+    };
+
+
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
 }
 
 void Editor::run() {
@@ -2185,7 +2224,7 @@ void Editor::draw() {
     glStencilMask(0x00);
 
 
-    sceneGraph->draw(previewWidth, previewHeight, framebuffer);
+    sceneGraph->draw(previewWidth, previewHeight, framebuffer, true);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
     ParticleEmitter* emitter = dynamic_cast<ParticleEmitter*>(sceneGraph->root->getChildByName("ParticleEmitter"));
@@ -2205,6 +2244,23 @@ void Editor::draw() {
         GuiManager::Instance().draw();
     }
 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	ResourceManager::Instance().shader_debug->use();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glActiveTexture(GL_TEXTURE0);
+	ResourceManager::Instance().shader_debug->setInt("depthMap", 0);
+    for (PointLight* p : sceneGraph->point_lights) {
+        glBindTexture(GL_TEXTURE_CUBE_MAP, p->depthCubemap);
+        break;
+    }
+
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // ImGui

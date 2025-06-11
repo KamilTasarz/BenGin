@@ -17,12 +17,19 @@
 #include "../System/Rigidbody.h"
 #include "../Gameplay/ScriptFactory.h"
 #include "../Particle/Particle.h"
+#include "../System/PhysicsSystem.h"
+#include "../System/RenderSystem.h"
 
 using namespace std;
 
 
 SceneGraph::SceneGraph()
 {
+    if (!point_lights.empty())
+        last_index = point_lights.begin();
+    else
+        last_index = point_lights.end();
+
 
     root = new Node("root", 0);
     grid = new Grid();
@@ -51,6 +58,9 @@ void SceneGraph::addChild(Node* p) {
         i++;
     }*/
     root->addChild(p);
+
+    if (dynamic_cast<InstanceManager*>(p)) emitter = dynamic_cast<InstanceManager*>(p);
+
     //nodes.insert(std::pair<std::string, Node*>(p->name, p));
 }
 
@@ -170,16 +180,22 @@ void SceneGraph::setShaders() {
     setLights(ResourceManager::Instance().shader);
     ResourceManager::Instance().shader->setMat4("projection", projection);
     ResourceManager::Instance().shader->setMat4("view", view);
-    ResourceManager::Instance().shader->setInt("point_light_number", point_light_number);
+
+    if (active_point_lights >= 16) ResourceManager::Instance().shader->setInt("point_light_number", 16);
+    else ResourceManager::Instance().shader->setInt("point_light_number", active_point_lights);
+
     ResourceManager::Instance().shader->setInt("directional_light_number", directional_light_number);
+    ResourceManager::Instance().shader->setFloat("far_plane", 10.f);
     
     ResourceManager::Instance().shader_tile->use();
     setLights(ResourceManager::Instance().shader_tile);
     ResourceManager::Instance().shader_tile->setMat4("projection", projection);
     ResourceManager::Instance().shader_tile->setMat4("view", view);
-    ResourceManager::Instance().shader_tile->setInt("point_light_number", point_light_number);
+    if (active_point_lights >= 16) ResourceManager::Instance().shader_tile->setInt("point_light_number", 16);
+    else  ResourceManager::Instance().shader_tile->setInt("point_light_number", active_point_lights);
     ResourceManager::Instance().shader_tile->setInt("directional_light_number", directional_light_number);
-
+    ResourceManager::Instance().shader_tile->setFloat("far_plane", 10.f);
+    
     ResourceManager::Instance().shader_instanced->use();
     setLights(ResourceManager::Instance().shader_instanced);
     ResourceManager::Instance().shader_instanced->setMat4("projection", projection);
@@ -197,17 +213,53 @@ void SceneGraph::setShaders() {
     ResourceManager::Instance().shader_outline->setInt("directional_light_number", directional_light_number);
 }
 
-void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
+void SceneGraph::draw(float width, float height, unsigned int framebuffer, bool is_editor) {
 
     
 
     for (auto& dir_light : directional_lights) {
         if (dir_light->is_shining) {
-            dir_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow);
-            glClear(GL_DEPTH_BUFFER_BIT);
-            root->drawShadows(*ResourceManager::Instance().shader_shadow);
+            //dir_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow);
+            //glClear(GL_DEPTH_BUFFER_BIT);
+            //root->drawShadows(*ResourceManager::Instance().shader_shadow);
             //glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
+    }
+    int updated_this_frame = 0;
+    int checked = 0;
+    int total_lights = point_lights.size();
+
+    // Upewnij się, że last_index nie jest przeterminowany
+    if (!point_lights.empty()) {
+
+        auto it = last_index;
+        if (it == point_lights.end()) it = point_lights.begin(); // reset przy końcu listy
+
+        while (updated_this_frame < limit_per_frame && checked < total_lights) {
+            if (it == point_lights.end()) it = point_lights.begin(); // zawijanie listy
+
+            auto& point_light = *it;
+
+            if (point_light->is_shining && point_light->in_frustrum) {
+                point_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow, 0);
+
+                if (is_editor) {
+                    root->drawShadows(*ResourceManager::Instance().shader_shadow);
+                }
+                else {
+                    RenderSystem::Instance().renderShadows();
+                }
+
+                updated_this_frame++;
+            }
+
+            ++it;
+            ++checked;
+        }
+
+        // Zaktualizuj last_index
+        last_index = it;
+
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -226,7 +278,14 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
 	
 
     setShaders();
-    root->drawSelfAndChild();
+    
+    if (is_editor) {
+        root->drawSelfAndChild();
+    }
+    else {
+        RenderSystem::Instance().render();
+        emitter->drawSelfAndChild();
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -270,6 +329,7 @@ void SceneGraph::setLights(Shader* shader) {
 
     shader->setVec3("cameraPosition", camera->cameraPos);
     int i = 0;
+
     for (auto& point_light : point_lights) {
         if (point_light->in_frustrum) {
             string index = to_string(i);
@@ -288,10 +348,21 @@ void SceneGraph::setLights(Shader* shader) {
                 shader->setVec3("point_lights[" + index + "].diffuse", glm::vec3({ 0.f, 0.f, 0.f }));
                 shader->setVec3("point_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
             }
+			
+            glActiveTexture(GL_TEXTURE8 + i);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, point_light->depthCubemap);
             i++;
         }
-        if (i >= 100) break;
+		if (i >= 16) break; // Limit 16 swiatel we frustum
     }
+    active_point_lights = i;
+    GLint loc = glGetUniformLocation(shader->ID, "shadow_maps");
+    GLint samplers[16];
+    for (int j = 0; j < 16; ++j) {
+        samplers[j] = 8 + j;
+    }
+    glUniform1iv(loc, 16, samplers);
+
     i = 0;
     for (auto& dir_light : directional_lights) {
         string index = to_string(i);
@@ -309,12 +380,13 @@ void SceneGraph::setLights(Shader* shader) {
             shader->setInt("useShadows", 0);
         }
         
-        glActiveTexture(GL_TEXTURE3 + i);
+        
+        glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, dir_light->depthMap);
         
-        i++;
-        shader->setMat4("light_view_projection" + to_string(i), dir_light->getMatrix());
-        shader->setInt("shadow_map" + to_string(i), 2 + i);
+        //i++;
+        shader->setMat4("light_view_projection", dir_light->getMatrix());
+        shader->setInt("shadow_map1", 3);
     }
 
 
@@ -632,6 +704,9 @@ void Node::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unor
         in_frustrum = camera->isInFrustrum(AABB);
         //in_frustrum = true;
         if (in_frustrum) {
+
+			addRenderQueue();
+
 			if (is_physic_active) colliders.insert(AABB);
 			else colliders.erase(AABB);
 
@@ -659,6 +734,8 @@ void Node::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unor
         in_frustrum = true;
 
     }
+
+    
 
     for (auto& child : children) {
         child->checkIfInFrustrum(colliders, colliders_RB, rooms);
@@ -836,6 +913,107 @@ void Node::drawSelfAndChild() {
 
     //_shader.setVec4("dynamicColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
+}
+
+void Node::drawSelf()
+{
+    if (pModel->mode.empty()) {
+        ResourceManager::Instance().shader->use();
+        ResourceManager::Instance().shader->setMat4("model", transform.getModelMatrix());
+    }
+    else {
+        ResourceManager::Instance().shader_tile->use();
+        ResourceManager::Instance().shader_tile->setMat4("model", transform.getModelMatrix());
+    }
+
+    if (is_animating) {
+        ResourceManager::Instance().shader->setInt("is_animating", 1);
+    }
+    else {
+        ResourceManager::Instance().shader->setInt("is_animating", 0);
+    }
+
+    if (animator != nullptr && is_animating) {
+        //is_animating = true;
+        auto& f = animator->final_bone_matrices;
+        for (int i = 0; i < f.size(); ++i)
+            ResourceManager::Instance().shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+
+        //ResourceManager::Instance().shader->setInt("is_animating", 1);
+    }
+
+    if (is_marked) {
+        glStencilMask(0xFF);
+    }
+    if (no_textures) {
+        ResourceManager::Instance().shader->setInt("is_light", 1);
+        ResourceManager::Instance().shader_tile->setInt("is_light", 1);
+    }
+
+    if (pModel->mode.empty()) {
+
+        pModel->Draw(*ResourceManager::Instance().shader);
+
+        glStencilMask(0x00);
+
+        ResourceManager::Instance().shader->setInt("is_light", 0);
+    }
+    else {
+        pModel->Draw(*ResourceManager::Instance().shader_tile);
+
+        glStencilMask(0x00);
+
+        ResourceManager::Instance().shader_tile->setInt("is_light", 0);
+    }
+
+
+
+    ResourceManager::Instance().shader_outline->use();
+
+    if (is_animating) {
+        ResourceManager::Instance().shader_outline->setInt("is_animating", 1);
+    }
+    else {
+        ResourceManager::Instance().shader_outline->setInt("is_animating", 0);
+    }
+
+
+    ResourceManager::Instance().shader_outline->setMat4("model", transform.getModelMatrix());
+    if (animator != nullptr && is_animating) {
+        auto& f = animator->final_bone_matrices;
+        for (int i = 0; i < f.size(); ++i)
+            ResourceManager::Instance().shader_outline->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+
+        //ResourceManager::Instance().shader_outline->setInt("is_animating", 1);
+    }
+    glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
+    ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+
+    if (scene_graph->is_editing) {
+        AABB->draw(*ResourceManager::Instance().shader_outline);
+    }
+    dynamic_color = glm::vec3(0.f, 0.8f, 0.f);
+    ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
+    if (scene_graph->is_editing && AABB_logic) {
+        AABB_logic->draw(*ResourceManager::Instance().shader_outline);
+    }
+}
+
+void Node::addRenderQueue()
+{
+    if (is_visible && !no_textures) {
+        if (is_animating) RenderSystem::Instance().addAnimatedObject(this);
+        else if (pModel && pModel->mode.empty()) RenderSystem::Instance().addStaticObject(this);
+        else if (pModel) RenderSystem::Instance().addTileObject(this);
+    }
+}
+
+void Node::addRenderQueueAndChild()
+{
+    addRenderQueue();
+	for (auto&& child : children) {
+		child->addRenderQueueAndChild();
+	}
 }
 
 void Node::drawSelfAndChild(Transform& parent)
@@ -1454,6 +1632,8 @@ void PrefabInstance::checkIfInFrustrum(std::unordered_set<Collider*>& colliders,
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
 
+        
+
         if (in_frustrum && (rooms.find(this) == rooms.end())) {
             for (auto& child : prefab_root->getAllChildren()) {
                 child->in_frustrum = true;
@@ -1490,6 +1670,10 @@ void PrefabInstance::checkIfInFrustrum(std::unordered_set<Collider*>& colliders,
                 }
             }
 			rooms.erase(this);
+        }
+
+        if (in_frustrum) {
+            prefab_root->addRenderQueueAndChild();
         }
     }
     else {
@@ -1558,14 +1742,18 @@ void DirectionalLight::updateSelfAndChild(bool controlDirty)
 PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
     : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
 
-    glGenTextures(1, &depthMapBack);
-    glBindTexture(GL_TEXTURE_2D, depthMapBack);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-        SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glGenTextures(1, &depthCubemap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
+    for (unsigned int i = 0; i < 6; ++i)
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
+            SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
 PointLight::~PointLight()
@@ -1573,43 +1761,48 @@ PointLight::~PointLight()
     scene_graph->point_lights.remove(this);
 	scene_graph->point_light_number--;
     glDeleteTextures(1, &depthMap);
-    glDeleteTextures(1, &depthMapBack);
+    glDeleteTextures(1, &depthCubemap);
 }
 
-void PointLight::render(unsigned int depthMapFBO, Shader& shader)
+void PointLight::render(unsigned int depthMapFBO, Shader& shader, int index)
 {
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
-    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
     shader.use();
     updateMatrix();
-    shader.setMat4("view_projection", view_projection);
+    shader.setMat4("shadowMatrices[0]", shadowTransforms[0]);
+    shader.setMat4("shadowMatrices[1]", shadowTransforms[1]);
+    shader.setMat4("shadowMatrices[2]", shadowTransforms[2]);
+    shader.setMat4("shadowMatrices[3]", shadowTransforms[3]);
+    shader.setMat4("shadowMatrices[4]", shadowTransforms[4]);
+    shader.setMat4("shadowMatrices[5]", shadowTransforms[5]);
+	glm::vec3 lightPos = transform.getGlobalPosition();
+    shader.setVec3("lightPos", lightPos);
+    shader.setFloat("far_plane", 10.f);
 
 }
 
-void PointLight::renderBack(unsigned int depthMapFBO, Shader& shader)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMapBack, 0);
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-    shader.use();
-    updateMatrix();
-    shader.setMat4("view_projection", view_projection_back);
-
-}
 
 void PointLight::updateMatrix()
 {
-    view = glm::lookAt(transform.getGlobalPosition() + glm::vec3(0.0f, 0.5f, 0.0f), transform.getGlobalPosition() + glm::vec3(0.0f, -2.0f, 0.0f), glm::vec3(0.f, 0.f, 1.f));
-    view_back = glm::lookAt(transform.getGlobalPosition() + glm::vec3(0.0f, -0.5f, 0.0f), transform.getGlobalPosition() + glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.f, 0.f, -1.f));
-
-    projection = glm::perspective(glm::radians(170.f), 1.f, 0.5f, 40.f);
-    view_projection = projection * view;
-    view_projection_back = projection * view_back;
+    
+    glm::vec3 lightPos = transform.getGlobalPosition();
+    
+    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.f);
+    shadowTransforms.clear();
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0))); // +X
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0))); // -X
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1))); // +Y
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1))); // -Y
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0))); // +Z
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))); // -Z
 }
 
 Prefab::Prefab(std::string name, PrefabType prefab_type)
@@ -1637,6 +1830,8 @@ Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph, bool lig
 		new_light->scene_graph = scene_graph;
 		new_light->transform.setLocalPosition(light->transform.getGlobalPosition());
 		new_light->transform.computeModelMatrix();
+		new_light->is_physic_active = light->is_physic_active;
+		new_light->is_logic_active = light->is_logic_active;
 		//scene_graph->addPointLight(new_light);
         scene_graph->point_lights.push_back(new_light);
         scene_graph->point_light_number++;
@@ -1916,6 +2111,8 @@ void MirrorNode::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std
     std::unordered_set<Node*>& rooms) {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
+
+        addRenderQueue();
         //in_frustrum = true;
         if (in_frustrum) {
             if (mirrorCollider) {

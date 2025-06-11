@@ -365,6 +365,9 @@ public:
 
     // Draw self and children
     void virtual drawSelfAndChild();
+    void drawSelf();
+    void addRenderQueue();
+    void addRenderQueueAndChild();
 
 	// Draw self and children for prefabs -> computing model matrix
     void virtual drawSelfAndChild(Transform &parent);
@@ -435,7 +438,7 @@ class Instance : public Node {
 
 
 
-const unsigned int SHADOW_WIDTH = 8192, SHADOW_HEIGHT = 8192;
+const unsigned int SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
 
 class Light : public Node {
 public:
@@ -449,7 +452,6 @@ public:
     glm::vec3 specular;
 
     glm::mat4 view_projection;
-    glm::mat4 view_projection_back;
     glm::mat4 view;
     glm::mat4 projection;
 
@@ -500,24 +502,22 @@ public:
     float quadratic;
     float linear;
     float constant;
+    std::vector<glm::mat4> shadowTransforms;
 
-    unsigned int depthMapBack = 0;
-    glm::mat4 view_back;
+    GLuint depthCubemap;
 
     //PointLight() : Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
 
     PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
     ~PointLight() override;
 
-    void render(unsigned int depthMapFBO, Shader& shader);
-
-    void renderBack(unsigned int depthMapFBO, Shader& shader);
+    void render(unsigned int depthMapFBO, Shader& shader, int index);
 
     void updateMatrix();
 
-    glm::mat4& getMatrix() {
+    std::vector<glm::mat4>& getMatrix() {
         updateMatrix();
-        return view_projection;
+        return shadowTransforms;
     }
 };
 
@@ -531,11 +531,16 @@ public:
 	Node* to_delete = nullptr;
     std::vector<Node*> to_delete_vec;
 
-    int size = 0, point_light_number = 0, directional_light_number = 0;
+    int size = 0, point_light_number = 0, directional_light_number = 0, active_point_lights = 0;
     std::list<DirectionalLight*> directional_lights;
     std::list<PointLight*> point_lights;
 
+    int limit_per_frame = 2;
+    std::list<PointLight*>::iterator last_index;
+
 	Grid* grid = nullptr;
+
+    InstanceManager* emitter;
 
     unsigned int depthMapFBO;
 
@@ -564,7 +569,7 @@ public:
     void addPointLight(PointLight* p, std::string name);
     void addDirectionalLight(DirectionalLight* p, std::string name);
     void setShaders();
-    void draw(float width, float height, unsigned int framebuffer);
+    void draw(float width, float height, unsigned int framebuffer, bool is_editor = false);
     void drawMarkedObject();
     void addParticleEmitter(ParticleEmitter* p);
     void update(float delta_time);
@@ -629,6 +634,8 @@ public:
 	void drawShadows(Shader& shader) override;
 
     void checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB, std::unordered_set<Node*>& rooms) override;
+
+    
 };
 
 struct Texture;

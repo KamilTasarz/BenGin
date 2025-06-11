@@ -47,7 +47,8 @@ private:
         shader_instanced_outline = new Shader(vertexPath_instanced, fragmentPath_outline);
         shader_outline = new Shader(vertexPath, fragmentPath_outline);
         shader2D = new Shader(triangleVertexPath, triangleFragmentPath);
-        shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow);
+        shader_debug = new Shader(postPath_vert, fragmentPath_debug);
+        shader_shadow = new Shader(vertexPath_shadow, fragmentPath_shadow, geoPath_shadow);
         shader_text = new Shader(vertexPath_text, fragmentPath_text);
         shader_background = new Shader(vertexPath_text, fragmentPath_background);
         shader_particle = new Shader(vertexPath_particle, fragmentPath_particle);
@@ -74,6 +75,7 @@ private:
         delete shader2D;
         delete shader_shadow;
         delete shader_text;
+        delete shader_debug;
         delete shader_background;
         delete shader_particle;
         
@@ -97,6 +99,7 @@ private:
     const char* vertexPath_instanced = "res/shaders/instanced.vert";
     const char* fragmentPath = "res/shaders/basic.frag";
     const char* vertexPath_shadow = "res/shaders/shadow.vert";
+    const char* geoPath_shadow = "res/shaders/shadow.geo";
     const char* fragmentPath_shadow = "res/shaders/shadow.frag";
     const char* fragmentPath_outline = "res/shaders/outline.frag";
     const char* triangleVertexPath = "res/shaders/triangle.vert";
@@ -109,10 +112,10 @@ private:
     const char* vertexPath_gas = "res/shaders/gas.vert";
     const char* fragmentPath_gas = "res/shaders/gas.frag";
     const char* geometryPath_gas = "res/shaders/gas.geo";
+    const char* fragmentPath_debug = "res/shaders/debug.frag";
 
     const char* postPath_vert = "res/shaders/pp_vert.vert";
     const char* postPath_pass = "res/shaders/pp_pass.frag";
-    //const char* postPath_pass = "res/shaders/debug.frag";
     const char* postPath_ssao = "res/shaders/pp_ssao.frag";
     const char* postPath_ssao_blur = "res/shaders/pp_ssao_blur.frag";
     const char* postPath_ssao_composite = "res/shaders/pp_ssao_composite.frag";
@@ -127,6 +130,7 @@ public:
     // Normal shaders
 
     Shader* shader;
+    Shader* shader_debug;
     Shader* shader_line;
     Shader* shader_tile;
     Shader* shader_instanced;
