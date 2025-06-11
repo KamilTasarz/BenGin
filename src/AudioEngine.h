@@ -66,6 +66,7 @@ public:
 	std::string death = "res/audios/sounds/death.mp3";
 	std::string death_spikes = "res/audios/sounds/spikes_death.mp3";
 	std::string running = "res/audios/sounds/running.mp3";
+	std::string eating = "res/audios/sounds/wpierdalanie_sera.mp3";
 
 
     static void Init();

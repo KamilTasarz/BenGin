@@ -5,6 +5,7 @@
 #include "../../System/Rigidbody.h"
 #include "../../Component/CameraGlobals.h"
 #include "../CameraFollow.h"
+#include "../GameManager.h"
 
 REGISTER_SCRIPT(Virus);
 
@@ -45,6 +46,10 @@ void Virus::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
 		std::cout << "Ser podniesiony - " << owner->name << std::endl;
+
+		auto* audio = ServiceLocator::getAudioEngine();
+		audio->PlaySFX(audio->eating, GameManager::instance->sfxVolume * 80.f);
+
 		ApplyEffect(other);
 	}
 }

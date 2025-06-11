@@ -297,7 +297,8 @@ void PlayerController::Die(bool freeze, bool electrified)
 	death->speed = 500.f;
 	owner->animator->playAnimation(death, false);
 
-	//owner->addComponent(std::make_unique<GroundObject>());
+	auto* audio = ServiceLocator::getAudioEngine();
+	audio->PlaySFX(audio->death, GameManager::instance->sfxVolume * 65.f);
 
 	// spawn new player
 	Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
