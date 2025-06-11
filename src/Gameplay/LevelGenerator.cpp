@@ -43,7 +43,7 @@ void LevelGenerator::GenerateLevel()
 		
 		if (goingRight) {
 			// change direction
-			if ((changeDirection < directionChangeChance && directionLength > minimalHorizontalLevelCount) || directionLength > maximalHorizontalLevelCount) {
+			if ((changeDirection < directionChangeChance && directionLength > minimalHorizontalLevelCount) || directionLength >= maximalHorizontalLevelCount) {
 				roomName = "room_right_up_";
 				levelIndex = 1;
 				directionLength = 0;
@@ -71,7 +71,7 @@ void LevelGenerator::GenerateLevel()
 		}
 		else if (goingUp) {
 			// change direction
-			if ((changeDirection < directionChangeChance && directionLength < minimalVerticalLevelCount) || directionLength > maximalVerticalLevelCount) {
+			if ((changeDirection < directionChangeChance && directionLength < minimalVerticalLevelCount) || directionLength >= maximalVerticalLevelCount) {
 				roomName = "room_up_right_";
 				levelIndex = 1;
 				directionLength = 0;
