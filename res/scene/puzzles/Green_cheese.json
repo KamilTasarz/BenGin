@@ -2,14 +2,14 @@
     "children": [
         {
             "AABB_logic_max": {
-                "x": -0.013787317089736462,
-                "y": 0.7187903523445129,
-                "z": -0.2822200357913971
+                "x": 0.2106878161430359,
+                "y": 0.36135903000831604,
+                "z": 0.3344469666481018
             },
             "AABB_logic_min": {
-                "x": -0.6991938948631287,
-                "y": 0.049404218792915344,
-                "z": -1.0410579442977905
+                "x": -0.47471874952316284,
+                "y": -0.39547330141067505,
+                "z": -0.3349308967590332
             },
             "components": [
                 {
@@ -31,6 +31,36 @@
                             "value": false
                         }
                     ]
+                },
+                {
+                    "name": "RotateObject",
+                    "variables": [
+                        {
+                            "field_type": "float",
+                            "name": "rotationSpeed",
+                            "value": -1.0
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "rotateX",
+                            "value": false
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "rotateY",
+                            "value": false
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "rotateZ",
+                            "value": false
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "stopRotation",
+                            "value": false
+                        }
+                    ]
                 }
             ],
             "id": 0,
@@ -42,20 +72,20 @@
             "name": "gouda",
             "no_textures": false,
             "position": {
-                "x": 0.20000000298023224,
-                "y": 0.0,
-                "z": 0.5
-            },
-            "rotation": {
-                "w": 1.0,
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
+            "rotation": {
+                "w": 0.7071067690849304,
+                "x": -0.7071067690849304,
+                "y": -0.0,
+                "z": 0.0
+            },
             "scale": {
-                "x": 1.2000000476837158,
-                "y": 1.2000000476837158,
-                "z": 1.2000000476837158
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             },
             "tag": "Default",
             "type": "Node"
@@ -69,6 +99,26 @@
                     "field_type": "float",
                     "name": "rotationSpeed",
                     "value": -1.0
+                },
+                {
+                    "field_type": "bool",
+                    "name": "rotateX",
+                    "value": false
+                },
+                {
+                    "field_type": "bool",
+                    "name": "rotateY",
+                    "value": false
+                },
+                {
+                    "field_type": "bool",
+                    "name": "rotateZ",
+                    "value": false
+                },
+                {
+                    "field_type": "bool",
+                    "name": "stopRotation",
+                    "value": false
                 }
             ]
         }
@@ -93,9 +143,9 @@
         "z": 0.0
     },
     "scale": {
-        "x": 1.0,
-        "y": 1.0,
-        "z": 1.0
+        "x": 1.5,
+        "y": 1.5,
+        "z": 1.5
     },
     "tag": "Default",
     "type": "Node"

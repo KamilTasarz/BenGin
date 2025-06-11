@@ -111,7 +111,7 @@ void Rigidbody::onUpdate(float deltaTime)
 
 	// vertical movement
 	if (overrideVelocityY) {
-		velocityY = glm::mix(velocityY, targetVelocityY, smoothingFactor * 0.5f * deltaTime);
+		velocityY = glm::mix(velocityY, targetVelocityY, smoothingFactor * deltaTime);
 		//velocityY += gravity * deltaTime;
 		//velocityY *= (1.0f - drag * deltaTime);
 	}
@@ -149,8 +149,8 @@ void Rigidbody::onUpdate(float deltaTime)
 	overrideVelocityY = false;
 	overrideVelocityX = false;
 
-	targetVelocityX = 0.f;
-	targetVelocityY = 0.f;
+	//targetVelocityX = 0.f;
+	//targetVelocityY = 0.f;
 
 	//std::cout << owner->getName() << " stoi na ziemi: " << groundUnderneath << ", dotyka sufitu: " << ceilingAbove << std::endl;
 }

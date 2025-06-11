@@ -90,6 +90,19 @@ void Fan::onStayCollisionLogic(Node* other)
 	}
 }
 
+void Fan::onExitCollisionLogic(Node* other)
+{
+	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
+		Rigidbody* rb = other->getComponent<Rigidbody>();
+		if (rb) {
+			rb->overrideVelocityY = false;
+			rb->overrideVelocityX = false;
+			rb->targetVelocityY = 0.f;
+			rb->targetVelocityX = 0.f;
+		}
+	}
+}
+
 void Fan::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {

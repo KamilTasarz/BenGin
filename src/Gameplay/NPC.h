@@ -24,9 +24,15 @@ public:
     VARIABLE(float, minWaitTime);
     VARIABLE(float, maxWaitTime);
     VARIABLE(float, maxSpeed);
-    VARIABLE(float, acceleration);
-    VARIABLE(float, deacceleration);
-    VARIABLE(float, directionSmoothTime);
+
+    bool isCatched = false;
+    glm::vec3 startPos;
+
+    glm::vec2 smoothedDirection{ 0.f, 0.f };
+    float directionSmoothing = 7.5f;
+
+	Node* spinnerLeft = nullptr;
+	Node* spinnerRight = nullptr;
 
     NPC() = default;
     ~NPC() = default;
@@ -51,14 +57,10 @@ public:
 		static Variable minWaitTimeVar = getField_minWaitTime();
 		static Variable maxWaitTimeVar = getField_maxWaitTime();
 		static Variable maxSpeedVar = getField_maxSpeed();
-		static Variable accelerationVar = getField_acceleration();
-		static Variable deaccelerationVar = getField_deacceleration();
-		static Variable directionSmoothTimeVar = getField_directionSmoothTime();
 
 		return { &isActiveVar, &isFleeingVar, &detectionRadiusVar, &playerDetectionRadiusVar, &avoidanceRadiusVar,
 				 &agentColliderSizeVar, &fleeAngleVar, &continueFleeTimeVar, &minMoveTimeVar,
-				 &maxMoveTimeVar, &minWaitTimeVar, &maxWaitTimeVar, &maxSpeedVar,
-				 &accelerationVar, &deaccelerationVar, &directionSmoothTimeVar };
+				 &maxMoveTimeVar, &minWaitTimeVar, &maxWaitTimeVar, &maxSpeedVar };
     }
 
 private:

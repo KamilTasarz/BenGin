@@ -32,16 +32,36 @@ void NPC::onStart() {
     // Inicjalizacja, np. znalezienie gracza w scenie
     // player = owner->scene_graph->findNodeByTag("Player");
 
+    startPos = owner->transform.getGlobalPosition();
     rb = owner->getComponent<Rigidbody>();
-	rb->smoothingFactor = 5.f;
+	rb->smoothingFactor = .02f;
+	rb->drag = 1.5f;
     obstacleLayer = { "Wall", "Floor", "Door" };
+
+    agentColliderSize = (owner->AABB->max_point_world.y - owner->AABB->min_point_world.y) / 2.f;
+
+	spinnerLeft = owner->getChildByNamePart("wing_left");
+	spinnerRight = owner->getChildByNamePart("wing_right");
 }
 
 void NPC::onUpdate(float deltaTime) {
-    //std::cout << "NPC " << owner->getName() << " is active: " << isActive << std::endl;
-    
+    if (spinnerLeft && spinnerRight) {
+        glm::quat currentRotation = spinnerLeft->transform.getLocalRotation();
+        float rotationAnlge = 25.f * deltaTime;
+        currentRotation = glm::rotate(currentRotation, rotationAnlge, glm::vec3(0.f, 0.f, 1.f));
+        spinnerLeft->transform.setLocalRotation(currentRotation);
+        spinnerRight->transform.setLocalRotation(-currentRotation);
+    }
+
+    if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
+        isActive = true;
+        owner->setPhysic(true);
+        owner->getComponent<Rigidbody>()->is_static = false;
+        isCatched = false;
+    }
+
     if (!isActive) return;
-    
+
     danger.fill(0.f);
     interest.fill(0.f);
 
@@ -59,8 +79,8 @@ void NPC::onCollision(Node* other)
     if (other->getTagName() == "Player") {
         isActive = false;
         owner->setPhysic(false);
-
         owner->getComponent<Rigidbody>()->is_static = true;
+        isCatched = true;
     }
 }
 
@@ -225,55 +245,76 @@ void NPC::getSteering(float deltaTime) {
             wanderState = WanderState::Moving;
             currentWanderDuration = minMoveTime + static_cast<float>(rand()) / RAND_MAX * (maxMoveTime - minMoveTime);
             wanderTimer = currentWanderDuration;
-            currentWanderDirectionIndex[0] = rand() % eightDirections.size();
-            currentWanderDirectionIndex[1] = rand() % eightDirections.size();
+
+            // --- NOWA, M¥DRZEJSZA LOGIKA ---
+            std::vector<int> safeDirections;
+            for (size_t i = 0; i < danger.size(); ++i) {
+                // Wybierz kierunki, w których zagro¿enie jest minimalne
+                if (danger[i] < 0.1f) {
+                    safeDirections.push_back(i);
+                }
+            }
+
+            if (!safeDirections.empty()) {
+                // Losuj kierunek tylko spoœród bezpiecznych opcji
+                int randomIndex = rand() % safeDirections.size();
+                currentWanderDirectionIndex[0] = safeDirections[randomIndex];
+                // Mo¿esz wylosowaæ drugi kierunek dla bardziej zró¿nicowanego ruchu
+                currentWanderDirectionIndex[1] = -1; // lub powtórzyæ logikê
+            }
+            else {
+                // Jeœli nie ma bezpiecznych kierunków (bardzo ma³o prawdopodobne),
+                // wybierz kierunek o najmniejszym zagro¿eniu lub ka¿ NPC siê obróciæ.
+                // Na przyk³ad, znajdŸ kierunek z najmniejsz¹ wartoœci¹ w 'danger'.
+                auto minIt = std::min_element(danger.begin(), danger.end());
+                currentWanderDirectionIndex[0] = std::distance(danger.begin(), minIt);
+                currentWanderDirectionIndex[1] = -1;
+            }
         }
     }
 }
 
 glm::vec2 NPC::getMoveDirection() {
+    // 1. Oblicz wektor celu (na podstawie 'interest')
+    glm::vec2 goalVector(0.f);
+    float totalInterest = 0.f;
     for (size_t i = 0; i < interest.size(); ++i) {
-        interest[i] = std::clamp(interest[i] - danger[i], 0.f, 1.f);
+        if (danger[i] < 0.1f) interest[i] += 0.5f;
+        if (danger[i] < 0.25f && interest[i] < 0.1f) interest[i] += 0.5f;
 
-        if (danger[i] < 0.1f) interest[i] += 0.2f;
-        if (danger[i] < 0.25f && interest[i] < 0.1f) interest[i] += 0.3f;
+        goalVector += eightDirections[i] * interest[i];
+        totalInterest += interest[i];
+    }
+    if (totalInterest > 0) {
+        goalVector /= totalInterest;
     }
 
-    glm::vec2 output{ 0.f, 0.f };
-    for (size_t i = 0; i < interest.size(); ++i)
-        output += eightDirections[i] * interest[i];
+    glm::vec2 avoidanceVector(0.f);
+    for (size_t i = 0; i < danger.size(); ++i) {
+        avoidanceVector -= eightDirections[i] * danger[i];
+    }
 
-	//std::cout << "NPC " << owner->getName() << " kierunek ruchu: " << output.x << ", " << output.y << std::endl;
+    float avoidanceWeight = 1.5f;
+    float goalWeight = 1.5f;
 
-    return output == glm::vec2(0.f) ? glm::vec2(0.f) : glm::normalize(output);
+    glm::vec2 finalDirection = goalVector * goalWeight + avoidanceVector * avoidanceWeight;
+
+    return finalDirection == glm::vec2(0.f) ? glm::vec2(0.f) : glm::normalize(finalDirection);
 }
 
 void NPC::move(const glm::vec2& direction, float deltaTime) {
-    bool hasDirection = direction.x != 0.f || direction.y != 0.f;
-
-	if (!hasDirection) {
-		return;
-	}
-
     if (!rb) return;
 
-    float velocityX = glm::clamp(direction.x, -maxSpeed, maxSpeed);
-    float velocityY = glm::clamp(direction.y, -maxSpeed, maxSpeed);
-
-    float speed = maxSpeed;
+    float currentSpeed = maxSpeed;
     if (isWandering) {
-        speed *= 0.4f;
+        currentSpeed *= 0.4f;
     }
 
-    // Ustaw celow¹ prêdkoœæ na osi X
-    rb->targetVelocityX = velocityX * speed;
+    rb->targetVelocityX = direction.x * currentSpeed;
+    rb->targetVelocityY = direction.y * currentSpeed;
 
-    // Ustaw celow¹ prêdkoœæ na osi Y (jeœli NPC mo¿e siê poruszaæ pionowo)
-    rb->targetVelocityY = velocityY * speed;
-
-    // Informujemy Rigidbody, ¿e ma nadpisaæ domyœlne velocity
-    rb->overrideVelocityX = true;
-    rb->overrideVelocityY = true;
+	rb->overrideVelocityX = true;
+	rb->overrideVelocityY = true;
 }
 
 glm::vec3 NPC::getClosestPointOnAABB(const glm::vec3& point, const glm::vec3& boxCenter, const glm::vec3& boxHalfExtents) {

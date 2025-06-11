@@ -22,10 +22,12 @@ void RotateObject::onStart()
 
 void RotateObject::onUpdate(float deltaTime)
 {
+	if (stopRotation) return;
+
 	glm::quat rotation = owner->transform.getLocalRotation();
 
 	float rotationAngle = rotationSpeed * deltaTime;
-	rotation = glm::rotate(rotation, rotationAngle, glm::vec3(0.f, 1.f, 0.f));
+	rotation = glm::rotate(rotation, rotationAngle, glm::vec3(rotateX, rotateY, rotateZ));
 
 	owner->transform.setLocalRotation(rotation);
 }

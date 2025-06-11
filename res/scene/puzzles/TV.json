@@ -1,0 +1,356 @@
+{
+    "children": [
+        {
+            "AABB_logic_max": {
+                "x": 0.8804694414138794,
+                "y": 0.525274932384491,
+                "z": 1.5136229991912842
+            },
+            "AABB_logic_min": {
+                "x": -0.8860781788825989,
+                "y": -0.23966972529888153,
+                "z": -0.5027202367782593
+            },
+            "AABB_max": {
+                "x": 0.8804694414138794,
+                "y": 0.525274932384491,
+                "z": 1.5182065963745117
+            },
+            "AABB_min": {
+                "x": -0.8860781788825989,
+                "y": -0.23966972529888153,
+                "z": -0.5027202367782593
+            },
+            "children": [
+                {
+                    "id": 0,
+                    "is_logic_active": false,
+                    "is_physic_active": false,
+                    "is_visible": true,
+                    "layer": "Default",
+                    "model.id": 56,
+                    "name": "wing_right",
+                    "no_textures": false,
+                    "position": {
+                        "x": 0.8497737646102905,
+                        "y": 0.12868447601795197,
+                        "z": 1.4457775354385376
+                    },
+                    "rotation": {
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "tag": "Default",
+                    "type": "Node"
+                },
+                {
+                    "id": 0,
+                    "is_logic_active": false,
+                    "is_physic_active": false,
+                    "is_visible": true,
+                    "layer": "Default",
+                    "model.id": 55,
+                    "name": "wing_left",
+                    "no_textures": false,
+                    "position": {
+                        "x": -0.8485223054885864,
+                        "y": 0.13927492499351501,
+                        "z": 1.4420653581619263
+                    },
+                    "rotation": {
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "tag": "Default",
+                    "type": "Node"
+                }
+            ],
+            "components": [
+                {
+                    "name": "NPC",
+                    "variables": [
+                        {
+                            "field_type": "bool",
+                            "name": "isActive",
+                            "value": true
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "isFleeing",
+                            "value": true
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "detectionRadius",
+                            "value": 10.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "playerDetectionRadius",
+                            "value": 6.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "avoidanceRadius",
+                            "value": 3.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "agentColliderSize",
+                            "value": 3.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "fleeAngle",
+                            "value": 135.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "continueFleeTime",
+                            "value": 0.5
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "minMoveTime",
+                            "value": 0.5
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "maxMoveTime",
+                            "value": 1.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "minWaitTime",
+                            "value": 0.5
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "maxWaitTime",
+                            "value": 2.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "maxSpeed",
+                            "value": 6.0
+                        }
+                    ]
+                },
+                {
+                    "name": "Rigidbody",
+                    "properties": {
+                        "gravity": 0.0,
+                        "is_static": false,
+                        "lockPositionX": false,
+                        "lockPositionY": false,
+                        "lockPositionZ": false,
+                        "mass": 1.0
+                    }
+                }
+            ],
+            "id": 0,
+            "is_logic_active": false,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 54,
+            "name": "body",
+            "no_textures": false,
+            "position": {
+                "x": 0.0,
+                "y": -0.5,
+                "z": -2.980232594040899e-08
+            },
+            "rotation": {
+                "w": 0.7071067690849304,
+                "x": -0.7071067690849304,
+                "y": -0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.5,
+                "y": 1.5,
+                "z": 1.5
+            },
+            "tag": "Default",
+            "type": "Node"
+        },
+        {
+            "children": [
+                {
+                    "AABB_logic_max": {
+                        "x": 0.2106878161430359,
+                        "y": 0.36135903000831604,
+                        "z": 0.3344469666481018
+                    },
+                    "AABB_logic_min": {
+                        "x": -0.47471874952316284,
+                        "y": -0.39547330141067505,
+                        "z": -0.3349308967590332
+                    },
+                    "components": [
+                        {
+                            "name": "Virus",
+                            "variables": [
+                                {
+                                    "field_type": "bool",
+                                    "name": "blue",
+                                    "value": false
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "green",
+                                    "value": true
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "black",
+                                    "value": false
+                                }
+                            ]
+                        },
+                        {
+                            "name": "RotateObject",
+                            "variables": [
+                                {
+                                    "field_type": "float",
+                                    "name": "rotationSpeed",
+                                    "value": -1.0
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "rotateX",
+                                    "value": false
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "rotateY",
+                                    "value": false
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "rotateZ",
+                                    "value": false
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "stopRotation",
+                                    "value": false
+                                }
+                            ]
+                        }
+                    ],
+                    "id": 0,
+                    "is_logic_active": true,
+                    "is_physic_active": false,
+                    "is_visible": true,
+                    "layer": "Default",
+                    "model.id": 23,
+                    "name": "Green_cheese_new_gouda",
+                    "no_textures": false,
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotation": {
+                        "w": 0.7071067690849304,
+                        "x": -0.7071067690849304,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "tag": "Default",
+                    "type": "Node"
+                }
+            ],
+            "id": 0,
+            "is_logic_active": false,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": -1,
+            "name": "Green_cheese_new_Green_cheese",
+            "no_textures": true,
+            "position": {
+                "x": 0.06689158082008362,
+                "y": -1.1622369289398193,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.5,
+                "y": 1.5,
+                "z": 1.5
+            },
+            "tag": "Default",
+            "type": "Node"
+        }
+    ],
+    "components": [
+        {
+            "name": "TVManager",
+            "variables": [
+                {
+                    "field_type": "Node*",
+                    "name": "tv",
+                    "value": "body"
+                },
+                {
+                    "field_type": "Node*",
+                    "name": "cheese",
+                    "value": "Green_cheese_new_gouda"
+                }
+            ]
+        }
+    ],
+    "id": 0,
+    "is_logic_active": false,
+    "is_physic_active": true,
+    "is_visible": true,
+    "layer": "Default",
+    "model.id": -1,
+    "name": "TV",
+    "no_textures": true,
+    "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotation": {
+        "w": 1.0,
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.5
+    },
+    "tag": "Default",
+    "type": "Node"
+}
