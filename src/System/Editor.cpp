@@ -1873,6 +1873,8 @@ void Editor::init()
     int fbWidth = previewWidth;
     int fbHeight = previewHeight;
 
+    camera->FarPlane = 100.f;
+
     glfwSwapInterval(0); // Ustawienie V-Sync w GLFW bo gra swiruje na kompie
 
     // 1. Tekstura kolorów
@@ -2222,7 +2224,7 @@ void Editor::draw() {
     glStencilMask(0x00);
 
 
-    sceneGraph->draw(previewWidth, previewHeight, framebuffer);
+    sceneGraph->draw(previewWidth, previewHeight, framebuffer, true);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
     ParticleEmitter* emitter = dynamic_cast<ParticleEmitter*>(sceneGraph->root->getChildByName("ParticleEmitter"));

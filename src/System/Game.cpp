@@ -372,6 +372,7 @@ void Game::init()
 	sceneGraph->is_editing = false;
 
 	camera->Pitch = 0.0f;
+	camera->FarPlane = 33.1f;
 	camera->Yaw = -90.0f;
 	camera->setPosition(glm::vec3(0.f, 0.f, 0.f));
     glm::vec3 origin = glm::vec3(0.f);

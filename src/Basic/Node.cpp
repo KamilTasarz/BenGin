@@ -25,6 +25,11 @@ using namespace std;
 
 SceneGraph::SceneGraph()
 {
+    if (!point_lights.empty())
+        last_index = point_lights.begin();
+    else
+        last_index = point_lights.end();
+
 
     root = new Node("root", 0);
     grid = new Grid();
@@ -53,6 +58,9 @@ void SceneGraph::addChild(Node* p) {
         i++;
     }*/
     root->addChild(p);
+
+    if (dynamic_cast<InstanceManager*>(p)) emitter = dynamic_cast<InstanceManager*>(p);
+
     //nodes.insert(std::pair<std::string, Node*>(p->name, p));
 }
 
@@ -172,7 +180,10 @@ void SceneGraph::setShaders() {
     setLights(ResourceManager::Instance().shader);
     ResourceManager::Instance().shader->setMat4("projection", projection);
     ResourceManager::Instance().shader->setMat4("view", view);
-    ResourceManager::Instance().shader->setInt("point_light_number", point_light_number);
+
+    if (active_point_lights >= 16) ResourceManager::Instance().shader->setInt("point_light_number", 16);
+    else ResourceManager::Instance().shader->setInt("point_light_number", active_point_lights);
+
     ResourceManager::Instance().shader->setInt("directional_light_number", directional_light_number);
     ResourceManager::Instance().shader->setFloat("far_plane", 10.f);
     
@@ -180,10 +191,11 @@ void SceneGraph::setShaders() {
     setLights(ResourceManager::Instance().shader_tile);
     ResourceManager::Instance().shader_tile->setMat4("projection", projection);
     ResourceManager::Instance().shader_tile->setMat4("view", view);
-    ResourceManager::Instance().shader_tile->setInt("point_light_number", point_light_number);
+    if (active_point_lights >= 16) ResourceManager::Instance().shader_tile->setInt("point_light_number", 16);
+    else  ResourceManager::Instance().shader_tile->setInt("point_light_number", active_point_lights);
     ResourceManager::Instance().shader_tile->setInt("directional_light_number", directional_light_number);
     ResourceManager::Instance().shader_tile->setFloat("far_plane", 10.f);
-
+    
     ResourceManager::Instance().shader_instanced->use();
     setLights(ResourceManager::Instance().shader_instanced);
     ResourceManager::Instance().shader_instanced->setMat4("projection", projection);
@@ -193,17 +205,15 @@ void SceneGraph::setShaders() {
     ResourceManager::Instance().shader_instanced->setFloat("scaleFactor", 0.2f);
     ResourceManager::Instance().shader_instanced->setInt("point_light_number", point_light_number);
     ResourceManager::Instance().shader_instanced->setInt("directional_light_number", directional_light_number);
-    ResourceManager::Instance().shader_instanced->setFloat("far_plane", 30.f);
 
     ResourceManager::Instance().shader_outline->use();
     ResourceManager::Instance().shader_outline->setMat4("projection", projection);
     ResourceManager::Instance().shader_outline->setMat4("view", view);
     ResourceManager::Instance().shader_outline->setInt("point_light_number", point_light_number);
     ResourceManager::Instance().shader_outline->setInt("directional_light_number", directional_light_number);
-    ResourceManager::Instance().shader_outline->setFloat("far_plane", 30.f);
 }
 
-void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
+void SceneGraph::draw(float width, float height, unsigned int framebuffer, bool is_editor) {
 
     
 
@@ -215,17 +225,42 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
             //glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
     }
+    int updated_this_frame = 0;
+    int checked = 0;
+    int total_lights = point_lights.size();
 
-	for (auto& point_light : point_lights) {
-		if (point_light->is_shining) {
-            //for (int i = 0; i < 6; i++) {
+    // Upewnij się, że last_index nie jest przeterminowany
+    if (!point_lights.empty()) {
+
+        auto it = last_index;
+        if (it == point_lights.end()) it = point_lights.begin(); // reset przy końcu listy
+
+        while (updated_this_frame < limit_per_frame && checked < total_lights) {
+            if (it == point_lights.end()) it = point_lights.begin(); // zawijanie listy
+
+            auto& point_light = *it;
+
+            if (point_light->is_shining && point_light->in_frustrum) {
                 point_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow, 0);
-                //root->drawShadows(*ResourceManager::Instance().shader_shadow);
-                RenderSystem::Instance().renderShadows();
-                //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            //}
-		}
-	}
+
+                if (is_editor) {
+                    root->drawShadows(*ResourceManager::Instance().shader_shadow);
+                }
+                else {
+                    RenderSystem::Instance().renderShadows();
+                }
+
+                updated_this_frame++;
+            }
+
+            ++it;
+            ++checked;
+        }
+
+        // Zaktualizuj last_index
+        last_index = it;
+
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
@@ -244,8 +279,13 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer) {
 
     setShaders();
     
-    //root->drawSelfAndChild();
-    RenderSystem::Instance().render();
+    if (is_editor) {
+        root->drawSelfAndChild();
+    }
+    else {
+        RenderSystem::Instance().render();
+        emitter->drawSelfAndChild();
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -289,6 +329,7 @@ void SceneGraph::setLights(Shader* shader) {
 
     shader->setVec3("cameraPosition", camera->cameraPos);
     int i = 0;
+
     for (auto& point_light : point_lights) {
         if (point_light->in_frustrum) {
             string index = to_string(i);
@@ -308,13 +349,20 @@ void SceneGraph::setLights(Shader* shader) {
                 shader->setVec3("point_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
             }
 			
-            glActiveTexture(GL_TEXTURE8);
+            glActiveTexture(GL_TEXTURE8 + i);
             glBindTexture(GL_TEXTURE_CUBE_MAP, point_light->depthCubemap);
-            shader->setInt("shadow_maps[0]", 8);
             i++;
         }
 		if (i >= 16) break; // Limit 16 swiatel we frustum
     }
+    active_point_lights = i;
+    GLint loc = glGetUniformLocation(shader->ID, "shadow_maps");
+    GLint samplers[16];
+    for (int j = 0; j < 16; ++j) {
+        samplers[j] = 8 + j;
+    }
+    glUniform1iv(loc, 16, samplers);
+
     i = 0;
     for (auto& dir_light : directional_lights) {
         string index = to_string(i);
@@ -1764,6 +1812,8 @@ Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph, bool lig
 		new_light->scene_graph = scene_graph;
 		new_light->transform.setLocalPosition(light->transform.getGlobalPosition());
 		new_light->transform.computeModelMatrix();
+		new_light->is_physic_active = light->is_physic_active;
+		new_light->is_logic_active = light->is_logic_active;
 		//scene_graph->addPointLight(new_light);
         scene_graph->point_lights.push_back(new_light);
         scene_graph->point_light_number++;

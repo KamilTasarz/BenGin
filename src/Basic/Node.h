@@ -529,11 +529,16 @@ public:
 	Node* to_delete = nullptr;
     std::vector<Node*> to_delete_vec;
 
-    int size = 0, point_light_number = 0, directional_light_number = 0;
+    int size = 0, point_light_number = 0, directional_light_number = 0, active_point_lights = 0;
     std::list<DirectionalLight*> directional_lights;
     std::list<PointLight*> point_lights;
 
+    int limit_per_frame = 2;
+    std::list<PointLight*>::iterator last_index;
+
 	Grid* grid = nullptr;
+
+    InstanceManager* emitter;
 
     unsigned int depthMapFBO;
 
@@ -562,7 +567,7 @@ public:
     void addPointLight(PointLight* p, std::string name);
     void addDirectionalLight(DirectionalLight* p, std::string name);
     void setShaders();
-    void draw(float width, float height, unsigned int framebuffer);
+    void draw(float width, float height, unsigned int framebuffer, bool is_editor = false);
     void drawMarkedObject();
     void addParticleEmitter(ParticleEmitter* p);
     void update(float delta_time);

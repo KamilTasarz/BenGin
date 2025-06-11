@@ -1,4 +1,4 @@
-#version 330 core
+﻿#version 330 core
 
 in VS_OUT {
 	vec3 Pos;
@@ -17,7 +17,6 @@ struct PointLight {
 
 	vec3 position, ambient, diffuse, specular;
 	float constant, linear, quadratic;
-
 };
 
 struct DirectionLight {
@@ -39,6 +38,8 @@ uniform int is_light;
 uniform int point_light_number;
 uniform int directional_light_number;
 
+uniform sampler2D shadow_map1;
+uniform samplerCube shadow_maps[16];
 uniform PointLight point_lights[16];
 uniform DirectionLight directional_lights[1];
 
@@ -47,8 +48,7 @@ uniform float far_plane;
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
-uniform sampler2D shadow_map1;
-uniform samplerCube shadow_maps[16];
+
 
 uniform vec3 cameraPosition;
 
@@ -71,26 +71,22 @@ void main() {
         vec3 viewDir = normalize(cameraPosition - fs_in.Pos);
 	    mat3 res = mat3(0.f);
         for (int i = 0; i < point_light_number; i++) {
-            res += calculatePointLight(viewDir, point_lights[i]);
+            mat3 p = calculatePointLight(viewDir, point_lights[i]);
+            float visibility = calculateShadowPointLight(point_lights[i], shadow_maps[i]);
+            res[0] += p[0]; // ambient
+            res[1] += p[1] * (1-visibility); // diffuse
+            res[2] += p[2] * (1-visibility); // specular
         }
         for (int i = 0; i < directional_light_number; i++) {
-            //res += calculateDirectionalLight(viewDir, directional_lights[i]);
+            res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
 
-        
-
-        float shadow = 0.f;//= calculateShadow(fs_in.Light_Perspective_Pos, shadow_map1);
-
-        //for (int i = 0; i < point_light_number; i++) {
-            //shadow += calculateShadowPointLight(point_lights[i], shadow_maps[i]);
-        //}
-
-        shadow = calculateShadowPointLight(point_lights[0], shadow_maps[0]);
-
-        //shadow = clamp(shadow, 0.f, 1.f);
 
 
-        vec3 finalColor = (res[0] + (res[1] + res[2]) * (1.f - shadow));
+        //shadow = shadow / float(point_light_number);
+
+        vec3 finalColor = (res[0] + (res[1] + res[2]));
+
         FragColor = vec4(finalColor, 1.0);
     } else {
         FragColor = vec4(1.f);
@@ -157,12 +153,14 @@ float calculateShadow(vec4 position_from_light_perpective, sampler2D map) {
 
 float calculateShadowPointLight(PointLight p, samplerCube map)
 {
+    //if (useShadows == 0) return 0.0;
+
     vec3 fragToLight = (fs_in.Pos - p.position);
     float currentDepth = length(fragToLight);
-    //fragToLight = normalize(fragToLight);
+    fragToLight = normalize(fragToLight);
 
     float closestDepth = texture(map, fragToLight).r * far_plane;
-    
+
     float bias = 0.05f;
     float shadow = currentDepth - bias > closestDepth ? 1.0f : 0.0f;
 
