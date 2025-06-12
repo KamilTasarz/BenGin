@@ -13,7 +13,7 @@ struct RenderObject {
 	std::shared_ptr<Model> model;
 	glm::mat4 modelMatrix;
 	Animator* animator;
-	
+	float tile_scale = 1.f;
 };
 
 class RenderSystem

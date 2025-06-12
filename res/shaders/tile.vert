@@ -21,6 +21,7 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 uniform mat4 light_view_projection;
+uniform float tile_scale;
 
 void main()
 {
@@ -37,11 +38,11 @@ void main()
 	vec3 scale = vec3(length(model[0].xyz), length(model[1].xyz), length(model[2].xyz));
 
 	if (abs(aNormal.z) > 0.9) {
-		vs_out.Cords = aTexCord * scale.xy;
+		vs_out.Cords =  -aTexCord * scale.xy;
 	} else if (abs(aNormal.y) > 0.9) {
-		vs_out.Cords = aTexCord * scale.xz;
+		vs_out.Cords =  aTexCord * scale.xz;
 	} else {
-		vs_out.Cords = aTexCord * scale.yz;
+		vs_out.Cords = aTexCord * scale.yz ;
 	}
 	
 }

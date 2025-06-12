@@ -1962,6 +1962,8 @@ void Editor::init()
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
+    ResourceManager::Instance().shader_tile->use();
+    ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
 }
 
 void Editor::run() {

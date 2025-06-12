@@ -28,6 +28,7 @@ void RenderSystem::addTileObject(Node* obj)
 	renderObj.model = obj->pModel;
 	renderObj.modelMatrix = obj->transform.getModelMatrix();
 	renderObj.animator = nullptr; // Tile objects typically don't have animators
+	renderObj.tile_scale = obj->pModel->tile_scale;
 	tileObjects.push_back(renderObj);
 }
 
@@ -57,8 +58,10 @@ void RenderSystem::render()
 	}
 	ResourceManager::Instance().shader_tile->use();
 	ResourceManager::Instance().shader_tile->setInt("is_light", 0);
+	
 	ResourceManager::Instance().shader_tile->setInt("is_animating", 0);
 	for (const auto& obj : tileObjects) {
+		ResourceManager::Instance().shader_tile->setFloat("tile_scale", obj.tile_scale);
 		ResourceManager::Instance().shader_tile->setMat4("model", obj.modelMatrix);
 		obj.model->Draw(*ResourceManager::Instance().shader_tile);
 	}

@@ -537,8 +537,9 @@ Model::Model(string const& path, int id, bool move_origin, bool gamma) : gammaCo
     if (has_animations) loadAnimations();
 }
 
-Model::Model(std::vector<shared_ptr<Texture>>&& textures, int id, string mode) : id(id) {
+Model::Model(std::vector<shared_ptr<Texture>>&& textures, int id, string mode, float scale_factor) : id(id) {
     this->mode = mode;
+	this->tile_scale = scale_factor;
     if (mode == "cube") {
         loadCube(std::move(textures));
     }

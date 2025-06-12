@@ -195,6 +195,7 @@ void SceneGraph::setShaders() {
     else  ResourceManager::Instance().shader_tile->setInt("point_light_number", active_point_lights);
     ResourceManager::Instance().shader_tile->setInt("directional_light_number", directional_light_number);
     ResourceManager::Instance().shader_tile->setFloat("far_plane", 10.f);
+    ResourceManager::Instance().shader_tile->setFloat("tile_scale", 1.f);
     
     ResourceManager::Instance().shader_instanced->use();
     setLights(ResourceManager::Instance().shader_instanced);
@@ -827,6 +828,7 @@ void Node::drawSelfAndChild() {
         else {
 			ResourceManager::Instance().shader_tile->use();
 			ResourceManager::Instance().shader_tile->setMat4("model", transform.getModelMatrix());
+			ResourceManager::Instance().shader_tile->setFloat("tile_scale", pModel->tile_scale);
         }
         
         if (is_animating) {
