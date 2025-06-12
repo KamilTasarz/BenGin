@@ -83,7 +83,7 @@ uniform sampler2D texture_specular1;
 uniform vec3 cameraPosition;
 
 float shininess = 64.f;
-
+uniform vec4 color;
 
 void main() {
 
@@ -136,9 +136,9 @@ mat3 calculatePointLight(vec3 viewDir, PointLight light) {
     float attenuation = 1.0f / (light.quadratic * _distance * _distance + light.linear * _distance + light.constant);
 
 
-    vec3 ambient = light.ambient * vec3(getTiledTexture(texture_diffuse1, fs_in.Cords)) * attenuation;
-    vec3 diffuse = light.diffuse * diff * vec3(getTiledTexture(texture_diffuse1, fs_in.Cords)) * attenuation;
-    vec3 specular = light.specular * spec * vec3(getTiledTexture(texture_specular1, fs_in.Cords)) * attenuation;
+    vec3 ambient = light.ambient * vec3(color * getTiledTexture(texture_diffuse1, fs_in.Cords)) * attenuation;
+    vec3 diffuse = light.diffuse * diff * vec3(color * getTiledTexture(texture_diffuse1, fs_in.Cords)) * attenuation;
+    vec3 specular = light.specular * spec * vec3(color * getTiledTexture(texture_specular1, fs_in.Cords)) * attenuation;
 
     return mat3(ambient, diffuse, specular);
 }
@@ -149,9 +149,9 @@ mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light) {
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(fs_in.Normal, halfwayDir), 0.0), shininess);
 
-    vec3 ambient = light.ambient * vec3(getTiledTexture(texture_diffuse1, fs_in.Cords));
-    vec3 diffuse = light.diffuse * diff * vec3(getTiledTexture(texture_diffuse1, fs_in.Cords));
-    vec3 specular = light.specular * spec * vec3(getTiledTexture(texture_specular1, fs_in.Cords));
+    vec3 ambient = light.ambient * vec3(color * getTiledTexture(texture_diffuse1, fs_in.Cords));
+    vec3 diffuse = light.diffuse * diff * vec3(color * getTiledTexture(texture_diffuse1, fs_in.Cords));
+    vec3 specular = light.specular * spec * vec3(color * getTiledTexture(texture_specular1, fs_in.Cords));
 
     return mat3(ambient, diffuse, specular);
 }

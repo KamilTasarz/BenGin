@@ -14,6 +14,7 @@ struct RenderObject {
 	glm::mat4 modelMatrix;
 	Animator* animator;
 	float tile_scale = 1.f;
+	glm::vec4 color = { 1.f, 1.f, 1.f, 1.f }; // Default color is white
 };
 
 class RenderSystem
