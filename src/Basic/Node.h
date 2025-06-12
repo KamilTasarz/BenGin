@@ -399,7 +399,7 @@ struct ParticleGasStruct {
 class InstanceManager : public Node {
 public:
     int size = 0, current_min_id = 0;
-    float life_time = 20.f;
+    float life_time = 40.f;
     //std::vector<int> free_ids;
     int max_size = 1000;
     unsigned int buffer, buffer_offset;

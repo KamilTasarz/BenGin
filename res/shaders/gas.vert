@@ -19,11 +19,12 @@ uniform float scaleFactor;
 uniform mat4 view;
 uniform mat4 projection;
 
+
 void main() {
 	
 	if (beginTime > 0.f) { 
 
-		float life_time = 20.f;
+		float life_time = 40.f;
 
 		float time = totalTime - beginTime;
 
@@ -33,11 +34,11 @@ void main() {
 		float scale_base = 1.f;
 
 		if (time < 3.f) scale_base = time / 3.f;
-		else if (time > 17.f) scale_base = ((life_time - time) / 3.f);
+		else if (time > life_time - 3.f) scale_base = ((life_time - time) / 3.f);
 
 		float pulse = 1.f;
 
-		if (time >= 3.f && time <= 17.f) {
+		if (time >= 3.f && time <= life_time - 3.f) {
 
 			pulse = scale_base + scaleFactor * sin(beginTime + time);
 		} else {

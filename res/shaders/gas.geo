@@ -3,29 +3,41 @@
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
 
-uniform float u_time;
+uniform mat4 view;
+uniform mat4 projection;
 
-// prosta funkcja hashująca — da pseudo losowy szum
-float hash(vec3 p) {
-    return fract(sin(dot(p ,vec3(12.9898,78.233, 37.719))) * 43758.5453);
-}
+// promień "kolca"
+uniform float spike_length = 0.2;
 
-void main() {
-    for (int i = 0; i < 3; ++i) {
-        vec4 pos = gl_in[i].gl_Position;
+void main()
+{
+    vec3 center = vec3(0.0); // środek sześcianu
 
-        vec3 offsetDir = normalize(pos.xyz);
+    for (int i = 0; i < 1; i++) {
+        vec3 base = gl_in[i].gl_Position.xyz;
+        vec3 dir = normalize(base - center); // wektor normalny wychodzący z centrum
 
-        float noise = hash(pos.xyz + u_time); 
+        // znajdź 2 wektory ortogonalne do dir, np. za pomocą Gram-Schmidta
+        vec3 tangent = normalize(cross(dir, vec3(0.0, 1.0, 0.0)));
+        if (length(tangent) < 0.001)
+            tangent = normalize(cross(dir, vec3(1.0, 0.0, 0.0)));
+        vec3 bitangent = normalize(cross(dir, tangent));
 
+        float w = 0.05; // szerokość podstawy kolca
 
-        float magnitude = 0.15; // jak bardzo wypychać
-        vec3 distortion = offsetDir * (noise * magnitude);
+        // 3 punkty trójkąta
+        vec3 tip = base + dir * spike_length;
+        vec3 p1 = base + tangent * w;
+        vec3 p2 = base + bitangent * w;
 
-        vec4 displaced = vec4(pos.xyz + distortion, 1.0);
-        gl_Position = displaced;
-
+        gl_Position = projection * view * vec4(p1, 1.0);
+        EmitVertex();
+        gl_Position = projection * view * vec4(p2, 1.0);
+        EmitVertex();
+        gl_Position = projection * view * vec4(tip, 1.0);
         EmitVertex();
     }
+
+    
     EndPrimitive();
 }
