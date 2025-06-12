@@ -21,6 +21,9 @@ public:
 	VARIABLE(bool, green);
 	VARIABLE(bool, black);
 
+	bool isCollected = false;
+	Node* player = nullptr;
+
 	Virus() = default;
 	virtual ~Virus() = default;
 	void onAttach(Node* owner) override;

@@ -6,6 +6,7 @@
 #include "../../Component/CameraGlobals.h"
 #include "../CameraFollow.h"
 #include "../GameManager.h"
+#include "../../ResourceManager.h"
 
 REGISTER_SCRIPT(Virus);
 
@@ -27,15 +28,26 @@ void Virus::onStart()
 
 void Virus::onUpdate(float deltaTime)
 {
-	/*glm::vec3 position = owner->transform.getLocalPosition();
-	glm::quat rotation = owner->transform.getLocalRotation();
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS || player && player->getTagName() == "Box") {
+		isCollected = false;
+		player == nullptr;
 
-	float rotationSpeed = 1.f;
-	float rotationAngle = rotationSpeed * deltaTime;
-
-	rotation = glm::rotate(rotation, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-	
-	owner->transform.setLocalRotation(rotation);*/
+		if (blue) {
+			auto model = ResourceManager::Instance().getModel(25);
+			owner->pModel = model;
+		}
+		else if (green) {
+			auto model = ResourceManager::Instance().getModel(23);
+			owner->pModel = model;
+		}
+		else if (black) {
+			auto model = ResourceManager::Instance().getModel(24);
+			owner->pModel = model;
+		}
+		else {
+			std::cout << "Unknown virus type!" << std::endl;
+		}
+	}
 }
 
 void Virus::onEnd()
@@ -45,10 +57,16 @@ void Virus::onEnd()
 void Virus::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
-		std::cout << "Ser podniesiony - " << owner->name << std::endl;
+		//std::cout << "Ser podniesiony - " << owner->name << std::endl;
+
+		if (isCollected) return;
+
+		player = other;
 
 		auto* audio = ServiceLocator::getAudioEngine();
 		audio->PlaySFX(audio->eating, GameManager::instance->sfxVolume * 80.f);
+
+		isCollected = true;
 
 		ApplyEffect(other);
 	}
@@ -83,6 +101,9 @@ void Virus::VirusEffect(Node* target)
 		target->getComponent<Rigidbody>()->mass = 0.4f;
 		player->jumpForce *= 1.2f;
 		player->virusType = "blue";
+
+		auto model = ResourceManager::Instance().getModel(60);
+		owner->pModel = model;
 	}
 	else if (green) {
 		target->changeColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
@@ -91,6 +112,9 @@ void Virus::VirusEffect(Node* target)
 		player->isGravityFlipped = true;
 		target->getComponent<Rigidbody>()->gravity = 32.f;
 		player->virusType = "green";
+
+		auto model = ResourceManager::Instance().getModel(62);
+		owner->pModel = model;
 	}
 	else if (black) {
 		target->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -99,6 +123,9 @@ void Virus::VirusEffect(Node* target)
 		player->speed *= 0.7f;
 		player->jumpForce *= 0.8f;
 		player->virusType = "black";
+
+		auto model = ResourceManager::Instance().getModel(61);
+		owner->pModel = model;
 	}
 	else {
 		std::cout << "Unknown virus type!" << std::endl;
