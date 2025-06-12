@@ -276,7 +276,8 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer, bool 
         grid->Draw();
     }
 
-	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     setShaders();
     
@@ -824,6 +825,7 @@ void Node::drawSelfAndChild() {
         if (pModel->mode.empty()) {
             ResourceManager::Instance().shader->use();
             ResourceManager::Instance().shader->setMat4("model", transform.getModelMatrix());
+            ResourceManager::Instance().shader->setVec4("color", color);
         }
         else {
 			ResourceManager::Instance().shader_tile->use();

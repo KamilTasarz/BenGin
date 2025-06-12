@@ -48,7 +48,7 @@ uniform float far_plane;
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
-
+uniform vec4 color;
 
 uniform vec3 cameraPosition;
 
@@ -87,7 +87,7 @@ void main() {
 
         vec3 finalColor = (res[0] + (res[1] + res[2]));
 
-        FragColor = vec4(finalColor, 1.0);
+        FragColor = vec4(finalColor, color.w);
     } else {
         FragColor = vec4(1.f);
     }
@@ -106,9 +106,9 @@ mat3 calculatePointLight(vec3 viewDir, PointLight light) {
     float attenuation = 1.0f / (light.quadratic * _distance * _distance + light.linear * _distance + light.constant);
 
 
-    vec3 ambient = light.ambient * vec3(texture(texture_diffuse1, fs_in.Cords)) * attenuation;
-    vec3 diffuse = light.diffuse * diff * vec3(texture(texture_diffuse1, fs_in.Cords)) * attenuation;
-    vec3 specular = light.specular * spec * vec3(texture(texture_specular1, fs_in.Cords)) * attenuation;
+    vec3 ambient = light.ambient * vec3(color * texture(texture_diffuse1, fs_in.Cords)) * attenuation;
+    vec3 diffuse = light.diffuse * diff * vec3(color * texture(texture_diffuse1, fs_in.Cords)) * attenuation;
+    vec3 specular = light.specular * spec * vec3(color * texture(texture_specular1, fs_in.Cords)) * attenuation;
 
     return mat3(ambient, diffuse, specular);
 }
@@ -119,9 +119,9 @@ mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light) {
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(fs_in.Normal, halfwayDir), 0.0), shininess);
 
-    vec3 ambient = light.ambient * vec3(texture(texture_diffuse1, fs_in.Cords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(texture_diffuse1, fs_in.Cords));
-    vec3 specular = light.specular * spec * vec3(texture(texture_specular1, fs_in.Cords));
+    vec3 ambient = light.ambient * vec3(color * texture(texture_diffuse1, fs_in.Cords));
+    vec3 diffuse = light.diffuse * diff * vec3(color * texture(texture_diffuse1, fs_in.Cords));
+    vec3 specular = light.specular * spec * vec3(color * texture(texture_specular1, fs_in.Cords));
 
     return mat3(ambient, diffuse, specular);
 }
