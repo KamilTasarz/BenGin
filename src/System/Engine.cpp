@@ -13,7 +13,7 @@
 
 void Engine::init()
 {
-	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Beta Version 1.2.0");
+	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "LABORATORUN");
 	ServiceLocator::provide(window);
 	
 	audio = new CAudioEngine();
@@ -33,7 +33,7 @@ void Engine::init()
 	game = new Game(prefabs, prefabs_puzzle);
 	//game->init();
 
-	editor = new Editor(prefabs, prefabs_puzzle);
+	//editor = new Editor(prefabs, prefabs_puzzle);
 	//editor->init();
 
 	camera->setAABB();
@@ -41,18 +41,11 @@ void Engine::init()
 
 void Engine::run()
 {
-	do {
-		editor->play = false;
-		editor->init();
-		editor->run();
-		editor->shutdown();
-		
-		game->play = true;
-		if (!engine_work) break;
-		game->init();
-		game->run();
-		game->shutdown();
-	} while (engine_work);
+			
+	game->init();
+	game->run();
+	game->shutdown();
+	
 }
 
 void Engine::shutdown()
@@ -65,6 +58,5 @@ void Engine::shutdown()
 
 	ServiceLocator::shutdownServices();
 
-	delete editor;
 	delete game;
 }
