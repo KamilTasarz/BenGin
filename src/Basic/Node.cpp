@@ -831,6 +831,7 @@ void Node::drawSelfAndChild() {
 			ResourceManager::Instance().shader_tile->use();
 			ResourceManager::Instance().shader_tile->setMat4("model", transform.getModelMatrix());
 			ResourceManager::Instance().shader_tile->setFloat("tile_scale", pModel->tile_scale);
+            ResourceManager::Instance().shader_tile->setVec4("color", color);
         }
         
         if (is_animating) {
