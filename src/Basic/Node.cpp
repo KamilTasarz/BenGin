@@ -185,7 +185,7 @@ void SceneGraph::setShaders() {
     else ResourceManager::Instance().shader->setInt("point_light_number", active_point_lights);
 
     ResourceManager::Instance().shader->setInt("directional_light_number", directional_light_number);
-    ResourceManager::Instance().shader->setFloat("far_plane", 10.f);
+    ResourceManager::Instance().shader->setFloat("far_plane", 20.f);
     
     ResourceManager::Instance().shader_tile->use();
     setLights(ResourceManager::Instance().shader_tile);
@@ -194,7 +194,7 @@ void SceneGraph::setShaders() {
     if (active_point_lights >= 16) ResourceManager::Instance().shader_tile->setInt("point_light_number", 16);
     else  ResourceManager::Instance().shader_tile->setInt("point_light_number", active_point_lights);
     ResourceManager::Instance().shader_tile->setInt("directional_light_number", directional_light_number);
-    ResourceManager::Instance().shader_tile->setFloat("far_plane", 10.f);
+    ResourceManager::Instance().shader_tile->setFloat("far_plane", 20.f);
     ResourceManager::Instance().shader_tile->setFloat("tile_scale", 1.f);
     
     ResourceManager::Instance().shader_instanced->use();
@@ -1787,7 +1787,7 @@ void PointLight::render(unsigned int depthMapFBO, Shader& shader, int index)
     shader.setMat4("shadowMatrices[5]", shadowTransforms[5]);
 	glm::vec3 lightPos = transform.getGlobalPosition();
     shader.setVec3("lightPos", lightPos);
-    shader.setFloat("far_plane", 10.f);
+    shader.setFloat("far_plane", 20.f);
 
 }
 
@@ -1797,7 +1797,7 @@ void PointLight::updateMatrix()
     
     glm::vec3 lightPos = transform.getGlobalPosition();
     
-    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.f);
+    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 20.f);
     shadowTransforms.clear();
     shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0))); // +X
     shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0))); // -X
