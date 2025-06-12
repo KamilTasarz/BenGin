@@ -27,6 +27,9 @@ void Box::onStart()
 
 void Box::onUpdate(float deltaTime)
 {
+	glm::vec3 pos = owner->transform.getGlobalPosition();
+	std::cout << "Box::onUpdate::" << owner->name << "pozycja: " << pos.x  << ", " << pos.y << ", " << pos.z << std::endl;
+
 	if (sfxId != -1 && rb && abs(rb->velocityX) <= 0.1f) {
 		auto* audio = ServiceLocator::getAudioEngine();
 		audio->pauseSound(sfxId);
