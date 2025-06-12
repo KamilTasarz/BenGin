@@ -42,7 +42,7 @@ private:
 
         shader = new Shader(vertexPath, fragmentPath);
         shader_line = new Shader(vertexPath_line, fragmentPath_line, geometryPath_line);
-        shader_tile = new Shader(vertexPath_tile, fragmentPath);
+        shader_tile = new Shader(vertexPath_tile, fragmentPath_tile);
         shader_instanced = new Shader(vertexPath_gas, fragmentPath_gas);
         shader_instanced_outline = new Shader(vertexPath_instanced, fragmentPath_outline);
         shader_outline = new Shader(vertexPath, fragmentPath_outline);
@@ -98,6 +98,7 @@ private:
     const char* vertexPath_tile = "res/shaders/tile.vert";
     const char* vertexPath_instanced = "res/shaders/instanced.vert";
     const char* fragmentPath = "res/shaders/basic.frag";
+    const char* fragmentPath_tile = "res/shaders/tile.frag";
     const char* vertexPath_shadow = "res/shaders/shadow.vert";
     const char* geoPath_shadow = "res/shaders/shadow.geo";
     const char* fragmentPath_shadow = "res/shaders/shadow.frag";

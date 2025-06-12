@@ -566,6 +566,8 @@ void Game::init()
 	PhysicsSystem::instance().colliders_RigidBody.clear();  
 	PhysicsSystem::instance().rooms.clear();  
 
+	ResourceManager::Instance().shader_tile->use();
+	ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
 }
 void Game::run()
 {

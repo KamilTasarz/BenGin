@@ -83,6 +83,9 @@ public:
     string directory;
     string exact_path;
     string mode = "";
+
+    float tile_scale = 1.f;
+
     bool gammaCorrection, has_animations = false, move_origin;
     std::vector<Animation*> animations;
 
@@ -98,7 +101,7 @@ public:
     // constructor, expects a filepath to a 3D model.
     Model(string const& path, int id, bool move_origin = true, bool gamma = false);
 
-    Model(std::vector<shared_ptr<Texture>>&& textures, int id, string mode = "cube");
+    Model(std::vector<shared_ptr<Texture>>&& textures, int id, string mode = "cube", float scale_factor = 1.f);
 
     ~Model();
 
