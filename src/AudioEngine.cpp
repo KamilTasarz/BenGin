@@ -415,4 +415,5 @@ void CAudioEngine::loadAllGameSounds() {
 	LoadSound(death_spikes, false, false, false);
 	LoadSound(running, false, true, false);
 	LoadSound(eating, false, false, false);
+	LoadSound(writing, false, false, false);
 }
