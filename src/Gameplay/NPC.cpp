@@ -5,6 +5,7 @@
 #include "../Basic/Node.h"
 #include <algorithm>
 #include <cmath>
+#include "GameManager.h"
 
 REGISTER_SCRIPT(NPC);
 
@@ -42,6 +43,11 @@ void NPC::onStart() {
 
 	spinnerLeft = owner->getChildByNamePart("wing_left");
 	spinnerRight = owner->getChildByNamePart("wing_right");
+
+	glm::vec3 pos = owner->transform.getGlobalPosition();
+    auto* audio = ServiceLocator::getAudioEngine();
+    sfxId = audio->PlayMusic(audio->propeller, /*GameManager::instance->sfxVolume **/ 75.f, pos);
+	audio->SetChannel3dMinMaxDistance(sfxId, 1.0f, 16.0f);
 }
 
 void NPC::onUpdate(float deltaTime) {
@@ -59,6 +65,9 @@ void NPC::onUpdate(float deltaTime) {
         owner->getComponent<Rigidbody>()->is_static = false;
         isCatched = false;
     }
+
+    auto* audio = ServiceLocator::getAudioEngine();
+    audio->SetChannel3dPosition(sfxId, owner->transform.getGlobalPosition());
 
     if (!isActive) return;
 

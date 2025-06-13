@@ -68,6 +68,7 @@ public:
 	std::string running = "res/audios/sounds/running.mp3";
 	std::string eating = "res/audios/sounds/wpierdalanie_sera.mp3";
 	std::string writing = "res/audios/sounds/writing.mp3";
+	std::string propeller = "res/audios/sounds/tv_propeller.mp3";
 
 
     static void Init();

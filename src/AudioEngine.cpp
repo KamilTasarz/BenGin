@@ -416,4 +416,5 @@ void CAudioEngine::loadAllGameSounds() {
 	LoadSound(running, false, true, false);
 	LoadSound(eating, false, false, false);
 	LoadSound(writing, false, false, false);
+	LoadSound(propeller, true, true, false);
 }
