@@ -21,45 +21,40 @@ uniform mat4 projection;
 
 
 void main() {
+	
 	if (beginTime > 0.f) { 
 
-		float instancePhase = length(aOffset.xy) * 10.0; 
+		float life_time = 40.0;
 
-		float life_time = 40.f;
-		float time = totalTime - (beginTime + instancePhase);
 
-		Color = vec4(
-			0.2f,
-			0.9f - 0.1f * pow(sin((beginTime / 3.14f + time / 4.f)), 2),
-			0.2f,
-			0.6f + 0.4f * pow(sin((beginTime + time / 2.f)), 2)
-		);
+		float time = totalTime - beginTime;
 
-		float scale_base = 1.0f;
+		float alpha = clamp(time, 0.0, 1.0);
+		Color = vec4(0.2f, 0.9f - 0.1f * pow(sin((beginTime / 3.14f + time / 4.f)), 2), 0.2f, 0.6f + 0.4 * pow(sin((beginTime + time / 2.f)), 2));
 
-		// Płynne pojawianie się i znikanie
-		if (time < 3.f) {
-			scale_base = smoothstep(0.0, 3.0, time);
-		} else if (time > life_time - 3.f) {
-			scale_base = smoothstep(life_time, life_time - 3.0, time);
-		}
+		float scale_base = 0.9;
 
-		// Pulsowanie po fazie pojawiania się
-		float pulse = scale_base;
+		if (time < 3.0) scale_base = 0.9 * time / (3.0);
+		else if (time > life_time - (3.0)) scale_base = 0.9 * ((life_time - time) / (3.0 ));
+
+		float pulse = 1.f;
 
 		
 
-		if (time >= 3.f && time <= life_time - 3.f) {
-			float localTime = time - 3.0; // startuje od 0 dla płynności
-			pulse += 0.15f * sin(localTime * 2.0 + instancePhase);
+		if (time >= (3.0) && time <= life_time - (3.0)) {
+			time = time - 3.0; // przesunięcie czasu o 3 sekundy
+			pulse = scale_base + 0.15 * sin(time * 2.0);
+		} else {
+			pulse = scale_base;
 		}
-
 		vec3 local = aPos * pulse;
 		vec4 worldPos = vec4(local + aOffset, 1.0);
-		gl_Position = projection * view * worldPos;
 
+		//vec3 scaledPos = aPos * scale;
+		//Position = vec3(aModel * vec4(scaledPos, 1.0));
+		gl_Position = projection * view * worldPos;
 	} else {
 		gl_Position = vec4(0.f);
 	}
-}
 
+}
