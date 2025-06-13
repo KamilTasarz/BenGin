@@ -20,7 +20,7 @@ void ShowText::onDetach()
 
 void ShowText::onStart()
 {
-	text = "Escape from the gas!";
+	//text = "Escape from the gas!";
 	
 	textObject = GuiManager::Instance().findText(9);
 	if (!textObject) {
@@ -29,27 +29,43 @@ void ShowText::onStart()
 	}
 
 	//textObject->setActive(false);
-	textChars.clear();
+	//textChars.clear();
 
-	for (char c : text) {
-		textChars.push_back(c);
-	}
+	//for (char c : text) {
+	//	textChars.push_back(c);
+	//}
 
-	textObject->value = "";
+	//textObject->value = "";
+
 	isWriting = false;
 }
 
 void ShowText::onUpdate(float deltaTime)
 {
-	if ((!isWriting && !isDeleting) || textChars.empty()) {
+	if (!isWriting && !isDeleting) {
 		return;
 	}
 
-	static float timer = 0.0f;
+	static float timer = -3.0f;
 	timer += deltaTime;
 
-	if (timer >= speed && isWriting) {
+	if (timer >= speed && isDeleting) {
 		timer = 0.0f + GameMath::RandomFloat(-0.05, 0.05);
+
+		if (!textObject->value.empty()) {
+			textObject->value.pop_back();
+
+			auto* audio = ServiceLocator::getAudioEngine();
+			audio->PlaySFX(audio->writing, GameManager::instance->sfxVolume * 80.f);
+		}
+		if (textObject->value.empty()) {
+			isDeleting = false;
+			//textObject->setActive(false);
+		}
+	}
+	else if (timer >= speed && isWriting) {
+		timer = 0.0f + GameMath::RandomFloat(-0.05, 0.05);
+
 		if (!textChars.empty()) {
 			textObject->value += textChars.front();
 
@@ -65,25 +81,18 @@ void ShowText::onUpdate(float deltaTime)
 			//textObject->setActive(false);
 		}
 	}
-	else if (timer >= speed && isDeleting) {
-		timer = 0.0f;
-		if (!textObject->value.empty()) {
-			textObject->value.pop_back();
-		}
-		if (textObject->value.empty()) {
-			isDeleting = false;
-			//textObject->setActive(false);
-		}
-	}
 }
 
 void ShowText::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
-		if (!isWriting) {
+		if (!isWriting && !entered) {
 			isWriting = true;
+			entered = true;
 			//textObject->setActive(true);
-			textObject->value = ""; // Reset text before showing
+			textObject->value = "";
+			textChars.clear();
+
 			for (char c : text) {
 				textChars.push_back(c);
 			}

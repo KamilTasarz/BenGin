@@ -17,6 +17,7 @@ public:
 	TextObject* textObject;
 	bool isWriting = false;
 	bool isDeleting = false;
+	bool entered = false;
 	vector<char> textChars;
 
 	ShowText() = default;
