@@ -78,14 +78,15 @@ struct UIAnimator {
 			if (t >= 1.f) {
 				element->pos = glm::vec2(2000, 2000);
 				state = UIAnimState::Hidden;
+				element->visible = false;
 			}
 		}
 	}
 };
 
-UIAnimator virusTypeAnimator(glm::vec2(1305, 115));
-UIAnimator virusEffectAnimator(glm::vec2(1375, 180));
-UIAnimator cheeseSpriteAnimator(glm::vec2(1705, 125));
+UIAnimator virusTypeAnimator(glm::vec2(1665, 135));
+UIAnimator virusEffectAnimator(glm::vec2(1665, 200));
+UIAnimator cheeseSpriteAnimator(glm::vec2(1705, 145));
 
 REGISTER_SCRIPT(PlayerController);
 
@@ -117,6 +118,10 @@ void PlayerController::onStart()
 	virusTypeText = GuiManager::Instance().findText(6);
 	virusEffectText = GuiManager::Instance().findText(7);
 	cheeseSprite = GuiManager::Instance().findSprite(8);
+
+	//virusTypeText->visible = false;
+	//virusEffectText->visible = false;
+	//cheeseSprite->visible = false;
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -254,6 +259,10 @@ void PlayerController::onUpdate(float deltaTime)
 			virusTypeText->value = "Heavy Havarti";
 			virusEffectText->value = "increased weight";
 		}
+
+		virusEffectText->visible = true;
+		virusTypeText->visible = true;
+		cheeseSprite->visible = true;
 
 		virusTypeAnimator.Show();
 		virusEffectAnimator.Show();

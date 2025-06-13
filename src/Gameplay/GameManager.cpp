@@ -11,6 +11,7 @@ GameManager* GameManager::instance = nullptr;
 
 void GameManager::onAttach(Node* owner)
 {
+	GameManager::instance = this;
     this->owner = owner;
 }
 
