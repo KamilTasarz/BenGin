@@ -17,6 +17,12 @@ struct Character {
     unsigned int offset_chars;
 };
 
+enum Alignment {
+	LEFT,
+	CENTER,
+	RIGHT
+};
+
 class Text {
 public:
 
@@ -95,7 +101,7 @@ public:
         }
     }
 
-    void renderText(std::string text_value, float x, float y, Shader& shader, glm::vec3 color) {
+    void renderText(std::string text_value, float x, float y, Shader& shader, glm::vec3 color, Alignment alignment = LEFT) {
 
         shader.use();
         shader.setVec3("text_color", color);
@@ -107,6 +113,22 @@ public:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBindVertexArray(VAO);
         glActiveTexture(GL_TEXTURE0);
+
+        unsigned int width = 0;
+
+        for (auto c = text_value.begin(); c != text_value.end(); c++) {
+            char value = *c;
+            Character character = characters[value];
+			width += (character.offset_chars >> 6); //offset_chars is in 64th of pixels
+        }
+
+		if (alignment == CENTER) {
+			x -= width / 2.f;
+		}
+		else if (alignment == RIGHT) {
+			x -= width;
+		}
+
         for (auto c = text_value.begin(); c != text_value.end(); c++) {
             char value = *c;
             Character character = characters[value];

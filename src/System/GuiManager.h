@@ -12,6 +12,7 @@ enum ObjectType {
 class GuiObject {
 public:
 	int order_id = 0;
+	bool visible = true;
 	glm::vec2 pos = { 0.f, 0.f };
 	unsigned int id = 0;
 
@@ -43,7 +44,7 @@ public:
 	std::string value;
 	glm::vec3 color = glm::vec3(0.f);
 	unsigned int text_id;
-
+	int alignment = 0; // 0 - left, 1 - center, 2 - right
 	TextObject(std::shared_ptr<Text> t, unsigned int t_id, glm::vec2 pos, std::string value, int order_id, unsigned int id, glm::vec3 color = { 0.f, 0.f, 0.f })
 		: text(t), value(value), color(color), text_id(t_id) {
 		this->pos = pos;
@@ -108,10 +109,10 @@ public:
 	}
 
 	// add text object to render
-	void text(std::string value, float x, float y, Text_names text_id, glm::vec3 color = {0.f, 0.f, 0.f}, int order_id = -1, int id = -1);
+	void text(std::string value, float x, float y, Text_names text_id, glm::vec3 color = {0.f, 0.f, 0.f}, int order_id = -1, int id = -1, bool visible = true, int alignment = 0);
 
 	// add sprite or animated sprite object to render
-	void sprite(float x, float y, float size, Sprite_names sprite_id, int order_id = -1, int id = -1);
+	void sprite(float x, float y, float size, Sprite_names sprite_id, int order_id = -1, int id = -1, bool visible = true);
 
 	TextObject* findText(unsigned int id);
 	SpriteObject* findSprite(unsigned int id);

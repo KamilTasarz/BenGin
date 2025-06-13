@@ -1670,6 +1670,45 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                 cursorPos = ImGui::GetCursorScreenPos();
                 itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
                 ImGui::SetCursorScreenPos(itemPos);
+                
+                int currentSelection = t->alignment, prev = t->alignment; 
+                bool changed = false;
+                const char* labels[3] = { "LEFT", "CENTER", "RIGHT" };
+
+                for (int i = 0; i < 3; ++i) {
+                    if (i > 0)
+                        ImGui::SameLine();
+
+                    if (i == currentSelection) {
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 1.0f, 1.0f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.8f, 1.0f, 1.0f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.6f, 0.9f, 1.0f));
+                    }
+
+                    if (ImGui::Button(labels[i])) {
+
+                        
+
+                        currentSelection = i;
+						changed = true;
+                        if (prev == i) changed = false;
+                    }
+
+                    if (i == currentSelection && !changed)
+                        ImGui::PopStyleColor(3);
+                }
+
+                t->alignment = currentSelection;
+                
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+				ImGui::Checkbox("Visible ", &t->visible);
+
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
 
                 ImGui::DragFloat("Pos x ", &pos.x);
 
@@ -1732,10 +1771,16 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                     s->sprite_id = index;
                     s->sprite = GuiManager::Instance().getSprites()[index];
                 }
+                cursorPos = ImGui::GetCursorScreenPos();
+                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                ImGui::Checkbox("Visible ", &s->visible);
 
                 cursorPos = ImGui::GetCursorScreenPos();
                 itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
                 ImGui::SetCursorScreenPos(itemPos);
+
 
                 ImGui::DragFloat("Pos x ", &pos.x);
 

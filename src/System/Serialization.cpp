@@ -51,6 +51,7 @@ int saveScene(const std::string& filename, SceneGraph*& scene) {
 			object["x"] = s->pos.x;
 			object["y"] = s->pos.y;
 			object["size"] = s->size;
+			object["visible"] = s->visible;
 		}
 		else {
 			TextObject* t = static_cast<TextObject*>(o);
@@ -61,6 +62,8 @@ int saveScene(const std::string& filename, SceneGraph*& scene) {
 			object["y"] = t->pos.y;
 			object["value"] = t->value;
 			object["color"] = vec3_to_json(t->color);
+			object["visible"] = t->visible;
+			object["alignment"] = t->alignment;
 		}
 		objects.push_back(object);
 	}
@@ -322,15 +325,28 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 					unsigned int id = object["id"];
 					float x = object["x"], y = object["y"];
 					float size = object["size"];
-					GuiManager::Instance().sprite(x, y, size, (Sprite_names) obj_id, order, id);
+					
+
+					bool visible = true;
+					if (object.contains("visible"))
+						visible = object["visible"];
+					GuiManager::Instance().sprite(x, y, size, (Sprite_names) obj_id, order, id, visible);
 				}
 				else {
 					int obj_id = object["ptr_id"];
 					unsigned int id = object["id"];
 					float x = object["x"], y = object["y"];
+					int alignment = 0;
+					if (object.contains("alignment")) {
+						alignment = object["alignment"];
+					}
+
+					bool visible = true;
+					if (object.contains("visible"))
+						visible = object["visible"];
 					std::string val = object["value"];
 					glm::vec3 col = json_to_vec3(object["color"]);
-					GuiManager::Instance().text(val, x, y, (Text_names)obj_id, col, order, id);
+					GuiManager::Instance().text(val, x, y, (Text_names)obj_id, col, order, id, visible, alignment);
 				}
 				
 			}
