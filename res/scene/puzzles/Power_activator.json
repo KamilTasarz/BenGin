@@ -1,5 +1,69 @@
 {
+    "AABB_logic_max": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+    },
+    "AABB_logic_min": {
+        "x": -1.0,
+        "y": -1.0,
+        "z": -1.0
+    },
     "children": [
+        {
+            "AABB_logic_max": {
+                "x": 1.5,
+                "y": 1.5,
+                "z": 0.5
+            },
+            "AABB_logic_min": {
+                "x": -1.5,
+                "y": -1.5,
+                "z": -0.5
+            },
+            "AABB_max": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            },
+            "AABB_min": {
+                "x": -0.5,
+                "y": -0.5,
+                "z": -0.5
+            },
+            "components": [
+                {
+                    "name": "Electrified",
+                    "variables": null
+                }
+            ],
+            "id": 0,
+            "is_logic_active": true,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 3,
+            "name": "power",
+            "no_textures": false,
+            "position": {
+                "x": 1.5,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "tag": "Default",
+            "type": "Node"
+        },
         {
             "AABB_logic_max": {
                 "x": 0.6000000238418579,
@@ -53,60 +117,6 @@
             "no_textures": false,
             "position": {
                 "x": -1.5,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "rotation": {
-                "w": 1.0,
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "tag": "Default",
-            "type": "Node"
-        },
-        {
-            "AABB_logic_max": {
-                "x": 1.5,
-                "y": 1.5,
-                "z": 0.5
-            },
-            "AABB_logic_min": {
-                "x": -1.5,
-                "y": -1.5,
-                "z": -0.5
-            },
-            "AABB_max": {
-                "x": 0.5,
-                "y": 0.5,
-                "z": 0.5
-            },
-            "AABB_min": {
-                "x": -0.5,
-                "y": -0.5,
-                "z": -0.5
-            },
-            "components": [
-                {
-                    "name": "Electrified",
-                    "variables": null
-                }
-            ],
-            "id": 0,
-            "is_logic_active": true,
-            "is_physic_active": true,
-            "is_visible": true,
-            "layer": "Default",
-            "model.id": 3,
-            "name": "power",
-            "no_textures": false,
-            "position": {
-                "x": 1.5,
                 "y": 0.0,
                 "z": 0.0
             },
