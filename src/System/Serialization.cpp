@@ -1107,11 +1107,17 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	// Bloom uniforms
 
-	j["bloom_treshold"] = data.bloom_treshold;
+	j["bloom_threshold"] = data.bloom_threshold;
+
+	j["bloom_smoothness"] = data.bloom_smoothness;
 
 	j["bloom_intensity"] = data.bloom_intensity;
 
-	j["bloom_blur_passes"] = data.bloom_blur_passes;
+	j["bloom_blur_radius"] = data.bloom_blur_radius;
+
+	j["bloom_blur_sigma"] = data.bloom_blur_sigma;
+
+	j["bloom_blur_intensity"] = data.bloom_blur_intensity;
 
 	std::ofstream file(filename);
 	if (file.is_open()) {
@@ -1172,11 +1178,17 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 
 			// Bloom uniforms
 
-			data.bloom_treshold = j.at("bloom_treshold");
+			data.bloom_threshold = j.at("bloom_threshold");
+
+			data.bloom_smoothness = j.at("bloom_smoothness");
 
 			data.bloom_intensity = j.at("bloom_intensity");
 
-			data.bloom_blur_passes = j.at("bloom_blur_passes");
+			data.bloom_blur_radius = j.at("bloom_blur_radius");
+
+			data.bloom_blur_sigma = j.at("bloom_blur_sigma");
+
+			data.bloom_blur_intensity = j.at("bloom_blur_intensity");
 
 		}
 		catch (const std::exception& e) {

@@ -1802,7 +1802,15 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
                 ImGui::Separator();
 
-                ImGui::SliderFloat("Bloom Treshold", &postProcessData.bloom_treshold, 0.0f, 1.0f, "%.2f");
+                ImGui::SliderFloat("Bloom Threshold", &postProcessData.bloom_threshold, 0.0f, 5.0f, "%.2f");
+
+                ImGui::SliderFloat("Bloom Smoothess", &postProcessData.bloom_smoothness, 0.0f, 1.0f, "%.2f");
+
+                ImGui::SliderInt("Bloom Blur Radius", &postProcessData.bloom_blur_radius, 1, 20);
+
+                ImGui::SliderFloat("Bloom Blur Sigma", &postProcessData.bloom_blur_sigma, 0.5f, 10.0f, "%.2f");
+
+                ImGui::SliderFloat("Bloom Blur Intensity", &postProcessData.bloom_blur_intensity, 0.0f, 2.0f, "%.2f");
 
                 ImGui::Separator();
 

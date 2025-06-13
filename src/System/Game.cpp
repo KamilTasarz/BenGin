@@ -169,16 +169,20 @@ void Game::draw()
             auto& brightShader = *ResourceManager::Instance().shader_PostProcess_bloom;
             brightShader.use();
             brightShader.setInt("sceneTexture", 0);
-            brightShader.setFloat("bloom_threshold", postProcessData.bloom_treshold);
+            brightShader.setFloat("bloom_threshold", postProcessData.bloom_threshold);
+            brightShader.setFloat("bloom_smoothness", postProcessData.bloom_smoothness);
 
             renderQuadWithTexture(current_texture);
 
             bool horizontal = true, firstIteration = true;
-            int blurPassCount = postProcessData.bloom_blur_passes;
+            int blurPassCount = postProcessData.bloom_blur_radius;
 
             auto& blurShader = *ResourceManager::Instance().shader_PostProcess_gaussian_blur;
             blurShader.use();
             blurShader.setVec2("screenSize", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+            blurShader.setInt("bloom_blur_radius", postProcessData.bloom_blur_radius);
+            blurShader.setFloat("bloom_blur_sigma", postProcessData.bloom_blur_sigma);
+            blurShader.setFloat("bloom_blur_intensity", postProcessData.bloom_blur_intensity);
 
             for (int i = 0; i < blurPassCount; ++i) {
                 glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);

@@ -51,11 +51,17 @@ struct PostProcessData {
 
     //////////////////////////////
 
-    float bloom_treshold;
+    float bloom_threshold; // jasnosc koloru od ktorej zaczynamy bloom
 
-    float bloom_intensity;
+    float bloom_smoothness; // plynnosc przejscia miedzy kolorem odcietym
 
-    int bloom_blur_passes;
+    int bloom_blur_radius; // ile probek liczymy w kazda strone
+
+    float bloom_blur_sigma; // wplywa na wage oddalonych bardziej probek
+
+    float bloom_blur_intensity; // slabsze/mocniejsze rozmycie
+
+    float bloom_intensity; // 
 
 };
 

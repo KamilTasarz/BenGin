@@ -521,6 +521,36 @@ public:
     }
 };
 
+class VolumetricLight : public Light {
+
+    glm::vec3 direction;
+    glm::vec3 color;
+    float intensity;
+    float radius;
+    float coneAngle;
+
+    VolumetricLight(std::shared_ptr<Model> model,
+        const std::string& nameOfNode,
+        const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f),
+        const glm::vec3& color = glm::vec3(1.0f),
+        float intensity = 1.0f,
+        float radius = 5.0f,
+        float coneAngle = glm::radians(30.0f))
+        : Light(model, nameOfNode, true),
+        direction(glm::normalize(direction)),
+        color(color),
+        intensity(intensity),
+        radius(radius),
+        coneAngle(coneAngle)
+    {}
+
+    glm::vec3 getDirection() const { return direction; }
+    glm::vec3 getColor() const { return color; }
+    float getIntensity() const { return intensity; }
+    float getRadius() const { return radius; }
+    float getConeAngle() const { return coneAngle; }
+
+};
 
 class SceneGraph {
 public:
