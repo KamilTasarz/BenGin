@@ -18,6 +18,7 @@ public:
 	VARIABLE(int, minimalVerticalLevelCount);
 	VARIABLE(int, maximalVerticalLevelCount);
 	VARIABLE(float, directionChangeChance);
+	VARIABLE(std::string, name);
 
 	bool goingRight = true;
 	bool goingUp = false;
@@ -48,6 +49,7 @@ public:
 		static Variable minimalVerticalLevelCountVar = getField_minimalVerticalLevelCount();
 		static Variable maximalVerticalLevelCountVar = getField_maximalVerticalLevelCount();
 		static Variable directionChangeChanceVar = getField_directionChangeChance();
+		static Variable nameVar = getField_name();
 
 		return {
 			&generateVar,
@@ -59,7 +61,8 @@ public:
 			&maximalHorizontalLevelCountVar,
 			&minimalVerticalLevelCountVar,
 			&maximalVerticalLevelCountVar,
-			&directionChangeChanceVar
+			&directionChangeChanceVar,
+			&nameVar
 		};
 	}
 };

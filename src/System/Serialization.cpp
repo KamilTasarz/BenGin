@@ -196,10 +196,10 @@ json save_node(Node* node) {
 	}
 
 	if (node->AABB_logic) {
-		if (node->pModel && (node->pModel->min_points != node->AABB_logic->min_point_local || node->pModel->max_points != node->AABB_logic->max_point_local)) {
-			j["AABB_logic_min"] = vec3_to_json(node->AABB_logic->min_point_local);
-			j["AABB_logic_max"] = vec3_to_json(node->AABB_logic->max_point_local);
-		}
+		//if (node->pModel && (node->pModel->min_points != node->AABB_logic->min_point_local || node->pModel->max_points != node->AABB_logic->max_point_local)) {
+		j["AABB_logic_min"] = vec3_to_json(node->AABB_logic->min_point_local);
+		j["AABB_logic_max"] = vec3_to_json(node->AABB_logic->max_point_local);
+		//}
 	}
 	j["id"] = node->id;
 	j["position"] = vec3_to_json(node->transform.getLocalPosition());
@@ -245,9 +245,9 @@ json save_node(Node* node) {
 					fieldJson["name"] = field->name;
 					fieldJson["value"] = *f;
 				}
-				else if (field->type == "string") {
+				else if (field->type == "std::string") {
 					std::string* s = reinterpret_cast<std::string*>(ptr);
-					fieldJson["field_type"] = "string";
+					fieldJson["field_type"] = "std::string";
 					fieldJson["name"] = field->name;
 					fieldJson["value"] = *s;
 				}
@@ -411,6 +411,16 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 		scene->root->transform.setLocalRotation(json_to_quat(j["rotation"]));
 		scene->root->transform.setLocalScale(json_to_vec3(j["scale"]));
 		scene->root->is_visible = is_visible;
+		if (j.contains("AABB_min") && scene->root->AABB) {
+			scene->root->AABB->min_point_local = json_to_vec3(j["AABB_min"]);
+			scene->root->AABB->max_point_local = json_to_vec3(j["AABB_max"]);
+
+		}
+		if (j.contains("AABB_logic_min") && scene->root->AABB_logic) {
+			scene->root->AABB_logic->min_point_local = json_to_vec3(j["AABB_logic_min"]);
+			scene->root->AABB_logic->max_point_local = json_to_vec3(j["AABB_logic_max"]);
+		}
+
 		for (json j : j["children"]) {
 
 			Node* child = load_node(j, prefabs, puzzle_prefabs, scene);
@@ -645,6 +655,15 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 		scene->root->transform.setLocalRotation(json_to_quat(j["rotation"]));
 		scene->root->transform.setLocalScale(json_to_vec3(j["scale"]));
 		scene->root->is_visible = is_visible;
+		if (j.contains("AABB_min") && scene->root->AABB) {
+			scene->root->AABB->min_point_local = json_to_vec3(j["AABB_min"]);
+			scene->root->AABB->max_point_local = json_to_vec3(j["AABB_max"]);
+
+		}
+		if (j.contains("AABB_logic_min") && scene->root->AABB_logic) {
+			scene->root->AABB_logic->min_point_local = json_to_vec3(j["AABB_logic_min"]);
+			scene->root->AABB_logic->max_point_local = json_to_vec3(j["AABB_logic_max"]);
+		}
 		for (json j : j["children"]) {
 
 			Node* child = load_prefab_node(j, scene, _name);
