@@ -97,36 +97,50 @@ void GuiManager::draw()
 
 
 	for (GuiObject* o : objects) {
-		o->render();
+		if (o->visible)
+			o->render();
 	}
 }
 
-void GuiManager::text(std::string value, float x, float y, Text_names text_id, glm::vec3 color, int order_id, int id)
+void GuiManager::text(std::string value, float x, float y, Text_names text_id, glm::vec3 color, int order_id, int id, bool visible, int alignment)
 {
 	if (id != -1) {
-		objects.push_back(new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, id, color));
+		TextObject* t = new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, id, color);
+		t->visible = visible;
+		t->alignment = alignment;
+		objects.push_back(t);
 	}
 	else if (free_ids.empty()) {
-		objects.push_back(new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, max_id, color));
+		TextObject* t = new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, max_id, color);
+		t->visible = visible;
+		t->alignment = alignment;
 		max_id++;
 	}
 	else {
-		objects.push_back(new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, free_ids.back(), color));
+		TextObject* t = new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, free_ids.back(), color);
+		t->visible = visible;
+		t->alignment = alignment;
 		free_ids.pop_back();
 	}
 }
 
-void GuiManager::sprite(float x, float y, float size, Sprite_names sprite_id, int order_id, int id)
+void GuiManager::sprite(float x, float y, float size, Sprite_names sprite_id, int order_id, int id, bool visible)
 {
 	if (id != -1) {
-		objects.push_back(new SpriteObject(sprites[sprite_id], sprite_id, glm::vec2(x, y), size, order_id, id));
+		SpriteObject* s = new SpriteObject(sprites[sprite_id], sprite_id, glm::vec2(x, y), size, order_id, id);
+		s->visible = visible;
+		objects.push_back(s);
 	}
 	else if (free_ids.empty()) {
-		objects.push_back(new SpriteObject(sprites[sprite_id], sprite_id, glm::vec2(x, y), size, order_id, max_id));
+		SpriteObject* s = new SpriteObject(sprites[sprite_id], sprite_id, glm::vec2(x, y), size, order_id, max_id);
+		s->visible = visible;
+		objects.push_back(s);
 		max_id++;
 	}
 	else {
-		objects.push_back(new SpriteObject(sprites[sprite_id], sprite_id, glm::vec2(x, y), size, order_id, free_ids.back()));
+		SpriteObject* s = new SpriteObject(sprites[sprite_id], sprite_id, glm::vec2(x, y), size, order_id, free_ids.back());
+		s->visible = visible;
+		objects.push_back(s);
 		free_ids.pop_back();
 	}
 }
@@ -191,7 +205,7 @@ ObjectType SpriteObject::getType()
 
 void TextObject::render()
 {
-	text.lock()->renderText(value, pos.x, pos.y, *ResourceManager::Instance().shader_text, color);
+	text.lock()->renderText(value, pos.x, pos.y, *ResourceManager::Instance().shader_text, color, (Alignment) alignment);
 }
 
 ObjectType TextObject::getType()
