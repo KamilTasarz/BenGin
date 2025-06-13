@@ -655,10 +655,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
             }
         }
     }
-    ImGui::SameLine();
-    if (ImGui::Button("EDITING_VIEW", ImVec2(150, 24))) {
-        sceneGraph->is_editing = !sceneGraph->is_editing;
-    }
+    
     ImGui::Separator();
     if (ImGui::Button("PLAY", ImVec2(150, 24))) {
         play = true;
