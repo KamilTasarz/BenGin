@@ -78,7 +78,7 @@ void Game::draw()
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     LineManager::Instance().drawLines();
 	
-	glEnable(GL_BLEND);
+	
 
     GuiManager::Instance().draw();
 	

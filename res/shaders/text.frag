@@ -10,6 +10,7 @@ uniform sampler2D letter;
 void main() {
 
 	vec4 sampled = vec4(1.0, 1.0, 1.0, texture(letter, Cords).r); //określa przezroczystość 
+	if (sampled.w < 0.1f) discard;
 	FragColor = vec4(text_color, 1.f) * sampled; //zmiania kolor na właściwy jak jest odpowiednia wartość alfa
 
 }
