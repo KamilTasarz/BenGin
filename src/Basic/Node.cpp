@@ -874,8 +874,9 @@ void Node::drawSelfAndChild() {
             ResourceManager::Instance().shader_tile->setInt("is_light", 0);
         }
         
+    }
 
-
+    if (AABB || AABB_logic) {
         ResourceManager::Instance().shader_outline->use();
 
         if (is_animating) {
@@ -888,16 +889,15 @@ void Node::drawSelfAndChild() {
 
         ResourceManager::Instance().shader_outline->setMat4("model", transform.getModelMatrix());
         if (animator != nullptr && is_animating) {
-            auto &f = animator->final_bone_matrices;
+            auto& f = animator->final_bone_matrices;
             for (int i = 0; i < f.size(); ++i)
                 ResourceManager::Instance().shader_outline->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
 
-            //ResourceManager::Instance().shader_outline->setInt("is_animating", 1);
         }
         glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
         ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
 
-        if (scene_graph->is_editing) {
+        if (scene_graph->is_editing && AABB) {
             AABB->draw(*ResourceManager::Instance().shader_outline);
         }
         dynamic_color = glm::vec3(0.f, 0.8f, 0.f);
@@ -1151,8 +1151,12 @@ Node::Node(std::string nameOfNode, int _id) {
     name = nameOfNode;
     id = _id;
     AABB = nullptr;
-    AABB_logic = nullptr;
+    AABB_logic = new BoundingBox(transform.getModelMatrix(), this);
     no_textures = true;
+
+	AABB_logic->is_logic = true;
+	AABB_logic->active = true;
+
 
     layer = TagLayerManager::Instance().getLayer("Default");
     tag = TagLayerManager::Instance().getTag("Default");
@@ -2086,15 +2090,17 @@ void MirrorNode::drawSelfAndChild()
         pModel->Draw(*ResourceManager::Instance().shader);
 
         glStencilMask(0x00);
+    }
 
+    if (AABB || AABB_logic || mirrorCollider) {
         ResourceManager::Instance().shader_outline->use();
 
         ResourceManager::Instance().shader_outline->setInt("is_animating", 0);
-     
+
         glm::vec3 dynamic_color = glm::vec3(0.f, 0.f, 0.8f);
         ResourceManager::Instance().shader_outline->setVec3("color", dynamic_color);
 
-        if (scene_graph->is_editing) {
+        if (scene_graph->is_editing && AABB) {
             AABB->draw(*ResourceManager::Instance().shader_outline);
         }
         dynamic_color = glm::vec3(0.f, 0.8f, 0.f);

@@ -31,7 +31,7 @@ void main() {
 		float alpha = clamp(time, 0.0, 1.0);
 		Color = vec4(vec3(1.f), 1.f);
 
-		float scale_base = 1.f;
+		float scale_base = 0.9f;
 
 		if (time < 3.f) scale_base = time / 3.f;
 		else if (time > life_time - 3.f) scale_base = ((life_time - time) / 3.f);
@@ -39,8 +39,8 @@ void main() {
 		float pulse = 1.f;
 
 		if (time >= 3.f && time <= life_time - 3.f) {
-
-			pulse = scale_base + scaleFactor * sin(beginTime + time);
+			time -= 3.f;
+			pulse = scale_base + 0.15 * sin((beginTime + 3.f + time * 2.f));
 		} else {
 			pulse = scale_base;
 		}

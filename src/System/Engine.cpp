@@ -10,9 +10,13 @@
 #include "PrefabRegistry.h"
 #include "../System/GuiManager.h"
 #include "../System/RenderSystem.h"
+#include <cstdlib>
+#include <ctime>
 
 void Engine::init()
 {
+	srand(static_cast<unsigned int>(time(nullptr)));
+
 	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Beta Version 1.2.0");
 	ServiceLocator::provide(window);
 	
