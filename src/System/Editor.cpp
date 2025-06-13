@@ -1425,14 +1425,21 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                             ImGui::SameLine();
                             ImGui::Checkbox(("##" + field->name).c_str(), b);
                         }
-                        else if (field->type == "string") {
+                        else if (field->type == "std::string") {
                             std::string* s = reinterpret_cast<std::string*>(ptr);
-                            char* buffer = new char[128];
+
+                            // Tymczasowy bufor
+                            char buffer[128];
+                            strncpy_s(buffer, s->c_str(), sizeof(buffer));
+                            buffer[sizeof(buffer) - 1] = '\0'; // zabezpieczenie
+
                             ImGui::Text(field->name.c_str());
                             ImGui::SameLine();
-                            ImGui::InputText(("##" + field->name).c_str(), buffer, 128);
-                            *s = std::string(buffer);
-                            delete[] buffer;
+
+                            if (ImGui::InputText(("##" + field->name).c_str(), buffer, sizeof(buffer))) {
+                                // Aktualizacja std::string, jeśli coś się zmieniło
+                                *s = buffer;
+                            }
                         }
                         else if (field->type == "Node*") {
                             Node** n = reinterpret_cast<Node**>(ptr);
