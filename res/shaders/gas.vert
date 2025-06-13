@@ -22,23 +22,23 @@ uniform mat4 projection;
 
 void main() {
 	
-	if (beginTime > 0.f) { 
+	if (beginTime > 0.0) { 
 
-		float life_time = 40.f;
+		float life_time = 40.0;
 
 		float time = totalTime - beginTime;
 
 		float alpha = clamp(time, 0.0, 1.0);
-		Color = vec4(vec3(1.f), 1.f);
+		Color = vec4(1.0, 1.0, 1.0, 1.0);
 
-		float scale_base = 1.f;
+		float scale_base = 1.0;
 
-		if (time < 3.f) scale_base = time / 3.f;
-		else if (time > life_time - 3.f) scale_base = ((life_time - time) / 3.f);
+		if (time < 3.0) scale_base = time / 3.0;
+		else if (time > life_time - 3.0) scale_base = ((life_time - time) / 3.0);
 
-		float pulse = 1.f;
+		float pulse = 1.0;
 
-		if (time >= 3.f && time <= life_time - 3.f) {
+		if (time >= 3.0 && time <= life_time - 3.0) {
 
 			pulse = scale_base + scaleFactor * sin(beginTime + time);
 		} else {
@@ -49,9 +49,13 @@ void main() {
 
 		//vec3 scaledPos = aPos * scale;
 		//Position = vec3(aModel * vec4(scaledPos, 1.0));
+		
+		Position = local + aOffset;
+		TextureCoords = aTexCord;
+
 		gl_Position = projection * view * worldPos;
 	} else {
-		gl_Position = vec4(0.f);
+		gl_Position = vec4(0.0);
 	}
 
 }

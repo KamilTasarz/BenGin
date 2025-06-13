@@ -1,43 +1,52 @@
 #version 330 core
 
-layout(triangles) in;
-layout(triangle_strip, max_vertices = 3) out;
+layout(points) in;
+layout(triangle_strip, max_vertices = 4) out;
+
+in vec3 Position[];
+in vec2 TextureCoords[];
+in vec4 Color[];
+
+out vec3 Position;
+out vec2 TextureCoords;
+out vec3 Normal;
+out vec4 Color;
 
 uniform mat4 view;
 uniform mat4 projection;
+uniform float size;
 
 // promień "kolca"
 uniform float spike_length = 0.2;
 
 void main()
 {
-    vec3 center = vec3(0.0); // środek sześcianu
+    vec3 right = vec3(view[0][0], view[1][0], view[2][0]) * size;
+    vec3 up    = vec3(view[0][1], view[1][1], view[2][1]) * size;
 
-    for (int i = 0; i < 1; i++) {
-        vec3 base = gl_in[i].gl_Position.xyz;
-        vec3 dir = normalize(base - center); // wektor normalny wychodzący z centrum
+    vec3 pos = Position[0];
 
-        // znajdź 2 wektory ortogonalne do dir, np. za pomocą Gram-Schmidta
-        vec3 tangent = normalize(cross(dir, vec3(0.0, 1.0, 0.0)));
-        if (length(tangent) < 0.001)
-            tangent = normalize(cross(dir, vec3(1.0, 0.0, 0.0)));
-        vec3 bitangent = normalize(cross(dir, tangent));
+    vec3 corners[4] = vec3[](
+        pos - right + up,
+        pos + right + up,
+        pos - right - up,
+        pos + right - up
+    );
 
-        float w = 0.05; // szerokość podstawy kolca
+    vec2 uvs[4] = vec2[](
+        vec2(0, 1),
+        vec2(1, 1),
+        vec2(0, 0),
+        vec2(1, 0)
+    );
 
-        // 3 punkty trójkąta
-        vec3 tip = base + dir * spike_length;
-        vec3 p1 = base + tangent * w;
-        vec3 p2 = base + bitangent * w;
-
-        gl_Position = projection * view * vec4(p1, 1.0);
-        EmitVertex();
-        gl_Position = projection * view * vec4(p2, 1.0);
-        EmitVertex();
-        gl_Position = projection * view * vec4(tip, 1.0);
+    for (int i = 0; i < 4; ++i) {
+        Position = corners[i];
+        TextureCoords = uvs[i];
+        Normal = vec3(0.0, 0.0, 1.0);
+        Color = Color[0];
+        gl_Position = projection * view * vec4(corners[i], 1.0);
         EmitVertex();
     }
-
-    
     EndPrimitive();
 }

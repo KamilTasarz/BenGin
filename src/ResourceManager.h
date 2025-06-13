@@ -43,7 +43,7 @@ private:
         shader = new Shader(vertexPath, fragmentPath);
         shader_line = new Shader(vertexPath_line, fragmentPath_line, geometryPath_line);
         shader_tile = new Shader(vertexPath_tile, fragmentPath_tile);
-        shader_instanced = new Shader(vertexPath_gas, fragmentPath_gas);
+        shader_instanced = new Shader(vertexPath_gas, fragmentPath_gas, geometryPath_gas);
         shader_instanced_outline = new Shader(vertexPath_instanced, fragmentPath_outline);
         shader_outline = new Shader(vertexPath, fragmentPath_outline);
         shader2D = new Shader(triangleVertexPath, triangleFragmentPath);
