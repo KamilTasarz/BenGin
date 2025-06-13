@@ -734,7 +734,8 @@ void Node::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unor
     }
     else {
         in_frustrum = true;
-
+        if (is_logic_active && AABB_logic) colliders.insert(AABB_logic);
+        else colliders.erase(AABB_logic);
     }
 
     
@@ -1355,6 +1356,8 @@ void InstanceManager::checkIfInFrustrum(std::unordered_set<Collider*>& colliders
     }
     else {
         in_frustrum = true;
+        if (is_logic_active && AABB_logic) colliders.insert(AABB_logic);
+        else colliders.erase(AABB_logic);
     }
 
     for (auto& child : children) {
@@ -1687,6 +1690,7 @@ void PrefabInstance::checkIfInFrustrum(std::unordered_set<Collider*>& colliders,
     }
     else {
         in_frustrum = true;
+
     }
 }
 
