@@ -9,10 +9,10 @@ class ShowText : public Script
 public:
 	using SelfType = ShowText;
 
-	//VARIABLE(std::string, text);
+	VARIABLE(std::string, text);
 	VARIABLE(float, speed);
 
-	std::string text = "Escape from the gas!";
+	//std::string text = "Escape from the gas!";
 
 	TextObject* textObject;
 	bool isWriting = false;
@@ -30,9 +30,9 @@ public:
 	void onExitCollisionLogic(Node* other) override;
 
 	std::vector<Variable*> getFields() const override {
-		//static Variable textVar = getField_text();
+		static Variable textVar = getField_text();
 		static Variable speedVar = getField_speed();
-		return { /*&textVar,*/ &speedVar };
+		return { &textVar, &speedVar };
 	}
 };
 

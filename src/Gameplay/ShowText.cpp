@@ -36,7 +36,7 @@ void ShowText::onStart()
 	}
 
 	textObject->value = "";
-	isWriting = true;
+	isWriting = false;
 }
 
 void ShowText::onUpdate(float deltaTime)
