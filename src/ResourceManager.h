@@ -62,6 +62,7 @@ private:
         shader_PostProcess_bloom_composite = new Shader(postPath_vert, postPath_bloom_composite);
         shader_PostProcess_crt = new Shader(postPath_vert, postPath_crt);
         shader_PostProcess_noise = new Shader(postPath_vert, postPath_noise);
+        shader_PostProcess_volumetric = new Shader(postPath_vert, postPath_volumetric);
 
     }
     ~ResourceManager() {
@@ -88,6 +89,7 @@ private:
         delete shader_PostProcess_bloom_composite;
         delete shader_PostProcess_crt;
         delete shader_PostProcess_noise;
+        delete shader_PostProcess_volumetric;
 
     }
 
@@ -125,6 +127,7 @@ private:
     const char* postPath_bloom_composite = "res/shaders/pp_bloom_composite.frag";
     const char* postPath_crt = "res/shaders/pp_crt.frag";
     const char* postPath_noise = "res/shaders/pp_noise.frag";
+    const char* postPath_volumetric = "res/shaders/pp_volumetric.frag";
 
 public:
 
@@ -154,6 +157,7 @@ public:
     Shader* shader_PostProcess_bloom_composite;
     Shader* shader_PostProcess_crt;
     Shader* shader_PostProcess_noise;
+    Shader* shader_PostProcess_volumetric;
 
 	static ResourceManager& Instance() {
 		static ResourceManager instance;

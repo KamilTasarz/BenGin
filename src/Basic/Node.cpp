@@ -133,6 +133,13 @@ void SceneGraph::deleteDirectionalLight(DirectionalLight* p) {
     deleteChild(p);
 }
 
+void SceneGraph::deleteVolumetricLight(VolumetricLight* p) {
+    auto it = std::find(volumetric_lights.begin(), volumetric_lights.end(), p);
+    volumetric_lights.erase(it);
+    volumetric_light_number--;
+    deleteChild(p);
+}
+
 
 void SceneGraph::addPointLight(PointLight* p) {
     if (!p->from_prefab)
@@ -151,6 +158,14 @@ void SceneGraph::addDirectionalLight(DirectionalLight* p) {
     
 }
 
+void SceneGraph::addVolumetricLight(VolumetricLight* p) {
+    if (!p->from_prefab)
+        addChild(p);
+
+    volumetric_lights.push_back(p);
+    volumetric_light_number++;
+}
+
 void SceneGraph::addPointLight(PointLight* p, std::string name) {
     
     if (!p->from_prefab)
@@ -164,6 +179,14 @@ void SceneGraph::addDirectionalLight(DirectionalLight* p, std::string name) {
         addChild(p, name);
     directional_lights.push_back(p);
     directional_light_number++;
+}
+
+void SceneGraph::addVolumetricLight(VolumetricLight* p, std::string name) {
+    if (!p->from_prefab)
+        addChild(p, name);
+
+    volumetric_lights.push_back(p);
+    volumetric_light_number++;
 }
 
 void SceneGraph::addParticleEmitter(ParticleEmitter* p) {
@@ -198,7 +221,7 @@ void SceneGraph::setShaders() {
     ResourceManager::Instance().shader_tile->setFloat("tile_scale", 1.f);
     
     ResourceManager::Instance().shader_instanced->use();
-    setLights(ResourceManager::Instance().shader_instanced);
+    //setLights(ResourceManager::Instance().shader_instanced);
     ResourceManager::Instance().shader_instanced->setMat4("projection", projection);
     ResourceManager::Instance().shader_instanced->setMat4("view", view);
     ResourceManager::Instance().shader_instanced->setFloat("totalTime", glfwGetTime());
@@ -1843,6 +1866,23 @@ Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph, bool lig
         scene_graph->point_lights.push_back(new_light);
         scene_graph->point_light_number++;
 		//new_light->parent = copy;
+    }
+
+    for (auto& light : prefab_scene_graph->volumetric_lights) {
+        
+        VolumetricLight* new_light = new VolumetricLight(light->pModel, light->name + "_" + instance_name,
+            light->getDirection(), light->getColor(), light->getIntensity(), light->getRadius(), light->getConeAngle());
+        new_light->from_prefab = !light_copy;
+        new_light->parent = copy;
+        copy->addChild(new_light);
+        new_light->scene_graph = scene_graph;
+        new_light->transform.setLocalPosition(light->transform.getGlobalPosition());
+        new_light->transform.computeModelMatrix();
+        new_light->is_physic_active = light->is_physic_active;
+        new_light->is_logic_active = light->is_logic_active;
+        scene_graph->volumetric_lights.push_back(new_light);
+        scene_graph->volumetric_light_number++;
+
     }
 
     //copy->createComponents();

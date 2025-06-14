@@ -17,7 +17,7 @@ uniform mat4 projection;
 uniform float size;
 
 // promień "kolca"
-uniform float spike_length = 0.2;
+float spike_length = 0.2;
 
 void main()
 {

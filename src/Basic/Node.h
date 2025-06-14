@@ -529,6 +529,8 @@ class VolumetricLight : public Light {
     float radius;
     float coneAngle;
 
+public:
+    
     VolumetricLight(std::shared_ptr<Model> model,
         const std::string& nameOfNode,
         const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f),
@@ -561,9 +563,10 @@ public:
 	Node* to_delete = nullptr;
     std::vector<Node*> to_delete_vec;
 
-    int size = 0, point_light_number = 0, directional_light_number = 0, active_point_lights = 0;
+    int size = 0, point_light_number = 0, directional_light_number = 0, volumetric_light_number = 0, active_point_lights = 0, active_volumetric_lights = 0;
     std::list<DirectionalLight*> directional_lights;
     std::list<PointLight*> point_lights;
+    std::list<VolumetricLight*> volumetric_lights;
 
     int limit_per_frame = 2;
     std::list<PointLight*>::iterator last_index;
@@ -594,10 +597,13 @@ public:
     void clearDeleteVector();
     void deletePointLight(PointLight* p);
     void deleteDirectionalLight(DirectionalLight* p);
+    void deleteVolumetricLight(VolumetricLight* p);
     void addPointLight(PointLight* p);
     void addDirectionalLight(DirectionalLight* p);
+    void addVolumetricLight(VolumetricLight* p);
     void addPointLight(PointLight* p, std::string name);
     void addDirectionalLight(DirectionalLight* p, std::string name);
+    void addVolumetricLight(VolumetricLight* p, std::string name);
     void setShaders();
     void draw(float width, float height, unsigned int framebuffer, bool is_editor = false);
     void drawMarkedObject();
