@@ -80,6 +80,11 @@ void ResourceManager::init(const char* path)
 					lights[id] = light;
 					std::cout << "Light loaded: " << type << " id: " << id << std::endl;
 				}
+				else if (type == "volumetric_light") {
+					shared_ptr<ViewLight> light = std::make_shared<ViewLight>(id, type);
+					lights[id] = light;
+					std::cout << "Light loaded: " << type << " id: " << id << std::endl;
+				}
 				else {
 
 					json textures = model["textures_id"];

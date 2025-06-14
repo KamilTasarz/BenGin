@@ -523,13 +523,13 @@ public:
 
 class VolumetricLight : public Light {
 
+public:
+
     glm::vec3 direction;
     glm::vec3 color;
     float intensity;
     float radius;
     float coneAngle;
-
-public:
     
     VolumetricLight(std::shared_ptr<Model> model,
         const std::string& nameOfNode,

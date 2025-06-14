@@ -41,6 +41,7 @@ Editor::Editor(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std
     eye_slashed_icon = new Sprite(1920.f, 1080.f, "res/sprites/eye_slashed.png", 0.f, 0.f, 1.f);
     dir_light_icon = new Sprite(1920.f, 1080.f, "res/sprites/dir_light_icon.png", 0.f, 0.f, 1.f);
     point_light_icon = new Sprite(1920.f, 1080.f, "res/sprites/point_light_icon.png", 0.f, 0.f, 1.f);
+    vol_light_icon = new Sprite(1920.f, 1080.f, "res/sprites/vol_light_icon.png", 0.f, 0.f, 1.f);
     switch_off = new Sprite(1920.f, 1080.f, "res/sprites/switch_off.png", 0.f, 0.f, 1.f);
     switch_on = new Sprite(1920.f, 1080.f, "res/sprites/switch_on.png", 0.f, 0.f, 1.f);
 
@@ -209,6 +210,10 @@ void Editor::DrawNodeBlock(Node* node, int depth)
             sceneGraph->deletePointLight(dynamic_cast<PointLight*>(sceneGraph->to_delete));
             sceneGraph->to_delete = nullptr;
         }
+        else if (dynamic_cast<VolumetricLight*>(sceneGraph->to_delete)) {
+            sceneGraph->deleteVolumetricLight(dynamic_cast<VolumetricLight*>(sceneGraph->to_delete));
+            sceneGraph->to_delete = nullptr;
+        }
         else {
             sceneGraph->deleteChild(sceneGraph->to_delete);
             sceneGraph->to_delete = nullptr;
@@ -284,6 +289,11 @@ void Editor::previewDisplay()
                 PointLight* newNode = new PointLight(ResourceManager::Instance().getModel(6), "point_light", true, 0.032f, 0.09f);
                 newNode->transform.setLocalPosition({ 0.f, 0.f, 0.f });
                 sceneGraph->addPointLight(newNode);
+            }
+            else if (id == 32) {
+                VolumetricLight* newNode = new VolumetricLight(ResourceManager::Instance().getModel(6), "vol_light");
+                newNode->transform.setLocalPosition({ 0.f, 0.f, 0.f });
+                sceneGraph->addVolumetricLight(newNode);
             }
             else {
                 //Model
@@ -597,6 +607,34 @@ void Editor::assetBarDisplay(float x, float y, float width, float height) {
         ImGui::PushID(temp->id);
 
         ImTextureID _icon = point_light_icon->sprite_id;
+        string name = temp->type;
+
+        if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)_icon, ImVec2(thumbnailSize, thumbnailSize))) {
+            // (opcjonalne: obsługa kliknięcia na asset)
+        }
+
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+            ImGui::SetDragDropPayload("ASSET_DRAG", &temp->id, sizeof(temp->id));
+            ImGui::Text("Dragging %s", name.c_str());
+            ImGui::EndDragDropSource();
+        }
+
+        ImGui::TextWrapped(name.c_str());
+
+        ImGui::NextColumn();
+        ImGui::PopID();
+
+    }
+
+    // Volumetric Light
+
+    {
+    
+        std::shared_ptr<ViewLight> temp = ResourceManager::Instance().getLight(32);
+        
+        ImGui::PushID(temp->id);
+
+        ImTextureID _icon = vol_light_icon->sprite_id;
         string name = temp->type;
 
         if (ImGui::ImageButton("cos", (ImTextureID)(intptr_t)_icon, ImVec2(thumbnailSize, thumbnailSize))) {
@@ -1278,12 +1316,16 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
             Light* temp = dynamic_cast<Light*>(preview_node);
 
-            ImGui::Separator();
-            ImGui::Text("Light Properties");
+            if (!dynamic_cast<VolumetricLight*>(preview_node)) {
 
-            ImGui::ColorEdit3("Ambient", glm::value_ptr(temp->ambient));
-            ImGui::ColorEdit3("Diffuse", glm::value_ptr(temp->diffuse));
-            ImGui::ColorEdit3("Specular", glm::value_ptr(temp->specular));
+                ImGui::Separator();
+                ImGui::Text("Light Properties");
+
+                ImGui::ColorEdit3("Ambient", glm::value_ptr(temp->ambient));
+                ImGui::ColorEdit3("Diffuse", glm::value_ptr(temp->diffuse));
+                ImGui::ColorEdit3("Specular", glm::value_ptr(temp->specular));
+
+            }
 
             if (dynamic_cast<DirectionalLight*>(preview_node)) {
 
@@ -1303,25 +1345,73 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
                 ImGui::PushID("quad");
 
-                ImGui::PushItemWidth(field_width);
-                ImGui::DragFloat("Quadratic##q", &temp->quadratic, 0.001f, 0.001f, 1.0f);
-                ImGui::PopItemWidth();
+                    ImGui::PushItemWidth(field_width);
+                    ImGui::DragFloat("Quadratic##q", &temp->quadratic, 0.001f, 0.001f, 1.0f);
+                    ImGui::PopItemWidth();
 
                 ImGui::PopID();
 
                 ImGui::PushID("lin");
 
-                ImGui::PushItemWidth(field_width);
-                ImGui::DragFloat("Linear##l", &temp->linear, 0.001f, 0.001f, 1.0f);
-                ImGui::PopItemWidth();
+                    ImGui::PushItemWidth(field_width);
+                    ImGui::DragFloat("Linear##l", &temp->linear, 0.001f, 0.001f, 1.0f);
+                    ImGui::PopItemWidth();
 
                 ImGui::PopID();
 
                 ImGui::PushID("const");
 
-                ImGui::PushItemWidth(field_width);
-                ImGui::DragFloat("Constant##c", &temp->constant, 0.001f, 0.f, 1.0f);
-                ImGui::PopItemWidth();
+                    ImGui::PushItemWidth(field_width);
+                    ImGui::DragFloat("Constant##c", &temp->constant, 0.001f, 0.f, 1.0f);
+                    ImGui::PopItemWidth();
+
+                ImGui::PopID();
+
+            }
+            else if (dynamic_cast<VolumetricLight*>(preview_node)) {
+            
+                VolumetricLight* temp = dynamic_cast<VolumetricLight*>(preview_node);
+                ImGui::Separator();
+
+                ImGui::Text("Volumetric Light Properties");
+
+                ImGui::PushID("vDirection");
+
+                    ImGui::PushItemWidth(field_width);
+                    ImGui::DragFloat3("Direction##vdirection", glm::value_ptr(temp->direction), 0.1f, -1.f, 1.f, "%.1f");
+                    ImGui::PopItemWidth();
+
+                ImGui::PopID();
+
+                ImGui::PushID("vColor");
+
+                    ImGui::PushItemWidth(field_width);
+                    ImGui::ColorEdit3("Color##vcolor", glm::value_ptr(temp->color));
+                    ImGui::PopItemWidth();
+
+                ImGui::PopID();
+
+                ImGui::PushID("vIntensity");
+
+                    ImGui::PushItemWidth(field_width);
+                    ImGui::DragFloat("Intensity##vintensity", &temp->intensity, 0.01f, 0.0f, 1.0f, "%.3f");
+                    ImGui::PopItemWidth();
+
+                ImGui::PopID();
+
+                ImGui::PushID("vRadius");
+
+                    ImGui::PushItemWidth(field_width);
+                    ImGui::DragFloat("Radius##vradius", &temp->radius, 0.1f, 0.5f, 10.0f, "%.3f");
+                    ImGui::PopItemWidth();
+
+                ImGui::PopID();
+
+                ImGui::PushID("vConeAngle");
+
+                    ImGui::PushItemWidth(field_width);
+                    ImGui::DragFloat("Cone Angle##vconeangle", &temp->coneAngle, 1.0f, 0.0f, 360.0f, "%.1f");
+                    ImGui::PopItemWidth();
 
                 ImGui::PopID();
 

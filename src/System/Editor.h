@@ -43,7 +43,7 @@ private:
 	unsigned int quadVAO, quadVBO;
 
 	glm::vec2 normalizedMouse;
-	Sprite * icon, * eye_icon, * eye_slashed_icon, *switch_on, *switch_off, * dir_light_icon, * point_light_icon;
+	Sprite * icon, * eye_icon, * eye_slashed_icon, *switch_on, *switch_off, * dir_light_icon, * point_light_icon, *vol_light_icon;
 	SceneGraph* sceneGraph;
 	SceneGraph* editor_sceneGraph;
 	Node* emit;
