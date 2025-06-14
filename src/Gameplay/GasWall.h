@@ -26,6 +26,7 @@ public:
     std::unordered_set<std::string> freeButUnused;
 
     int counter = 0;
+	bool inputDetected = false;
 
     InstanceManager* gasCreator;
 

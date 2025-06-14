@@ -32,6 +32,17 @@ void GasWall::onStart() {
 void GasWall::onUpdate(float deltaTime) {
     if (!spreading || spreadQueue.empty()) return;
 
+    if (!inputDetected) {
+        GLFWwindow* window = ServiceLocator::getWindow()->window;
+        for (int key = GLFW_KEY_SPACE; key <= GLFW_KEY_LAST; ++key) {
+            if (glfwGetKey(window, key) == GLFW_PRESS) {
+                inputDetected = true;
+                break;
+            }
+        }
+        return;
+    }
+
     spreadInterval = GameManager::instance->gasSpreadingSpeed;
 
     timer += deltaTime;
