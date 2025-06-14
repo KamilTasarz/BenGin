@@ -4,6 +4,7 @@
 #include "../Basic/Node.h"
 
 class TextObject;
+class LevelGenerator;
 
 class GameManager : public Script
 {
@@ -14,13 +15,14 @@ public:
 	float gasSpreadingSpeed = 1.f;
 	Node* currentPlayer;
 	Node* playerSpawner;
-	Node* levelGenerator;
+	LevelGenerator* levelGenerator;
 	InstanceManager* emitter;
 
 	// run variables
 	float runTime = 0.f;
 	int deathCount = 0;
 	float score = 0.f;
+	bool tutorialActive = false;
 
 	TextObject* scoreText;
 	TextObject* deathCountText;

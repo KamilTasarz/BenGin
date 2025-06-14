@@ -25,7 +25,7 @@ void GasWall::onStart() {
     obstacleLayer = { "Wall", "Floor" };
     glm::ivec2 startPos = glm::round(glm::vec2(owner->transform.getGlobalPosition().x, owner->transform.getGlobalPosition().y));
     spreadQueue.push(startPos);
-    visited.insert(posKey(startPos));
+    //visited.insert(posKey(startPos));
     prefab = PrefabRegistry::FindPuzzleByName("GasParticle");
 }
 

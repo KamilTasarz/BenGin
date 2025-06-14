@@ -9,6 +9,7 @@ public:
 	using SelfType = LevelGenerator;
 
 	VARIABLE(bool, generate);
+	VARIABLE(bool, playTutorial);
 	VARIABLE(int, levelCount);
 	VARIABLE(int, levelsRightCount);
 	VARIABLE(int, levelsUpCount);
@@ -40,6 +41,7 @@ public:
 
 	std::vector<Variable*> getFields() const override {
 		static Variable generateVar = getField_generate();
+		static Variable playTutorialVar = getField_playTutorial();
 		static Variable levelCountVar = getField_levelCount();
 		static Variable levelsRightCountVar = getField_levelsRightCount();
 		static Variable levelsUpCountVar = getField_levelsUpCount();
@@ -53,6 +55,7 @@ public:
 
 		return {
 			&generateVar,
+			&playTutorialVar,
 			&levelCountVar,
 			&levelsRightCountVar,
 			&levelsUpCountVar,

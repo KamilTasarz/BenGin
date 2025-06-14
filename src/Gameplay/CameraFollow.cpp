@@ -3,24 +3,22 @@
 //#include "../Component/Camera.h"
 #include "RegisterScript.h"
 #include "../Component/CameraGlobals.h"
+#include "PlayerController.h"
 
 REGISTER_SCRIPT(CameraFollow);	
 
 void CameraFollow::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "CameraFollow::onAttach::" << owner->name << std::endl;
 }
 
 void CameraFollow::onDetach()
 {
-	std::cout << "CameraFollow::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 
 void CameraFollow::onStart()
 {
-	//positionZ = owner->transform.getLocalPosition().z;
 }
 
 void CameraFollow::onUpdate(float deltaTime)
@@ -29,7 +27,7 @@ void CameraFollow::onUpdate(float deltaTime)
 		std::cout << "camera follow - player is nullptr" << std::endl;
 
 		player = owner->scene_graph->root->getChildByTag("Player");
-		//std::cout << "current player: " << player->getName() << ", tag: " << player->getTagName() << std::endl;
+		playerController = player->getComponent<PlayerController>();
 
 		glm::vec3 origin = glm::vec3(0.f, 0.f, 0.f);
 		glm::vec3 offset = glm::vec3(0.f, 0.f, offsetZ);
@@ -39,20 +37,19 @@ void CameraFollow::onUpdate(float deltaTime)
 		camera->setOffsetToFollowingObject(offset);
 	}
 	else {
-		//std::cout << "following player: " << player->getName() << std::endl;
-
 		glm::vec3 targetPosition = player->transform.getLocalPosition();
+
 		targetPosition.y += verticalOffset;
+		if (playerController->isDying || playerController->isInGas) targetPosition.z -= 10.f;
 
 		glm::vec3 currentPosition = owner->transform.getLocalPosition();
-		glm::vec3 newPosition = glm::mix(currentPosition, targetPosition, smoothing * deltaTime);
+		glm::vec3 newPosition;
+		newPosition.x = glm::mix(currentPosition.x, targetPosition.x, smoothing * deltaTime);
+		newPosition.y = glm::mix(currentPosition.y, targetPosition.y, smoothing * deltaTime);
+		newPosition.z = glm::mix(currentPosition.z, targetPosition.z, smoothing * .2f * deltaTime);
+
 		owner->transform.setLocalPosition(newPosition);
-
-		//std::cout << "Following: " << player->getName() << ", tag: " << player->getTagName() <<   std::endl;
 	}
-
-	//glm::vec3 pos = owner->transform.getLocalPosition();
-	//owner->transform.setLocalPosition(glm::vec3(pos.x, pos.y, positionZ));
 }
 
 void CameraFollow::onEnd()

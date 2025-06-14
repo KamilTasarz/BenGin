@@ -52,6 +52,8 @@ void PlayerAnimationController::onStart()
 	deathRight = owner->pModel->getAnimationByName("DeadBackTailRight");
 
 	changeState(new IdleState());
+
+	owner->animator->blendAnimation(sleep, 50.f, false, false);
 }
 
 void PlayerAnimationController::onUpdate(float deltaTime)
