@@ -585,8 +585,6 @@ void Game::init()
         std::cerr << "ERROR::FRAMEBUFFER:: Volumetric FBO is not complete!" << std::endl;
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
     // ======== VOLUMETRIC END ========
 
     ServiceLocator::getAudioEngine()->Init();
