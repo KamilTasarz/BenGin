@@ -1,7 +1,9 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include "Component.h"
+#include <deque>
 
 class Rigidbody : public Component
 {
@@ -38,6 +40,11 @@ public:
 	glm::vec4 side = glm::vec4(1.f, 0.f, 0.f, 0.f);
 
 	bool isPlayer = false;
+
+	//time reverse
+	std::deque<glm::vec3> positionHistory;
+	std::deque<glm::quat> rotationHistory;
+	bool isRewinding = false;
 
 	Rigidbody(float mass = 1.f, float gravity = 1.f, bool isStatic = false, bool useGravity = true, bool lockPositionX = false, bool lockPositionY = false, bool lockPositionZ = false);
 	virtual ~Rigidbody() = default;

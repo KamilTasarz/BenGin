@@ -49,8 +49,39 @@ void Rigidbody::onUpdate(float deltaTime)
 		return;
     }
 
-	//float lastVelocityX = velocityX;
-	//float lastVelocityY = velocityY;
+	//time rewind
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
+		isRewinding = true;
+	}
+	else isRewinding = false;
+
+	if (isRewinding) {
+		const int rewindStepsPerFrame = 10;
+
+		for (int i = 0; i < rewindStepsPerFrame; ++i) {
+			if (!positionHistory.empty() && !rotationHistory.empty()) {
+				glm::vec3 lastPosition = positionHistory.back();
+				glm::quat lastRotation = rotationHistory.back();
+
+				owner->transform.setLocalPosition(lastPosition);
+				owner->transform.setLocalRotation(lastRotation);
+
+				positionHistory.pop_back();
+				rotationHistory.pop_back();
+			}
+			else {
+				owner->scene_graph->deleteChild(owner);
+			}
+		}
+		return;
+	}
+	else if (!isRewinding) {
+		glm::vec3 currentPosition = owner->transform.getLocalPosition();
+		glm::quat currentRotation = owner->transform.getLocalRotation();
+
+		positionHistory.push_back(currentPosition);
+		rotationHistory.push_back(currentRotation);
+	}
 
 	smoothingFactor = GameManager::instance->globalSmoothing;
 
