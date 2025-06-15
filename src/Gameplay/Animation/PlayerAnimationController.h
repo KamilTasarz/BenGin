@@ -6,6 +6,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include "../AnimationRewindable.h"
 
 class IPlayerAnimState;
 class Animation;
@@ -46,6 +47,8 @@ public:
 	bool isTurning = false;
 	glm::quat targetRotation;
 	float turnSpeed = 15.f;
+
+	AnimationRewindable* rewindable = nullptr;
 
 	PlayerAnimationController() = default;
 	virtual ~PlayerAnimationController() = default;

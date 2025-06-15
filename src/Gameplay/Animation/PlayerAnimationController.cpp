@@ -54,6 +54,14 @@ void PlayerAnimationController::onStart()
 	changeState(new IdleState());
 
 	owner->animator->blendAnimation(sleep, 50.f, false, false);
+
+	owner->animator->current_animation;
+
+	rewindable = owner->getComponent<AnimationRewindable>();
+	if (rewindable == nullptr) {
+		owner->addComponent(std::make_unique<AnimationRewindable>());
+		rewindable = owner->getComponent<AnimationRewindable>();
+	}
 }
 
 void PlayerAnimationController::onUpdate(float deltaTime)

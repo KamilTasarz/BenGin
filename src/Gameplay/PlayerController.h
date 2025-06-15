@@ -6,6 +6,7 @@
 class InstanceManager;
 class TextObject;
 class SpriteObject;
+class PlayerRewindable;
 
 class PlayerController : public Script
 {
@@ -52,6 +53,8 @@ public:
 
     int sfxId = -1;
 
+	PlayerRewindable* rewindable = nullptr;
+
     PlayerController() = default;
     virtual ~PlayerController() = default;
 
@@ -68,6 +71,10 @@ public:
     void Die(bool freeze, bool electrified = false);
 
     bool HandleVirus(float deltaTime);
+
+    void ApplyVirusEffect();
+
+    void VirusEffect();
 
     bool CheckIfInGas();
 

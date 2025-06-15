@@ -12,6 +12,10 @@
 #include "GameManager.h"
 #include "../System/GuiManager.h"
 #include "../AudioEngine.h"
+#include "PlayerRewindable.h"
+#include "../Component/CameraGlobals.h"
+#include "CameraFollow.h"
+#include "../ResourceManager.h"
 
 //#include "GameMath.h"
 
@@ -119,13 +123,18 @@ void PlayerController::onStart()
 	virusEffectText = GuiManager::Instance().findText(7);
 	cheeseSprite = GuiManager::Instance().findSprite(8);
 
-	//virusTypeText->visible = false;
-	//virusEffectText->visible = false;
-	//cheeseSprite->visible = false;
+	rewindable = owner->getComponent<PlayerRewindable>();
+	if (rewindable == nullptr) {
+		owner->addComponent(std::make_unique<PlayerRewindable>());
+		rewindable = owner->getComponent<PlayerRewindable>();
+	}
 }
 
 void PlayerController::onUpdate(float deltaTime)
 {
+	//rewindable->isDead = isDead;
+	//rewindable->isGravityFlipped = isGravityFlipped;
+
 	if (isDead) return;
 
 	isDying = false;
@@ -133,17 +142,6 @@ void PlayerController::onUpdate(float deltaTime)
 	glm::vec3 position = owner->transform.getLocalPosition();
 	glm::vec3 globalPosition = owner->transform.getGlobalPosition();
 	globalPosition.z -= 2.f;
-	
-	glm::vec3 listenerForward;
-	if (rb->side.x > 0) {
-		listenerForward = glm::vec3(0.0f, 0.0f, 1.0f); // Patrzy w prawo
-	}
-	else if (rb->side.x < 0) {
-		listenerForward = glm::vec3(0.0f, 0.0f, -1.0f); // Patrzy w lewo
-	}
-	else {
-		listenerForward = glm::vec3(rb->side.x, 0.0f, 0.0f);
-	}
 
 	auto* audio = ServiceLocator::getAudioEngine();
 	audio->Set3dListenerAndOrientation(globalPosition, glm::vec3(rb->velocityX, rb->velocityY, 0.f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0, 1, 0));
@@ -223,6 +221,9 @@ void PlayerController::onUpdate(float deltaTime)
 	if (virusType != "none") {
 		isDying = HandleVirus(deltaTime);
 	}
+	else {
+		timerIndicator->transform.setLocalScale(glm::vec3(0.f));
+	}
 
 	float checkDelay = 0.5f;
 	if (gasCheckTimer > checkDelay) {
@@ -250,6 +251,8 @@ void PlayerController::onUpdate(float deltaTime)
 		virusTypeAnimator.Hide();
 		virusEffectAnimator.Hide();
 		cheeseSpriteAnimator.Hide();
+
+		ApplyVirusEffect();
 	}
 	else if (virusType != "none" && virusTypeAnimator.state == UIAnimState::Hidden || virusType != "none" && lastVirusType != virusType) {
 		if (virusType == "blue") {
@@ -272,6 +275,8 @@ void PlayerController::onUpdate(float deltaTime)
 		virusTypeAnimator.Show();
 		virusEffectAnimator.Show();
 		cheeseSpriteAnimator.Show();
+
+		ApplyVirusEffect();
 	}
 
 	virusTypeAnimator.Update(deltaTime, virusTypeText);
@@ -297,7 +302,8 @@ void PlayerController::Die(bool freeze, bool electrified)
 	}
 	else if (freeze) {
 		Rigidbody* rb = owner->getComponent<Rigidbody>();
-		owner->deleteComponent(rb);
+		//owner->deleteComponent(rb);
+		rb->is_static = true;
 	}
 
 	std::shared_ptr<Tag> tag = TagLayerManager::Instance().getTag("Box");
@@ -320,8 +326,10 @@ void PlayerController::Die(bool freeze, bool electrified)
 
 	if (!GameManager::instance->tutorialActive) GameManager::instance->deathCount++;
 }
+
 bool PlayerController::HandleVirus(float deltaTime)
 {
+	timerIndicator->setActive(true);
 	float smoothing = 10.f;
 
 	glm::vec3 currentScale = timerIndicator->transform.getLocalScale();
@@ -332,7 +340,7 @@ bool PlayerController::HandleVirus(float deltaTime)
 	
 	std::cout << "Gracz biegnie: " << isRunning << ", gracz skacze: " << isJumping << std::endl;
 
-	if (isRunning || !rb->groundUnderneath) {
+	if (isRunning || !rb->groundUnderneath || rewindable->isRewinding) {
 		deathTimer = 0.8f;
 		return false;
 	}
@@ -347,6 +355,52 @@ bool PlayerController::HandleVirus(float deltaTime)
 			return false;
 		}
 		return true;
+	}
+}
+
+void PlayerController::ApplyVirusEffect()
+{
+	//PlayerController* player = target->getComponent<PlayerController>();
+
+	rb->gravity = -32.f;
+	rb->mass = 1.f;
+	speed = 9.f;
+	isGravityFlipped = false;
+	jumpForce = 19.f;
+	//virusType = "none";
+	camera->object_to_follow->getComponent<CameraFollow>()->verticalOffset = 3.f;
+
+	VirusEffect();
+}
+
+void PlayerController::VirusEffect()
+{
+	//PlayerController* player = target->getComponent<PlayerController>();
+
+	if (virusType == "blue") {
+		owner->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+
+		isGravityFlipped = false;
+		rb->gravity = -32.f;
+		rb->mass = 0.4f;
+		jumpForce *= 1.2f;
+	}
+	else if (virusType == "green") {
+		owner->changeColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+		camera->object_to_follow->getComponent<CameraFollow>()->verticalOffset = -1.f;
+		isGravityFlipped = true;
+		rb->gravity = 32.f;
+	}
+	else if (virusType == "black") {
+		owner->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+		rb->mass = 25.f;
+		speed *= 0.7f;
+		jumpForce *= 0.8f;
+	}
+	else {
+		std::cout << "Unknown virus type!" << std::endl;
 	}
 }
 

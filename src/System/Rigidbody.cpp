@@ -6,6 +6,7 @@
 #include "../System/PhysicsSystem.h"
 #include "../Component/BoundingBox.h"
 #include "../Gameplay/GameManager.h"
+#include "../Gameplay/TimeRewindable.h"
 
 Rigidbody::Rigidbody(float mass, float gravity, bool isStatic, bool useGravity, bool lockPositionX, bool lockPositionY, bool lockPositionZ)
 {
@@ -41,6 +42,11 @@ void Rigidbody::onStart()
 
 	length = (owner->AABB->max_point_world.y - owner->AABB->min_point_world.y) / 2.f;
 	width = (owner->AABB->max_point_world.x - owner->AABB->min_point_world.x) / 2.f;
+
+	TimeRewindable* rewindable = owner->getComponent<TimeRewindable>();
+	if (rewindable == nullptr) {
+		owner->addComponent(std::make_unique<TimeRewindable>());
+	}
 }
 
 void Rigidbody::onUpdate(float deltaTime)
@@ -50,7 +56,7 @@ void Rigidbody::onUpdate(float deltaTime)
     }
 
 	//time rewind
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
+	/*if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
 		isRewinding = true;
 	}
 	else isRewinding = false;
@@ -81,7 +87,7 @@ void Rigidbody::onUpdate(float deltaTime)
 
 		positionHistory.push_back(currentPosition);
 		rotationHistory.push_back(currentRotation);
-	}
+	}*/
 
 	smoothingFactor = GameManager::instance->globalSmoothing;
 

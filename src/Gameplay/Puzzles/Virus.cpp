@@ -7,6 +7,7 @@
 #include "../CameraFollow.h"
 #include "../GameManager.h"
 #include "../../ResourceManager.h"
+#include "../VirusRewindable.h"
 
 REGISTER_SCRIPT(Virus);
 
@@ -24,29 +25,32 @@ void Virus::onDetach()
 
 void Virus::onStart()
 {
+	rewindable = owner->getComponent<VirusRewindable>();
+	if (!rewindable) {
+		owner->addComponent(std::make_unique<VirusRewindable>());
+		rewindable = owner->getComponent<VirusRewindable>();
+	}
 }
 
 void Virus::onUpdate(float deltaTime)
 {
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS || player && player->getTagName() == "Box") {
-		isCollected = false;
-		player == nullptr;
+	rewindable->isCollected = isCollected;
+	rewindable->player = player;
 
-		if (blue) {
-			auto model = ResourceManager::Instance().getModel(25);
-			owner->pModel = model;
+	if (!isCollected || player && player->getTagName() == "Box") {
+		int modelId = -1;
+		if (blue) modelId = 25;
+		else if (green) modelId = 23;
+		else if (black) modelId = 24;
+
+		if (modelId != -1) {
+			owner->pModel = ResourceManager::Instance().getModel(modelId);
 		}
-		else if (green) {
-			auto model = ResourceManager::Instance().getModel(23);
-			owner->pModel = model;
-		}
-		else if (black) {
-			auto model = ResourceManager::Instance().getModel(24);
-			owner->pModel = model;
-		}
-		else {
-			std::cout << "Unknown virus type!" << std::endl;
-		}
+	}
+
+	if (isCollected && player && player->getTagName() == "Box") {
+		isCollected = false;
+		player = nullptr;
 	}
 }
 
@@ -57,7 +61,6 @@ void Virus::onEnd()
 void Virus::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
-		//std::cout << "Ser podniesiony - " << owner->name << std::endl;
 
 		if (isCollected) return;
 
@@ -68,25 +71,8 @@ void Virus::onCollisionLogic(Node* other)
 
 		isCollected = true;
 
-		ApplyEffect(other);
+		VirusEffect(other);
 	}
-}
-
-void Virus::ApplyEffect(Node* target)
-{
-	PlayerController* player = target->getComponent<PlayerController>();
-
-	target->getComponent<Rigidbody>()->gravity = -32.f;
-	target->getComponent<Rigidbody>()->mass = 1.f;
-	player->speed = 9.f;
-	player->isGravityFlipped = false;
-	player->jumpForce = 19.f;
-	player->virusType = "none";
-	camera->object_to_follow->getComponent<CameraFollow>()->verticalOffset = 3.f;
-
-	VirusEffect(target);
-
-	std::cout << "Virus effect applied to: " << target->name << std::endl;
 }
 
 void Virus::VirusEffect(Node* target)
@@ -94,34 +80,18 @@ void Virus::VirusEffect(Node* target)
 	PlayerController* player = target->getComponent<PlayerController>();
 
 	if (blue) {
-		target->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-
-		player->isGravityFlipped = false;
-		target->getComponent<Rigidbody>()->gravity = -32.f;
-		target->getComponent<Rigidbody>()->mass = 0.4f;
-		player->jumpForce *= 1.2f;
 		player->virusType = "blue";
 
 		auto model = ResourceManager::Instance().getModel(60);
 		owner->pModel = model;
 	}
 	else if (green) {
-		target->changeColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-
-		camera->object_to_follow->getComponent<CameraFollow>()->verticalOffset = -1.f;
-		player->isGravityFlipped = true;
-		target->getComponent<Rigidbody>()->gravity = 32.f;
 		player->virusType = "green";
 
 		auto model = ResourceManager::Instance().getModel(62);
 		owner->pModel = model;
 	}
 	else if (black) {
-		target->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-
-		target->getComponent<Rigidbody>()->mass = 25.f;
-		player->speed *= 0.7f;
-		player->jumpForce *= 0.8f;
 		player->virusType = "black";
 
 		auto model = ResourceManager::Instance().getModel(61);

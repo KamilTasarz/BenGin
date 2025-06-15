@@ -3,6 +3,8 @@
 #include "../Script.h"
 #include <string>
 
+class VirusRewindable;
+
 class Virus : public Script
 {
 //private:
@@ -23,6 +25,7 @@ public:
 
 	bool isCollected = false;
 	Node* player = nullptr;
+	VirusRewindable* rewindable = nullptr;
 
 	Virus() = default;
 	virtual ~Virus() = default;
@@ -32,15 +35,8 @@ public:
 	void onUpdate(float deltaTime) override;
 	void onEnd() override;
 
-	//void onCollision(Node* other) override;
-	//void onStayCollision(Node* other) override;
-	//void onExitCollision(Node* other) override;
-
 	void onCollisionLogic(Node* other) override;
-	//void onStayCollisionLogic(Node* other) override;
-	//void onExitCollisionLogic(Node* other) override;
 
-	void ApplyEffect(Node* target);
 	void VirusEffect(Node* target);
 
 	std::vector<Variable*> getFields() const override {

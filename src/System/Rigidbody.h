@@ -5,6 +5,11 @@
 #include "Component.h"
 #include <deque>
 
+struct RigidBodySnapshot {
+	glm::vec3 position;
+	glm::quat rotation;
+};
+
 class Rigidbody : public Component
 {
 public:
