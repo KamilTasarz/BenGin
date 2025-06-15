@@ -224,6 +224,12 @@ void Game::draw()
 
         }
 
+        if (postProcessData.is_volumetric) {
+            
+
+
+        }
+
         if (postProcessData.is_crt_curved) {
 
             glDisable(GL_DEPTH_TEST);
@@ -560,6 +566,29 @@ void Game::init()
     
     // ======== NOISE END ========
 
+    // ======== VOLUMETRIC START ========
+
+    glGenFramebuffers(1, &volumetricFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, volumetricFBO);
+
+    // Create color texture
+    glGenTextures(1, &volumetricColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, volumetricColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, WINDOW_WIDTH, WINDOW_HEIGHT, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, volumetricColorBuffer, 0);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "ERROR::FRAMEBUFFER:: Volumetric FBO is not complete!" << std::endl;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // ======== VOLUMETRIC END ========
+
     ServiceLocator::getAudioEngine()->Init();
     loadSounds();
 
@@ -615,8 +644,15 @@ void Game::shutdown()
     glDeleteTextures(1, &colorTexture);
     glDeleteTextures(1, &normalTexture);
     glDeleteTextures(1, &depthTexture);
+    glDeleteTextures(1, &ssaoColorBuffer);
+    glDeleteTextures(1, &ssaoBlurColorBuffer);
+    glDeleteTextures(1, &crtColorBuffer);
+    glDeleteTextures(1, &volumetricColorBuffer);
     glDeleteRenderbuffers(1, &depthRenderbuffer);
     glDeleteFramebuffers(1, &framebuffer);
+    glDeleteFramebuffers(1, &ssaoFBO);
+    glDeleteFramebuffers(1, &ssaoBlurFBO);
+    glDeleteFramebuffers(1, &volumetricFBO);
     //glfwTerminate();
 }
 

@@ -47,6 +47,7 @@ private:
 	PostProcessData postProcessData;
 	unsigned int framebuffer, colorTexture, depthTexture, normalTexture, depthRenderbuffer;
 	unsigned int ssaoFBO, ssaoColorBuffer, ssaoBlurFBO, ssaoBlurColorBuffer, crtColorBuffer;
+	unsigned int volumetricFBO, volumetricColorBuffer;
 
 	float alpha = 0.f;
 

@@ -1078,6 +1078,8 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	j["is_bloom"] = data.is_bloom;
 
+	j["is_volumetric"] = data.is_volumetric;
+
 	// Save as an array of 2 values
 	j["crt_curvature"] = vec2_to_json(data.crt_curvature);
 
@@ -1145,6 +1147,8 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 			data.is_ssao = j.at("is_ssao");
 
 			data.is_bloom = j.at("is_bloom");
+
+			data.is_volumetric = j.at("is_volumetric");
 
 			data.is_crt_curved = j.at("is_crt");
 

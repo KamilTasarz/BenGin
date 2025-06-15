@@ -1906,6 +1906,8 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
             }
 
+            ImGui::Checkbox("Volumetric Enable/Disable", &postProcessData.is_volumetric);
+
             ImGui::Checkbox("CRT Enable/Disable", &postProcessData.is_crt_curved);
 
             if (postProcessData.is_crt_curved) {
