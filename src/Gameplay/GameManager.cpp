@@ -13,6 +13,7 @@ void GameManager::onAttach(Node* owner)
 {
 	GameManager::instance = this;
     this->owner = owner;
+    GameManager::instance = this;
 }
 
 void GameManager::onDetach()
@@ -22,7 +23,7 @@ void GameManager::onDetach()
 
 void GameManager::onStart()
 {
-    GameManager::instance = this;
+
     playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
 	playerSpawner->getComponent<PlayerSpawner>()->spawnPlayer();
 

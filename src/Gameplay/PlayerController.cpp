@@ -177,6 +177,7 @@ void PlayerController::onUpdate(float deltaTime)
 
 		rb->is_static = debugMode;
 		owner->setPhysic(!debugMode);
+		
 	}
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_RELEASE) {
@@ -216,6 +217,7 @@ void PlayerController::onUpdate(float deltaTime)
 			isJumping = true;
 			canJump = false;
 		}
+
 	}
 
 	if (virusType != "none") {
