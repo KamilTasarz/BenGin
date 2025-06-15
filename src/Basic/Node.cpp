@@ -104,19 +104,24 @@ void SceneGraph::deleteChild(Node* p)
 
 void SceneGraph::clearDeleteVector()
 {
-    while (!to_delete_vec.empty()) {
-        Node* parent = to_delete_vec.back()->parent;
-        if (!parent) return;
+    std::unordered_set<Node*> unique_nodes(to_delete_vec.begin(), to_delete_vec.end());
+
+    for (Node* node : unique_nodes) {
+        if (!node) continue;
+        Node* parent = node->parent;
+        if (!parent) continue;
+
         auto& siblings = parent->children;
-        auto it = std::find(siblings.begin(), siblings.end(), to_delete_vec.back());
+        auto it = std::find(siblings.begin(), siblings.end(), node);
         if (it != siblings.end()) {
-            
             siblings.erase(it);
             this->size--;
         }
-        delete to_delete_vec.back();
-        to_delete_vec.pop_back();
+
+        delete node;
     }
+
+    to_delete_vec.clear();
 }
 
 void SceneGraph::deletePointLight(PointLight* p) {
