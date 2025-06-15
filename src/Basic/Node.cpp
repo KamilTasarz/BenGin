@@ -228,7 +228,7 @@ void SceneGraph::setShaders() {
     ResourceManager::Instance().shader_instanced->setMat4("projection", projection);
     ResourceManager::Instance().shader_instanced->setMat4("view", view);
     // Geometry uniforms
-    ResourceManager::Instance().shader_instanced->setFloat("size", 0.5f);
+    ResourceManager::Instance().shader_instanced->setFloat("size", 1.5f);
     // Fragment uniforms
     ResourceManager::Instance().shader_instanced->setFloat("time", glfwGetTime());
 

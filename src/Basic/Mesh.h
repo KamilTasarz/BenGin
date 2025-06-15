@@ -209,6 +209,9 @@ public:
             }
         }
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         // draw mesh
         glBindVertexArray(VAO);
         if (is_EBO) {
@@ -218,6 +221,8 @@ public:
             glDrawArraysInstanced(GL_POINTS, 0, static_cast<unsigned int>(vertices.size()), num);
         }
         glBindVertexArray(0);
+
+        glDisable(GL_BLEND);
 
         // always good practice to set everything back to defaults once configured.
         glActiveTexture(GL_TEXTURE0);
