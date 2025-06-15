@@ -2,6 +2,8 @@
 
 #include "Script.h"
 
+class PlayerController;
+
 class CameraFollow : public Script
 {
 public:
@@ -13,6 +15,7 @@ public:
 	VARIABLE(float, smoothing);
 
 	float verticalOffset = 3.f;
+	PlayerController* playerController = nullptr;
 
 	CameraFollow() = default;
 	virtual ~CameraFollow() = default;

@@ -70,7 +70,7 @@ void Fan::onStayCollisionLogic(Node* other)
 	}
 
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
-		if (other->getTagName() == "Player") {
+		if (other->getComponent<PlayerController>() != nullptr) {
 			if (other->getComponent<PlayerController>()->virusType == "black") {
 				return;
 			}

@@ -34,8 +34,8 @@ void CameraProp::onUpdate(float deltaTime)
     float diffY = playerPos.y - cameraPos.y;
 
     // Przekszta³æ ró¿nice na k¹ty w stopniach (z czu³oœci¹ i ograniczeniem)
-    float desiredYDeg = glm::clamp(diffX * 9.f, -90.0f, 90.0f); // obrót w lewo/prawo
-    float desiredXDeg = glm::clamp(-diffY * 9.f, -45.0f, 45.0f) - 45.f; // obrót w górê/dó³ (minus, ¿eby obraca³o poprawnie)
+    float desiredYDeg = glm::clamp(diffX * 9.f, -80.0f, 80.0f); // obrót w lewo/prawo
+    float desiredXDeg = glm::clamp(-diffY * 9.f, -60.0f, 60.0f) - 45.f; // obrót w górê/dó³ (minus, ¿eby obraca³o poprawnie)
 
     // Konwertuj na radiany
     float desiredYRad = glm::radians(desiredYDeg);

@@ -1,43 +1,49 @@
 {
     "AABB_logic_max": {
-        "x": 1.0000008344650269,
-        "y": 4.496504306793213,
-        "z": -7.000000953674316
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
     },
     "AABB_logic_min": {
-        "x": -0.9999994039535522,
-        "y": -4.496504306793213,
-        "z": -13.000003814697266
+        "x": -1.0,
+        "y": -1.0,
+        "z": -1.0
     },
     "children": [
         {
             "AABB_logic_max": {
-                "x": 3.0,
-                "y": 4.055138111114502,
-                "z": 1.0
+                "x": 1.6952190399169922,
+                "y": 0.9533786773681641,
+                "z": 5.786543846130371
             },
             "AABB_logic_min": {
-                "x": -3.0,
-                "y": 0.0,
-                "z": -1.0
+                "x": -1.6952195167541504,
+                "y": -4.155320644378662,
+                "z": -0.8704432845115662
             },
+            "components": [
+                {
+                    "name": "CameraProp",
+                    "variables": null
+                }
+            ],
             "id": 0,
             "is_logic_active": false,
-            "is_physic_active": true,
+            "is_physic_active": false,
             "is_visible": true,
             "layer": "Default",
-            "model.id": 37,
-            "name": "gate_down",
+            "model.id": 35,
+            "name": "head",
             "no_textures": false,
             "position": {
                 "x": 0.0,
-                "y": -3.5,
-                "z": 0.0
+                "y": -0.2847781181335449,
+                "z": 3.312309741973877
             },
             "rotation": {
-                "w": 1.0,
-                "x": 0.0,
-                "y": 0.0,
+                "w": 0.9659258127212524,
+                "x": -0.258819043636322,
+                "y": -0.0,
                 "z": 0.0
             },
             "scale": {
@@ -50,26 +56,26 @@
         },
         {
             "AABB_logic_max": {
-                "x": 3.0,
-                "y": 7.0,
-                "z": 1.0
+                "x": 1.5792088508605957,
+                "y": 1.5792094469070435,
+                "z": 4.274559020996094
             },
             "AABB_logic_min": {
-                "x": -3.0,
-                "y": 2.4390716552734375,
-                "z": -1.0
+                "x": -1.5792088508605957,
+                "y": -1.5792087316513062,
+                "z": -2.384185791015625e-07
             },
             "id": 0,
             "is_logic_active": false,
-            "is_physic_active": true,
+            "is_physic_active": false,
             "is_visible": true,
             "layer": "Default",
-            "model.id": 36,
-            "name": "gate_up",
+            "model.id": 34,
+            "name": "body",
             "no_textures": false,
             "position": {
                 "x": 0.0,
-                "y": -3.5,
+                "y": 0.0,
                 "z": 0.0
             },
             "rotation": {
@@ -87,30 +93,13 @@
             "type": "Node"
         }
     ],
-    "components": [
-        {
-            "name": "Door",
-            "variables": [
-                {
-                    "field_type": "bool",
-                    "name": "isOpen",
-                    "value": false
-                },
-                {
-                    "field_type": "bool",
-                    "name": "openToSide",
-                    "value": true
-                }
-            ]
-        }
-    ],
     "id": 0,
     "is_logic_active": false,
     "is_physic_active": true,
     "is_visible": true,
     "layer": "Default",
     "model.id": -1,
-    "name": "Door_vertical",
+    "name": "camera_prop",
     "no_textures": true,
     "position": {
         "x": 0.0,
@@ -118,15 +107,15 @@
         "z": 0.0
     },
     "rotation": {
-        "w": 0.7071067690849304,
+        "w": 1.0,
         "x": 0.0,
-        "y": -0.7071067690849304,
+        "y": 0.0,
         "z": 0.0
     },
     "scale": {
-        "x": 0.44999998807907104,
-        "y": 0.7149999737739563,
-        "z": 0.5
+        "x": 0.25,
+        "y": 0.25,
+        "z": 0.25
     },
     "tag": "Default",
     "type": "Node"

@@ -27,6 +27,7 @@ public:
 
     bool isCatched = false;
     glm::vec3 startPos;
+	int sfxId = -1;
 
     glm::vec2 smoothedDirection{ 0.f, 0.f };
     float directionSmoothing = 7.5f;

@@ -11,6 +11,7 @@ GameManager* GameManager::instance = nullptr;
 
 void GameManager::onAttach(Node* owner)
 {
+	GameManager::instance = this;
     this->owner = owner;
     GameManager::instance = this;
 }
@@ -26,7 +27,7 @@ void GameManager::onStart()
     playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
 	playerSpawner->getComponent<PlayerSpawner>()->spawnPlayer();
 
-    levelGenerator = owner->scene_graph->root->getChildByTag("LevelGenerator");
+    levelGenerator = owner->scene_graph->root->getChildByTag("LevelGenerator")->getComponent<LevelGenerator>();
     emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
 
     scoreText = GuiManager::Instance().findText(0);
@@ -41,20 +42,27 @@ void GameManager::onStart()
 
 void GameManager::onUpdate(float deltaTime)
 {
-	runTime += deltaTime;
-	score += deltaTime * 10.f / gasSpreadingSpeed;
-    
-	int minutes = static_cast<int>(runTime) / 60;
-	int seconds = static_cast<int>(runTime) % 60;
+    if (!tutorialActive) {
+        runTime += deltaTime;
+        score += deltaTime * 10.f / gasSpreadingSpeed;
 
-	std::string minutesText = minutes < 10 ? "0" + std::to_string(minutes) : std::to_string(minutes);
-	std::string secondsText = seconds < 10 ? "0" + std::to_string(seconds) : std::to_string(seconds);
-	runTimeText->value = minutesText + ":" + secondsText;
+        int minutes = static_cast<int>(runTime) / 60;
+        int seconds = static_cast<int>(runTime) % 60;
 
-    std::string scoreWithZeros = std::format("{:05}", static_cast<int>(score));
-	scoreText->value = "SCORE:" + scoreWithZeros;
+        std::string minutesText = minutes < 10 ? "0" + std::to_string(minutes) : std::to_string(minutes);
+        std::string secondsText = seconds < 10 ? "0" + std::to_string(seconds) : std::to_string(seconds);
+        runTimeText->value = minutesText + ":" + secondsText;
 
-	deathCountText->value = "DEATHS:" + std::to_string(deathCount);
+        std::string scoreWithZeros = std::format("{:05}", static_cast<int>(score));
+        scoreText->value = "SCORE:" + scoreWithZeros;
+
+        deathCountText->value = "DEATHS:" + std::to_string(deathCount);
+    }
+    else if (tutorialActive && scoreText->visible) {
+        scoreText->visible = false;
+        runTimeText->visible = false;
+        deathCountText->visible = false;
+    }
 
     timeSinceLastUpdate += deltaTime;
     fpsAccumulator += 1.f / deltaTime; // fps dla tej jednej klatki
@@ -78,24 +86,43 @@ void GameManager::onUpdate(float deltaTime)
 void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
     int index = emitter->tail - 1;
 
-    glm::vec3 gasPos = emitter->particles[index].position;
     glm::vec3 spawnerPos = playerSpawner->transform.getGlobalPosition();
 
+    glm::vec3 gasPos = emitter->particles[index].position;
     float distanceFromGasToSpawner = glm::distance(gasPos, spawnerPos);
 
-    gasSpreadingSpeed = 10.f / distanceFromGasToSpawner;
-    gasSpreadingSpeed = glm::clamp(gasSpreadingSpeed, 0.3f, 3.f);
+    float minDistance = 100.f;
+	int size = clamp(index, 0, 15);
+
+	for (int i = 0; i < size; i++) {
+		glm::vec3 particlePos = emitter->particles[index - i].position;
+		float distance = glm::distance(particlePos, spawnerPos);
+		if (i == 0 || distance < minDistance) {
+			minDistance = distance;
+		}
+	}
+
+    gasSpreadingSpeed = 10.f / minDistance;
+
+	if (tutorialActive) {
+        gasSpreadingSpeed = glm::clamp(gasSpreadingSpeed, 0.6f, 200.f);
+	}
+    else {
+        gasSpreadingSpeed = glm::clamp(gasSpreadingSpeed, 0.3f, 3.f);
+        float modifier = 1.f + runTime / 300.f;
+		gasSpreadingSpeed /= modifier;
+    }
 
     std::cout << gasSpreadingSpeed << std::endl;
 }
 
 void GameManager::HandleLevelGeneration() {
     glm::vec3 playerPos = currentPlayer->transform.getGlobalPosition();
-    glm::vec3 generatorPos = levelGenerator->transform.getGlobalPosition();
+    glm::vec3 generatorPos = levelGenerator->getOwner()->transform.getGlobalPosition();
 
     float distanceToLevelGen = glm::distance(playerPos, generatorPos);
 
-    if (distanceToLevelGen < 30.f) {
-        levelGenerator->getComponent<LevelGenerator>()->GenerateLevel();
+    if (distanceToLevelGen < 40.f) {
+        levelGenerator->GenerateLevel();
     }
 }

@@ -78,14 +78,15 @@ struct UIAnimator {
 			if (t >= 1.f) {
 				element->pos = glm::vec2(2000, 2000);
 				state = UIAnimState::Hidden;
+				element->visible = false;
 			}
 		}
 	}
 };
 
-UIAnimator virusTypeAnimator(glm::vec2(1305, 115));
-UIAnimator virusEffectAnimator(glm::vec2(1375, 180));
-UIAnimator cheeseSpriteAnimator(glm::vec2(1705, 125));
+UIAnimator virusTypeAnimator(glm::vec2(1665, 135));
+UIAnimator virusEffectAnimator(glm::vec2(1665, 200));
+UIAnimator cheeseSpriteAnimator(glm::vec2(1705, 145));
 
 REGISTER_SCRIPT(PlayerController);
 
@@ -117,13 +118,17 @@ void PlayerController::onStart()
 	virusTypeText = GuiManager::Instance().findText(6);
 	virusEffectText = GuiManager::Instance().findText(7);
 	cheeseSprite = GuiManager::Instance().findSprite(8);
+
+	//virusTypeText->visible = false;
+	//virusEffectText->visible = false;
+	//cheeseSprite->visible = false;
 }
 
 void PlayerController::onUpdate(float deltaTime)
 {
 	if (isDead) return;
 
-	//std::cout << "tag aktualnego gracza" << owner->getTagName() << std::endl;
+	isDying = false;
 
 	glm::vec3 position = owner->transform.getLocalPosition();
 	glm::vec3 globalPosition = owner->transform.getGlobalPosition();
@@ -216,15 +221,18 @@ void PlayerController::onUpdate(float deltaTime)
 	}
 
 	if (virusType != "none") {
-		HandleVirus(deltaTime);
+		isDying = HandleVirus(deltaTime);
 	}
 
 	float checkDelay = 0.5f;
 	if (gasCheckTimer > checkDelay) {
-		if (CheckIfInGas()) {
+
+		isInGas = CheckIfInGas();
+
+		if (isInGas) {
 			gasTimer += checkDelay;
 
-			if (gasTimer > 2.f) {
+			if (gasTimer > 1.5f) {
 				Die(false);
 			}
 		}
@@ -256,6 +264,10 @@ void PlayerController::onUpdate(float deltaTime)
 			virusTypeText->value = "Heavy Havarti";
 			virusEffectText->value = "increased weight";
 		}
+
+		virusEffectText->visible = true;
+		virusTypeText->visible = true;
+		cheeseSprite->visible = true;
 
 		virusTypeAnimator.Show();
 		virusEffectAnimator.Show();
@@ -306,18 +318,10 @@ void PlayerController::Die(bool freeze, bool electrified)
 	Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
 	playerSpawner->getComponent<PlayerSpawner>()->spawnPlayer();
 
-	GameManager::instance->deathCount++;
+	if (!GameManager::instance->tutorialActive) GameManager::instance->deathCount++;
 }
-
-void PlayerController::HandleVirus(float deltaTime)
+bool PlayerController::HandleVirus(float deltaTime)
 {
-	/*if (isGravityFlipped) {
-		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, 0.f, -1.f));
-	}
-	else {
-		timerIndicator->transform.setLocalPosition(glm::vec3(0.f, 0.f, 1.f));
-	}*/
-	
 	float smoothing = 10.f;
 
 	glm::vec3 currentScale = timerIndicator->transform.getLocalScale();
@@ -328,8 +332,9 @@ void PlayerController::HandleVirus(float deltaTime)
 	
 	std::cout << "Gracz biegnie: " << isRunning << ", gracz skacze: " << isJumping << std::endl;
 
-	if (/*abs(rb->velocityX) >= 0.25f || abs(rb->velocityY) >= 2.f*/ isRunning || !rb->groundUnderneath) {
-		deathTimer = 0.5f;
+	if (isRunning || !rb->groundUnderneath) {
+		deathTimer = 0.8f;
+		return false;
 	}
 	else {
 		deathTimer -= deltaTime;
@@ -337,6 +342,11 @@ void PlayerController::HandleVirus(float deltaTime)
 		if (deathTimer <= -0.1f) {
 			Die(false);
 		}
+
+		if (deathTimer > 0.5f) {
+			return false;
+		}
+		return true;
 	}
 }
 
@@ -366,7 +376,7 @@ bool PlayerController::CheckIfInGas() {
 			iterator = 0;
 		}
 
-		if (iterator > 30) {
+		if (iterator > 250) {
 			break;
 		}
 		else {

@@ -24,6 +24,8 @@ public:
 	bool isGrounded = false;
     bool isJumping = false;
     bool isDead = false;
+    bool isDying = false;
+	bool isInGas = false;
     bool isRunning = false;
     bool canJump = true;
 
@@ -65,7 +67,7 @@ public:
 
     void Die(bool freeze, bool electrified = false);
 
-    void HandleVirus(float deltaTime);
+    bool HandleVirus(float deltaTime);
 
     bool CheckIfInGas();
 

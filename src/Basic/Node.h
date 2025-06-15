@@ -403,7 +403,7 @@ public:
     //std::vector<int> free_ids;
     int max_size = 1000;
     unsigned int buffer, buffer_offset;
-	ParticleGasStruct particles[1000];
+	ParticleGasStruct particles[1200];
     int head = 0, tail = 0;
 
     InstanceManager(std::shared_ptr<Model> model, std::string nameOfNode, int id = 0) : Node(nameOfNode, id) {
