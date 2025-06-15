@@ -7,17 +7,17 @@ in vec3 Position[];
 in vec2 TextureCoords[];
 in vec4 Color[];
 
-out vec3 Position;
-out vec2 TextureCoords;
-out vec3 Normal;
-out vec4 Color;
+out vec3 PositionF;
+out vec2 TextureCoordsF;
+out vec3 NormalF;
+out vec4 ColorF;
 
 uniform mat4 view;
 uniform mat4 projection;
 uniform float size;
 
 // promień "kolca"
-float spike_length = 0.2;
+// float spike_length = 0.2;
 
 void main()
 {
@@ -41,10 +41,10 @@ void main()
     );
 
     for (int i = 0; i < 4; ++i) {
-        Position = corners[i];
-        TextureCoords = uvs[i];
-        Normal = vec3(0.0, 0.0, 1.0);
-        Color = Color[0];
+        PositionF = corners[i];
+        TextureCoordsF = uvs[i];
+        NormalF = vec3(0.0, 0.0, 1.0);
+        ColorF = Color[0];
         gl_Position = projection * view * vec4(corners[i], 1.0);
         EmitVertex();
     }

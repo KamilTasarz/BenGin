@@ -212,10 +212,10 @@ public:
         // draw mesh
         glBindVertexArray(VAO);
         if (is_EBO) {
-            glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, (void*)0, num);
+            glDrawElementsInstanced(GL_POINTS, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, (void*)0, num);
         }
         else {
-            glDrawArraysInstanced(GL_TRIANGLES, 0, static_cast<unsigned int>(vertices.size()), num);
+            glDrawArraysInstanced(GL_POINTS, 0, static_cast<unsigned int>(vertices.size()), num);
         }
         glBindVertexArray(0);
 

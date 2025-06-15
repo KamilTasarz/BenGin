@@ -222,15 +222,15 @@ void SceneGraph::setShaders() {
     
     ResourceManager::Instance().shader_instanced->use();
     //setLights(ResourceManager::Instance().shader_instanced);
+    // Vertex uniforms
+    ResourceManager::Instance().shader_instanced->setFloat("totalTime", glfwGetTime());
+    ResourceManager::Instance().shader_instanced->setFloat("scaleFactor", 0.2f);
     ResourceManager::Instance().shader_instanced->setMat4("projection", projection);
     ResourceManager::Instance().shader_instanced->setMat4("view", view);
-    ResourceManager::Instance().shader_instanced->setFloat("totalTime", glfwGetTime());
-    ResourceManager::Instance().shader_instanced->setFloat("u_time", glfwGetTime());
-    ResourceManager::Instance().shader_instanced->setFloat("time", glfwGetTime());
+    // Geometry uniforms
     ResourceManager::Instance().shader_instanced->setFloat("size", 0.5f);
-    ResourceManager::Instance().shader_instanced->setFloat("scaleFactor", 0.2f);
-    ResourceManager::Instance().shader_instanced->setInt("point_light_number", point_light_number);
-    ResourceManager::Instance().shader_instanced->setInt("directional_light_number", directional_light_number);
+    // Fragment uniforms
+    ResourceManager::Instance().shader_instanced->setFloat("time", glfwGetTime());
 
     ResourceManager::Instance().shader_outline->use();
     ResourceManager::Instance().shader_outline->setMat4("projection", projection);

@@ -1,9 +1,9 @@
 #version 330 core
 
-in vec3 Position;
-in vec2 TextureCoords;
-in vec3 Normal;
-in vec4 Color;
+in vec3 PositionF;
+in vec2 TextureCoordsF;
+in vec3 NormalF;
+in vec4 ColorF;
 
 out vec4 FragColor;
 
@@ -36,7 +36,7 @@ void main() {
     //if (FragColor.a < 0.01)
         //discard;
 
-    vec2 uv = TextureCoords;
+    vec2 uv = TextureCoordsF;
     
     // Dynamiczny szum
     float n = noise(uv * 6.0 + time * 0.5);
@@ -48,7 +48,7 @@ void main() {
 
     vec3 gasColor = vec3(0.2, 1.0, 0.4); // seledynowy zielony
 
-    FragColor = vec4(gasColor, alpha * Color.a);
+    FragColor = vec4(gasColor, alpha * ColorF.a);
 
     if (FragColor.a < 0.01)
         discard;
