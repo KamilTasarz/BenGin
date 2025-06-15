@@ -687,6 +687,10 @@ class MirrorNode : public Node {
 public:
     RectOBB* mirrorCollider;
     MirrorNode(std::shared_ptr<Model> model, std::string nameOfNode);
+	~MirrorNode() override {
+		delete mirrorCollider;
+        
+	}
     glm::vec3 reflectDirection(Ray ray);
     void forceUpdateSelfAndChild() override;
     void drawSelfAndChild() override;

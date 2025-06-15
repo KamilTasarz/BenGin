@@ -1217,12 +1217,19 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
 
 Node::~Node()
 {
-    delete AABB;
+    if (AABB) {
+        delete AABB;
+		PhysicsSystem::instance().colliders.erase(AABB);
+		PhysicsSystem::instance().colliders_RigidBody.erase(AABB);
+    }
     AABB = nullptr;
 
-    delete AABB_logic;
+    if (AABB_logic) {
+        delete AABB_logic;
+        PhysicsSystem::instance().colliders.erase(AABB_logic);
+		PhysicsSystem::instance().colliders_RigidBody.erase(AABB_logic);
+    }
     AABB_logic = nullptr;
-
     delete animator;
     animator = nullptr;
 
