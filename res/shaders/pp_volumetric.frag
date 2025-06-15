@@ -4,7 +4,6 @@ in vec2 vectorUV;
 out vec4 FragColor;
 
 uniform sampler2D depthTexture;
-uniform sampler2D normalTexture;
 
 uniform vec3 lightPos;
 uniform vec3 lightDir;
@@ -14,7 +13,6 @@ uniform float lightConeAngle; // in radians
 uniform float lightIntensity;
 
 uniform mat4 invViewProj;
-uniform mat4 view;
 
 uniform vec3 camPos;
 

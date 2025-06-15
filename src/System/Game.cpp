@@ -226,7 +226,50 @@ void Game::draw()
 
         if (postProcessData.is_volumetric) {
             
+            for (auto& light : sceneGraph->volumetric_lights) {
+            
+                if (!light->in_frustrum) {
+                    continue;
+                }
 
+                glBindFramebuffer(GL_FRAMEBUFFER, volumetricFBO);
+                glClear(GL_COLOR_BUFFER_BIT);
+
+                auto& vol_shader = *ResourceManager::Instance().shader_PostProcess_volumetric;
+                vol_shader.use();
+
+                vol_shader.setVec3("lightPos", light->getTransform().getGlobalPosition());
+                vol_shader.setVec3("lightDir", light->getDirection());
+                vol_shader.setVec3("lightColor", light->getColor());
+                vol_shader.setFloat("lightRadius", light->getRadius());
+                vol_shader.setFloat("lightConeAngle", glm::radians(light->getConeAngle()));
+                vol_shader.setFloat("lightIntensity", light->getIntensity());
+                vol_shader.setMat4("invViewProj", glm::inverse(camera->GetProjection() * camera->GetView()));
+                vol_shader.setVec3("camPos", camera->cameraPos);
+
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, depthTexture);
+                vol_shader.setInt("depthTexture", 0);
+
+                glBindVertexArray(quadVAO);
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+                glBindVertexArray(0);
+
+                glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_ONE, GL_ONE);
+
+                auto& add_blend_shader = *ResourceManager::Instance().shader_PostProcess_add_blend;
+
+                add_blend_shader.use();
+                add_blend_shader.setInt("baseTexture", 0);
+                add_blend_shader.setInt("lightScatteringTexture", 1);
+
+                renderQuadWithTextures(current_texture, volumetricColorBuffer);
+
+                glDisable(GL_BLEND);
+
+            }
 
         }
 
