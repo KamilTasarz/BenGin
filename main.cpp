@@ -9,7 +9,7 @@ PascalCase - klasy/struktury
 */
 #include "config.h"
 #include "src/System/Engine.h"
-
+#include "SimpleObject.h"
 
 // Audio paths
 std::string track1 = "res/audios/music/kill-v-maim.ogg";
@@ -63,11 +63,15 @@ int main() {
 
 	// --- ENGINE INIT --- //
 
+    SimpleObject* bengin = new SimpleObject();
+
 	Engine engine;
 
     engine.init();
     engine.run();
     engine.shutdown();
+
+    delete bengin;
 
     return 0;
 }
