@@ -2,6 +2,7 @@
 
 #include "Script.h"
 #include "../Basic/Node.h"
+#include <deque>
 
 class TextObject;
 class LevelGenerator;
@@ -17,6 +18,7 @@ public:
 	Node* playerSpawner;
 	LevelGenerator* levelGenerator;
 	InstanceManager* emitter;
+	std::deque<Node*> players;
 
 	// run variables
 	float runTime = 0.f;
@@ -43,6 +45,8 @@ public:
 	void onDetach() override;
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
+	void RemovePlayer();
+	void RemoveCurrentPlayer();
 	void CalculateGasSpreadingSpeed(float deltaTime);
 	void HandleLevelGeneration();
 };

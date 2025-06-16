@@ -7,7 +7,7 @@ class Virus;
 class VirusSnapshot : public TimeSnapshot {
 public:
 	bool isCollected;
-	Node* player;
+	//Node* player;
 };
 
 class VirusRewindable : public TimeRewindable {
@@ -17,7 +17,7 @@ public:
     std::deque<VirusSnapshot> virusHistory;
 
     bool isCollected = false;
-    Node* player = nullptr;
+    //Node* player = nullptr;
 	Virus* virus = nullptr;
 
 	void onStart() override {

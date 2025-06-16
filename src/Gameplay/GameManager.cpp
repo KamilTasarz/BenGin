@@ -13,7 +13,6 @@ void GameManager::onAttach(Node* owner)
 {
 	GameManager::instance = this;
     this->owner = owner;
-    GameManager::instance = this;
 }
 
 void GameManager::onDetach()
@@ -79,8 +78,31 @@ void GameManager::onUpdate(float deltaTime)
         frameCount = 0;
     }
 
+    if (players.size() > 3) {
+        RemovePlayer();
+    }
+
     CalculateGasSpreadingSpeed(deltaTime);
     HandleLevelGeneration();
+}
+
+void GameManager::RemovePlayer()
+{
+	if (players.empty()) return;
+
+	Node* playerToRemove = players.front();
+	owner->scene_graph->deleteChild(playerToRemove);
+    players.pop_front();
+}
+
+void GameManager::RemoveCurrentPlayer()
+{
+    if (players.size() <= 1) return;
+    Node* playerToRemove = players.back();
+    owner->scene_graph->deleteChild(playerToRemove);
+    players.pop_back();
+
+    if (!players.empty()) currentPlayer = players.back();
 }
 
 void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {

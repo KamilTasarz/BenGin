@@ -3,6 +3,7 @@
 #include "../System/PrefabRegistry.h"
 #include "RegisterScript.h"
 #include "GameManager.h"
+#include "PlayerController.h"
 
 REGISTER_SCRIPT(PlayerSpawner);
 
@@ -26,6 +27,20 @@ void PlayerSpawner::onStart()
 
 void PlayerSpawner::onUpdate(float deltaTime)
 {
+	if (spawnInNextFrame) {
+		spawnPlayer();
+		spawnInNextFrame = false;
+	}
+	
+	if (GameManager::instance->currentPlayer == nullptr) {
+		spawnInNextFrame = true;
+	}
+	else {
+		PlayerController* player = GameManager::instance->currentPlayer->getComponent<PlayerController>();
+		if (player != nullptr && player->isDead) {
+			spawnInNextFrame = true;
+		}
+	}
 }
 
 void PlayerSpawner::onEnd()
@@ -43,6 +58,7 @@ void PlayerSpawner::spawnPlayer()
 	player->transform.setLocalPosition(owner->getTransform().getLocalPosition());
  	owner->scene_graph->addChild(player);
 
-	currentPlayer = player;
+	//currentPlayer = player;
 	GameManager::instance->currentPlayer = player;
+	GameManager::instance->players.push_back(player);
 }

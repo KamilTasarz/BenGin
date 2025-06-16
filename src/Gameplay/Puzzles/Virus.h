@@ -24,7 +24,7 @@ public:
 	VARIABLE(bool, black);
 
 	bool isCollected = false;
-	Node* player = nullptr;
+	bool modelChanged = false;
 	VirusRewindable* rewindable = nullptr;
 
 	Virus() = default;

@@ -11,7 +11,8 @@
 #include "LandState.h"
 #include "IdleState.h"
 #include "RunState.h"
-
+#include "DeathState.h"
+#include "../GameManager.h"
 
 REGISTER_SCRIPT(PlayerAnimationController);
 
@@ -66,39 +67,26 @@ void PlayerAnimationController::onStart()
 
 void PlayerAnimationController::onUpdate(float deltaTime)
 {
-	if (rb == nullptr || player->isDead) {
+	if (GameManager::instance->currentPlayer->getComponent<PlayerController>()->isDead) {
+		
+		/*if (currentState && GameManager::instance->currentPlayer == owner)
+			changeState(new DeathState());
+		
+		if (currentState)
+			currentState->update(owner, deltaTime);*/
+
 		if (currentState) {
 			currentState->exit(owner);
 			delete currentState;
 			currentState = nullptr;
 		}
+
 		return;
 	}
 	
 	deltaX = owner->transform.getLocalPosition().x - previousPosition.x;
 	deltaY = owner->transform.getLocalPosition().y - previousPosition.y;
 	
-	/*if (abs(deltaX) < (4.f * deltaTime) && abs(rb->velocityDeltaX) < 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
-		isStanding = true;
-	}
-	else if (abs(rb->velocityX) > 0.2f && abs(rb->velocityDeltaX) >= 0.2f && (rb->groundUnderneath || rb->scaleUnderneath)) {
-		isRunning = true;
-	}
-
-	if (player->isJumping) {
-		hasJumped = true;
-	}
-	else if (rb->groundUnderneath || rb->scaleUnderneath) {
-		hasLanded = true;
-	}
-
-	if ((rb->velocityDeltaY < 0.f && !gravityFlipped) || (rb->velocityDeltaY > 0.f && gravityFlipped)) {
-		isFalling = true;
-	}
-	else {
-		isFalling = false;
-	}*/
-
 	if (currentState)
 		currentState->update(owner, deltaTime);
 
@@ -139,10 +127,6 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_H) == GLFW_PRESS) {
 		owner->animator->blendAnimation(push, 100.f, true, true);
-	}
-
-	if (rb->targetVelocityX > 0.f) {
-		std::cout << "gracz si� porusza" << std::endl;
 	}
 
 	previousPosition = owner->transform.getLocalPosition();

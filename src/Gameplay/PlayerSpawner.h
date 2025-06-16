@@ -7,8 +7,8 @@ class PlayerSpawner : public Script
 public:
 	using SelfType = PlayerSpawner;
 
-	int i = 0;
-	Node* currentPlayer;
+	int i = 12;
+	bool spawnInNextFrame = false;
 
 	PlayerSpawner() = default;
 	virtual ~PlayerSpawner() = default;

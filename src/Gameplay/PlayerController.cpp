@@ -112,7 +112,7 @@ void PlayerController::onStart()
 {
 	isGravityFlipped = false;
 	deathTimer = 0.5f;
- 	rb = owner->getComponent<Rigidbody>();
+	rb = owner->getComponent<Rigidbody>();
 	rb->lockPositionZ = true;
 	rb->isPlayer = true;
 	//rb->smoothingFactor = 10.f;
@@ -148,7 +148,10 @@ void PlayerController::onUpdate(float deltaTime)
 
 	if (!rb) return;
 
-	if (rb->groundUnderneath || rb->scaleUnderneath) isJumping = false;
+	if (rb->groundUnderneath || rb->scaleUnderneath) {
+		isJumping = false;
+		canJump = true;
+	}
 
 	if (isGravityFlipped && !rb->isGravityFlipped) {
 		rb->isGravityFlipped = true;
@@ -175,7 +178,7 @@ void PlayerController::onUpdate(float deltaTime)
 
 		rb->is_static = debugMode;
 		owner->setPhysic(!debugMode);
-		
+
 	}
 
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_RELEASE) {
@@ -208,7 +211,7 @@ void PlayerController::onUpdate(float deltaTime)
 
 		if ((rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
 
-			rb->overrideVelocityY = true;
+			//rb->overrideVelocityY = true;
 			if (isGravityFlipped) rb->velocityY = -jumpForce;
 			else rb->velocityY = jumpForce;
 
@@ -294,7 +297,7 @@ void PlayerController::onEnd()
 void PlayerController::Die(bool freeze, bool electrified)
 {
 	if (isDead) return;
-	
+
 	timerIndicator->setActive(false);
 
 	if (electrified) {
@@ -320,10 +323,6 @@ void PlayerController::Die(bool freeze, bool electrified)
 	auto* audio = ServiceLocator::getAudioEngine();
 	audio->PlaySFX(audio->death, GameManager::instance->sfxVolume * 65.f);
 
-	// spawn new player
-	Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
-	playerSpawner->getComponent<PlayerSpawner>()->spawnPlayer();
-
 	if (!GameManager::instance->tutorialActive) GameManager::instance->deathCount++;
 }
 
@@ -337,7 +336,7 @@ bool PlayerController::HandleVirus(float deltaTime)
 
 	glm::vec3 newScale = glm::mix(currentScale, targetScale, deltaTime * smoothing);
 	timerIndicator->transform.setLocalScale(newScale);
-	
+
 	std::cout << "Gracz biegnie: " << isRunning << ", gracz skacze: " << isJumping << std::endl;
 
 	if (isRunning || !rb->groundUnderneath || rewindable->isRewinding) {
@@ -368,7 +367,7 @@ void PlayerController::ApplyVirusEffect()
 	isGravityFlipped = false;
 	jumpForce = 19.f;
 	//virusType = "none";
-	camera->object_to_follow->getComponent<CameraFollow>()->verticalOffset = 3.f;
+	CameraFollow::instance->verticalOffset = 3.f;
 
 	VirusEffect();
 }
@@ -388,7 +387,7 @@ void PlayerController::VirusEffect()
 	else if (virusType == "green") {
 		owner->changeColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
-		camera->object_to_follow->getComponent<CameraFollow>()->verticalOffset = -1.f;
+		CameraFollow::instance->verticalOffset = -1.f;
 		isGravityFlipped = true;
 		rb->gravity = 32.f;
 	}
@@ -406,7 +405,7 @@ void PlayerController::VirusEffect()
 
 bool PlayerController::CheckIfInGas() {
 	bool inGas = false;
-	
+
 	float minDist = 1000.f, dist = 0.f;
 
 	int index = emitter->tail - 1, iterator = 0;
@@ -416,10 +415,10 @@ bool PlayerController::CheckIfInGas() {
 	for (int i = 0; i < emitter->size; i++) {
 		dist = glm::distance(glm::vec2(emitter->particles[index].position), glm::vec2(playerPos));
 		if (dist < 0.8f) {
-			
+
 			inGas = true;
 			break;
-			
+
 		}
 		index--;
 		if (index < 0) {

@@ -23,7 +23,7 @@ void VirusRewindable::onUpdate(float deltaTime) {
                 owner->transform.setLocalRotation(snap.rotation);
 
 				virus->isCollected = snap.isCollected;
-                virus->player = snap.player;
+                virus->modelChanged = false;
             }
         }
     }
@@ -33,7 +33,7 @@ void VirusRewindable::onUpdate(float deltaTime) {
         snap.rotation = owner->transform.getLocalRotation();
 
 		snap.isCollected = virus->isCollected;
-		snap.player = virus->player;
+		//snap.player = virus->player;
 
         virusHistory.push_back(snap);
     }

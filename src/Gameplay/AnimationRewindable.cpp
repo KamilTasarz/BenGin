@@ -4,6 +4,8 @@
 #include "Animation/PlayerAnimationController.h"
 #include "../Basic/Animator.h"
 
+#include "Animation/IdleState.h"
+
 REGISTER_SCRIPT(AnimationRewindable);
 
 void AnimationRewindable::onUpdate(float deltaTime)
@@ -25,7 +27,7 @@ void AnimationRewindable::onUpdate(float deltaTime)
 				animationController->targetRotation = snap.targetRotation;
 				animationController->gravityFlipped = snap.gravityFlipped;
 				animationController->facingRight = snap.facingRight;
-				animationController->getOwner()->animator->playAnimation(snap.currentAnimation, false);
+				animationController->getOwner()->animator->current_animation = snap.currentAnimation;
 			}
 		}
 	}
@@ -40,4 +42,8 @@ void AnimationRewindable::onUpdate(float deltaTime)
 
 		playerHistory.push_back(snap);
 	}
+
+	/*if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE) {
+		animationController->changeState(new IdleState());
+	}*/
 }

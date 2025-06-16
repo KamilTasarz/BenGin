@@ -3,6 +3,7 @@
 #include "RegisterScript.h"
 #include "PlayerController.h"
 #include "../System/Tag.h"
+#include "GameManager.h"
 
 REGISTER_SCRIPT(PlayerRewindable);
 
@@ -14,7 +15,7 @@ void PlayerRewindable::onUpdate(float deltaTime) {
     }
     else isRewinding = false;
 
-    if (isRewinding) {
+    if (isRewinding && !playerHistory.empty()) {
         for (int i = 0; i < rewindSpeed; ++i) {
             if (!playerHistory.empty()) {
                 PlayerSnapshot snap = playerHistory.back();
@@ -34,10 +35,8 @@ void PlayerRewindable::onUpdate(float deltaTime) {
 				}
             }
             else {
-                std::shared_ptr<Tag> tag = TagLayerManager::Instance().getTag("Default");
-                owner->setTag(tag);
-
-				owner->transform.setLocalPosition(glm::vec3(-1000.f, -1000.f, 0.f));
+				GameManager::instance->RemoveCurrentPlayer();
+                return;
             }
         }
     }

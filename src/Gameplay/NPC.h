@@ -68,12 +68,15 @@ private:
     enum class WanderState { Waiting, Moving };
 
     Rigidbody* rb;
-    Node* player = nullptr;
+    bool playerVisible = false;
     std::vector<Node*> obstacles;
     std::vector<std::string> obstacleLayer;
 
     std::array<float, 8> danger{};
     std::array<float, 8> interest{};
+
+    glm::vec3 ownerPos;
+    glm::vec3 playerPos;
 
     bool isFleeingWithoutTarget = false;
     bool isWandering = true;

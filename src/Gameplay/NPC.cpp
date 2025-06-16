@@ -71,6 +71,8 @@ void NPC::onUpdate(float deltaTime) {
 
     if (!isActive) return;
 
+	ownerPos = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
+
     danger.fill(0.f);
     interest.fill(0.f);
 
@@ -94,8 +96,6 @@ void NPC::onCollision(Node* other)
 }
 
 void NPC::detectObstacles() {
-    glm::vec3 ownerPos = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
-
     obstacles.clear();
     for (Collider* box : PhysicsSystem::instance().getColliders()) {
         if (box->node) {
@@ -117,9 +117,8 @@ void NPC::detectObstacles() {
 void NPC::detectPlayer() {
     for (Collider* box : PhysicsSystem::instance().getColliders()) {
         if (box->node && box->node->getTagName() == "Player") {
-            glm::vec3 playerPos = (box->node->AABB->max_point_world + box->node->AABB->min_point_world) / 2.f;
-			glm::vec3 ownerPos = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
-            
+            playerPos = (box->node->AABB->max_point_world + box->node->AABB->min_point_world) / 2.f;
+
 			float distance = glm::distance(ownerPos, playerPos);
             
             if (distance <= playerDetectionRadius) {
@@ -134,26 +133,26 @@ void NPC::detectPlayer() {
                             std::cout << hit.node->getTagName() << std::endl;
                         }
                         
-                        
-                        player = hitNodes[0].node;
+                        playerVisible = true;
                         return;
                     }
                 }
             }
         }
     }
-    player = nullptr;
+    playerVisible = false;
 }
 
 void NPC::avoidObstacles() {
     for (Node* obstacle : obstacles) {
         glm::vec3 obstaclePos = obstacle->transform.getGlobalPosition();
         glm::vec3 obstacleHalfExtents = obstacle->transform.getLocalScale() * 0.5f;
-        glm::vec3 ownerPos = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
 
         glm::vec3 closestPoint = getClosestPointOnAABB(ownerPos, obstaclePos, obstacleHalfExtents);
         glm::vec2 directionToObstacle = glm::vec2(closestPoint) - glm::vec2(ownerPos);
+
         float distanceToObstacle = glm::length(directionToObstacle);
+
         if (distanceToObstacle == 0.f) continue;
 
         float weight = distanceToObstacle <= agentColliderSize ? 1.f : (avoidanceRadius - distanceToObstacle) / avoidanceRadius;
@@ -172,8 +171,6 @@ void NPC::avoidObstacles() {
 }
 
 void NPC::getSteering(float deltaTime) {
-    bool playerVisible = player != nullptr;
-
     if (!playerVisible) {
         if (!isFleeingWithoutTarget && !escaped) {
             isFleeingWithoutTarget = true;
@@ -192,13 +189,10 @@ void NPC::getSteering(float deltaTime) {
         isFleeingWithoutTarget = false;
         escaped = false;
         isWandering = false;
-		glm::vec3 playerPos = player->transform.getGlobalPosition();
         playerPositionCached = glm::vec2(playerPos);
     }
 
     if (playerVisible || isFleeingWithoutTarget) {
-		glm::vec3 ownerPos = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
-
         glm::vec2 directionToTarget = playerPositionCached - glm::vec2(ownerPos);
         glm::vec2 fleeDirection = isFleeing ? -glm::normalize(directionToTarget) : glm::normalize(directionToTarget);
 
@@ -216,19 +210,6 @@ void NPC::getSteering(float deltaTime) {
             }
         }
 
-        if (playerVisible) {
-			std::cout << "NPC " << owner->getName() << " widzi gracza: " << player->getName() << std::endl;
-        }
-        else if (isFleeingWithoutTarget) {
-            std::cout << "NPC " << owner->getName() << " ucieka przed graczem " << std::endl;
-        }
-		else if (escaped) {
-			std::cout << "NPC " << owner->getName() << " uciek³ przed graczem " << std::endl;
-		}
-		else if (isWandering) {
-			std::cout << "NPC " << owner->getName() << " wêdruje" << std::endl;
-		}
-     
         return;
     }
 

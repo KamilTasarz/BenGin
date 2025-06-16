@@ -4,11 +4,15 @@
 #include "RegisterScript.h"
 #include "../Component/CameraGlobals.h"
 #include "PlayerController.h"
+#include "GameManager.h"
 
 REGISTER_SCRIPT(CameraFollow);	
 
+CameraFollow* CameraFollow::instance = nullptr;
+
 void CameraFollow::onAttach(Node* owner)
 {
+	CameraFollow::instance = this;
 	this->owner = owner;
 }
 
@@ -19,37 +23,34 @@ void CameraFollow::onDetach()
 
 void CameraFollow::onStart()
 {
+	glm::vec3 origin = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 offset = glm::vec3(0.f, 0.f, offsetZ);
+	verticalOffset = 3.f;
+
+	camera->setObjectToFollow(owner, origin);
+	camera->setOffsetToFollowingObject(offset);
 }
 
 void CameraFollow::onUpdate(float deltaTime)
 {
-	if (player == nullptr || player->getTagName() != "Player") {
-		std::cout << "camera follow - player is nullptr" << std::endl;
+	player = GameManager::instance->currentPlayer;
+	if (player == nullptr) return;
 
-		player = owner->scene_graph->root->getChildByTag("Player");
-		playerController = player->getComponent<PlayerController>();
+	PlayerController* playerController = player->getComponent<PlayerController>();
+	if (playerController == nullptr) return;
 
-		glm::vec3 origin = glm::vec3(0.f, 0.f, 0.f);
-		glm::vec3 offset = glm::vec3(0.f, 0.f, offsetZ);
-		verticalOffset = 3.f;
+	glm::vec3 targetPosition = player->transform.getLocalPosition();
 
-		camera->setObjectToFollow(owner, origin);
-		camera->setOffsetToFollowingObject(offset);
-	}
-	else {
-		glm::vec3 targetPosition = player->transform.getLocalPosition();
+	targetPosition.y += verticalOffset;
+	if (playerController->isDying || playerController->isInGas) targetPosition.z -= 10.f;
 
-		targetPosition.y += verticalOffset;
-		if (playerController->isDying || playerController->isInGas) targetPosition.z -= 10.f;
+	glm::vec3 currentPosition = owner->transform.getLocalPosition();
+	glm::vec3 newPosition;
+	newPosition.x = glm::mix(currentPosition.x, targetPosition.x, smoothing * deltaTime);
+	newPosition.y = glm::mix(currentPosition.y, targetPosition.y, smoothing * deltaTime);
+	newPosition.z = glm::mix(currentPosition.z, targetPosition.z, smoothing * .2f * deltaTime);
 
-		glm::vec3 currentPosition = owner->transform.getLocalPosition();
-		glm::vec3 newPosition;
-		newPosition.x = glm::mix(currentPosition.x, targetPosition.x, smoothing * deltaTime);
-		newPosition.y = glm::mix(currentPosition.y, targetPosition.y, smoothing * deltaTime);
-		newPosition.z = glm::mix(currentPosition.z, targetPosition.z, smoothing * .2f * deltaTime);
-
-		owner->transform.setLocalPosition(newPosition);
-	}
+	owner->transform.setLocalPosition(newPosition);
 }
 
 void CameraFollow::onEnd()

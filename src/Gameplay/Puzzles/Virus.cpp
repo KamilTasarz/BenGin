@@ -35,9 +35,11 @@ void Virus::onStart()
 void Virus::onUpdate(float deltaTime)
 {
 	rewindable->isCollected = isCollected;
-	rewindable->player = player;
 
-	if (!isCollected || player && player->getTagName() == "Box") {
+	//rewindable->player = player;
+	PlayerController* player = GameManager::instance->currentPlayer->getComponent<PlayerController>();
+
+	if (!isCollected && !modelChanged || player->isDead) {
 		int modelId = -1;
 		if (blue) modelId = 25;
 		else if (green) modelId = 23;
@@ -46,11 +48,22 @@ void Virus::onUpdate(float deltaTime)
 		if (modelId != -1) {
 			owner->pModel = ResourceManager::Instance().getModel(modelId);
 		}
+
+		isCollected = false;
+		modelChanged = true;
 	}
 
-	if (isCollected && player && player->getTagName() == "Box") {
-		isCollected = false;
-		player = nullptr;
+	if (isCollected && !modelChanged) {
+		int modelId = -1;
+		if (blue) modelId = 60;
+		else if (green) modelId = 62;
+		else if (black) modelId = 61;
+
+		if (modelId != -1) {
+			owner->pModel = ResourceManager::Instance().getModel(modelId);
+		}
+
+		modelChanged = true;
 	}
 }
 
@@ -64,12 +77,11 @@ void Virus::onCollisionLogic(Node* other)
 
 		if (isCollected) return;
 
-		player = other;
-
 		auto* audio = ServiceLocator::getAudioEngine();
 		audio->PlaySFX(audio->eating, GameManager::instance->sfxVolume * 80.f);
 
 		isCollected = true;
+		modelChanged = false;
 
 		VirusEffect(other);
 	}
@@ -81,24 +93,12 @@ void Virus::VirusEffect(Node* target)
 
 	if (blue) {
 		player->virusType = "blue";
-
-		auto model = ResourceManager::Instance().getModel(60);
-		owner->pModel = model;
 	}
 	else if (green) {
 		player->virusType = "green";
-
-		auto model = ResourceManager::Instance().getModel(62);
-		owner->pModel = model;
 	}
 	else if (black) {
 		player->virusType = "black";
-
-		auto model = ResourceManager::Instance().getModel(61);
-		owner->pModel = model;
-	}
-	else {
-		std::cout << "Unknown virus type!" << std::endl;
 	}
 }
 
