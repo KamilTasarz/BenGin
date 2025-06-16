@@ -151,7 +151,7 @@ void Editor::DrawNodeBlock(Node* node, int depth)
 
     ImTextureID icon = node->is_visible ? eye_icon->sprite_id : eye_slashed_icon->sprite_id;
     ImTextureID switch_icon;
-    if (dynamic_cast<PointLight*>(node) || dynamic_cast<DirectionalLight*>(node)) {
+    if (dynamic_cast<PointLight*>(node) || dynamic_cast<DirectionalLight*>(node) || dynamic_cast<VolumetricLight*>(node)) {
         Light* temp = dynamic_cast<Light*>(node);
         switch_icon = temp->is_shining ? switch_on->sprite_id : switch_off->sprite_id;
     }

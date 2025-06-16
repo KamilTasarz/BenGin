@@ -255,7 +255,7 @@ void Game::draw()
                 glDrawArrays(GL_TRIANGLES, 0, 6);
                 glBindVertexArray(0);
 
-                glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_ONE, GL_ONE);
 
@@ -269,6 +269,7 @@ void Game::draw()
 
                 glDisable(GL_BLEND);
 
+				current_texture = volumetricColorBuffer;
             }
 
         }

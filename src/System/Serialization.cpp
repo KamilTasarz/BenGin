@@ -438,6 +438,10 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 				DirectionalLight* directional_light = dynamic_cast<DirectionalLight*>(child);
 				scene->addDirectionalLight(directional_light);
 			}
+			else if (dynamic_cast<VolumetricLight*>(child)) {
+				VolumetricLight* vol_light = dynamic_cast<VolumetricLight*>(child);
+				scene->addVolumetricLight(vol_light);
+			}
 			else {
 				scene->addChild(child);
 			}
@@ -635,6 +639,14 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 				scene->directional_lights.push_back(directional_light);
 				scene->directional_light_number++;
 			}
+			else if (dynamic_cast<VolumetricLight*>(child)) {
+				VolumetricLight* vol_light = dynamic_cast<VolumetricLight*>(child);
+				//scene->addDirectionalLight(directional_light, node->name);
+				node->scene_graph = scene;
+				node->addChild(vol_light);
+				scene->volumetric_lights.push_back(vol_light);
+				scene->volumetric_light_number++;
+			}
 			else {
 				//scene->addChild(child, node->name);
 				node->scene_graph = scene;
@@ -689,6 +701,10 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			else if (dynamic_cast<DirectionalLight*>(child)) {
 				DirectionalLight* directional_light = dynamic_cast<DirectionalLight*>(child);
 				scene->addDirectionalLight(directional_light);
+			}
+			else if (dynamic_cast<VolumetricLight*>(child)) {
+				VolumetricLight* vol_light = dynamic_cast<VolumetricLight*>(child);
+				scene->addVolumetricLight(vol_light);
 			}
 			else {
 				scene->addChild(child);
