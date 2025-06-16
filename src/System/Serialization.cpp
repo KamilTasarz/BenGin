@@ -164,6 +164,22 @@ json save_node(Node* node) {
 		pointLightData["is_shining"] = point_lights->is_shining;
 		j["point_light"] = pointLightData;
 	}
+	else if (dynamic_cast<VolumetricLight*>(node)) {
+		j["type"] = "VolumetricLight";
+		VolumetricLight* volumetric_lights = dynamic_cast<VolumetricLight*>(node);
+		if (volumetric_lights->from_prefab) return json();
+		json volumetricLightData;
+		volumetricLightData["ambient"] = vec3_to_json(volumetric_lights->ambient);
+		volumetricLightData["specular"] = vec3_to_json(volumetric_lights->specular);
+		volumetricLightData["diffuse"] = vec3_to_json(volumetric_lights->diffuse);
+		volumetricLightData["direction"] = vec3_to_json(volumetric_lights->direction);
+		volumetricLightData["color"] = vec3_to_json(volumetric_lights->color);
+		volumetricLightData["intensity"] = volumetric_lights->intensity;
+		volumetricLightData["radius"] = volumetric_lights->radius;
+		volumetricLightData["coneAngle"] = volumetric_lights->coneAngle;
+		volumetricLightData["is_shining"] = volumetric_lights->is_shining;
+		j["volumetric_light"] = volumetricLightData;
+	}
 	else if (dynamic_cast<PrefabInstance*>(node)) {
 		j["type"] = "PrefabInstance";
 		PrefabInstance* prefab_inst = dynamic_cast<PrefabInstance*>(node);
@@ -460,7 +476,7 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 			}
 
 		}
-		else if (type._Equal("PointLight")) {
+		else if (type == "PointLight") {
 			glm::vec3 ambient = json_to_vec3(j["point_light"]["ambient"]);
 			glm::vec3 specular = json_to_vec3(j["point_light"]["specular"]);
 			glm::vec3 diffuse = json_to_vec3(j["point_light"]["diffuse"]);
@@ -477,7 +493,7 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 
 			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, is_shining, quadratic, linear, constant, ambient, diffuse, specular);
 		}
-		else if (type._Equal("DirectionalLight")) {
+		else if (type == "DirectionalLight") {
 			glm::vec3 ambient = json_to_vec3(j["directional_light"]["ambient"]);
 			glm::vec3 specular = json_to_vec3(j["directional_light"]["specular"]);
 			glm::vec3 diffuse = json_to_vec3(j["directional_light"]["diffuse"]);
@@ -488,6 +504,24 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 			}
 			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, is_shining, direction, ambient, diffuse, specular);
 		}
+
+		else if (type == "VolumetricLight") {
+		
+			glm::vec3 ambient = json_to_vec3(j["volumetric_light"]["ambient"]);
+			glm::vec3 specular = json_to_vec3(j["volumetric_light"]["specular"]);
+			glm::vec3 diffuse = json_to_vec3(j["volumetric_light"]["diffuse"]);
+
+			glm::vec3 direction = json_to_vec3(j["volumetric_light"]["direction"]);
+			glm::vec3 color = json_to_vec3(j["volumetric_light"]["color"]);
+
+			float intensity = j["volumetric_light"]["intensity"];
+			float radius = j["volumetric_light"]["radius"];
+			float coneAngle = j["volumetric_light"]["coneAngle"];
+
+			node = new VolumetricLight(ResourceManager::Instance().getModel(model_id), name, direction, color, intensity, radius, coneAngle);
+
+		}
+
 		else if (type._Equal("PrefabInstance")) {
 			std::string prefab_name = j["prefab_instance"]["prefab_name"];
 			std::shared_ptr<Prefab> prefab = getPrefab(prefabs, prefab_name);
@@ -710,6 +744,24 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			}
 			node = new DirectionalLight(ResourceManager::Instance().getModel(model_id), name, is_shining, direction, ambient, diffuse, specular);
 		}
+
+		else if (type == "VolumetricLight") {
+
+			glm::vec3 ambient = json_to_vec3(j["volumetric_light"]["ambient"]);
+			glm::vec3 specular = json_to_vec3(j["volumetric_light"]["specular"]);
+			glm::vec3 diffuse = json_to_vec3(j["volumetric_light"]["diffuse"]);
+
+			glm::vec3 direction = json_to_vec3(j["volumetric_light"]["direction"]);
+			glm::vec3 color = json_to_vec3(j["volumetric_light"]["color"]);
+
+			float intensity = j["volumetric_light"]["intensity"];
+			float radius = j["volumetric_light"]["radius"];
+			float coneAngle = j["volumetric_light"]["coneAngle"];
+
+			node = new VolumetricLight(ResourceManager::Instance().getModel(model_id), name, direction, color, intensity, radius, coneAngle);
+
+		}
+
 		else if (type._Equal("InstanceManager")) {
 
 			node = new InstanceManager(ResourceManager::Instance().getModel(model_id), name);
@@ -767,6 +819,13 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 				node->addChild(directional_light);
 				scene->directional_lights.push_back(directional_light);
 				scene->directional_light_number++;
+			} else if (dynamic_cast<VolumetricLight*>(child)) {
+				VolumetricLight* volumetric_light = dynamic_cast<VolumetricLight*>(child);
+				//scene->addDirectionalLight(directional_light, node->name);
+				node->scene_graph = scene;
+				node->addChild(volumetric_light);
+				scene->volumetric_lights.push_back(volumetric_light);
+				scene->volumetric_light_number++;
 			}
 			else {
 				//scene->addChild(child, node->name);

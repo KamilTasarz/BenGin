@@ -228,7 +228,7 @@ void Game::draw()
             
             for (auto& light : sceneGraph->volumetric_lights) {
             
-                if (!light->in_frustrum) {
+                if (!light->in_frustrum || !light->is_shining) {
                     continue;
                 }
 
