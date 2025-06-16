@@ -2,35 +2,29 @@
 
 #include "TimeRewindable.h"
 #include "../Basic/Node.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 class PlayerAnimationController;
 class Animation;
 
-class AnimationSnapshot : public TimeSnapshot {
-public:
+struct AnimationSnapshot : public ITimeSnapshot {
     bool isTurning;
     bool gravityFlipped;
     bool facingRight;
     glm::quat targetRotation;
-    Animation* currentAnimation;
+    Animation* currentAnimation = nullptr;
 };
 
 class AnimationRewindable : public TimeRewindable {
 public:
-    using SelfType = AnimationRewindable;
-
-    std::deque<AnimationSnapshot> playerHistory;
-
-	bool isTurning = false;
-	bool gravityFlipped = false;
-	bool facingRight = true;
-	glm::quat targetRotation;
-    Animation* currentAnimation = nullptr;
     PlayerAnimationController* animationController = nullptr;
 
-    void onStart() override {
-        animationController = owner->getComponent<PlayerAnimationController>();
-    }
+    void onAttach(Node* owner) override;
+    void onDetach() override;
+    void onStart() override;
 
-    void onUpdate(float deltaTime) override;
+protected:
+    std::shared_ptr<ITimeSnapshot> createSnapshot() override;
+    void applySnapshot(const std::shared_ptr<ITimeSnapshot>& snapshot) override;
 };

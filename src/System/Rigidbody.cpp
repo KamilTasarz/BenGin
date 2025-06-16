@@ -6,7 +6,7 @@
 #include "../System/PhysicsSystem.h"
 #include "../Component/BoundingBox.h"
 #include "../Gameplay/GameManager.h"
-#include "../Gameplay/TimeRewindable.h"
+#include "../Gameplay/RigidbodyRewindable.h"
 
 Rigidbody::Rigidbody(float mass, float gravity, bool isStatic, bool useGravity, bool lockPositionX, bool lockPositionY, bool lockPositionZ)
 {
@@ -43,9 +43,9 @@ void Rigidbody::onStart()
 	length = (owner->AABB->max_point_world.y - owner->AABB->min_point_world.y) / 2.f;
 	width = (owner->AABB->max_point_world.x - owner->AABB->min_point_world.x) / 2.f;
 
-	TimeRewindable* rewindable = owner->getComponent<TimeRewindable>();
+	RigidbodyRewindable* rewindable = owner->getComponent<RigidbodyRewindable>();
 	if (rewindable == nullptr) {
-		owner->addComponent(std::make_unique<TimeRewindable>());
+		owner->addComponent(std::make_unique<RigidbodyRewindable>());
 	}
 }
 

@@ -1,31 +1,29 @@
-// TimeRewindable.h
 #pragma once
+
 #include <deque>
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
+#include <memory>
 #include "Script.h"
 
-class TimeSnapshot {
+class ITimeSnapshot {
 public:
-    glm::vec3 position;
-    glm::quat rotation;
+    virtual ~ITimeSnapshot() = default;
 };
 
 class TimeRewindable : public Script {
 public:
-	using SelfType = TimeRewindable;
-
-    std::deque<TimeSnapshot> history;
-    float maxTime = 10.f;         // ile sekund przechowuje
-    float rewindSpeed = 2.f;     // x razy szybciej ni¿ normalny czas
-    float accumulatedTime = 0.f;  // do zarz¹dzania maxTime
-
+    std::deque<std::shared_ptr<ITimeSnapshot>> history;
+    float maxTime = 10.f;
+    float rewindSpeed = 2.f;
     bool isRewinding = false;
+	glm::vec3 lastCheckpointPos;
 
-	void onAttach(Node* owner) override;
-	void onDetach() override;
-    void onUpdate(float deltaTime) override;
+    virtual void onUpdate(float deltaTime) override;
+    void resetHistory();
 
-    void pushSnapshot(const TimeSnapshot& snapshot);
-    bool popSnapshot(TimeSnapshot& outSnapshot); // zwraca false jak pusto
+protected:
+    virtual std::shared_ptr<ITimeSnapshot> createSnapshot() = 0;
+    virtual void applySnapshot(const std::shared_ptr<ITimeSnapshot>& snapshot) = 0;
+
+private:
+    void pushSnapshot(std::shared_ptr<ITimeSnapshot> snapshot);
 };

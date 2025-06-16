@@ -1,40 +1,41 @@
 #include "VirusRewindable.h"
-#include "../Basic/Node.h"
-#include "RegisterScript.h"
 #include "Puzzles/Virus.h"
+#include "../System/Tag.h"
+#include "RegisterScript.h"
+#include "../Basic/Node.h"
+#include "RewindManager.h"
 
 REGISTER_SCRIPT(VirusRewindable);
 
-void VirusRewindable::onUpdate(float deltaTime) {
-    if (!owner) return;
+void VirusRewindable::onAttach(Node* owner) {
+	this->owner = owner;
+    RewindManager::Instance().registerRewindable(this);
+}
 
-    if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
-        isRewinding = true;
-    }
-    else isRewinding = false;
+void VirusRewindable::onDetach() {
+	virus = nullptr;
+	owner = nullptr;
+	RewindManager::Instance().unregisterRewindable(this);
+}
 
-    if (isRewinding) {
-        for (int i = 0; i < rewindSpeed; ++i) {
-            if (!virusHistory.empty()) {
-                VirusSnapshot snap = virusHistory.back();
-                virusHistory.pop_back();
+void VirusRewindable::onStart() {
+    virus = owner->getComponent<Virus>();
+}
 
-                owner->transform.setLocalPosition(snap.position);
-                owner->transform.setLocalRotation(snap.rotation);
+std::shared_ptr<ITimeSnapshot> VirusRewindable::createSnapshot() {
+    auto snap = std::make_shared<VirusSnapshot>();
 
-				virus->isCollected = snap.isCollected;
-                virus->modelChanged = false;
-            }
-        }
-    }
-    else {
-        VirusSnapshot snap;
-        snap.position = owner->transform.getLocalPosition();
-        snap.rotation = owner->transform.getLocalRotation();
+	snap->isCollected = virus->isCollected;
+	snap->rotation = owner->transform.getLocalRotation();
 
-		snap.isCollected = virus->isCollected;
-		//snap.player = virus->player;
+    return snap;
+}
 
-        virusHistory.push_back(snap);
-    }
+void VirusRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseSnap) {
+    auto snap = std::dynamic_pointer_cast<VirusSnapshot>(baseSnap);
+    if (!snap) return;
+    
+	virus->isCollected = snap->isCollected;
+	owner->transform.setLocalRotation(snap->rotation);
+	virus->modelChanged = false;
 }

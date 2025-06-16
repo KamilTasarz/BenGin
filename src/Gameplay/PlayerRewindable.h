@@ -1,11 +1,13 @@
 #pragma once
 
 #include "TimeRewindable.h"
-#include "../Basic/Node.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <string>
 
 class PlayerController;
 
-class PlayerSnapshot : public TimeSnapshot {
+class PlayerSnapshot : public ITimeSnapshot {
 public:
     bool isDead;
     bool isGravityFlipped;
@@ -15,19 +17,14 @@ public:
 
 class PlayerRewindable : public TimeRewindable {
 public:
-    using SelfType = PlayerRewindable;
+    PlayerController* playerController = nullptr;
 
-    std::deque<PlayerSnapshot> playerHistory;
+    void onAttach(Node* owner) override;
+	void onDetach() override;
+    void onStart() override;
+	void onEnd() override;
 
-    bool isDead = false;
-    bool isGravityFlipped = false;
-	std::string virusType = "none";
-    std::string tagName = "Default";
-	PlayerController* playerController = nullptr;
-
-	void onStart() override {
-		playerController = owner->getComponent<PlayerController>();
-	}
-
-    void onUpdate(float deltaTime) override;
+protected:
+    std::shared_ptr<ITimeSnapshot> createSnapshot() override;
+    void applySnapshot(const std::shared_ptr<ITimeSnapshot>& snapshot) override;
 };

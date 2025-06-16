@@ -3,22 +3,21 @@
 #include "TimeRewindable.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include <string>
 
-class Virus;
+class Rigidbody;
 
-class VirusSnapshot : public ITimeSnapshot {
-public:
+struct RigidbodySnapshot : public ITimeSnapshot {
+    glm::vec3 position;
     glm::quat rotation;
-    bool isCollected;
+    bool is_static;
 };
 
-class VirusRewindable : public TimeRewindable {
+class RigidbodyRewindable : public TimeRewindable {
 public:
-    Virus* virus = nullptr;
+    Rigidbody* rigidbody = nullptr;
 
-    void onAttach(Node* owner) override;
-    void onDetach() override;
+	void onAttach(Node* owner) override;
+	void onDetach() override;
     void onStart() override;
 
 protected:

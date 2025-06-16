@@ -132,9 +132,6 @@ void PlayerController::onStart()
 
 void PlayerController::onUpdate(float deltaTime)
 {
-	//rewindable->isDead = isDead;
-	//rewindable->isGravityFlipped = isGravityFlipped;
-
 	if (isDead) return;
 
 	isDying = false;
@@ -160,65 +157,66 @@ void PlayerController::onUpdate(float deltaTime)
 		rb->isGravityFlipped = false;
 	}
 
-	pressedRight = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS);
-	pressedLeft = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS);
+	if (!GameManager::instance->isRewinding) {
+		pressedRight = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS);
+		pressedLeft = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS);
 
-	if (!rb->overrideVelocityX) rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
+		if (!rb->overrideVelocityX) rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
 
-	if (pressedRight - pressedLeft != 0.f) isRunning = true;
-	else isRunning = false;
+		if (pressedRight - pressedLeft != 0.f) isRunning = true;
+		else isRunning = false;
 
-	if (pressedRight) rb->side = glm::vec4(1.f, 0.f, 0.f, 0.f);
-	else if (pressedLeft) rb->side = glm::vec4(-1.f, 0.f, 0.f, 0.f);
+		if (pressedRight) rb->side = glm::vec4(1.f, 0.f, 0.f, 0.f);
+		else if (pressedLeft) rb->side = glm::vec4(-1.f, 0.f, 0.f, 0.f);
 
-	// DebugMode
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS && !debugTogglePressed) {
-		debugMode = !debugMode;
-		debugTogglePressed = true;
+		// DebugMode
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS && !debugTogglePressed) {
+			debugMode = !debugMode;
+			debugTogglePressed = true;
 
-		rb->is_static = debugMode;
-		owner->setPhysic(!debugMode);
+			rb->is_static = debugMode;
+			owner->setPhysic(!debugMode);
 
-	}
-
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_RELEASE) {
-		debugTogglePressed = false;
-	}
-
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_9) == GLFW_PRESS) {
-		int temp = ServiceLocator::getAudioEngine()->PlayMusic("res/audios/sounds/bonk.ogg");
-	}
-
-	if (debugMode) {
-		glm::vec3 move(0.0f);
-
-		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_W) == GLFW_PRESS)
-			move.y += 1.0f;
-		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_S) == GLFW_PRESS)
-			move.y -= 1.0f;
-		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS)
-			move.x += 1.0f;
-		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS)
-			move.x -= 1.0f;
-
-		owner->transform.setLocalPosition(owner->transform.getLocalPosition() + move * 50.f * deltaTime);
-
-		return;
-	}
-
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-		//std::cout << "Gracz probuje skoczyc" << std::endl;
-
-		if ((rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
-
-			//rb->overrideVelocityY = true;
-			if (isGravityFlipped) rb->velocityY = -jumpForce;
-			else rb->velocityY = jumpForce;
-
-			isJumping = true;
-			canJump = false;
 		}
 
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_RELEASE) {
+			debugTogglePressed = false;
+		}
+
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_9) == GLFW_PRESS) {
+			int temp = ServiceLocator::getAudioEngine()->PlayMusic("res/audios/sounds/bonk.ogg");
+		}
+
+		if (debugMode) {
+			glm::vec3 move(0.0f);
+
+			if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_W) == GLFW_PRESS)
+				move.y += 1.0f;
+			if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_S) == GLFW_PRESS)
+				move.y -= 1.0f;
+			if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS)
+				move.x += 1.0f;
+			if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS)
+				move.x -= 1.0f;
+
+			owner->transform.setLocalPosition(owner->transform.getLocalPosition() + move * 50.f * deltaTime);
+
+			return;
+		}
+
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+			//std::cout << "Gracz probuje skoczyc" << std::endl;
+
+			if ((rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
+
+				//rb->overrideVelocityY = true;
+				if (isGravityFlipped) rb->velocityY = -jumpForce;
+				else rb->velocityY = jumpForce;
+
+				isJumping = true;
+				canJump = false;
+			}
+		}
 	}
 
 	if (virusType != "none") {

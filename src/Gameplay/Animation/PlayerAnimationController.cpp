@@ -70,16 +70,16 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	if (GameManager::instance->currentPlayer->getComponent<PlayerController>()->isDead) {
 		
 		/*if (currentState && GameManager::instance->currentPlayer == owner)
-			changeState(new DeathState());
+			changeState(new DeathState());*/
 		
-		if (currentState)
-			currentState->update(owner, deltaTime);*/
+		//if (currentState)
+		//	currentState->update(owner, deltaTime);
 
-		if (currentState) {
+		/*if (currentState) {
 			currentState->exit(owner);
 			delete currentState;
 			currentState = nullptr;
-		}
+		}*/
 
 		return;
 	}

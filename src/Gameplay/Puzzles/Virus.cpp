@@ -34,7 +34,7 @@ void Virus::onStart()
 
 void Virus::onUpdate(float deltaTime)
 {
-	rewindable->isCollected = isCollected;
+	//rewindable->isCollected = isCollected;
 
 	//rewindable->player = player;
 	PlayerController* player = GameManager::instance->currentPlayer->getComponent<PlayerController>();

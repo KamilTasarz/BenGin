@@ -1,61 +1,55 @@
 #include "TimeRewindable.h"
-#include "../Basic/Node.h"
+//#include "../Window/ServiceLocator.h"
 #include "RegisterScript.h"
+#include <GLFW/glfw3.h>
+#include "GameManager.h"
 
-REGISTER_SCRIPT(TimeRewindable);
-
-void TimeRewindable::onAttach(Node* owner)
-{
-	this->owner = owner;
-}
-
-void TimeRewindable::onDetach()
-{
-	history.clear();
-	owner = nullptr;
-}
+//REGISTER_SCRIPT(TimeRewindable);
+//
+//void TimeRewindable::onAttach(Node* owner) {
+//    this->owner = owner;
+//}
+//
+//void TimeRewindable::onDetach() {
+//    history.clear();
+//    owner = nullptr;
+//}
 
 void TimeRewindable::onUpdate(float deltaTime) {
     if (!owner) return;
-    
+
+	glm::vec3 newCheckpointPos = GameManager::instance->playerSpawner->transform.getGlobalPosition();
+	if (newCheckpointPos != lastCheckpointPos) {
+		resetHistory();
+		lastCheckpointPos = newCheckpointPos;
+	}
+
     if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
         isRewinding = true;
     }
-    else isRewinding = false;
+    else {
+        isRewinding = false;
+    }
 
     if (isRewinding) {
-        for (int i = 0; i < rewindSpeed; ++i) {
-            if (!history.empty()) {
-                TimeSnapshot snap = history.back();
-                history.pop_back();
-                owner->transform.setLocalPosition(snap.position);
-                owner->transform.setLocalRotation(snap.rotation);
-            }
+        for (int i = 0; i < rewindSpeed && !history.empty(); ++i) {
+            auto snapshot = history.back();
+            history.pop_back();
+            applySnapshot(snapshot);
         }
     }
     else {
-        TimeSnapshot snap;
-        snap.position = owner->transform.getLocalPosition();
-        snap.rotation = owner->transform.getLocalRotation();
-
-        pushSnapshot(snap);
+        pushSnapshot(createSnapshot());
     }
 }
 
-void TimeRewindable::pushSnapshot(const TimeSnapshot& snapshot) {
+void TimeRewindable::pushSnapshot(std::shared_ptr<ITimeSnapshot> snapshot) {
     history.push_back(snapshot);
-    // zarz¹dzaj limitem czasu
-    //float timePerSnapshot = 1.f / 60.f; // np. 60 FPS
-    //accumulatedTime += timePerSnapshot;
-    //while (accumulatedTime > maxTime && !history.empty()) {
-    //    history.pop_front();
-    //    accumulatedTime -= timePerSnapshot;
-    //}
+
+    // Optional: implement size/time limit
+    // while (history.size() > limit) history.pop_front();
 }
 
-bool TimeRewindable::popSnapshot(TimeSnapshot& outSnapshot) {
-    if (history.empty()) return false;
-    outSnapshot = history.back();
-    history.pop_back();
-    return true;
+void TimeRewindable::resetHistory() {
+	history.clear();
 }

@@ -4,6 +4,9 @@
 #include "PlayerSpawner.h"
 #include "LevelGenerator.h"
 #include "../System/GuiManager.h"
+#include "GameManagerRewindable.h"
+#include "PlayerRewindable.h"
+#include "RewindManager.h"
 
 REGISTER_SCRIPT(GameManager);
 
@@ -32,18 +35,42 @@ void GameManager::onStart()
     scoreText = GuiManager::Instance().findText(0);
 	runTimeText = GuiManager::Instance().findText(1);
 	deathCountText = GuiManager::Instance().findText(2);
+	stateText = GuiManager::Instance().findText(3);
 	fpsText = GuiManager::Instance().findText(5);
+	playSprite = GuiManager::Instance().findSprite(15);
+	rewindSprite = GuiManager::Instance().findSprite(16);
 
 	runTime = 0.f;
 	score = 0.f;
 	deathCount = 0;
+
+	rewindable = owner->getComponent<GameManagerRewindable>();
+	if (rewindable == nullptr) {
+		owner->addComponent(std::make_unique<GameManagerRewindable>());
+		rewindable = owner->getComponent<GameManagerRewindable>();
+	}
 }
 
 void GameManager::onUpdate(float deltaTime)
 {
+	isRewinding = rewindable->isRewinding;
+    
+    if (isRewinding) {
+        stateText->value = "REWIND";
+		rewindSprite->visible = true;
+		playSprite->visible = false;
+	}
+    else {
+        stateText->value = "PLAY";
+        rewindSprite->visible = false;
+        playSprite->visible = true;
+    }
+
     if (!tutorialActive) {
-        runTime += deltaTime;
-        score += deltaTime * 10.f / gasSpreadingSpeed;
+        if (!isRewinding) {
+            runTime += deltaTime;
+            score += deltaTime * 10.f / gasSpreadingSpeed;
+        }
 
         int minutes = static_cast<int>(runTime) / 60;
         int seconds = static_cast<int>(runTime) % 60;
@@ -99,6 +126,10 @@ void GameManager::RemoveCurrentPlayer()
 {
     if (players.size() <= 1) return;
     Node* playerToRemove = players.back();
+
+    auto* player = playerToRemove->getComponent<PlayerRewindable>();
+    RewindManager::Instance().unregisterRewindable(player);
+
     owner->scene_graph->deleteChild(playerToRemove);
     players.pop_back();
 

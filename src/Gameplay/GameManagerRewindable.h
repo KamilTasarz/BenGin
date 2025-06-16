@@ -1,21 +1,19 @@
 #pragma once
 
 #include "TimeRewindable.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <string>
+#include <memory>
 
-class Virus;
+class GameManager;
 
-class VirusSnapshot : public ITimeSnapshot {
-public:
-    glm::quat rotation;
-    bool isCollected;
+struct GameManagerSnapshot : public ITimeSnapshot {
+    float runTime = 0.0f;
+    int deathCount = 0;
+    float score = 0.0f;
 };
 
-class VirusRewindable : public TimeRewindable {
+class GameManagerRewindable : public TimeRewindable {
 public:
-    Virus* virus = nullptr;
+    GameManager* gameManager = nullptr;
 
     void onAttach(Node* owner) override;
     void onDetach() override;

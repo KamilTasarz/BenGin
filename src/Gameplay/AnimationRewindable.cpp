@@ -1,49 +1,52 @@
 #include "AnimationRewindable.h"
 #include "../Basic/Node.h"
-#include "RegisterScript.h"
 #include "Animation/PlayerAnimationController.h"
 #include "../Basic/Animator.h"
-
+#include "RegisterScript.h"
+#include "RewindManager.h"
+#include "GameManager.h"
+#include "GameManagerRewindable.h"
 #include "Animation/IdleState.h"
 
 REGISTER_SCRIPT(AnimationRewindable);
 
-void AnimationRewindable::onUpdate(float deltaTime)
-{
-	if (!owner) return;
+void AnimationRewindable::onAttach(Node* owner) {
+	this->owner = owner;
+    RewindManager::Instance().registerRewindable(this);
+}
 
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
-		isRewinding = true;
-	}
-	else isRewinding = false;
+void AnimationRewindable::onDetach() {
+	animationController = nullptr;
+	owner = nullptr;
+	RewindManager::Instance().unregisterRewindable(this);
+}
 
-	if (isRewinding) {
-		for (int i = 0; i < rewindSpeed; ++i) {
-			if (!playerHistory.empty()) {
-				AnimationSnapshot snap = playerHistory.back();
-				playerHistory.pop_back();
+void AnimationRewindable::onStart() {
+    animationController = owner->getComponent<PlayerAnimationController>();
+}
 
-				animationController->isTurning = snap.isTurning;
-				animationController->targetRotation = snap.targetRotation;
-				animationController->gravityFlipped = snap.gravityFlipped;
-				animationController->facingRight = snap.facingRight;
-				animationController->getOwner()->animator->current_animation = snap.currentAnimation;
-			}
-		}
-	}
-	else {
-		AnimationSnapshot snap;
+std::shared_ptr<ITimeSnapshot> AnimationRewindable::createSnapshot() {
+    auto snap = std::make_shared<AnimationSnapshot>();
+    snap->isTurning = animationController->isTurning;
+    snap->targetRotation = animationController->targetRotation;
+    snap->gravityFlipped = animationController->gravityFlipped;
+    snap->facingRight = animationController->facingRight;
+    snap->currentAnimation = animationController->getOwner()->animator->current_animation;
+    return snap;
+}
 
-		snap.isTurning = animationController->isTurning;
-		snap.targetRotation = animationController->targetRotation;
-		snap.gravityFlipped = animationController->gravityFlipped;
-		snap.facingRight = animationController->facingRight;
-		snap.currentAnimation = animationController->getOwner()->animator->current_animation;
+void AnimationRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseSnap) {
+    auto snap = std::dynamic_pointer_cast<AnimationSnapshot>(baseSnap);
+    if (!snap) return;
 
-		playerHistory.push_back(snap);
-	}
+    animationController->isTurning = snap->isTurning;
+    animationController->targetRotation = snap->targetRotation;
+    animationController->gravityFlipped = snap->gravityFlipped;
+    animationController->facingRight = snap->facingRight;
+    animationController->getOwner()->animator->current_animation = snap->currentAnimation;
 
-	/*if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE) {
-		animationController->changeState(new IdleState());
-	}*/
+    /*if (history.empty() && GameManager::instance->rewindable->history.size() > 1) {
+        animationController->getOwner()->animator->current_animation = animationController->idle;
+        animationController->changeState(new IdleState());
+    }*/
 }

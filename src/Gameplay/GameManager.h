@@ -5,7 +5,9 @@
 #include <deque>
 
 class TextObject;
+class SpriteObject;
 class LevelGenerator;
+class GameManagerRewindable;
 
 class GameManager : public Script
 {
@@ -20,6 +22,9 @@ public:
 	InstanceManager* emitter;
 	std::deque<Node*> players;
 
+	GameManagerRewindable* rewindable = nullptr;
+	bool isRewinding = false;
+
 	// run variables
 	float runTime = 0.f;
 	int deathCount = 0;
@@ -30,6 +35,9 @@ public:
 	TextObject* deathCountText;
 	TextObject* runTimeText;
 	TextObject* fpsText;
+	TextObject* stateText;
+	SpriteObject* playSprite;
+	SpriteObject* rewindSprite;
 
 	float fpsAccumulator = 0.f;
 	int frameCount = 0;

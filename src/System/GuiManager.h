@@ -71,7 +71,9 @@ enum Sprite_names {
 	PIRATE,
 	GHOST,
 	CORNERS,
-	CHEESE
+	CHEESE,
+	PLAY,
+	REWIND
 };
 
 class GuiManager

@@ -2,6 +2,8 @@
 #include "../Basic/Node.h"
 #include "RegisterScript.h"
 #include "../Basic/Animator.h"
+#include "GameManager.h"
+#include "RewindManager.h"
 
 REGISTER_SCRIPT(Checkpoint);
 
@@ -31,11 +33,13 @@ void Checkpoint::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
 		Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
-		playerSpawner->transform.setLocalPosition(owner->transform.getGlobalPosition() * glm::vec3(1.f, 1.f, 0.f) + glm::vec3(0.f, 1.5f, 0.f));
+		playerSpawner->transform.setLocalPosition(owner->transform.getGlobalPosition() * glm::vec3(1.f, 1.f, 0.f) + glm::vec3(0.f, 0.5f, 0.f));
 		//owner->animator->playAnimation(owner->pModel->animations[0], false);
 		if (!owner->is_animating) {
 			owner->animator->playAnimation(owner->pModel->getAnimationByName("ArmatureAction"), false);
 			owner->is_animating = true;
+
+			//RewindManager::Instance().resetAllHistories();
 		}
 	}
 }

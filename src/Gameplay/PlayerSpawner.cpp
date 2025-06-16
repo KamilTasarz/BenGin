@@ -27,6 +27,8 @@ void PlayerSpawner::onStart()
 
 void PlayerSpawner::onUpdate(float deltaTime)
 {
+	if (GameManager::instance->isRewinding) return;
+	
 	if (spawnInNextFrame) {
 		spawnPlayer();
 		spawnInNextFrame = false;
