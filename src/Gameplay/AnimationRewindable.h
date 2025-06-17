@@ -12,8 +12,11 @@ struct AnimationSnapshot : public ITimeSnapshot {
     bool isTurning;
     bool gravityFlipped;
     bool facingRight;
+	bool allFinished = false; // Whether all animations have finished
     glm::quat targetRotation;
-    Animation* currentAnimation = nullptr;
+    int model_id;
+	std::string currentAnimation;
+	float time_animation = 0.f; // Current time in the animation
 };
 
 class AnimationRewindable : public TimeRewindable {

@@ -16,6 +16,8 @@
 #include "../Component/CameraGlobals.h"
 #include "CameraFollow.h"
 #include "../ResourceManager.h"
+#include "Animation/DeathState.h"
+
 
 //#include "GameMath.h"
 
@@ -311,12 +313,18 @@ void PlayerController::Die(bool freeze, bool electrified)
 	owner->setTag(tag);
 	isDead = true;
 
+	
+
 	//owner->is_animating = false;
-	Animation* death;
+	/*Animation* death;
 	if (GameMath::RandomInt(0, 1) == 0) death = owner->getComponent<PlayerAnimationController>()->deathLeft;
 	else death = owner->getComponent<PlayerAnimationController>()->deathRight;
 	death->speed = 500.f;
-	owner->animator->playAnimation(death, false);
+	owner->animator->playAnimation(death, false);*/
+
+	PlayerAnimationController *animationController = owner->getComponent<PlayerAnimationController>();
+
+	animationController->changeState(new DeathState());
 
 	auto* audio = ServiceLocator::getAudioEngine();
 	audio->PlaySFX(audio->death, GameManager::instance->sfxVolume * 65.f);

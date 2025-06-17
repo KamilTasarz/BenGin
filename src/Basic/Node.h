@@ -374,6 +374,7 @@ public:
 
     void virtual updateComponents(float deltaTime);
     void virtual createComponents();
+    void virtual endComponents();
 
     void virtual drawShadows(Shader& shader);
 
@@ -615,6 +616,11 @@ public:
     PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name, glm::vec3 position);
 
 	~PrefabInstance() {
+
+        if (scene_graph && !scene_graph->is_editing) {
+			endComponents();
+        }
+
 		delete prefab_root;
 	}
 
@@ -626,6 +632,7 @@ public:
 
 	void updateComponents(float deltaTime) override;
     void createComponents() override;
+    void endComponents() override;
 
 	void forceUpdateSelfAndChild() override;
 

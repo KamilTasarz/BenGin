@@ -4,6 +4,7 @@
 #include "../../Basic/Animator.h"
 #include "../GameManager.h"
 #include "../GameMath.h"
+#include "../../ResourceManager.h"
 
 void DeathState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
@@ -18,10 +19,24 @@ void DeathState::enter(Node* owner) {
 
 void DeathState::update(Node* owner, float deltaTime) {
     
+    if (owner->animator->ended) exit(owner);
     
     if (owner->animator->isPlayingNonLooping()) {
         return;
     }
 }
 
-void DeathState::exit(Node* owner) {}
+void DeathState::exit(Node* owner) {
+
+    auto* animation = owner->getComponent<PlayerAnimationController>();
+    if (owner->animator->current_animation == animation->deathLeft) {
+		owner->pModel = ResourceManager::Instance().getModel(65);
+        
+    }
+    else {
+        owner->pModel = ResourceManager::Instance().getModel(66);
+    }
+
+    animation->currentState = nullptr;
+    animation->allFinished = true;
+}

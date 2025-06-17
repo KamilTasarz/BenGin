@@ -1013,7 +1013,7 @@ void Node::drawSelf()
 void Node::addRenderQueue()
 {
     if (is_visible && !no_textures) {
-        if (is_animating) RenderSystem::Instance().addAnimatedObject(this);
+        if (is_animating && pModel && pModel->has_animations) RenderSystem::Instance().addAnimatedObject(this);
         else if (pModel && pModel->mode.empty()) RenderSystem::Instance().addStaticObject(this);
         else if (pModel) RenderSystem::Instance().addTileObject(this);
     }
@@ -1127,6 +1127,14 @@ void Node::createComponents()
     }
 }
 
+void Node::endComponents()
+{
+    for (auto& component : components) {
+        component->onEnd();
+    }
+
+}
+
 void Node::drawShadows(Shader& shader) {
     if (pModel && in_frustrum) {
 
@@ -1222,6 +1230,10 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
 
 Node::~Node()
 {
+    if (scene_graph && !scene_graph->is_editing) {
+        endComponents();
+    }
+
     if (AABB) {
         delete AABB;
 		PhysicsSystem::instance().colliders.erase(AABB);
@@ -1598,8 +1610,14 @@ void PrefabInstance::updateComponents(float deltaTime)
 }
 void PrefabInstance::createComponents()
 {
-	if (in_frustrum && prefab_root) {
+	if (prefab_root) { // ewentualnie dodać sprawdzanie frustum tutaj
 		prefab_root->createComponents();
+	}
+}
+void PrefabInstance::endComponents()
+{
+	if (prefab_root) {
+		prefab_root->endComponents();
 	}
 }
 void PrefabInstance::forceUpdateSelfAndChild()

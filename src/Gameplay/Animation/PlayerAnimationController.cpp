@@ -34,6 +34,7 @@ void PlayerAnimationController::onStart()
 	player = owner->getComponent<PlayerController>();
 	previousPosition = owner->transform.getLocalPosition();
 	facingRight = true;
+	allFinished = false;
 
 	if (!owner->is_animating) {
 		owner->is_animating = true;
@@ -67,7 +68,8 @@ void PlayerAnimationController::onStart()
 
 void PlayerAnimationController::onUpdate(float deltaTime)
 {
-	if (GameManager::instance->currentPlayer->getComponent<PlayerController>()->isDead) {
+	bool isDead = owner->getComponent<PlayerController>()->isDead;
+	if (isDead && allFinished) {
 		
 		/*if (currentState && GameManager::instance->currentPlayer == owner)
 			changeState(new DeathState());*/
@@ -80,7 +82,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 			delete currentState;
 			currentState = nullptr;
 		}*/
-
+		
 		return;
 	}
 	

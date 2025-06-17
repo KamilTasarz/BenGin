@@ -37,6 +37,7 @@ void Virus::onUpdate(float deltaTime)
 	//rewindable->isCollected = isCollected;
 
 	//rewindable->player = player;
+	if (!GameManager::instance->currentPlayer) return;
 	PlayerController* player = GameManager::instance->currentPlayer->getComponent<PlayerController>();
 
 	if (!isCollected && !modelChanged || player->isDead) {

@@ -43,6 +43,7 @@ public:
 	bool isRising = false;
 	bool isFalling = false;
 	bool hasLanded = false;
+	bool allFinished = false;
 
 	bool isTurning = false;
 	glm::quat targetRotation;

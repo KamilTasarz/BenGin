@@ -3,6 +3,8 @@
 #include "RegisterScript.h"
 #include <GLFW/glfw3.h>
 #include "GameManager.h"
+#include "Animation/PlayerAnimationController.h"
+#include "Animation/IdleState.h"
 
 //REGISTER_SCRIPT(TimeRewindable);
 //
@@ -27,9 +29,12 @@ void TimeRewindable::onUpdate(float deltaTime) {
     if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
         isRewinding = true;
     }
-    else {
+    if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE && isRewinding) {
+        auto* comp = owner->getComponent<PlayerAnimationController>();
+        if (comp) comp->changeState(new IdleState());
         isRewinding = false;
     }
+    
 
     if (isRewinding) {
         for (int i = 0; i < rewindSpeed && !history.empty(); ++i) {
