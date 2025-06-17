@@ -36,7 +36,9 @@ void DeathState::exit(Node* owner) {
     else {
         owner->pModel = ResourceManager::Instance().getModel(66);
     }
-
-    animation->currentState = nullptr;
+    if (animation->currentState) {
+		delete animation->currentState;
+        animation->currentState = nullptr;
+    }
     animation->allFinished = true;
 }
