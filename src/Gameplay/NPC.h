@@ -64,7 +64,7 @@ public:
 				 &maxMoveTimeVar, &minWaitTimeVar, &maxWaitTimeVar, &maxSpeedVar };
     }
 
-private:
+public:
     enum class WanderState { Waiting, Moving };
 
     Rigidbody* rb;

@@ -11,6 +11,7 @@ class PlayerSnapshot : public ITimeSnapshot {
 public:
     bool isDead;
     bool isGravityFlipped;
+	bool isElectrified;
     std::string virusType;
     std::string tagName;
 };

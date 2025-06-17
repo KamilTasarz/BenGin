@@ -59,12 +59,12 @@ void NPC::onUpdate(float deltaTime) {
         spinnerRight->transform.setLocalRotation(-currentRotation);
     }
 
-    if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
+    /*if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
         isActive = true;
         owner->setPhysic(true);
         owner->getComponent<Rigidbody>()->is_static = false;
         isCatched = false;
-    }
+    }*/
 
     auto* audio = ServiceLocator::getAudioEngine();
     audio->SetChannel3dPosition(sfxId, owner->transform.getGlobalPosition());

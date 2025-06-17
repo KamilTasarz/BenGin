@@ -23,7 +23,6 @@ void Electrified::onStart()
 {
 	if (owner->getTagName() != "Player") {
 		//owner->scene_graph->root->forceUpdateSelfAndChild();
-		
 		glm::vec3 pos = owner->transform.getGlobalPosition();
 		auto* audio = ServiceLocator::getAudioEngine();
 		sfxId = audio->PlayMusic(audio->electricity, GameManager::instance->sfxVolume * 70.f, pos);
@@ -31,14 +30,30 @@ void Electrified::onStart()
 	}	
 }
 
+void Electrified::onUpdate(float deltaTime)
+{
+	if (owner->getTagName() == "Player") {
+		if (!owner->getComponent<PlayerController>()->isElectrified) {
+			isActive = false;
+		}
+		else {
+			isActive = true;
+		}
+	}
+}
+
 void Electrified::onCollisionLogic(Node* other)
 {
-	if (other->getTagName() == "Player") {
-		other->addComponent(std::make_unique<Electrified>());
-		other->getComponent<PlayerController>()->Die(false, true);
+	if (other->getTagName() == "Player" && isActive) {
+		auto* player = other->getComponent<PlayerController>();
+		player->isElectrified = true;
+		player->Die(false, true);
+
+		other->getComponent<Electrified>()->isActive = true;
+
+		//other->addComponent(std::make_unique<Electrified>());
 
 		glm::vec3 pos = owner->transform.getGlobalPosition();
-
 		auto* audio = ServiceLocator::getAudioEngine();
 		audio->PlaySFX(audio->electrified, GameManager::instance->sfxVolume * 70.f);
 	}

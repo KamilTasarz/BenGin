@@ -29,6 +29,7 @@ public:
 	bool isInGas = false;
     bool isRunning = false;
     bool canJump = true;
+	bool isElectrified = false;
 
     TextObject* virusTypeText;
     TextObject* virusEffectText;
