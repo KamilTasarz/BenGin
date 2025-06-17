@@ -54,16 +54,16 @@ void LaserEmitter::onUpdate(float deltaTime)
         nodes.clear();
 
         if (PhysicsSystem::instance().rayCast(ray, nodes, 50.f, owner)) {
-            // Dodaj punkt pocz¹tkowy
+            // Dodaj punkt poczatkowy
             points.push_back(ray.origin);
 
             for (size_t i = 0; i < nodes.size(); ++i) {
                 Node* hitNode = nodes[i].node;
 
 
-				std::cout << "obiekt: " << owner->getName() << " trafi³ w: " << hitNode->getName() << std::endl;
+				std::cout << "obiekt: " << owner->getName() << " trafi w: " << hitNode->getName() << std::endl;
 
-                // Pomijamy powtórne trafienia tego samego obiektu, np. w pêtli odbiæ
+                // Pomijamy powtórne trafienia tego samego obiektu, np. w petli odbic
                 if (hitNode == lastNode) continue;
 
                 glm::vec3 hitPoint = nodes[i].endPoint;
@@ -74,6 +74,10 @@ void LaserEmitter::onUpdate(float deltaTime)
                     if (dynamic_cast<BoundingBox*>(collider)) {
                         std::cout << "LaserEmitter::onUpdate: Trafiono w lustro: " << hitNode->getName() << std::endl;
                         //continue;
+                        if (nodes.size() > i && dynamic_cast<RectOBB*>(nodes[i + 1].collider)) {
+                            hitPoint = nodes[i + 1].endPoint;
+                            
+                        }
                     }
 
                     ray.origin = hitPoint;

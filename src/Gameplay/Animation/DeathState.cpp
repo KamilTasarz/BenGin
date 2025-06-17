@@ -31,7 +31,6 @@ void DeathState::exit(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
     if (owner->animator->current_animation == animation->deathLeft) {
 		owner->pModel = ResourceManager::Instance().getModel(65);
-        
     }
     else {
         owner->pModel = ResourceManager::Instance().getModel(66);

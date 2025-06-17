@@ -176,11 +176,22 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<RayCastHit>& collide_with, floa
 
 			
 
-			if (collider->is_logic || !collider->active) continue;
+			if (collider->is_logic || !collider->active) {
+				continue;
+			}
+
+			/*if ((dynamic_cast<MirrorNode*>(collider->node) && dynamic_cast<BoundingBox*>(collider)))
+			{
+				continue;
+			}*/
 			float t;
 			glm::vec3 end;
 			if (collider->isRayIntersects(ray.direction, ray.origin, t, end) && collider->node != owner) {
 				
+				if (dynamic_cast<RectOBB*>(collider)) {
+					float a = 0;
+					a++;
+				}
 				
 				float distance = glm::length(end - ray.origin);
 				if (distance <= length) {
