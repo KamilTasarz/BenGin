@@ -2,6 +2,8 @@
 #include "../RegisterScript.h"
 #include "../../Basic/Node.h"
 #include "../RotateObject.h"
+#include "../NPCRewindable.h"
+#include "../../ResourceManager.h"
 
 REGISTER_SCRIPT(TVManager);
 
@@ -18,21 +20,18 @@ void TVManager::onStart() {
 	cheeseStartPos = cheese->transform.getLocalPosition();
 
 	tvAI = tv->getComponent<NPC>();
+
+	rewindable = owner->getComponent<NPCRewindable>();
+	if (rewindable == nullptr) {
+		owner->addComponent(std::make_unique<NPCRewindable>());
+		rewindable = owner->getComponent<NPCRewindable>();
+	}
 }
 
 void TVManager::onUpdate(float deltaTime) {
 	if (!tvAI) return;
 
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
-		isFleeing = false;
-		tv->transform.setLocalPosition(tvStartPos);
-		cheese->transform.setLocalPosition(cheeseStartPos);
-		cheese->getChildById(0)->getComponent<RotateObject>()->stopRotation = true;
-		currentVelocity = glm::vec3(0.f, 0.f, 3.f);
-		targetVelocity = glm::vec3(0.f);
-		tvAI->isCatched = false;
-		//tv->setPhysic(true);
-	}
+	handleFaceChange();
 
 	if (tvAI->isCatched) {
 		float velX = tv->getComponent<Rigidbody>()->velocityX;
@@ -70,5 +69,21 @@ void TVManager::onUpdate(float deltaTime) {
 
 		// Ustaw wyg³adzon¹ rotacjê
 		owner->transform.setLocalRotation(newRotation);
+	}
+}
+
+void TVManager::handleFaceChange() {
+	bool isTarget = tvAI->playerVisible || tvAI->isFleeingWithoutTarget;
+	if (isFleeing) {
+		tvAI->getOwner()->pModel = ResourceManager::Instance().getModel(68);
+	}
+	else if (isTarget && tvAI->isFleeing) {
+		tvAI->getOwner()->pModel = ResourceManager::Instance().getModel(70);
+	}
+	else if (isTarget && !tvAI->isFleeing) {
+		tvAI->getOwner()->pModel = ResourceManager::Instance().getModel(67);
+	}
+	else if (tvAI->isWandering) {
+		tvAI->getOwner()->pModel = ResourceManager::Instance().getModel(69);
 	}
 }

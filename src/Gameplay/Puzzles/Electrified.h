@@ -5,9 +5,8 @@
 class Electrified : public Script
 {
 public:
-	/*using SelfType = Electrified;
-	VARIABLE(float, damage);
-	VARIABLE(float, duration);*/
+	using SelfType = Electrified;
+	VARIABLE(bool, isActive);
 
 	int sfxId = -1;
 
@@ -16,12 +15,12 @@ public:
 	void onAttach(Node* owner) override;
 	void onDetach() override;
 	void onStart() override;
+	void onUpdate(float deltaTime);
 	//void onUpdate(float deltaTime) override;
 	void onCollisionLogic(Node* other) override;
-	/*std::vector<Variable*> getFields() const override {
-		static Variable damageVar = getField_damage();
-		static Variable durationVar = getField_duration();
-		return { &damageVar, &durationVar };
-	}*/
+	std::vector<Variable*> getFields() const override {
+		static Variable isActiveVar = getField_isActive();
+		return { &isActiveVar };
+	}
 };
 

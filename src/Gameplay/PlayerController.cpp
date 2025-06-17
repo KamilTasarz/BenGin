@@ -302,6 +302,7 @@ void PlayerController::Die(bool freeze, bool electrified)
 
 	if (electrified) {
 		rb->is_static = true;
+		//isElectrified = true;
 	}
 	else if (freeze) {
 		Rigidbody* rb = owner->getComponent<Rigidbody>();

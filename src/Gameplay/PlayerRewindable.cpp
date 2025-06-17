@@ -33,6 +33,7 @@ std::shared_ptr<ITimeSnapshot> PlayerRewindable::createSnapshot() {
     auto snap = std::make_shared<PlayerSnapshot>();
     snap->isDead = playerController->isDead;
     snap->isGravityFlipped = playerController->isGravityFlipped;
+	snap->isElectrified = playerController->isElectrified;
     snap->virusType = playerController->virusType;
     snap->tagName = owner->getTagName();
     return snap;
@@ -44,6 +45,7 @@ void PlayerRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseS
 
     playerController->isDead = snap->isDead;
     playerController->isGravityFlipped = snap->isGravityFlipped;
+	playerController->isElectrified = snap->isElectrified;
     playerController->virusType = snap->virusType;
     playerController->lastVirusType = "null";
 

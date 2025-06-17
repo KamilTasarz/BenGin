@@ -3,6 +3,8 @@
 #include "../Script.h"
 #include "../NPC.h"
 
+class NPCRewindable;
+
 class TVManager : public Script
 {
 public:
@@ -20,12 +22,16 @@ public:
 	glm::vec3 targetVelocity;
 	glm::vec3 currentVelocity = glm::vec3(0.f, 0.f, 3.f);
 
+	NPCRewindable* rewindable;
+
 	TVManager() = default;
 	virtual ~TVManager() = default;
 	void onAttach(Node* owner) override;
 	void onDetach() override;
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
+
+	void handleFaceChange();
 
 	std::vector<Variable*> getFields() const override {
 		static Variable tvVar = getField_tv();
