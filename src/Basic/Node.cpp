@@ -1696,6 +1696,17 @@ void PrefabInstance::checkIfInFrustrum(std::unordered_set<Collider*>& colliders,
                     //if (child->has_RB) colliders_RB.erase(child->AABB_logic);
                     colliders.erase(child->AABB_logic);
                 }
+
+                MirrorNode* m = dynamic_cast<MirrorNode*>(child);
+                if (m) {
+                    if (m->mirrorCollider) {
+                        colliders.insert(m->mirrorCollider);
+                    }
+                    else {
+                        colliders.erase(m->mirrorCollider);
+                    }
+                }
+
             }
             rooms.insert(this);
         }
@@ -1709,6 +1720,12 @@ void PrefabInstance::checkIfInFrustrum(std::unordered_set<Collider*>& colliders,
                 if (child->AABB_logic && child->is_logic_active) {
                     //if (child->has_RB) colliders_RB.erase(child->AABB_logic);
                     colliders.erase(child->AABB_logic);
+                }
+				MirrorNode* m = dynamic_cast<MirrorNode*>(child);
+                if (m) {
+                    if (m->mirrorCollider) {
+						colliders.erase(m->mirrorCollider);
+                    }
                 }
             }
 			rooms.erase(this);
