@@ -1564,9 +1564,9 @@ void PrefabInstance::set_prefab_colliders(Node* node)
 
 void PrefabInstance::updateSelf()
 {
-    if (prefab_root)
+    if (prefab_root == nullptr)
         delete prefab_root;
-    if (AABB)
+    if (AABB == nullptr)
         delete AABB;
 	AABB = new BoundingBox(transform.getModelMatrix(), this);
 	prefab_root = prefab->clone(this->name, scene_graph);

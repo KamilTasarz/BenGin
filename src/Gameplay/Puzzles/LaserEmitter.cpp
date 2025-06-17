@@ -64,7 +64,7 @@ void LaserEmitter::onUpdate(float deltaTime)
 				std::cout << "obiekt: " << owner->getName() << " trafi w: " << hitNode->getName() << std::endl;
 
                 // Pomijamy powtórne trafienia tego samego obiektu, np. w petli odbic
-                if (hitNode == lastNode) continue;
+                if (hitNode == lastNode || (lastNode && hitNode->parent == lastNode->parent)) continue;
 
                 glm::vec3 hitPoint = nodes[i].endPoint;
 				Collider* collider = nodes[i].collider;
@@ -73,10 +73,12 @@ void LaserEmitter::onUpdate(float deltaTime)
                     // Lustro: refleksja
                     if (dynamic_cast<BoundingBox*>(collider)) {
                         std::cout << "LaserEmitter::onUpdate: Trafiono w lustro: " << hitNode->getName() << std::endl;
-                        //continue;
-                        if (nodes.size() > i && dynamic_cast<RectOBB*>(nodes[i + 1].collider)) {
-                            hitPoint = nodes[i + 1].endPoint;
-                            
+                        
+                        for (size_t j = i; j < nodes.size(); ++j) {
+                            if (nodes[j].node == hitNode && dynamic_cast<RectOBB*>(nodes[j].collider)) {
+                                hitPoint = nodes[j].endPoint;
+                                break;
+                            }
                         }
                     }
 

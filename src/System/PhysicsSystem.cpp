@@ -186,7 +186,7 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<RayCastHit>& collide_with, floa
 			}*/
 			float t;
 			glm::vec3 end;
-			if (collider->isRayIntersects(ray.direction, ray.origin, t, end) && collider->node != owner) {
+			if (collider->node != owner && collider->isRayIntersects(ray.direction, ray.origin, t, end)) {
 				
 				if (dynamic_cast<RectOBB*>(collider)) {
 					float a = 0;
