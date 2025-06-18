@@ -233,6 +233,13 @@ void Game::draw()
 
             rewindShader.setBool("is_rewind", sceneGraph->is_rewinidng);
 
+            rewindShader.setFloat("time", glfwGetTime());
+
+            rewindShader.setFloat("noise_alpha", postProcessData.rewind_noise_alpha);
+            rewindShader.setFloat("band_speed", postProcessData.rewind_band_speed);
+            rewindShader.setInt("num_bands", postProcessData.rewind_band_amount);
+            rewindShader.setFloat("band_thickness", postProcessData.rewind_band_thicc);
+
             rewindShader.setInt("screenTexture", 0);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, current_texture);

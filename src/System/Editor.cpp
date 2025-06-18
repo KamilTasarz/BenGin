@@ -1859,6 +1859,16 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
             ImGui::Checkbox("Rewind Enable/Disable", &postProcessData.is_rewind);
 
+            if (postProcessData.is_rewind) {
+            
+                ImGui::Separator();
+
+                ImGui::SliderFloat("Rewind Noise Alpha", &postProcessData.rewind_noise_alpha, 0.0f, 1.0f, "%.2f");
+
+                ImGui::Separator();
+
+            }
+
             ImGui::Checkbox("CRT Enable/Disable", &postProcessData.is_crt_curved);
 
             if (postProcessData.is_crt_curved) {

@@ -28,10 +28,12 @@ void TimeRewindable::onUpdate(float deltaTime) {
 
     if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
         isRewinding = true;
+        owner->scene_graph->activateRewindShader();
     }
     if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE && isRewinding) {
         auto* comp = owner->getComponent<PlayerAnimationController>();
         if (comp) comp->changeState(new IdleState());
+        owner->scene_graph->deactivateRewindShader();
         isRewinding = false;
     }
     

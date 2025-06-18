@@ -59,6 +59,16 @@ struct PostProcessData {
 
     int bloom_blur_passes;
 
+    //////////////////////////////
+
+    float rewind_noise_alpha;
+
+    float rewind_band_speed;
+
+    int rewind_band_amount;
+
+    float rewind_band_thicc;
+
 };
 
 #endif
