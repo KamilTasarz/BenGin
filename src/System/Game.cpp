@@ -269,7 +269,7 @@ void Game::draw()
 
                 glDisable(GL_BLEND);
 
-				current_texture = volumetricColorBuffer;
+				//current_texture = volumetricColorBuffer;
             }
 
         }

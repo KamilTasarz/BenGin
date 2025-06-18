@@ -29,6 +29,7 @@ vec3 reconstructWorldPos(vec2 uv, float depth) {
 }
 
 void main() {
+
     float depth = texture(depthTexture, vectorUV).r;
     float linearDepth = LinearizeDepth(depth);
 
@@ -61,4 +62,6 @@ void main() {
 
     vec3 color = lightColor * contribution * lightIntensity;
     FragColor = vec4(color, 1.0);
+    //FragColor = vec4(vec3(linearDepth / 50.0), 1.0);
+
 }
