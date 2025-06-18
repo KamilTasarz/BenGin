@@ -225,7 +225,24 @@ void Game::draw()
             /* Tu dodamy obsluge uniformow i wgl */
             // Przy ustawieniu uniformu bool do shadera sprawdzaj to ze sceneGraph
 
+            glBindFramebuffer(GL_FRAMEBUFFER, rewindFBO);
+            glClear(GL_COLOR_BUFFER_BIT);
 
+            auto& rewindShader = *ResourceManager::Instance().shader_PostProcess_rewind;
+            rewindShader.use();
+
+            rewindShader.setBool("is_rewind", sceneGraph->is_rewinidng);
+
+            rewindShader.setInt("screenTexture", 0);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, current_texture);
+
+            glBindVertexArray(quadVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindVertexArray(0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            current_texture = rewindColorBuffer;
 
         }
 
@@ -544,6 +561,28 @@ void Game::init()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // ======== END BLOOM SETUP ========
+
+    // ======== REWIND SETUP ========
+
+    glGenFramebuffers(1, &rewindFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, rewindFBO);
+
+    glGenTextures(1, &rewindColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, rewindColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fbWidth, fbHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rewindColorBuffer, 0);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cerr << "Rewind FBO not complete!" << std::endl;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // ======== END REWIND SETUP ========
+
 
     // ======== NOISE START ========
     

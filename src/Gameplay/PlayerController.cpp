@@ -189,6 +189,14 @@ void PlayerController::onUpdate(float deltaTime)
 			int temp = ServiceLocator::getAudioEngine()->PlayMusic("res/audios/sounds/bonk.ogg");
 		}
 
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_7) == GLFW_PRESS) {
+			owner->scene_graph->activateRewindShader();
+		}
+
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_8) == GLFW_PRESS) {
+			owner->scene_graph->deactivateRewindShader();
+		}
+
 		if (debugMode) {
 			glm::vec3 move(0.0f);
 
