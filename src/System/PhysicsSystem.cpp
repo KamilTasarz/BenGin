@@ -48,6 +48,12 @@ void PhysicsSystem::updateCollisions()
 				continue; 
 			}
 
+			bool ignored = false;
+
+			if (collider2->ignored_layers.contains(collider1->node->layer.lock())) {
+				ignored = true;
+			}
+
 			BoundingBox* first = (collider1 < collider2) ? collider1 : collider2;
 			BoundingBox* second = (collider1 < collider2) ? collider2 : collider1;
 
@@ -59,7 +65,7 @@ void PhysicsSystem::updateCollisions()
 
 			counter++;
 
-			if (collider1->isBoundingBoxIntersects(*collider2)) {
+			if (!ignored && collider1->isBoundingBoxIntersects(*collider2)) {
 
 				if (collider1->current_collisons.find(collider2) == collider1->current_collisons.end()) {
 					for (auto& comp : collider1->node->components) {
@@ -158,6 +164,8 @@ bool PhysicsSystem::rayCast(Ray ray, std::vector<RayCastHit>& collide_with, floa
 			//if (dynamic_cast<BoundingBox*>(collider)) continue;
 
 			//BoundingBox* collider = dynamic_cast<BoundingBox*>(collider_base);
+
+
 
 			if (collider->is_logic || !collider->active) continue;
 			float t;

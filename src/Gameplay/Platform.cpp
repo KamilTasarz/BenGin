@@ -2,6 +2,8 @@
 #include "../Basic/Node.h"
 #include "RegisterScript.h"
 #include "../System/Rigidbody.h"
+#include "../Component/BoundingBox.h"
+#include "../System/Tag.h"
 
 REGISTER_SCRIPT(Platform);
 
@@ -20,7 +22,8 @@ void Platform::onDetach()
 void Platform::onUpdate(float deltaTime)
 {
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		owner->setPhysic(false);
+		//owner->setPhysic(false);
+		owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
 		timer = 0.25f;
 	}
 	
@@ -32,14 +35,16 @@ void Platform::onUpdate(float deltaTime)
 		}
 	}
 	else {
-		owner->setPhysic(true);
+		//owner->setPhysic(true);
+		owner->AABB->removeIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
 	}
 }
 
 void Platform::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
-		owner->setPhysic(false);
+		//owner->setPhysic(false);
+		owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
 		timer = 0.25f;
 
 		//owner->setActive(false);

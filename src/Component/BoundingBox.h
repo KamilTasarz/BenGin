@@ -12,6 +12,7 @@ struct SnapResult {
 };
 
 class Node;
+class Layer;
 
 class Collider {
 public:
@@ -22,6 +23,8 @@ public:
 	bool active = true;
 
 	Node* node = nullptr;
+
+	std::unordered_set<std::shared_ptr<Layer>> ignored_layers;
 
 	Collider(Node* node) : node(node) {};
 	virtual ~Collider() = default;
@@ -75,6 +78,13 @@ public:
 	void transformWithOffsetAABB(const glm::mat4& model);
 	void draw(Shader& shader);
 	void setBuffers();
+	void addIgnoredLayer(std::shared_ptr<Layer> layer) {
+		ignored_layers.insert(layer);
+	}
+
+	void removeIgnoredLayer(std::shared_ptr<Layer> layer) {
+		ignored_layers.erase(layer);
+	}
 
 	glm::vec3 getCenter() const {
 		return (min_point_world + max_point_world) / 2.f;

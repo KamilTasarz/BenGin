@@ -112,7 +112,7 @@ void Rigidbody::onUpdate(float deltaTime)
 
 	nodes.clear();
 	if (PhysicsSystem::instance().rayCast(Rays, nodes, length + 0.2f, owner)) {
-		if (nodes.size() > 0) {
+		if (nodes.size() > 0 && !nodes[0].collider->ignored_layers.contains(owner->layer.lock())) {
 			groundUnderneath = true;
 
 			for (RayCastHit hit : nodes) {
