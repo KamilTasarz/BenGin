@@ -220,6 +220,15 @@ void Game::draw()
 
         }
 
+        if (postProcessData.is_rewind) {
+        
+            /* Tu dodamy obsluge uniformow i wgl */
+            // Przy ustawieniu uniformu bool do shadera sprawdzaj to ze sceneGraph
+
+
+
+        }
+
         if (postProcessData.is_crt_curved) {
 
             glDisable(GL_DEPTH_TEST);

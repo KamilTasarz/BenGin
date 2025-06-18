@@ -1111,6 +1111,8 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	j["is_crt"] = data.is_crt_curved;
 
+	j["is_rewind"] = data.is_rewind;
+
 	j["is_bloom"] = data.is_bloom;
 
 	// Save as an array of 2 values
@@ -1174,6 +1176,8 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 			data.is_ssao = j.at("is_ssao");
 
 			data.is_bloom = j.at("is_bloom");
+
+			data.is_rewind = j.at("is_rewind");
 
 			data.is_crt_curved = j.at("is_crt");
 
