@@ -4,6 +4,7 @@
 #include "RegisterScript.h"
 #include "GameManager.h"
 #include "PlayerController.h"
+#include "../Basic/Animator.h"
 
 REGISTER_SCRIPT(PlayerSpawner);
 
@@ -59,6 +60,7 @@ void PlayerSpawner::spawnPlayer()
 	Node* player = pref->prefab_root->getChildByTag("Player");
 	player->transform.setLocalPosition(owner->getTransform().getLocalPosition());
  	owner->scene_graph->addChild(player);
+	player->animator->current_animation = player->pModel->getAnimationByName("Idle");
 
 	//currentPlayer = player;
 	GameManager::instance->currentPlayer = player;

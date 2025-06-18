@@ -85,6 +85,10 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 		
 		return;
 	}
+
+	if (isDead && !allFinished && !dynamic_cast<DeathState*>(currentState)) {
+		changeState(new DeathState());
+	}
 	
 	deltaX = owner->transform.getLocalPosition().x - previousPosition.x;
 	deltaY = owner->transform.getLocalPosition().y - previousPosition.y;

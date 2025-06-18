@@ -5,6 +5,15 @@
 #include "GameManager.h"
 #include "Animation/PlayerAnimationController.h"
 #include "Animation/IdleState.h"
+#include "../Basic/Animator.h"
+#include "Animation/FallState.h"
+#include "Animation/JumpState.h"
+#include "Animation/RiseState.h"
+#include "Animation/LandState.h"
+#include "Animation/RunState.h"
+#include "Animation/DeathState.h"
+#include "Animation/TurnState.h"
+#include "Animation/PushState.h"
 
 //REGISTER_SCRIPT(TimeRewindable);
 //
@@ -30,9 +39,11 @@ void TimeRewindable::onUpdate(float deltaTime) {
         isRewinding = true;
     }
     if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE && isRewinding) {
-        auto* comp = owner->getComponent<PlayerAnimationController>();
-        if (comp) comp->changeState(new IdleState());
+        auto* animationController = owner->getComponent<PlayerAnimationController>();
+        //if (animationController && !animationController->currentState) animationController->changeState(new IdleState());
         isRewinding = false;
+        
+        
     }
     
 

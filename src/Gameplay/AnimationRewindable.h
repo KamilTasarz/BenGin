@@ -12,6 +12,7 @@ struct AnimationSnapshot : public ITimeSnapshot {
     bool isTurning;
     bool gravityFlipped;
     bool facingRight;
+	bool isDead = false; // Whether the player is dead
 	bool allFinished = false; // Whether all animations have finished
     glm::quat targetRotation;
     int model_id;
