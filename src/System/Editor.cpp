@@ -1865,6 +1865,12 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
                 ImGui::SliderFloat("Rewind Noise Alpha", &postProcessData.rewind_noise_alpha, 0.0f, 1.0f, "%.2f");
 
+                ImGui::SliderFloat("Rewind Band Speed", &postProcessData.rewind_band_speed, 0.01f, 15.0f, "%.3f");
+
+                ImGui::SliderInt("Rewind Band Amount", &postProcessData.rewind_band_amount, 1, 20);
+                
+                ImGui::SliderFloat("Rewind Band Thickness", &postProcessData.rewind_band_thicc, 0.01f, 0.1f, "%.4f");
+
                 ImGui::Separator();
 
             }

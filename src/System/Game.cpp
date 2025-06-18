@@ -237,7 +237,7 @@ void Game::draw()
 
             rewindShader.setFloat("noise_alpha", postProcessData.rewind_noise_alpha);
             rewindShader.setFloat("band_speed", postProcessData.rewind_band_speed);
-            rewindShader.setInt("num_bands", postProcessData.rewind_band_amount);
+            rewindShader.setFloat("num_bands", float(postProcessData.rewind_band_amount));
             rewindShader.setFloat("band_thickness", postProcessData.rewind_band_thicc);
 
             rewindShader.setInt("screenTexture", 0);

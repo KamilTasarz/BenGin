@@ -7,7 +7,6 @@ uniform sampler2D screenTexture;
 uniform bool is_rewind;
 
 uniform float time;
-uniform vec2 res;
 
 uniform float noise_alpha;
 uniform float band_speed;
@@ -45,7 +44,25 @@ void main() {
     float noiseVal = simpleNoise(noiseUV * 200.0);
 
     // 2. Scrolling bands
+    float scrollY = mod(uv.y + time * band_speed, 1.0);
+    float bandStep = 1.0 / num_bands;
+    float band = mod(scrollY, bandStep);
 
-    FragColor = mix(original, vec4(vec3(noiseVal), 1.0), noise_alpha);
+    float bandMask = step(0.0, band_thickness - band);
+
+    float bandNoise = simpleNoise(vec2(uv.x * 50.0, uv.y * 50.0 + time * 10.0));
+    vec4 bandColor = vec4(vec3(bandNoise), 1.0);
+
+    // 3. UV distortion
+    float rippleFreq = 20.0;
+    float rippleAmp = 0.005;
+    float ripple = sin((uv.y + time * 0.8) * rippleFreq) * rippleAmp;
+    uv.x += ripple;
+
+    vec4 distorted = texture(screenTexture, uv);
+
+    vec4 combined = mix(distorted, bandColor, bandMask);
+
+    FragColor = mix(combined, vec4(vec3(noiseVal), 1.0), noise_alpha);
 
 }
