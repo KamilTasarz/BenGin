@@ -161,6 +161,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	}
 
 	velocityY *= (1.0f - drag * deltaTime);
+	if (useVelocityZ) velocityZ *= (1.0f - drag * deltaTime);
 
 	// veltical movement limit
 	if (velocityY < -25.f || velocityY > 25.f) {

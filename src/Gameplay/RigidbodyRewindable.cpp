@@ -24,6 +24,8 @@ std::shared_ptr<ITimeSnapshot> RigidbodyRewindable::createSnapshot() {
     auto snap = std::make_shared<RigidbodySnapshot>();
     snap->position = owner->transform.getLocalPosition();
     snap->rotation = owner->transform.getLocalRotation();
+	snap->velocityX = rigidbody->velocityX;
+	snap->velocityY = rigidbody->velocityY;
 	snap->is_static = rigidbody->is_static;
     return snap;
 }
@@ -34,5 +36,7 @@ void RigidbodyRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& ba
 
     owner->transform.setLocalPosition(snap->position);
     owner->transform.setLocalRotation(snap->rotation);
+	rigidbody->velocityX = snap->velocityX;
+	rigidbody->velocityY = snap->velocityY;
 	rigidbody->is_static = snap->is_static; 
 }

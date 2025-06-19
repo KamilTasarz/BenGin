@@ -33,7 +33,7 @@ void Checkpoint::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
 		Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
-		playerSpawner->transform.setLocalPosition(owner->transform.getGlobalPosition() * glm::vec3(1.f, 1.f, 0.f) + glm::vec3(0.f, 0.5f, 0.f));
+		playerSpawner->transform.setLocalPosition(owner->transform.getGlobalPosition() * glm::vec3(1.f, 1.f, 0.f) + glm::vec3(0.f, 0.05f, 0.f));
 		//owner->animator->playAnimation(owner->pModel->animations[0], false);
 		if (!owner->is_animating) {
 			owner->animator->playAnimation(owner->pModel->getAnimationByName("ArmatureAction"), false);

@@ -13,7 +13,8 @@ class TimeRewindable : public Script {
 public:
     std::deque<std::shared_ptr<ITimeSnapshot>> history;
     float maxTime = 10.f;
-    float rewindSpeed = 2.f;
+	float rewindTime = 0.f;
+    int rewindSpeed = 2;
     bool isRewinding = false;
 	glm::vec3 lastCheckpointPos;
 

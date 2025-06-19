@@ -8,6 +8,8 @@
 #include "../GameManager.h"
 #include "../../ResourceManager.h"
 #include "../VirusRewindable.h"
+#include "../GameMath.h"
+#include "../../System/Tag.h"
 
 REGISTER_SCRIPT(Virus);
 
@@ -66,6 +68,24 @@ void Virus::onUpdate(float deltaTime)
 
 		modelChanged = true;
 	}
+
+	if (!particles.empty()) {
+		particleTimer -= deltaTime;
+		if (particleTimer <= 0.f) {
+			for (Node* particle : particles) {
+				//Node* particle = particles.back();
+				owner->scene_graph->deleteChild(particle);
+			}
+			particles.clear();
+		}
+		else {
+			for (Node* particle : particles) {
+				float newScale = particle->transform.getLocalScale().x - deltaTime * 0.5f;
+				newScale = clamp(newScale, 0.f, 0.5f);
+				particle->transform.setLocalScale(glm::vec3(newScale, newScale, newScale));
+			}
+		}
+	}
 }
 
 void Virus::onEnd()
@@ -91,16 +111,47 @@ void Virus::onCollisionLogic(Node* other)
 void Virus::VirusEffect(Node* target)
 {
 	PlayerController* player = target->getComponent<PlayerController>();
+	particleTimer = 0.5f;
 
 	if (blue) {
 		player->virusType = "blue";
+		ShowParticles("Blue_cheese_parts", "feta_parts");
 	}
 	else if (green) {
 		player->virusType = "green";
+		ShowParticles("Green_cheese_parts", "gouda_parts");
 	}
 	else if (black) {
 		player->virusType = "black";
+		ShowParticles("Black_cheese_parts", "havarti_parts");
 	}
 }
 
+void Virus::ShowParticles(std::string prefabName, std::string particleName) {
+	for (int i = 0; i < 12; i++) {
+		PrefabInstance* pref = new PrefabInstance(PrefabRegistry::FindPuzzleByName(prefabName), owner->scene_graph, "_" + std::to_string(i), owner->getTransform().getLocalPosition());
+		Node* particle = pref->prefab_root->getChildById(0);
+		particle->transform.setLocalPosition(owner->transform.getGlobalPosition());
+		owner->scene_graph->addChild(particle);
 
+		particles.push_back(particle);
+
+		auto* rb = particle->getComponent<Rigidbody>();
+		if (rb) {
+			rb->drag = -1.f;
+			rb->velocityX = GameMath::RandomFloat(-30.f, 30.f);
+			rb->velocityY = GameMath::RandomFloat(-5.f, 5.f);
+			rb->velocityZ = GameMath::RandomFloat(-30.f, 30.f);
+			rb->useVelocityZ = true;
+			particle->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
+
+			// randomize particle rotation
+			glm::vec3 randomRotation = glm::vec3(GameMath::RandomFloat(0.f, 360.f), GameMath::RandomFloat(0.f, 360.f), GameMath::RandomFloat(0.f, 360.f));
+			particle->transform.setLocalRotation(glm::quat(glm::vec3(glm::radians(randomRotation.x), glm::radians(randomRotation.y), glm::radians(randomRotation.z))));
+
+			// set particle scale
+			float scaleFactor = GameMath::RandomFloat(0.1f, 0.3f);
+			particle->transform.setLocalScale(glm::vec3(scaleFactor, scaleFactor, scaleFactor));
+		}
+	}
+}

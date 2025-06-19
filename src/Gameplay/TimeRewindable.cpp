@@ -36,14 +36,44 @@ void TimeRewindable::onUpdate(float deltaTime) {
 	}
 
     if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
+		rewindTime += deltaTime;
+
         isRewinding = true;
+		rewindSpeed = pow(2, static_cast<int>(rewindTime) + 1);
     }
     if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE && isRewinding) {
         auto* animationController = owner->getComponent<PlayerAnimationController>();
-        //if (animationController && !animationController->currentState) animationController->changeState(new IdleState());
+        //if (comp) comp->changeState(new IdleState());
         isRewinding = false;
-        
-        
+		rewindTime = 0.f;
+
+        /*if (owner->animator) {
+            std::string name_anim = owner->animator->current_animation->name;
+            if (name_anim == "Idle") {
+                animationController->changeState(new IdleState());
+            }
+            else if (name_anim == "Run") {
+                animationController->changeState(new RunState());
+            }
+            else if (name_anim == "PushFinal") {
+                animationController->changeState(new PushState());
+            }
+            else if (name_anim == "JumpFall") {
+                animationController->changeState(new FallState());
+            }
+            else if (name_anim == "JumpUp") {
+                animationController->changeState(new RiseState());
+            }
+            else if (name_anim == "JumpEnd") {
+                animationController->changeState(new LandState());
+            }
+            else if (name_anim == "Turn") {
+                animationController->changeState(new TurnState());
+            }
+            else if (name_anim == "DeadBackTailLeft" || name_anim == "DeadBackTailRight") {
+                animationController->changeState(new DeathState());
+            }
+        }*/
     }
     
 

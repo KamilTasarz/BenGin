@@ -26,6 +26,8 @@ public:
 	bool isCollected = false;
 	bool modelChanged = false;
 	VirusRewindable* rewindable = nullptr;
+	std::vector<Node*> particles;
+	float particleTimer;
 
 	Virus() = default;
 	virtual ~Virus() = default;
@@ -38,6 +40,8 @@ public:
 	void onCollisionLogic(Node* other) override;
 
 	void VirusEffect(Node* target);
+
+	void ShowParticles(std::string prefabName, std::string particleName);
 
 	std::vector<Variable*> getFields() const override {
 		//static Variable typeVar = getField_type();

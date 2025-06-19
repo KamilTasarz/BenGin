@@ -37,6 +37,9 @@ void GameManager::onStart()
 	deathCountText = GuiManager::Instance().findText(2);
 	stateText = GuiManager::Instance().findText(3);
 	fpsText = GuiManager::Instance().findText(5);
+	timeline = GuiManager::Instance().findText(11);
+	timelineTop = GuiManager::Instance().findText(12);
+	timelineDown = GuiManager::Instance().findText(13);
 	playSprite = GuiManager::Instance().findSprite(15);
 	rewindSprite = GuiManager::Instance().findSprite(16);
 
@@ -59,11 +62,21 @@ void GameManager::onUpdate(float deltaTime)
         stateText->value = "REWIND";
 		rewindSprite->visible = true;
 		playSprite->visible = false;
+
+        HandleRewindTimeline();
+		timeline->visible = true;
+		timelineTop->visible = true;
+		timelineDown->visible = true;
 	}
     else {
         stateText->value = "PLAY";
         rewindSprite->visible = false;
         playSprite->visible = true;
+
+		startHistorySize = rewindable->history.size();
+		timeline->visible = false;
+		timelineTop->visible = false;
+		timelineDown->visible = false;
     }
 
     if (!tutorialActive) {
@@ -179,4 +192,16 @@ void GameManager::HandleLevelGeneration() {
     if (distanceToLevelGen < 40.f) {
         levelGenerator->GenerateLevel();
     }
+}
+
+void GameManager::HandleRewindTimeline()
+{
+	int timelineSize = 29;
+    int historySize = rewindable->history.size();
+    int mappedHistorySize = static_cast<int>((historySize / (float)startHistorySize) * timelineSize);
+
+    std::string speed = historySize > 0 ? std::to_string(rewindable->rewindSpeed) + + "x " : "-:- ";
+    std::string timelineText = speed + std::string(mappedHistorySize, '|') + std::string(timelineSize - mappedHistorySize, '-');
+
+	timeline->value = timelineText;
 }

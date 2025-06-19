@@ -38,6 +38,11 @@ public:
 	TextObject* stateText;
 	SpriteObject* playSprite;
 	SpriteObject* rewindSprite;
+	TextObject* timeline;
+	TextObject* timelineTop;
+	TextObject* timelineDown;
+
+	int startHistorySize = 0;
 
 	float fpsAccumulator = 0.f;
 	int frameCount = 0;
@@ -57,5 +62,6 @@ public:
 	void RemoveCurrentPlayer();
 	void CalculateGasSpreadingSpeed(float deltaTime);
 	void HandleLevelGeneration();
+	void HandleRewindTimeline();
 };
 

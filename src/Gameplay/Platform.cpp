@@ -40,7 +40,7 @@ void Platform::onUpdate(float deltaTime)
 	}
 }
 
-void Platform::onCollisionLogic(Node* other)
+void Platform::onStayCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
 		//owner->setPhysic(false);

@@ -19,6 +19,7 @@ REGISTER_SCRIPT(PlayerAnimationController);
 void PlayerAnimationController::onAttach(Node* owner)
 {
 	this->owner = owner;
+	owner->animator->current_animation = owner->pModel->getAnimationByName("Idle");
 	//animator = owner->animator;
 }
 
@@ -57,7 +58,7 @@ void PlayerAnimationController::onStart()
 
 	owner->animator->blendAnimation(sleep, 50.f, false, false);
 
-	owner->animator->current_animation;
+	//owner->animator->current_animation;
 
 	rewindable = owner->getComponent<AnimationRewindable>();
 	if (rewindable == nullptr) {

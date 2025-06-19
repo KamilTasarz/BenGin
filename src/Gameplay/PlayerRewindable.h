@@ -14,6 +14,7 @@ public:
 	bool isElectrified;
     std::string virusType;
     std::string tagName;
+    std::string LayerName;
 };
 
 class PlayerRewindable : public TimeRewindable {

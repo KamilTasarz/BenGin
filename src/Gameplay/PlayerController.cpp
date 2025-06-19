@@ -312,19 +312,13 @@ void PlayerController::Die(bool freeze, bool electrified)
 
 	std::shared_ptr<Tag> tag = TagLayerManager::Instance().getTag("Box");
 	owner->setTag(tag);
+
+	std::shared_ptr<Layer> layer = TagLayerManager::Instance().getLayer("Body");
+	owner->setLayer(layer);
+
 	isDead = true;
 
-	
-
-	//owner->is_animating = false;
-	/*Animation* death;
-	if (GameMath::RandomInt(0, 1) == 0) death = owner->getComponent<PlayerAnimationController>()->deathLeft;
-	else death = owner->getComponent<PlayerAnimationController>()->deathRight;
-	death->speed = 500.f;
-	owner->animator->playAnimation(death, false);*/
-
 	PlayerAnimationController *animationController = owner->getComponent<PlayerAnimationController>();
-
 	animationController->changeState(new DeathState());
 
 	auto* audio = ServiceLocator::getAudioEngine();
