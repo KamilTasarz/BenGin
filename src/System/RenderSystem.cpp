@@ -8,6 +8,7 @@ void RenderSystem::addAnimatedObject(Node* obj)
 {
 	RenderObject renderObj;
 	renderObj.model = obj->pModel;
+	renderObj.color = glm::vec4(obj->color);
 	renderObj.modelMatrix = obj->transform.getModelMatrix();
 	renderObj.animator = obj->animator;
 	animatedObjects.push_back(renderObj);
@@ -16,7 +17,7 @@ void RenderSystem::addAnimatedObject(Node* obj)
 void RenderSystem::addStaticObject(Node* obj)
 {
 	RenderObject renderObj;
-	renderObj.color = obj->color;
+	renderObj.color = glm::vec4(obj->color);
 	renderObj.model = obj->pModel;
 	renderObj.modelMatrix = obj->transform.getModelMatrix();
 	renderObj.animator = nullptr; // Static objects typically don't have animators
@@ -27,6 +28,7 @@ void RenderSystem::addTileObject(Node* obj)
 {
 	RenderObject renderObj;
 	renderObj.model = obj->pModel;
+	renderObj.color = glm::vec4(obj->color);
 	renderObj.modelMatrix = obj->transform.getModelMatrix();
 	renderObj.animator = nullptr; // Tile objects typically don't have animators
 	renderObj.tile_scale = obj->pModel->tile_scale;
@@ -35,7 +37,16 @@ void RenderSystem::addTileObject(Node* obj)
 
 void RenderSystem::render()
 {
-	
+	ResourceManager::Instance().shader_tile->use();
+	ResourceManager::Instance().shader_tile->setInt("is_light", 0);
+	ResourceManager::Instance().shader_tile->setInt("is_animating", 0);
+	for (const auto& obj : tileObjects) {
+		glm::vec4 color = glm::vec4(obj.color);
+		ResourceManager::Instance().shader_tile->setVec4("color", color);
+		ResourceManager::Instance().shader_tile->setFloat("tile_scale", obj.tile_scale);
+		ResourceManager::Instance().shader_tile->setMat4("model", obj.modelMatrix);
+		obj.model->Draw(*ResourceManager::Instance().shader_tile);
+	}
 
 	ResourceManager::Instance().shader->use();
 	ResourceManager::Instance().shader->setInt("is_light", 0);
@@ -44,7 +55,8 @@ void RenderSystem::render()
 	for (const auto& obj : animatedObjects) {
 		
 		ResourceManager::Instance().shader->setMat4("model", obj.modelMatrix);
-		ResourceManager::Instance().shader->setVec4("color", obj.color);
+		glm::vec4 color = glm::vec4(obj.color);
+		ResourceManager::Instance().shader->setVec4("color", color);
 
 		auto& f = obj.animator->final_bone_matrices;
 		for (int i = 0; i < f.size(); ++i) {
@@ -56,19 +68,14 @@ void RenderSystem::render()
 	ResourceManager::Instance().shader->setInt("is_animating", 0);
 	for (const auto& obj : staticObjects) {
 		ResourceManager::Instance().shader->setMat4("model", obj.modelMatrix);
+		glm::vec4 color = glm::vec4(obj.color);
+		ResourceManager::Instance().shader->setVec4("color", color);
 		obj.model->Draw(*ResourceManager::Instance().shader);
 	}
-	ResourceManager::Instance().shader_tile->use();
-	ResourceManager::Instance().shader_tile->setInt("is_light", 0);
+
 
 	
-	ResourceManager::Instance().shader_tile->setInt("is_animating", 0);
-	for (const auto& obj : tileObjects) {
-		ResourceManager::Instance().shader_tile->setVec4("color", obj.color);
-		ResourceManager::Instance().shader_tile->setFloat("tile_scale", obj.tile_scale);
-		ResourceManager::Instance().shader_tile->setMat4("model", obj.modelMatrix);
-		obj.model->Draw(*ResourceManager::Instance().shader_tile);
-	}
+	
 }
 
 void RenderSystem::renderShadows()

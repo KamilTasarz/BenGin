@@ -394,14 +394,14 @@ void PlayerController::VirusEffect()
 		jumpForce *= 1.2f;
 	}
 	else if (virusType == "green") {
-		owner->changeColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		owner->changeColor(glm::vec4(0.8f, 0.5f, 0.8f, 1.0f));
 
 		CameraFollow::instance->verticalOffset = -1.f;
 		isGravityFlipped = true;
 		rb->gravity = 32.f;
 	}
 	else if (virusType == "black") {
-		owner->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		owner->changeColor(glm::vec4(0.f, 0.0f, 0.0f, 1.0f));
 
 		rb->mass = 25.f;
 		speed *= 0.7f;

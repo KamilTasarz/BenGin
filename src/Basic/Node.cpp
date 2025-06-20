@@ -1022,7 +1022,7 @@ void Node::addRenderQueue()
 {
     if (is_visible && !no_textures) {
         if (is_animating && pModel && pModel->has_animations) RenderSystem::Instance().addAnimatedObject(this);
-        else if (pModel && pModel->mode.empty()) RenderSystem::Instance().addStaticObject(this);
+        else if ((pModel && pModel->mode.empty()) || (pModel && pModel->has_animations && !is_animating)) RenderSystem::Instance().addStaticObject(this);
         else if (pModel) RenderSystem::Instance().addTileObject(this);
     }
 }
@@ -1210,7 +1210,7 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
     }
 
     //this->no_textures = no_textures;
-    
+    color = glm::vec4(1.f);
 }
 
 //Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::vec3 min_point, glm::vec3 max_point) : pModel{ model } {

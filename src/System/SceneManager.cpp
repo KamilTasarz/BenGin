@@ -80,7 +80,16 @@ void SceneManager::Initialize()
 		file.close();
 
 		for (json scene : sceneData) {
-			
+			OrderedScene order;
+			order.order = scene["order"];
+			order.path_name = scene["path_name"];
+			scenes.push_back(order);
 		}
+
+		std::sort(scenes.begin(), scenes.end(), [&](OrderedScene a, OrderedScene b) {
+			return a.order < b.order;
+			});
+
+		next();
 	}
 }

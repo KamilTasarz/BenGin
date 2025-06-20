@@ -273,7 +273,7 @@ public:
 
     // Change color
     void changeColor(glm::vec4 newColor) {
-        color = newColor;
+        color = glm::vec4(newColor);
     }
 
     // Add child

@@ -22,7 +22,7 @@ void Checkpoint::onDetach()
 void Checkpoint::onStart()
 {
 	std::cout << "Checkpoint::onStart::" << owner->name << std::endl;
-	owner->color = glm::vec4(1.f, 1.f, 1.f, 0.0f);
+	owner->color = glm::vec4(1.f, 1.f, 1.f, 0.5f);
 }
 
 void Checkpoint::onUpdate(float deltaTime)
