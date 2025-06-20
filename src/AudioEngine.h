@@ -50,25 +50,25 @@ class CAudioEngine {
 public:
 
     std::string sound1 = "res/audios/sounds/bonk.ogg";
-    std::string button_down = "res/audios/sounds/button_down.mp3";
-    std::string button_up = "res/audios/sounds/button_up.mp3";
-	std::string gate_open = "res/audios/sounds/gate_open.mp3";
+    std::string button_down = "res/audios/sounds/button_down.ogg";
+    std::string button_up = "res/audios/sounds/button_up.ogg";
+	std::string gate_open = "res/audios/sounds/gate_open.ogg";
 	//std::string gate_close = "res/audios/sounds/gate_close.mp3";
-	std::string activation = "res/audios/sounds/activation.mp3";
-	std::string electricity = "res/audios/sounds/electricity.mp3";
-	std::string electrified = "res/audios/sounds/electrified.mp3";
-	std::string jumping = "res/audios/sounds/jumping.mp3";
-	std::string landing = "res/audios/sounds/landing.mp3";
-	std::string laser_hit = "res/audios/sounds/laser_hit.mp3";
-	std::string pushing = "res/audios/sounds/pushing.mp3";
-	std::string wind_blow = "res/audios/sounds/wind_blow.mp3";
-	std::string fan = "res/audios/sounds/fan.mp3";
-	std::string death = "res/audios/sounds/death.mp3";
-	std::string death_spikes = "res/audios/sounds/spikes_death.mp3";
-	std::string running = "res/audios/sounds/running.mp3";
-	std::string eating = "res/audios/sounds/wpierdalanie_sera.mp3";
-	std::string writing = "res/audios/sounds/writing.mp3";
-	std::string propeller = "res/audios/sounds/tv_propeller.mp3";
+	std::string activation = "res/audios/sounds/activation.ogg";
+	std::string electricity = "res/audios/sounds/electricity.ogg";
+	std::string electrified = "res/audios/sounds/electrified.ogg";
+	std::string jumping = "res/audios/sounds/jumping.ogg";
+	std::string landing = "res/audios/sounds/landing.ogg";
+	std::string laser_hit = "res/audios/sounds/laser_hit.ogg";
+	std::string pushing = "res/audios/sounds/pushing.ogg";
+	std::string wind_blow = "res/audios/sounds/wind_blow.ogg";
+	std::string fan = "res/audios/sounds/fan.ogg";
+	std::string death = "res/audios/sounds/death.ogg";
+	std::string death_spikes = "res/audios/sounds/spikes_death.ogg";
+	std::string running = "res/audios/sounds/running.ogg";
+	std::string eating = "res/audios/sounds/wpierdalanie_sera.ogg";
+	std::string writing = "res/audios/sounds/writing.ogg";
+	std::string propeller = "res/audios/sounds/tv_propeller.ogg";
 
 
     static void Init();
