@@ -60,6 +60,7 @@ private:
         shader_PostProcess_bloom = new Shader(postPath_vert, postPath_bloom);
         shader_PostProcess_gaussian_blur = new Shader(postPath_vert, postPath_gaussian_blur);
         shader_PostProcess_bloom_composite = new Shader(postPath_vert, postPath_bloom_composite);
+        shader_PostProcess_rewind = new Shader(postPath_vert, postPath_rewind);
         shader_PostProcess_crt = new Shader(postPath_vert, postPath_crt);
         shader_PostProcess_noise = new Shader(postPath_vert, postPath_noise);
 
@@ -86,6 +87,7 @@ private:
         delete shader_PostProcess_bloom;
         delete shader_PostProcess_gaussian_blur;
         delete shader_PostProcess_bloom_composite;
+        delete shader_PostProcess_rewind;
         delete shader_PostProcess_crt;
         delete shader_PostProcess_noise;
 
@@ -123,6 +125,7 @@ private:
     const char* postPath_bloom = "res/shaders/pp_bloom.frag";
     const char* postPath_gaussian_blur = "res/shaders/pp_blur.frag";
     const char* postPath_bloom_composite = "res/shaders/pp_bloom_composite.frag";
+    const char* postPath_rewind = "res/shaders/pp_rewind.frag";
     const char* postPath_crt = "res/shaders/pp_crt.frag";
     const char* postPath_noise = "res/shaders/pp_noise.frag";
 
@@ -152,6 +155,7 @@ public:
     Shader* shader_PostProcess_bloom; // bloom
     Shader* shader_PostProcess_gaussian_blur;
     Shader* shader_PostProcess_bloom_composite;
+    Shader* shader_PostProcess_rewind;
     Shader* shader_PostProcess_crt;
     Shader* shader_PostProcess_noise;
 

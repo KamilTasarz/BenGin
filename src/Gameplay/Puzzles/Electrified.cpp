@@ -28,6 +28,9 @@ void Electrified::onStart()
 		sfxId = audio->PlayMusic(audio->electricity, GameManager::instance->sfxVolume * 70.f, pos);
 		audio->SetChannel3dMinMaxDistance(sfxId, 3.0f, 20.0f);
 	}	
+
+	particleEmitter = owner->getComponent<Particles>();
+	if (isActive && particleEmitter) particleEmitter->emit = true;
 }
 
 void Electrified::onUpdate(float deltaTime)
@@ -35,9 +38,11 @@ void Electrified::onUpdate(float deltaTime)
 	if (owner->getTagName() == "Player") {
 		if (!owner->getComponent<PlayerController>()->isElectrified) {
 			isActive = false;
+			if (particleEmitter) particleEmitter->emit = false;
 		}
 		else {
 			isActive = true;
+			if (particleEmitter) particleEmitter->emit = true;
 		}
 	}
 }
@@ -50,6 +55,7 @@ void Electrified::onCollisionLogic(Node* other)
 		player->Die(false, true);
 
 		other->getComponent<Electrified>()->isActive = true;
+		if (other->getComponent<Particles>()) other->getComponent<Particles>()->emit = true;
 
 		//other->addComponent(std::make_unique<Electrified>());
 

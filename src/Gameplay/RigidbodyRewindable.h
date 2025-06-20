@@ -9,6 +9,8 @@ class Rigidbody;
 struct RigidbodySnapshot : public ITimeSnapshot {
     glm::vec3 position;
     glm::quat rotation;
+	float velocityX;
+	float velocityY;
     bool is_static;
 };
 

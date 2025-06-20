@@ -14,9 +14,10 @@ public:
 	void onDetach() override;
 	//void onStart() override;
 	void onUpdate(float deltaTime) override;
+	void onStayCollisionLogic(Node* other);
 	//void onEnd() override;
 	
-	void onCollisionLogic(Node* other) override;
+	//void onCollisionLogic(Node* other) override;
 	void onExitCollisionLogic(Node* other) override;
 	void onStayCollision(Node* other) override;
 };

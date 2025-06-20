@@ -22,6 +22,7 @@ void Fan::onDetach()
 void Fan::onStart()
 {
 	fan = owner->parent->getChildByNamePart("fan");
+	particleEmitter = owner->getComponent<Particles>();
 }
 
 void Fan::onUpdate(float deltaTime)
@@ -49,6 +50,8 @@ void Fan::onUpdate(float deltaTime)
 			sfxId = -1;
 
 			targetFanSpeed = 0.f;
+
+			if (particleEmitter) particleEmitter->emit = false;
 		}
 		return;
 	}
@@ -60,6 +63,8 @@ void Fan::onUpdate(float deltaTime)
 		audio->SetChannel3dMinMaxDistance(sfxId, 3.f, 20.0f);
 
 		targetFanSpeed = 10.f;
+
+		if (particleEmitter) particleEmitter->emit = true;
 	}
 }
 

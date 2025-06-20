@@ -118,7 +118,7 @@ void PlayerController::onStart()
 	rb->lockPositionZ = true;
 	rb->isPlayer = true;
 	//rb->smoothingFactor = 10.f;
-	timerIndicator = owner->getChildById(0);
+	timerIndicator = owner->getChildByNamePart("timer");
 	scale_factor = owner->transform.getLocalScale().x;
 	emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
 	virusTypeText = GuiManager::Instance().findText(6);
@@ -187,6 +187,14 @@ void PlayerController::onUpdate(float deltaTime)
 
 		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_9) == GLFW_PRESS) {
 			int temp = ServiceLocator::getAudioEngine()->PlayMusic("res/audios/sounds/bonk.ogg");
+		}
+
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_7) == GLFW_PRESS) {
+			owner->scene_graph->activateRewindShader();
+		}
+
+		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_8) == GLFW_PRESS) {
+			owner->scene_graph->deactivateRewindShader();
 		}
 
 		if (debugMode) {
@@ -312,19 +320,13 @@ void PlayerController::Die(bool freeze, bool electrified)
 
 	std::shared_ptr<Tag> tag = TagLayerManager::Instance().getTag("Box");
 	owner->setTag(tag);
+
+	std::shared_ptr<Layer> layer = TagLayerManager::Instance().getLayer("Body");
+	owner->setLayer(layer);
+
 	isDead = true;
 
-	
-
-	//owner->is_animating = false;
-	/*Animation* death;
-	if (GameMath::RandomInt(0, 1) == 0) death = owner->getComponent<PlayerAnimationController>()->deathLeft;
-	else death = owner->getComponent<PlayerAnimationController>()->deathRight;
-	death->speed = 500.f;
-	owner->animator->playAnimation(death, false);*/
-
 	PlayerAnimationController *animationController = owner->getComponent<PlayerAnimationController>();
-
 	animationController->changeState(new DeathState());
 
 	auto* audio = ServiceLocator::getAudioEngine();

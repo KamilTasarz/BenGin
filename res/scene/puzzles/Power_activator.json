@@ -12,66 +12,6 @@
     "children": [
         {
             "AABB_logic_max": {
-                "x": 0.28152117133140564,
-                "y": 0.16519522666931152,
-                "z": 0.11260986328125
-            },
-            "AABB_logic_min": {
-                "x": -0.28149235248565674,
-                "y": -0.1620892733335495,
-                "z": -0.48363643884658813
-            },
-            "AABB_max": {
-                "x": 0.28152117133140564,
-                "y": 0.08839354664087296,
-                "z": 0.023395657539367676
-            },
-            "AABB_min": {
-                "x": -0.28150156140327454,
-                "y": -0.08554057776927948,
-                "z": -0.4042459726333618
-            },
-            "components": [
-                {
-                    "name": "Electrified",
-                    "variables": [
-                        {
-                            "field_type": "bool",
-                            "name": "isActive",
-                            "value": true
-                        }
-                    ]
-                }
-            ],
-            "id": 0,
-            "is_logic_active": true,
-            "is_physic_active": true,
-            "is_visible": true,
-            "layer": "Default",
-            "model.id": 47,
-            "name": "power",
-            "no_textures": false,
-            "position": {
-                "x": -2.0,
-                "y": 0.0,
-                "z": 2.980232594040899e-08
-            },
-            "rotation": {
-                "w": 0.7071067690849304,
-                "x": 0.0,
-                "y": -0.7071067690849304,
-                "z": 0.0
-            },
-            "scale": {
-                "x": 2.0,
-                "y": 2.0,
-                "z": 2.0
-            },
-            "tag": "Default",
-            "type": "Node"
-        },
-        {
-            "AABB_logic_max": {
                 "x": 0.28152114152908325,
                 "y": 0.781521201133728,
                 "z": 0.5233956575393677
@@ -130,6 +70,181 @@
                 "w": 0.7071067690849304,
                 "x": 0.0,
                 "y": 0.7071067690849304,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.0,
+                "y": 2.0,
+                "z": 2.0
+            },
+            "tag": "Default",
+            "type": "Node"
+        },
+        {
+            "AABB_logic_max": {
+                "x": 0.28152117133140564,
+                "y": 0.16519522666931152,
+                "z": 0.11260986328125
+            },
+            "AABB_logic_min": {
+                "x": -0.28149235248565674,
+                "y": -0.1620892733335495,
+                "z": -0.48363643884658813
+            },
+            "AABB_max": {
+                "x": 0.28152117133140564,
+                "y": 0.08839354664087296,
+                "z": 0.023395657539367676
+            },
+            "AABB_min": {
+                "x": -0.28150156140327454,
+                "y": -0.08554057776927948,
+                "z": -0.4042459726333618
+            },
+            "components": [
+                {
+                    "name": "Electrified",
+                    "variables": [
+                        {
+                            "field_type": "bool",
+                            "name": "isActive",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "name": "Particles",
+                    "variables": [
+                        {
+                            "field_type": "std::string",
+                            "name": "particlePrefab",
+                            "value": "Blue_cheese_parts"
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "emissionRate",
+                            "value": 20.0
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "emit",
+                            "value": true
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "lifetime",
+                            "value": 0.30000001192092896
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "minParticleSize",
+                            "value": 0.10000000149011612
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "maxParticleSize",
+                            "value": 0.20000000298023224
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "velocityX",
+                            "value": 2.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "velocityY",
+                            "value": 2.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "velocityZ",
+                            "value": 2.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "velocityVariation",
+                            "value": 1.0
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "applyVelocityX",
+                            "value": true
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "applyVelocityY",
+                            "value": true
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "applyVelocityZ",
+                            "value": true
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "velocityXInBothDir",
+                            "value": true
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "gravity",
+                            "value": 0.0
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "useGravity",
+                            "value": false
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "drag",
+                            "value": 0.0
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "useDrag",
+                            "value": false
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "areaX",
+                            "value": 1.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "areaY",
+                            "value": 0.5
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "areaZ",
+                            "value": 0.5
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "distortion",
+                            "value": 3.0
+                        }
+                    ]
+                }
+            ],
+            "id": 0,
+            "is_logic_active": true,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 47,
+            "name": "power",
+            "no_textures": false,
+            "position": {
+                "x": -2.0,
+                "y": 0.0,
+                "z": 2.980232594040899e-08
+            },
+            "rotation": {
+                "w": 0.7071067690849304,
+                "x": 0.0,
+                "y": -0.7071067690849304,
                 "z": 0.0
             },
             "scale": {

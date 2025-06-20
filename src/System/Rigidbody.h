@@ -13,13 +13,14 @@ struct RigidBodySnapshot {
 class Rigidbody : public Component
 {
 public:
-	float velocityX, velocityY;
+	float velocityX, velocityY, velocityZ;
 	float velocityXBuffer, velocityYBuffer;
 	float targetVelocityX, targetVelocityY;
 
 	bool isBufferX = false, isBufferY = false;
 
 	bool overrideVelocityX = false, overrideVelocityY = false;
+	bool useVelocityZ = false;
 
 	float velocityDeltaX, velocityDeltaY;
 
