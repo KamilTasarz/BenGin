@@ -120,7 +120,7 @@ void GameManager::onUpdate(float deltaTime)
         frameCount = 0;
     }
 
-    if (players.size() > 3) {
+    if (players.size() > 12) {
         RemovePlayer();
     }
 
@@ -173,7 +173,7 @@ void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
     gasSpreadingSpeed = 10.f / minDistance;
 
 	if (tutorialActive) {
-        gasSpreadingSpeed = glm::clamp(gasSpreadingSpeed, 0.6f, 200.f);
+        gasSpreadingSpeed = glm::clamp(gasSpreadingSpeed, 0.3f, 200.f);
 	}
     else {
         gasSpreadingSpeed = glm::clamp(gasSpreadingSpeed, 0.3f, 3.f);
