@@ -50,12 +50,18 @@ void Particles::onUpdate(float deltaTime) {
             it->velocity.y += gravity * deltaTime;
         }
 
+		if (useDrag) {
+			it->velocity.x *= (1.0f - drag * deltaTime);
+			it->velocity.y *= (1.0f - drag * deltaTime);
+			it->velocity.z *= (1.0f - drag * deltaTime);
+		}
+
         it->position += it->velocity * deltaTime;
 		it->prefab->transform.setLocalPosition(it->position);
 
-		if (it->lifetime - it->age < 0.2f) {
-			it->size = it->size * (it->lifetime - it->age) / 0.2f;
-            it->prefab->transform.setLocalScale(glm::vec3(it->size));
+		if (it->lifetime - it->age < 0.3f) {
+			float newSize = it->size * (it->lifetime - it->age) / 0.3f;
+            it->prefab->transform.setLocalScale(glm::vec3(newSize));
 		}
 
         if (it->age >= it->lifetime) {

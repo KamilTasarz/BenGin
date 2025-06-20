@@ -32,6 +32,8 @@ void Virus::onStart()
 		owner->addComponent(std::make_unique<VirusRewindable>());
 		rewindable = owner->getComponent<VirusRewindable>();
 	}
+
+	particleEmitter = owner->getComponent<Particles>();
 }
 
 void Virus::onUpdate(float deltaTime)
@@ -69,23 +71,23 @@ void Virus::onUpdate(float deltaTime)
 		modelChanged = true;
 	}
 
-	if (!particles.empty()) {
-		particleTimer -= deltaTime;
-		if (particleTimer <= 0.f) {
-			for (Node* particle : particles) {
-				//Node* particle = particles.back();
-				owner->scene_graph->deleteChild(particle);
-			}
-			particles.clear();
-		}
-		else {
-			for (Node* particle : particles) {
-				float newScale = particle->transform.getLocalScale().x - deltaTime * 0.5f;
-				newScale = clamp(newScale, 0.f, 0.5f);
-				particle->transform.setLocalScale(glm::vec3(newScale, newScale, newScale));
-			}
-		}
-	}
+	//if (!particles.empty()) {
+	//	particleTimer -= deltaTime;
+	//	if (particleTimer <= 0.f) {
+	//		for (Node* particle : particles) {
+	//			//Node* particle = particles.back();
+	//			owner->scene_graph->deleteChild(particle);
+	//		}
+	//		particles.clear();
+	//	}
+	//	else {
+	//		for (Node* particle : particles) {
+	//			float newScale = particle->transform.getLocalScale().x - deltaTime * 0.5f;
+	//			newScale = clamp(newScale, 0.f, 0.5f);
+	//			particle->transform.setLocalScale(glm::vec3(newScale, newScale, newScale));
+	//		}
+	//	}
+	//}
 }
 
 void Virus::onEnd()
@@ -111,19 +113,21 @@ void Virus::onCollisionLogic(Node* other)
 void Virus::VirusEffect(Node* target)
 {
 	PlayerController* player = target->getComponent<PlayerController>();
-	particleTimer = 0.5f;
+	//particleTimer = 0.5f;
+
+	if (particleEmitter) particleEmitter->SpawnBurst(15);
 
 	if (blue) {
 		player->virusType = "blue";
-		ShowParticles("Blue_cheese_parts", "feta_parts");
+		//ShowParticles("Blue_cheese_parts", "feta_parts");
 	}
 	else if (green) {
 		player->virusType = "green";
-		ShowParticles("Green_cheese_parts", "gouda_parts");
+		//ShowParticles("Green_cheese_parts", "gouda_parts");
 	}
 	else if (black) {
 		player->virusType = "black";
-		ShowParticles("Black_cheese_parts", "havarti_parts");
+		//ShowParticles("Black_cheese_parts", "havarti_parts");
 	}
 }
 

@@ -2,6 +2,7 @@
 
 #include "../Script.h"
 #include <string>
+#include "../Particles.h"
 
 class VirusRewindable;
 
@@ -26,6 +27,7 @@ public:
 	bool isCollected = false;
 	bool modelChanged = false;
 	VirusRewindable* rewindable = nullptr;
+	Particles* particleEmitter = nullptr;
 	std::vector<Node*> particles;
 	float particleTimer;
 

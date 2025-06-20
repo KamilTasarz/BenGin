@@ -35,6 +35,8 @@ public:
 	VARIABLE(bool, velocityZInBothDir); // If true, applies velocity in both directions (positive and negative)
 	VARIABLE(float, gravity);           // Gravity applied to particles
 	VARIABLE(bool, useGravity);			// If true, applies gravity to particles
+	VARIABLE(float, drag);
+	VARIABLE(bool, useDrag);          // If true, applies drag to particles
 	VARIABLE(float, areaX);			    // Area of emission in X direction
 	VARIABLE(float, areaY);             // Area of emission in Y direction
 	VARIABLE(float, areaZ);			    // Area of emission in Z direction
@@ -74,12 +76,14 @@ public:
 		static Variable velocityZInBothDirVar = getField_velocityZInBothDir();
 		static Variable gravityVar = getField_gravity();
 		static Variable useGravityVar = getField_useGravity();
+		static Variable dragVar = getField_drag();
+		static Variable useDragVar = getField_useDrag();
 		static Variable areaXVar = getField_areaX();
 		static Variable areaYVar = getField_areaY();
 		static Variable areaZVar = getField_areaZ();
 		static Variable distortionVar = getField_distortion();
 		return { &particlePrefabVar, &emissionRateVar, &emitVar, &lifetimeVar, &minParticleSizeVar, &maxParticleSizeVar,
 			&velocityXVar, &velocityYVar, &velocityZVar, &velocityVariationVar, &applyVelocityXVar, &applyVelocityYVar, &applyVelocityZVar,
-			&velocityXInBothDirVar, &gravityVar, &useGravityVar, &areaXVar, &areaYVar, &areaZVar, &distortionVar };
+			&velocityXInBothDirVar, &gravityVar, &useGravityVar, &dragVar, &useDragVar, &areaXVar, &areaYVar, &areaZVar, &distortionVar };
 	}
 };
