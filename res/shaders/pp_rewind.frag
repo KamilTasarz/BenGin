@@ -9,9 +9,14 @@ uniform bool is_rewind;
 uniform float time;
 
 uniform float noise_alpha;
+
 uniform float band_speed;
 uniform float num_bands;
 uniform float band_thickness;
+
+uniform float ripple_frequency;
+uniform float ripple_amplitude;
+uniform float ripple_speed;
 
 float random(vec2 uv) {
     return fract(sin(dot(uv.xy ,vec2(12.9898,78.233))) * 43758.5453123);
@@ -54,9 +59,7 @@ void main() {
     vec4 bandColor = vec4(vec3(bandNoise), 1.0);
 
     // 3. UV distortion
-    float rippleFreq = 20.0;
-    float rippleAmp = 0.005;
-    float ripple = sin((uv.y + time * 0.8) * rippleFreq) * rippleAmp;
+    float ripple = sin((uv.y + time * ripple_speed) * ripple_frequency) * ripple_amplitude;
     uv.x += ripple;
 
     vec4 distorted = texture(screenTexture, uv);

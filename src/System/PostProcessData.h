@@ -69,6 +69,12 @@ struct PostProcessData {
 
     float rewind_band_thicc;
 
+    float rewind_ripple_frequency;
+
+    float rewind_ripple_amplitude;
+    
+    float rewind_ripple_speed;
+
 };
 
 #endif

@@ -1160,6 +1160,12 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	j["rewind_band_thicc"] = data.rewind_band_thicc;
 
+	j["rewind_ripple_frequency"] = data.rewind_ripple_frequency;
+
+	j["rewind_ripple_amplitude"] = data.rewind_ripple_amplitude;
+
+	j["rewind_ripple_speed"] = data.rewind_ripple_speed;
+
 	std::ofstream file(filename);
 	if (file.is_open()) {
 		file << j.dump(4); // Pretty print with 4 spaces
@@ -1236,6 +1242,12 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 			data.rewind_band_amount = j.at("rewind_band_amount");
 
 			data.rewind_band_thicc = j.at("rewind_band_thicc");
+
+			data.rewind_ripple_frequency = j.at("rewind_ripple_frequency");
+			
+			data.rewind_ripple_amplitude = j.at("rewind_ripple_amplitude");
+
+			data.rewind_ripple_speed = j.at("rewind_ripple_speed");
 
 		}
 		catch (const std::exception& e) {

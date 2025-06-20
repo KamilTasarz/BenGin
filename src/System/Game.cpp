@@ -240,6 +240,10 @@ void Game::draw()
             rewindShader.setFloat("num_bands", float(postProcessData.rewind_band_amount));
             rewindShader.setFloat("band_thickness", postProcessData.rewind_band_thicc);
 
+            rewindShader.setFloat("ripple_frequency", postProcessData.rewind_ripple_frequency);
+            rewindShader.setFloat("ripple_amplitude", postProcessData.rewind_ripple_amplitude);
+            rewindShader.setFloat("ripple_speed", postProcessData.rewind_ripple_speed);
+
             rewindShader.setInt("screenTexture", 0);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, current_texture);

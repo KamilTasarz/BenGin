@@ -1869,7 +1869,13 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
                 ImGui::SliderInt("Rewind Band Amount", &postProcessData.rewind_band_amount, 1, 20);
                 
-                ImGui::SliderFloat("Rewind Band Thickness", &postProcessData.rewind_band_thicc, 0.01f, 0.1f, "%.4f");
+                ImGui::SliderFloat("Rewind Band Thickness", &postProcessData.rewind_band_thicc, 0.01f, 0.1f, "%.3f");
+
+                ImGui::SliderFloat("Rewind Ripple Frequency", &postProcessData.rewind_ripple_frequency, 1.0f, 50.0f, "%.2f");
+
+                ImGui::SliderFloat("Rewind Ripple Amplitude", &postProcessData.rewind_ripple_amplitude, 0.0001f, 0.01f, "%.4f");
+                
+                ImGui::SliderFloat("Rewind Ripple Speed", &postProcessData.rewind_ripple_speed, 0.1f, 3.0f, "%.2f");
 
                 ImGui::Separator();
 
