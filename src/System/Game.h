@@ -43,6 +43,9 @@ private:
 	GLuint pingpongFBO[2];
 	GLuint pingpongTexture[2];
 
+	GLuint rewindFBO;
+	GLuint rewindColorBuffer;
+
 	SceneGraph* sceneGraph;
 	PostProcessData postProcessData;
 	unsigned int framebuffer, colorTexture, depthTexture, normalTexture, depthRenderbuffer;

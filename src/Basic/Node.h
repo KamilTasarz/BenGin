@@ -547,6 +547,8 @@ public:
 
 	bool is_editing = true;
 
+    bool is_rewinidng = false;
+
     //std::unordered_set<std::string> nameRegistry;
     //std::unordered_map<std::string, Node*> nodes;
 
@@ -577,6 +579,8 @@ public:
     void forcedUpdate();
     void setLights(Shader* shader);
     void mark(Ray ray);
+    void activateRewindShader();
+    void deactivateRewindShader();
     //std::string generateUniqueName(const std::string& base);
     //void release(const std::string& name);
 };
