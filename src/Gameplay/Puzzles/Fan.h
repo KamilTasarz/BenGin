@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Script.h"
+#include "../Particles.h"
 
 class Fan : public Script
 {
@@ -16,6 +17,7 @@ public:
 	Node* fan = nullptr;
 	float fanSpeed = 0.0f;
 	float targetFanSpeed = 0.0f;
+	Particles* particleEmitter = nullptr;
 
 	Fan() = default;
 	virtual ~Fan() = default;

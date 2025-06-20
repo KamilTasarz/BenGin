@@ -8,6 +8,7 @@
 #include "../../System/Rigidbody.h"
 #include "../../Basic/Animator.h"
 #include "../GameManager.h"
+#include "../Particles.h"
 
 void RunState::enter(Node* owner) {
     auto* animation = owner->getComponent<PlayerAnimationController>();
@@ -17,6 +18,8 @@ void RunState::enter(Node* owner) {
 
     auto* audio = ServiceLocator::getAudioEngine();
     sfxId = audio->PlayMusic(audio->running, GameManager::instance->sfxVolume * 75.f);
+
+	owner->getChildByNamePart("run_particles")->getComponent<Particles>()->emit = true;
 }
 
 void RunState::update(Node* owner, float deltaTime) {
@@ -42,4 +45,6 @@ void RunState::exit(Node* owner) {
     auto* audio = ServiceLocator::getAudioEngine();
     audio->stopSound(sfxId);
     sfxId = -1;
+
+    owner->getChildByNamePart("run_particles")->getComponent<Particles>()->emit = false;
 }

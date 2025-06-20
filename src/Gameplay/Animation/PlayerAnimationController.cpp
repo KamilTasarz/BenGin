@@ -33,6 +33,7 @@ void PlayerAnimationController::onStart()
 {
 	rb = owner->getComponent<Rigidbody>();
 	player = owner->getComponent<PlayerController>();
+	particleEmitter = owner->getComponent<Particles>();
 	previousPosition = owner->transform.getLocalPosition();
 	facingRight = true;
 	allFinished = false;
@@ -90,7 +91,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	if (isDead && !allFinished && !dynamic_cast<DeathState*>(currentState)) {
 		changeState(new DeathState());
 	}
-	
+
 	deltaX = owner->transform.getLocalPosition().x - previousPosition.x;
 	deltaY = owner->transform.getLocalPosition().y - previousPosition.y;
 	
@@ -107,6 +108,22 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	bool desiredGravityState = owner->getComponent<PlayerController>()->isGravityFlipped;
 	if (gravityFlipped != desiredGravityState) {
 		StartRotation(gravityFlipped, desiredGravityState, 180.f, glm::vec3(1.f, 0.f, 0.f));
+	}
+
+	if (facingRight && particleEmitter->velocityX > 0) {
+		particleEmitter->velocityX *= -1.f;
+	}
+	else if (!facingRight && particleEmitter->velocityX < 0) {
+		particleEmitter->velocityX *= -1.f;
+	}
+
+	if (gravityFlipped && particleEmitter->velocityY > 0) {
+		particleEmitter->velocityY *= -1.f;
+		particleEmitter->playerVerticalOffset *= -1.f;
+	}
+	else if (!gravityFlipped && particleEmitter->velocityY < 0) {
+		particleEmitter->velocityY *= -1.f;
+		particleEmitter->playerVerticalOffset *= -1.f;
 	}
 
 	UpdateRotation(deltaTime);

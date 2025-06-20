@@ -43,6 +43,7 @@ public:
 	TextObject* timelineDown;
 
 	int startHistorySize = 0;
+	bool historyEmpty = true;
 
 	float fpsAccumulator = 0.f;
 	int frameCount = 0;

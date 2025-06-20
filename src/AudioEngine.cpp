@@ -204,6 +204,8 @@ void CAudioEngine::PlaySFX(const string& strSoundName, float volumePercent, cons
     temp = PlayMusic(strSoundName, volumePercent, vPosition);
 }
 
+
+
 void CAudioEngine::PlayEvent(const string& strEventName)
 {
     auto tFoundit = sgpImplementation->mEvents.find(strEventName);
@@ -417,4 +419,6 @@ void CAudioEngine::loadAllGameSounds() {
 	LoadSound(eating, false, false, false);
 	LoadSound(writing, false, false, false);
 	LoadSound(propeller, true, true, false);
+	LoadSound(running_step, false, false, false);
+	LoadSound(rewind, false, false, false);
 }

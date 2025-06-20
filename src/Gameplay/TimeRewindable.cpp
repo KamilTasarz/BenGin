@@ -35,47 +35,74 @@ void TimeRewindable::onUpdate(float deltaTime) {
 		lastCheckpointPos = newCheckpointPos;
 	}
 
-    if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
-		rewindTime += deltaTime;
+  //  if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
+  //      if (GameManager::instance->historyEmpty) {
+  //          isRewinding = false;
+  //      }
+  //      else {
+  //          isRewinding = true;
 
-        isRewinding = true;
-		rewindSpeed = pow(2, static_cast<int>(rewindTime) + 1);
-    }
-    if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE && isRewinding) {
-        auto* animationController = owner->getComponent<PlayerAnimationController>();
-        //if (comp) comp->changeState(new IdleState());
-        isRewinding = false;
-		rewindTime = 0.f;
+  //          rewindTime += deltaTime;
+		//    rewindSpeed = pow(2, static_cast<int>(rewindTime) + 1);
+  //      
+  //          auto* audio = ServiceLocator::getAudioEngine();
+  //          if (sfxId == -1) {
+  //              sfxId = audio->PlayMusic(audio->rewind, GameManager::instance->sfxVolume * 60.f);
+  //          }
+  //      }
+  //  }
+  //  if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE && isRewinding || !isRewinding) {
+  //      auto* animationController = owner->getComponent<PlayerAnimationController>();
+  //      //if (comp) comp->changeState(new IdleState());
+  //      isRewinding = false;
+		//rewindTime = 0.f;
 
-        /*if (owner->animator) {
-            std::string name_anim = owner->animator->current_animation->name;
-            if (name_anim == "Idle") {
-                animationController->changeState(new IdleState());
-            }
-            else if (name_anim == "Run") {
-                animationController->changeState(new RunState());
-            }
-            else if (name_anim == "PushFinal") {
-                animationController->changeState(new PushState());
-            }
-            else if (name_anim == "JumpFall") {
-                animationController->changeState(new FallState());
-            }
-            else if (name_anim == "JumpUp") {
-                animationController->changeState(new RiseState());
-            }
-            else if (name_anim == "JumpEnd") {
-                animationController->changeState(new LandState());
-            }
-            else if (name_anim == "Turn") {
-                animationController->changeState(new TurnState());
-            }
-            else if (name_anim == "DeadBackTailLeft" || name_anim == "DeadBackTailRight") {
-                animationController->changeState(new DeathState());
-            }
-        }*/
-    }
+  //      auto* audio = ServiceLocator::getAudioEngine();
+  //      audio->stopSound(sfxId);
+  //      sfxId = -1;
+  //  }
     
+    bool rewindKeyHeld = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS;
+    bool rewindKeyReleased = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE;
+
+    // Klawisz puœci³ => zezwól na ponowne cofanie przy kolejnym naciœniêciu
+    if (rewindKeyReleased) {
+        hasReleasedRewindKey = true;
+    }
+
+    // Start rewind
+    if (rewindKeyHeld && hasReleasedRewindKey && !GameManager::instance->historyEmpty) {
+        isRewinding = true;
+        rewindTime += deltaTime;
+        rewindSpeed = pow(2, static_cast<int>(rewindTime) + 1);
+
+        auto* audio = ServiceLocator::getAudioEngine();
+        if (sfxId == -1) {
+            sfxId = audio->PlayMusic(audio->rewind, GameManager::instance->sfxVolume * 0.f);
+        }
+    }
+
+    // Stop rewind if no history left
+    if (isRewinding && GameManager::instance->historyEmpty) {
+        isRewinding = false;
+        rewindTime = 0.f;
+        hasReleasedRewindKey = false;  // czeka na ponowne puszczenie klawisza
+
+        auto* audio = ServiceLocator::getAudioEngine();
+        audio->pauseSound(sfxId);
+        sfxId = -1;
+    }
+
+    // Stop rewind if key released manually
+    if (rewindKeyReleased && isRewinding) {
+        isRewinding = false;
+        rewindTime = 0.f;
+        hasReleasedRewindKey = true;
+
+        auto* audio = ServiceLocator::getAudioEngine();
+        audio->pauseSound(sfxId);
+        sfxId = -1;
+    }
 
     if (isRewinding) {
         for (int i = 0; i < rewindSpeed && !history.empty(); ++i) {

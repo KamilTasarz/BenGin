@@ -118,7 +118,7 @@ void PlayerController::onStart()
 	rb->lockPositionZ = true;
 	rb->isPlayer = true;
 	//rb->smoothingFactor = 10.f;
-	timerIndicator = owner->getChildById(0);
+	timerIndicator = owner->getChildByNamePart("timer");
 	scale_factor = owner->transform.getLocalScale().x;
 	emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
 	virusTypeText = GuiManager::Instance().findText(6);

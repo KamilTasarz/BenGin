@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Script.h"
+#include "../Particles.h"
 
 class Electrified : public Script
 {
@@ -9,6 +10,7 @@ public:
 	VARIABLE(bool, isActive);
 
 	int sfxId = -1;
+	Particles* particleEmitter = nullptr;
 
 	Electrified() = default;
 	~Electrified() = default;

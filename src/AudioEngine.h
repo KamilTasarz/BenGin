@@ -69,6 +69,8 @@ public:
 	std::string eating = "res/audios/sounds/wpierdalanie_sera.mp3";
 	std::string writing = "res/audios/sounds/writing.mp3";
 	std::string propeller = "res/audios/sounds/tv_propeller.mp3";
+	std::string running_step = "res/audios/sounds/running_step.mp3";
+	std::string rewind = "res/audios/sounds/rewind.mp3";
 
 
     static void Init();
@@ -83,6 +85,7 @@ public:
     void Set3dListenerAndOrientation(const glm::vec3& vPos, const glm::vec3& vVel, const glm::vec3& vFor, const glm::vec3& vUp);
     int PlayMusic(const string& strSoundName, float volumePercent = 100.0f, const glm::vec3& vPosition = glm::vec3{ 0, 0, 0 });
     void PlaySFX(const string& strSoundName, float volumePercent = 100.0f, const glm::vec3& vPosition = glm::vec3{ 0, 0, 0 });
+    void PlaySFXWithFadeIn(const string& strSoundName, float volumePercent, const glm::vec3& vPosition, float fadeTime);
     void PlayEvent(const string& strEventName);
     void StopChannel(int nChannelId);
     void StopEvent(const string& strEventName, bool bImmediate = false);

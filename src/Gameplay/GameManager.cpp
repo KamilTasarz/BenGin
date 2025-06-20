@@ -58,6 +58,8 @@ void GameManager::onUpdate(float deltaTime)
 {
 	isRewinding = rewindable->isRewinding;
     
+	historyEmpty = rewindable->history.empty();
+
     if (isRewinding) {
         stateText->value = "REWIND";
 		rewindSprite->visible = true;

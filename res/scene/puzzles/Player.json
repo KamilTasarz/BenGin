@@ -59,7 +59,7 @@
                     "is_visible": true,
                     "layer": "Default",
                     "model.id": 7,
-                    "name": "entity",
+                    "name": "timer",
                     "no_textures": false,
                     "position": {
                         "x": -7.003043833719858e-08,
@@ -76,6 +76,151 @@
                         "x": 0.10000000149011612,
                         "y": 0.0010000000474974513,
                         "z": 0.10000000149011612
+                    },
+                    "tag": "Default",
+                    "type": "Node"
+                },
+                {
+                    "AABB_logic_max": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "AABB_logic_min": {
+                        "x": -1.0,
+                        "y": -1.0,
+                        "z": -1.0
+                    },
+                    "components": [
+                        {
+                            "name": "Particles",
+                            "variables": [
+                                {
+                                    "field_type": "std::string",
+                                    "name": "particlePrefab",
+                                    "value": "Black_cheese_parts"
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "emissionRate",
+                                    "value": 12.0
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "emit",
+                                    "value": false
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "lifetime",
+                                    "value": 0.5
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "minParticleSize",
+                                    "value": 0.10000000149011612
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "maxParticleSize",
+                                    "value": 0.20000000298023224
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "velocityX",
+                                    "value": -5.0
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "velocityY",
+                                    "value": 8.0
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "velocityZ",
+                                    "value": 0.0
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "velocityVariation",
+                                    "value": 3.0
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "applyVelocityX",
+                                    "value": true
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "applyVelocityY",
+                                    "value": true
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "applyVelocityZ",
+                                    "value": false
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "velocityXInBothDir",
+                                    "value": false
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "gravity",
+                                    "value": -32.0
+                                },
+                                {
+                                    "field_type": "bool",
+                                    "name": "useGravity",
+                                    "value": true
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "areaX",
+                                    "value": 0.5
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "areaY",
+                                    "value": 0.0
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "areaZ",
+                                    "value": 0.5
+                                },
+                                {
+                                    "field_type": "float",
+                                    "name": "distortion",
+                                    "value": 0.0
+                                }
+                            ]
+                        }
+                    ],
+                    "id": 0,
+                    "is_logic_active": false,
+                    "is_physic_active": false,
+                    "is_visible": true,
+                    "layer": "Default",
+                    "model.id": -1,
+                    "name": "run_particles",
+                    "no_textures": true,
+                    "position": {
+                        "x": -8.470329472543003e-22,
+                        "y": 0.7142857909202576,
+                        "z": -1.4210854715202004e-14
+                    },
+                    "rotation": {
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
                     },
                     "tag": "Default",
                     "type": "Node"
@@ -136,6 +281,111 @@
                             "value": false
                         }
                     ]
+                },
+                {
+                    "name": "Particles",
+                    "variables": [
+                        {
+                            "field_type": "std::string",
+                            "name": "particlePrefab",
+                            "value": "Blue_cheese_parts"
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "emissionRate",
+                            "value": 60.0
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "emit",
+                            "value": false
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "lifetime",
+                            "value": 0.30000001192092896
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "minParticleSize",
+                            "value": 0.10000000149011612
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "maxParticleSize",
+                            "value": 0.20000000298023224
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "velocityX",
+                            "value": 2.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "velocityY",
+                            "value": 2.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "velocityZ",
+                            "value": 2.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "velocityVariation",
+                            "value": 0.800000011920929
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "applyVelocityX",
+                            "value": true
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "applyVelocityY",
+                            "value": true
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "applyVelocityZ",
+                            "value": true
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "velocityXInBothDir",
+                            "value": true
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "gravity",
+                            "value": 0.0
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "useGravity",
+                            "value": false
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "areaX",
+                            "value": 1.600000023841858
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "areaY",
+                            "value": 0.800000011920929
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "areaZ",
+                            "value": 0.800000011920929
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "distortion",
+                            "value": 3.0
+                        }
+                    ]
                 }
             ],
             "id": 0,
@@ -152,10 +402,10 @@
                 "z": 0.0
             },
             "rotation": {
-                "w": 0.5005318522453308,
-                "x": -0.4994675815105438,
-                "y": 0.4994675815105438,
-                "z": 0.5005318522453308
+                "w": 0.4999999701976776,
+                "x": -0.4999999701976776,
+                "y": 0.4999999701976776,
+                "z": 0.4999999701976776
             },
             "scale": {
                 "x": 0.699999988079071,

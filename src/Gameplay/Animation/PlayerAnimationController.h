@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include "../AnimationRewindable.h"
+#include "../Particles.h"
 
 class IPlayerAnimState;
 class Animation;
@@ -16,6 +17,7 @@ class PlayerAnimationController : public Script
 public:
 	Rigidbody* rb;
 	PlayerController* player;
+	Particles* particleEmitter;
 
 	Animation* idle;
 	Animation* turn;
