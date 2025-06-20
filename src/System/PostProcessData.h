@@ -13,6 +13,8 @@ struct PostProcessData {
 
     bool is_bloom;
 
+    bool is_rewind; // does rewinding activate special shader
+
     bool is_crt_curved; // Shader crt do zakrzywienia ekranu
 
     // Si³a tego efektu "wypuklosci" ekranu
@@ -56,6 +58,22 @@ struct PostProcessData {
     float bloom_intensity;
 
     int bloom_blur_passes;
+
+    //////////////////////////////
+
+    float rewind_noise_alpha;
+
+    float rewind_band_speed;
+
+    int rewind_band_amount;
+
+    float rewind_band_thicc;
+
+    float rewind_ripple_frequency;
+
+    float rewind_ripple_amplitude;
+    
+    float rewind_ripple_speed;
 
 };
 

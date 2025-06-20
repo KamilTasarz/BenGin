@@ -1111,6 +1111,8 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	j["is_crt"] = data.is_crt_curved;
 
+	j["is_rewind"] = data.is_rewind;
+
 	j["is_bloom"] = data.is_bloom;
 
 	// Save as an array of 2 values
@@ -1148,6 +1150,22 @@ void savePostProcessData(const std::string& filename, PostProcessData& data) {
 
 	j["bloom_blur_passes"] = data.bloom_blur_passes;
 
+	// Rewind
+
+	j["rewind_noise_alpha"] = data.rewind_noise_alpha;
+
+	j["rewind_band_speed"] = data.rewind_band_speed;
+
+	j["rewind_band_amount"] = data.rewind_band_amount;
+
+	j["rewind_band_thicc"] = data.rewind_band_thicc;
+
+	j["rewind_ripple_frequency"] = data.rewind_ripple_frequency;
+
+	j["rewind_ripple_amplitude"] = data.rewind_ripple_amplitude;
+
+	j["rewind_ripple_speed"] = data.rewind_ripple_speed;
+
 	std::ofstream file(filename);
 	if (file.is_open()) {
 		file << j.dump(4); // Pretty print with 4 spaces
@@ -1174,6 +1192,8 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 			data.is_ssao = j.at("is_ssao");
 
 			data.is_bloom = j.at("is_bloom");
+
+			data.is_rewind = j.at("is_rewind");
 
 			data.is_crt_curved = j.at("is_crt");
 
@@ -1212,6 +1232,22 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 			data.bloom_intensity = j.at("bloom_intensity");
 
 			data.bloom_blur_passes = j.at("bloom_blur_passes");
+
+			// Rewind
+
+			data.rewind_noise_alpha = j.at("rewind_noise_alpha");
+
+			data.rewind_band_speed = j.at("rewind_band_speed");
+
+			data.rewind_band_amount = j.at("rewind_band_amount");
+
+			data.rewind_band_thicc = j.at("rewind_band_thicc");
+
+			data.rewind_ripple_frequency = j.at("rewind_ripple_frequency");
+			
+			data.rewind_ripple_amplitude = j.at("rewind_ripple_amplitude");
+
+			data.rewind_ripple_speed = j.at("rewind_ripple_speed");
 
 		}
 		catch (const std::exception& e) {

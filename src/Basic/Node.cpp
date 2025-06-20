@@ -316,6 +316,14 @@ void SceneGraph::mark(Ray ray) {
     root->mark(ray, t);
 }
 
+void SceneGraph::activateRewindShader() {
+    this->is_rewinidng = true;
+}
+
+void SceneGraph::deactivateRewindShader() {
+    this->is_rewinidng = false;
+}
+
 //std::string SceneGraph::generateUniqueName(const std::string& base)
 //{
 //    std::string candidate = base;

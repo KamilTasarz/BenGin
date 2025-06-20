@@ -1857,6 +1857,30 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
             }
 
+            ImGui::Checkbox("Rewind Enable/Disable", &postProcessData.is_rewind);
+
+            if (postProcessData.is_rewind) {
+            
+                ImGui::Separator();
+
+                ImGui::SliderFloat("Rewind Noise Alpha", &postProcessData.rewind_noise_alpha, 0.0f, 1.0f, "%.2f");
+
+                ImGui::SliderFloat("Rewind Band Speed", &postProcessData.rewind_band_speed, 0.01f, 15.0f, "%.3f");
+
+                ImGui::SliderInt("Rewind Band Amount", &postProcessData.rewind_band_amount, 1, 20);
+                
+                ImGui::SliderFloat("Rewind Band Thickness", &postProcessData.rewind_band_thicc, 0.01f, 0.1f, "%.3f");
+
+                ImGui::SliderFloat("Rewind Ripple Frequency", &postProcessData.rewind_ripple_frequency, 1.0f, 50.0f, "%.2f");
+
+                ImGui::SliderFloat("Rewind Ripple Amplitude", &postProcessData.rewind_ripple_amplitude, 0.0001f, 0.01f, "%.4f");
+                
+                ImGui::SliderFloat("Rewind Ripple Speed", &postProcessData.rewind_ripple_speed, 0.1f, 3.0f, "%.2f");
+
+                ImGui::Separator();
+
+            }
+
             ImGui::Checkbox("CRT Enable/Disable", &postProcessData.is_crt_curved);
 
             if (postProcessData.is_crt_curved) {
