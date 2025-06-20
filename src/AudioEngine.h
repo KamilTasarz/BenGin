@@ -69,6 +69,8 @@ public:
 	std::string eating = "res/audios/sounds/wpierdalanie_sera.ogg";
 	std::string writing = "res/audios/sounds/writing.ogg";
 	std::string propeller = "res/audios/sounds/tv_propeller.ogg";
+    std::string running_step = "res/audios/sounds/running_step.ogg";
+    std::string rewind = "res/audios/sounds/rewind.ogg";
 
     static void Init();
     static void Update();

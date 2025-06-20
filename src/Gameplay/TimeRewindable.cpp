@@ -76,6 +76,8 @@ void TimeRewindable::onUpdate(float deltaTime) {
         rewindTime += deltaTime;
         rewindSpeed = pow(2, static_cast<int>(rewindTime) + 1);
 
+        owner->scene_graph->activateRewindShader();
+
         auto* audio = ServiceLocator::getAudioEngine();
         if (sfxId == -1) {
             sfxId = audio->PlayMusic(audio->rewind, GameManager::instance->sfxVolume * 0.f);
@@ -88,6 +90,8 @@ void TimeRewindable::onUpdate(float deltaTime) {
         rewindTime = 0.f;
         hasReleasedRewindKey = false;  // czeka na ponowne puszczenie klawisza
 
+        owner->scene_graph->deactivateRewindShader();
+
         auto* audio = ServiceLocator::getAudioEngine();
         audio->pauseSound(sfxId);
         sfxId = -1;
@@ -98,6 +102,8 @@ void TimeRewindable::onUpdate(float deltaTime) {
         isRewinding = false;
         rewindTime = 0.f;
         hasReleasedRewindKey = true;
+
+        owner->scene_graph->deactivateRewindShader();
 
         auto* audio = ServiceLocator::getAudioEngine();
         audio->pauseSound(sfxId);
