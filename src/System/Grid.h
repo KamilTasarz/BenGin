@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "config.h"
-#include "src/Basic/Shader.h"
+#include "../config.h"
+#include "../Basic/Shader.h"
 
 enum GridType
 {

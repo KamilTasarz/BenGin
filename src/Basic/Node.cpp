@@ -9,7 +9,7 @@
 #include "Animator.h"
 #include "../Basic/Shader.h"
 
-#include "../Grid.h"
+#include "../System/Grid.h"
 
 #include "../ResourceManager.h"
 #include "../System/Tag.h"

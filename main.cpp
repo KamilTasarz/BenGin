@@ -3,8 +3,6 @@
 
 int main() {
 
-	// --- ENGINE INIT --- //
-
 	Engine engine;
 
     engine.init();

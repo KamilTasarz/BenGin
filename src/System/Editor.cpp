@@ -23,7 +23,7 @@
 #include "../Component/BoundingBox.h"
 #include "../Component/CameraGlobals.h"
 #include "../Component/Camera.h"
-#include "../Grid.h"
+#include "../System/Grid.h"
 #include "../Gameplay/ScriptFactory.h"
 #include "../System/PhysicsSystem.h"
 #include "../System/LineManager.h"

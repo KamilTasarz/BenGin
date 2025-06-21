@@ -4,7 +4,6 @@
 #include "../Basic/Node.h"
 #include "../Gameplay/Player.h"
 #include "../Component/CameraGlobals.h"
-#include "../Light.h"
 #include "../ResourceManager.h"
 #include "../Basic/Model.h"
 #include "../Gameplay/Script.h"
