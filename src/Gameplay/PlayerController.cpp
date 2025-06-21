@@ -130,6 +130,9 @@ void PlayerController::onStart()
 		owner->addComponent(std::make_unique<PlayerRewindable>());
 		rewindable = owner->getComponent<PlayerRewindable>();
 	}
+
+	auto ratTexture = ResourceManager::Instance().getTexture(34);
+	owner->pModel->meshes[0].textures[0] = (ratTexture);
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -383,10 +386,11 @@ void PlayerController::ApplyVirusEffect()
 
 void PlayerController::VirusEffect()
 {
-	//PlayerController* player = target->getComponent<PlayerController>();
-
 	if (virusType == "blue") {
-		owner->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+		//owner->changeColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.5f));
+
+		auto ratTexture = ResourceManager::Instance().getTexture(35);
+		owner->pModel->meshes[0].textures[0] = (ratTexture);
 
 		isGravityFlipped = false;
 		rb->gravity = -32.f;
@@ -394,14 +398,20 @@ void PlayerController::VirusEffect()
 		jumpForce *= 1.2f;
 	}
 	else if (virusType == "green") {
-		owner->changeColor(glm::vec4(0.8f, 0.5f, 0.8f, 1.0f));
+		//owner->changeColor(glm::vec4(0.5f, 0.3f, 0.7f, 1.0f));
+
+		auto ratTexture = ResourceManager::Instance().getTexture(36);
+		owner->pModel->meshes[0].textures[0] = (ratTexture);
 
 		CameraFollow::instance->verticalOffset = -1.f;
 		isGravityFlipped = true;
 		rb->gravity = 32.f;
 	}
 	else if (virusType == "black") {
-		owner->changeColor(glm::vec4(0.f, 0.0f, 0.0f, 1.0f));
+		//owner->changeColor(glm::vec4(0.72f, 0.45f, 0.2f, 1.0f));
+
+		auto ratTexture = ResourceManager::Instance().getTexture(37);
+		owner->pModel->meshes[0].textures[0] = (ratTexture);
 
 		rb->mass = 25.f;
 		speed *= 0.7f;

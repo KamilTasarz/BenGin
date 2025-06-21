@@ -61,6 +61,7 @@ public:
 	void onUpdate(float deltaTime) override;
 	void RemovePlayer();
 	void RemoveCurrentPlayer();
+	void RemoveThisPlayer(Node* player);
 	void CalculateGasSpreadingSpeed(float deltaTime);
 	void HandleLevelGeneration();
 	void HandleRewindTimeline();

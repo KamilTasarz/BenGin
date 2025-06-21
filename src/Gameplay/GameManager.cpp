@@ -151,6 +151,25 @@ void GameManager::RemoveCurrentPlayer()
     if (!players.empty()) currentPlayer = players.back();
 }
 
+void GameManager::RemoveThisPlayer(Node* player)
+{
+	if (!player || players.empty()) return;
+
+	owner->scene_graph->deleteChild(player);
+
+    auto playerNode = std::find(players.begin(), players.end(), player);
+    if (playerNode != players.end()) {
+        players.erase(playerNode);
+    }
+
+	if (players.empty()) {
+		currentPlayer = nullptr;
+	}
+	else {
+		currentPlayer = players.back();
+	}
+}
+
 void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
     int index = emitter->tail - 1;
 

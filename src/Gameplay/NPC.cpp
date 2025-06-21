@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include "GameManager.h"
+#include "../System/Tag.h"
 
 REGISTER_SCRIPT(NPC);
 
@@ -32,6 +33,9 @@ void NPC::onDetach() {
 void NPC::onStart() {
     // Inicjalizacja, np. znalezienie gracza w scenie
     // player = owner->scene_graph->findNodeByTag("Player");
+
+    owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Platform"));
+    owner->AABB_logic->addIgnoredLayer(TagLayerManager::Instance().getLayer("Platform"));
 
     startPos = owner->transform.getGlobalPosition();
     rb = owner->getComponent<Rigidbody>();

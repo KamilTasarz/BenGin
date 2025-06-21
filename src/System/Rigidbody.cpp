@@ -182,7 +182,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	}
 	if (lockPositionZ) position.z = startPos.z;
 
-    owner->transform.setLocalPosition(position);
+    owner->transform.setLocalPosition(glm::vec3(position.x, position.y, 0.f));
 
 	overrideVelocityY = false;
 	overrideVelocityX = false;
