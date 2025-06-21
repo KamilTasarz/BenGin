@@ -288,7 +288,7 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer, bool 
     
     if (is_editor) {
         root->drawSelfAndChild();
-    }
+     }
     else {
         RenderSystem::Instance().render();
         if (emitter)
@@ -1529,11 +1529,12 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
     //set_prefab_colliders(prefab_root);
+    set_prefab_colliders(prefab_root);
     updateSelfAndChild(true);
 
     if (!scene_graph->is_editing) prefab_root->createComponents();
 
-    set_prefab_colliders(prefab_root);
+    //set_prefab_colliders(prefab_root);
 }
 
 PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name, glm::vec3 position)
@@ -1550,13 +1551,14 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
+    set_prefab_colliders(prefab_root);
     transform.setLocalPosition(position);
     
     updateSelfAndChild(true);
 
     if (!scene_graph->is_editing)prefab_root->createComponents();
 
-    set_prefab_colliders(prefab_root);
+    
 }
 
 void PrefabInstance::set_prefab_colliders(Node* node)

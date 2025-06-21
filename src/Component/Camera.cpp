@@ -24,7 +24,7 @@ glm::mat4 Camera::GetProjection() {
 
 void Camera::setAABB()
 {
-    float height = 10.f * tan(glm::radians(Zoom) / 2.0f) * FarPlane;
+    float height = 8.f * tan(glm::radians(Zoom) / 2.0f) * FarPlane;
     float width = height * AspectRatio;
     //glm::vec3 halfExtents = glm::vec3(width / 2, height / 2, FarPlane / 2);
 
