@@ -44,11 +44,9 @@ void Game::input()
 
     if (glfwGetKey(window->window, GLFW_KEY_Z) == GLFW_PRESS) {
         if (!isClicked) {
-            shutdown();
-            isClicked = true;
-            is_initialized = false;
+
             SceneManager::Instance().next();
-            init();
+			isClicked = true;
         }
     }
     else {
@@ -408,12 +406,13 @@ Game::Game(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::sh
 void Game::init()
 {
 
-	is_initialized = true;
+    is_initialized = true;
 
-    GuiManager::Instance().init();
-
-    SceneManager::Instance().reset();
-
+    //GuiManager::Instance().init();
+    
+    
+    //SceneManager::Instance().reset();
+    
 	//SceneManager::Instance().getCurrentScene();
 
 	//loadScene("res/scene/scene.json", sceneGraph, prefabs, puzzle_prefabs);
@@ -650,8 +649,14 @@ void Game::run()
 {
 	if (!is_initialized)
 		init();
-	while (!glfwWindowShouldClose(ServiceLocator::getWindow()->window) && play) {
-        
+    while (!glfwWindowShouldClose(ServiceLocator::getWindow()->window) && play) {
+
+        if (SceneManager::Instance().isSwitched()) {
+            
+            shutdown();
+            init();
+            SceneManager::Instance().resetSwitched();
+        }
         GLfloat currentFrame = glfwGetTime();
         ServiceLocator::getWindow()->deltaTime = currentFrame - ServiceLocator::getWindow()->lastFrame;
         ServiceLocator::getWindow()->lastFrame = currentFrame;

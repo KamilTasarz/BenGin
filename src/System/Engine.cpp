@@ -53,9 +53,11 @@ void Engine::run()
 		editor->init();
 		editor->run();
 		editor->shutdown();
-		
+
 		game->play = true;
 		if (!engine_work) break;
+		SceneManager::Instance().reset();
+		SceneManager::Instance().resetSwitched();
 		game->init();
 		game->run();
 		game->shutdown();

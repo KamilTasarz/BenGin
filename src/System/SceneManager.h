@@ -15,6 +15,7 @@ private:
 	std::vector<OrderedScene> scenes;
 	int currentSceneIndex = -1;
 	SceneGraph* sceneGraph = nullptr;
+	bool switched = false;
 
 public:
 	SceneManager() = default;
@@ -37,6 +38,9 @@ public:
 
 	//load current index scene again
 	void reset();
+
+	bool isSwitched() const;
+	void resetSwitched();
 
 	//get pointer to current scene graph
 	SceneGraph* getCurrentScene();

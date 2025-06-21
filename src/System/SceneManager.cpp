@@ -2,6 +2,7 @@
 #include "../Basic/Node.h"
 #include "../System/Serialization.h"
 #include "../System/PrefabRegistry.h"
+#include "../System/GuiManager.h"
 #include <fstream>
 
 SceneManager::~SceneManager()
@@ -15,10 +16,12 @@ SceneManager::~SceneManager()
 
 void SceneManager::next()
 {
+	
+	switched = true; // Set switched to true to indicate a scene switch
 	if (sceneGraph) {
 		delete sceneGraph;
 	}
-
+	GuiManager::Instance().getObjects().clear();
 	if (currentSceneIndex + 1 < scenes.size())
 	{
 		currentSceneIndex++;
@@ -37,10 +40,11 @@ void SceneManager::next()
 
 void SceneManager::previous()
 {
+	switched = true; // Set switched to true to indicate a scene switch
 	if (sceneGraph) {
 		delete sceneGraph;
 	}
-
+	GuiManager::Instance().getObjects().clear();
 	if (currentSceneIndex - 1 >= 0)
 	{
 		currentSceneIndex--;
@@ -57,9 +61,11 @@ void SceneManager::previous()
 
 void SceneManager::goToScene(unsigned int index)
 {
+	switched = true; // Set switched to true to indicate a scene switch
 	if (sceneGraph) {
 		delete sceneGraph;
 	}
+	GuiManager::Instance().getObjects().clear();
 	if (index < scenes.size())
 	{
 		currentSceneIndex = index;
@@ -71,10 +77,11 @@ void SceneManager::goToScene(unsigned int index)
 
 void SceneManager::reset()
 {
+	switched = true; // Set switched to true to indicate a scene switch
 	if (sceneGraph) {
 		delete sceneGraph;
 	}
-
+	GuiManager::Instance().getObjects().clear();
 	if (currentSceneIndex >= 0 && currentSceneIndex < scenes.size())
 	{
 		std::vector<std::shared_ptr<Prefab>> rooms = PrefabRegistry::GetRooms();
@@ -85,6 +92,16 @@ void SceneManager::reset()
 	{
 		currentSceneIndex = -1;
 	}
+}
+
+bool SceneManager::isSwitched() const
+{
+	return switched;
+}
+
+void SceneManager::resetSwitched()
+{
+	switched = false;
 }
 
 SceneGraph* SceneManager::getCurrentScene()

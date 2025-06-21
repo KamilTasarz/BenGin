@@ -55,6 +55,8 @@ private:
 
 	glm::vec2 normalizedMouse;
 
+	bool first = true;
+
 	Animator* animator;
 	Animation* anim;
 
