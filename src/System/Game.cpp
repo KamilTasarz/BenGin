@@ -667,6 +667,7 @@ void Game::run()
 }
 void Game::shutdown()
 {
+    unloadSounds();
     glDeleteTextures(1, &colorTexture);
     glDeleteTextures(1, &normalTexture);
     glDeleteTextures(1, &depthTexture);
@@ -771,3 +772,12 @@ void Game::loadSounds() {
     audio->loadAllGameSounds();
     
 }
+
+void Game::unloadSounds() {
+
+    auto* audio = ServiceLocator::getAudioEngine();
+
+    audio->unloadAllGameSounds();
+
+}
+
