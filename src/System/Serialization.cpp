@@ -306,6 +306,7 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 	std::ifstream file(filename);
 	if (!file) {
 		std::cerr << "Błąd: Nie można otworzyć pliku JSON!\n";
+		scene = new SceneGraph();
 		return -1;
 	}
 

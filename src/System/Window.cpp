@@ -69,8 +69,9 @@ void Window::initializeWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+    glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
     glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_FALSE);
 
     window = glfwCreateWindow(width, height, title, NULL, NULL);
 
@@ -98,7 +99,7 @@ void Window::initializeWindow() {
     glEnable(GL_BLEND);
 
     // Gamma correction???
-    glEnable(GL_FRAMEBUFFER_SRGB);
+    //glEnable(GL_FRAMEBUFFER_SRGB);
 
     // -- CULLING -- //
 

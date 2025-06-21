@@ -58,6 +58,8 @@ private:
 	Animator* animator;
 	Animation* anim;
 
+	bool isClicked = false;
+
 	void input();
 	void draw();
 	void update(float deltaTime);

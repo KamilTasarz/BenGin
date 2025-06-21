@@ -10,6 +10,7 @@
 #include "PrefabRegistry.h"
 #include "../System/GuiManager.h"
 #include "../System/RenderSystem.h"
+#include "../System/SceneManager.h"
 #include <cstdlib>
 #include <ctime>
 
@@ -33,6 +34,8 @@ void Engine::init()
 	loadPrefabs(prefabs, prefabs_puzzle);
 
 	PrefabRegistry::Init(&prefabs, &prefabs_puzzle);
+
+	SceneManager::Instance().Initialize();
 
 	game = new Game(prefabs, prefabs_puzzle);
 	//game->init();

@@ -30,6 +30,7 @@
 #include "../System/Rigidbody.h"
 #include "../System/Tag.h"
 #include "../System/GuiManager.h"
+#include "../System/SceneManager.h"
 
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -226,8 +227,8 @@ void Editor::DrawHierarchyWindow(Node* root, float x, float y, float width, floa
     // Ustawiamy stałą pozycję i rozmiar okna
     ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
-
-    ImGui::Begin("Scene", nullptr, window_flags);
+	std::string window_title = "Scene - " + SceneManager::Instance().getCurrentScenePath();
+    ImGui::Begin(window_title.c_str(), nullptr, window_flags);
 
     if (root)
         DrawNodeBlock(root, 0);
@@ -645,7 +646,7 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
 
     if (ImGui::Button("SAVE", ImVec2(150, 24))) {
         
-        saveScene("res/scene/scene.json", editor_sceneGraph);
+        saveScene(SceneManager::Instance().getCurrentScenePath(), editor_sceneGraph);
         if (!scene_editor) {
             if (puzz) {
                 savePuzzle(puzzle_prefabs[current_puzzle]);
@@ -653,6 +654,18 @@ void Editor::operationBarDisplay(float x, float y, float width, float height)
             else {
                 savePrefab(prefabs[current_prefab]);
             }
+        }
+    }
+    if (scene_editor) {
+        ImGui::SameLine();
+
+        if (ImGui::Button("NEXT_SCENE", ImVec2(150, 24))) {
+
+            saveScene(SceneManager::Instance().getCurrentScenePath(), editor_sceneGraph);
+            GuiManager::Instance().getObjects().clear();
+            SceneManager::Instance().next();
+            editor_sceneGraph = SceneManager::Instance().getCurrentScene();
+            sceneGraph = editor_sceneGraph;
         }
     }
     
@@ -1937,7 +1950,10 @@ void Editor::init()
 
     GuiManager::Instance().init();
 
-    loadScene("res/scene/scene.json", editor_sceneGraph, prefabs, puzzle_prefabs);
+    //loadScene("res/scene/scene.json", editor_sceneGraph, prefabs, puzzle_prefabs);
+    SceneManager::Instance().reset();
+
+    editor_sceneGraph = SceneManager::Instance().getCurrentScene();
 
     loadPostProcessData("res/scene/postprocess_data.json", postProcessData);
 
@@ -1983,24 +1999,7 @@ void Editor::init()
     _texture.path = "res/textures/raindrop.png";
     _texture.type = "diffuse";
 
-    //ParticleEmitter* ziom = new ParticleEmitter(_texture.id, 10000);
-    //ParticleEmitter* ziom = new ParticleEmitter(_texture, 20000);
-    //ziom->transform.setLocalScale({ 0.1f, .1f, .1f });
-    //editor_sceneGraph->addChild(ziom);
-    glm::vec3 pos = glm::vec3(0.f, 1.f, 0.f);
-    glm::mat4 model = glm::translate(glm::mat4(1.f), pos);
-    glm::mat4 quat = glm::rotate(glm::mat4(1.f), glm::radians(45.f), glm::vec3(0.f, 0.f, 1.f));
-    model = model * quat;
-    Ray ray;
-    ray.direction = { 1.f, 0.f, 0.f };
-    emit = editor_sceneGraph->root->getChildByName("LASER");
-        // new LaserEmitterNode(ResourceManager::Instance().getModel(4), "LASER", ray);
-
-    //mirror = new MirrorNode(ResourceManager::Instance().getModel(13), "mirror");
-    //editor_sceneGraph->addChild(emit);
-
-
-
+    
     glGenTextures(1, &debugColorTex);
     glBindTexture(GL_TEXTURE_2D, debugColorTex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
@@ -2037,6 +2036,8 @@ void Editor::init()
 
     ResourceManager::Instance().shader_tile->use();
     ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
+
+    //emitter = dynamic_cast<ParticleEmitter*>(editor_sceneGraph->root->getChildByName("ParticleEmitter"));
 }
 
 void Editor::run() {
@@ -2081,7 +2082,7 @@ void Editor::run() {
 
 void Editor::shutdown()
 {
-    saveScene("res/scene/scene.json", editor_sceneGraph);
+    saveScene(SceneManager::Instance().getCurrentScenePath(), editor_sceneGraph);
     savePrefabs(prefabs, puzzle_prefabs);
 
     savePostProcessData("res/scene/postprocess_data.json", postProcessData);
@@ -2302,9 +2303,9 @@ void Editor::draw() {
     sceneGraph->draw(previewWidth, previewHeight, framebuffer, true);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    ParticleEmitter* emitter = dynamic_cast<ParticleEmitter*>(sceneGraph->root->getChildByName("ParticleEmitter"));
 
-    if (emitter)  emitter->draw(camera->GetView(), camera->GetProjection());
+
+    //if (emitter)  emitter->draw(camera->GetView(), camera->GetProjection());
 
     sceneGraph->drawMarkedObject();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -2347,8 +2348,8 @@ void Editor::draw() {
     DrawHierarchyWindow(sceneGraph->root, 0, 0, WINDOW_WIDTH / 6, 2 * WINDOW_HEIGHT / 3);
     previewDisplay();
     assetBarDisplay(0, 2 * WINDOW_HEIGHT / 3, 2 * WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3);
-    operationBarDisplay(2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3, WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3);
     propertiesWindowDisplay(sceneGraph, sceneGraph->marked_object, 5 * WINDOW_WIDTH / 6, 0, WINDOW_WIDTH / 6, 2 * WINDOW_HEIGHT / 3);
+    operationBarDisplay(2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3, WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

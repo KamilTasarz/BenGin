@@ -15,6 +15,10 @@ SceneManager::~SceneManager()
 
 void SceneManager::next()
 {
+	if (sceneGraph) {
+		delete sceneGraph;
+	}
+
 	if (currentSceneIndex + 1 < scenes.size())
 	{
 		currentSceneIndex++;
@@ -33,6 +37,10 @@ void SceneManager::next()
 
 void SceneManager::previous()
 {
+	if (sceneGraph) {
+		delete sceneGraph;
+	}
+
 	if (currentSceneIndex - 1 >= 0)
 	{
 		currentSceneIndex--;
@@ -47,8 +55,26 @@ void SceneManager::previous()
 	loadScene(scenes[currentSceneIndex].path_name, sceneGraph, rooms, puzzles);
 }
 
+void SceneManager::goToScene(unsigned int index)
+{
+	if (sceneGraph) {
+		delete sceneGraph;
+	}
+	if (index < scenes.size())
+	{
+		currentSceneIndex = index;
+	}
+	std::vector<std::shared_ptr<Prefab>> rooms = PrefabRegistry::GetRooms();
+	std::vector<std::shared_ptr<Prefab>> puzzles = PrefabRegistry::GetPuzzles();
+	loadScene(scenes[currentSceneIndex].path_name, sceneGraph, rooms, puzzles);
+}
+
 void SceneManager::reset()
 {
+	if (sceneGraph) {
+		delete sceneGraph;
+	}
+
 	if (currentSceneIndex >= 0 && currentSceneIndex < scenes.size())
 	{
 		std::vector<std::shared_ptr<Prefab>> rooms = PrefabRegistry::GetRooms();
@@ -67,9 +93,17 @@ SceneGraph* SceneManager::getCurrentScene()
 	return sceneGraph;
 }
 
+std::string SceneManager::getCurrentScenePath()
+{
+	if (currentSceneIndex >= 0)
+		return std::string(scenes[currentSceneIndex].path_name);
+	else
+		return std::string();
+}
+
 void SceneManager::Initialize()
 {
-	std::ifstream file("res/scene/scene_order.json");
+	std::ifstream file("res/config.json");
 	if (!file) {
 		std::cerr << "Błąd: Nie można otworzyć pliku JSON!\n";
 	}
@@ -79,7 +113,7 @@ void SceneManager::Initialize()
 		file >> sceneData;
 		file.close();
 
-		for (json scene : sceneData) {
+		for (json scene : sceneData["scene_order"]) {
 			OrderedScene order;
 			order.order = scene["order"];
 			order.path_name = scene["path_name"];

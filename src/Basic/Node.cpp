@@ -291,7 +291,8 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer, bool 
     }
     else {
         RenderSystem::Instance().render();
-        emitter->drawSelfAndChild();
+        if (emitter)
+            emitter->drawSelfAndChild();
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

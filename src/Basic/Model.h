@@ -99,7 +99,7 @@ public:
     glm::vec3 max_points = glm::vec3(-FLT_MAX);
 
     // constructor, expects a filepath to a 3D model.
-    Model(string const& path, int id, bool move_origin = true, bool gamma = false);
+    Model(string const& path, int id, bool move_origin = false, bool gamma = false);
 
     Model(std::vector<shared_ptr<Texture>>&& textures, int id, string mode = "cube", float scale_factor = 1.f);
 

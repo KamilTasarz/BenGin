@@ -114,12 +114,14 @@ void GuiManager::text(std::string value, float x, float y, Text_names text_id, g
 		TextObject* t = new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, max_id, color);
 		t->visible = visible;
 		t->alignment = alignment;
+		objects.push_back(t);
 		max_id++;
 	}
 	else {
 		TextObject* t = new TextObject(texts[text_id], text_id, glm::vec2(x, y), value, order_id, free_ids.back(), color);
 		t->visible = visible;
 		t->alignment = alignment;
+		objects.push_back(t);
 		free_ids.pop_back();
 	}
 }

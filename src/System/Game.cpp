@@ -13,6 +13,7 @@
 #include <random>
 #include "../System/GuiManager.h"
 #include "../System/RenderSystem.h"
+#include "../System/SceneManager.h"
 
 Ray Game::getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
 
@@ -39,6 +40,19 @@ void Game::input()
         //engine_work = false;
         //glfwSetWindowShouldClose(window->window, true);
         play = false;
+    }
+
+    if (glfwGetKey(window->window, GLFW_KEY_Z) == GLFW_PRESS) {
+        if (!isClicked) {
+            shutdown();
+            isClicked = true;
+            is_initialized = false;
+            SceneManager::Instance().next();
+            init();
+        }
+    }
+    else {
+		isClicked = false;
     }
 
     if (glfwGetKey(window->window, GLFW_KEY_F11) == GLFW_PRESS) {
@@ -69,7 +83,7 @@ void Game::draw()
 
     float t = glfwGetTime();
 
-    sceneGraph->draw(viewWidth, viewHeight, framebuffer); // Po tym etapie mamy gotowe color texture 
+    SceneManager::Instance().getCurrentScene()->draw(viewWidth, viewHeight, framebuffer); // Po tym etapie mamy gotowe color texture 
     
     float t2 = glfwGetTime();
 
@@ -231,7 +245,7 @@ void Game::draw()
             auto& rewindShader = *ResourceManager::Instance().shader_PostProcess_rewind;
             rewindShader.use();
 
-            rewindShader.setBool("is_rewind", sceneGraph->is_rewinidng);
+            rewindShader.setBool("is_rewind", SceneManager::Instance().getCurrentScene()->is_rewinidng);
 
             rewindShader.setFloat("time", glfwGetTime());
 
@@ -361,13 +375,13 @@ void Game::update(float deltaTime)
     // Scena
     //sceneGraph->root->checkIfInFrustrum();
 	float t = glfwGetTime();
-	PhysicsSystem::instance().updateColliders(sceneGraph);
+	PhysicsSystem::instance().updateColliders(SceneManager::Instance().getCurrentScene());
     float t2 = glfwGetTime();
 	PhysicsSystem::instance().updateCollisions();
 	float t3 = glfwGetTime();
-    sceneGraph->update(deltaTime);
+    SceneManager::Instance().getCurrentScene()->update(deltaTime);
     float t4 = glfwGetTime();
-    sceneGraph->clearDeleteVector();
+    SceneManager::Instance().getCurrentScene()->clearDeleteVector();
 
     GuiManager::Instance().update(ServiceLocator::getWindow()->deltaTime);
 
@@ -398,7 +412,11 @@ void Game::init()
 
     GuiManager::Instance().init();
 
-	loadScene("res/scene/scene.json", sceneGraph, prefabs, puzzle_prefabs);
+    SceneManager::Instance().reset();
+
+	//SceneManager::Instance().getCurrentScene();
+
+	//loadScene("res/scene/scene.json", sceneGraph, prefabs, puzzle_prefabs);
 
     loadPostProcessData("res/scene/postprocess_data.json", postProcessData);
 
@@ -407,16 +425,16 @@ void Game::init()
     generateNoiseTexture();
     debug_print();
 
-	sceneGraph->forcedUpdate();
+    SceneManager::Instance().getCurrentScene()->forcedUpdate();
 
-    sceneGraph->is_editing = false;
+    SceneManager::Instance().getCurrentScene()->is_editing = false;
 
 	camera->Pitch = 0.0f;
 	camera->FarPlane = 33.1f;
 	camera->Yaw = -90.0f;
 	camera->setPosition(glm::vec3(0.f, 0.f, 0.f));
     glm::vec3 origin = glm::vec3(0.f);
-	camera->setObjectToFollow(sceneGraph->root->getChildByName("camera_follow"), origin);
+	camera->setObjectToFollow(SceneManager::Instance().getCurrentScene()->root->getChildByName("camera_follow"), origin);
 	camera->changeMode(FOLLOWING);
 	
     alpha = 0.f;
@@ -618,9 +636,9 @@ void Game::init()
     ServiceLocator::getAudioEngine()->Init();
     loadSounds();
 
-    sceneGraph->forcedUpdate();
+    SceneManager::Instance().getCurrentScene()->forcedUpdate();
 
-    sceneGraph->root->createComponents();
+    SceneManager::Instance().getCurrentScene()->root->createComponents();
 	PhysicsSystem::instance().colliders.clear();
 	PhysicsSystem::instance().colliders_RigidBody.clear();  
 	PhysicsSystem::instance().rooms.clear();  
