@@ -627,6 +627,9 @@ void Game::init()
 
 	ResourceManager::Instance().shader_tile->use();
 	ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
+
+    glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 }
 void Game::run()
 {
@@ -667,6 +670,7 @@ void Game::run()
 }
 void Game::shutdown()
 {
+    glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     unloadSounds();
     glDeleteTextures(1, &colorTexture);
     glDeleteTextures(1, &normalTexture);
@@ -677,7 +681,7 @@ void Game::shutdown()
     glDeleteTextures(1, &rewindColorBuffer);
     glDeleteTextures(1, &ssaoColorBuffer);
     glDeleteTextures(1, &ssaoBlurColorBuffer);
-    glDeleteTextures(1, &crtColorBuffers);
+    glDeleteTextures(1, &crtColorBuffer);
     glDeleteRenderbuffers(1, &depthRenderbuffer);
     glDeleteFramebuffers(1, &framebuffer);
     glDeleteFramebuffers(1, &bloomFBO);
