@@ -29,12 +29,32 @@ void Door::onStart()
 	startPos = targetPos = door1->transform.getLocalPosition();
 	startPos2 = targetPos2 = door2->transform.getLocalPosition();
 
+	if (activateAlarm) {
+		float minDistance = 100.f;
+		glm::vec3 ownerPos = owner->transform.getGlobalPosition();
+
+		for (PointLight* point : owner->scene_graph->point_lights) {
+			//if (point->parent == owner->parent) light = point;
+
+			glm::vec3 lightPos = point->transform.getGlobalPosition();
+			float distance = glm::distance(ownerPos, lightPos);
+
+			if (distance < minDistance) {
+				light = point;
+				minDistance = distance;
+			}
+		}
+	}
+
 	if (isOpen) {
 		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) / owner->transform.getLocalScale().y;
 		else {
 			targetPos = startPos + glm::vec3(0.f, 3.f, 0.f) / owner->transform.getLocalScale().y;
 			targetPos2 = startPos2 + glm::vec3(0.f, -3.f, 0.f) / owner->transform.getLocalScale().y;
 		}
+	}
+	else {
+		if (light) light->is_shining = false;
 	}
 }
 
@@ -92,11 +112,15 @@ void Door::onUpdate(float deltaTime)
 void Door::ChangeState(bool state)
 {
 	if (overrideState) return;
-	
+
 	if (state) {
 		targetPos = startPos;
 		targetPos2 = startPos2;
 		isOpen = false;
+
+		if (light) {
+			light->is_shining = false;
+		}
 	}
 	else {
 		if (!openToSide) targetPos = startPos + glm::vec3(0.f, 3.5f, 0.f) / owner->transform.getLocalScale().y;
@@ -105,6 +129,10 @@ void Door::ChangeState(bool state)
 			targetPos2 = startPos2 + glm::vec3(0.f, -3.f, 0.f) / owner->transform.getLocalScale().y;
 		}
 		isOpen = true;
+
+		if (light) {
+			light->is_shining = true;
+		}
 	}
 
 	if (sfxId != -1) {

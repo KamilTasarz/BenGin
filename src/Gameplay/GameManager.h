@@ -35,6 +35,8 @@ public:
 	float musicVolume = 1.f;
 	float sfxVolume = 1.f;
 
+	float minDistance = 100.f;
+
 	static GameManager& instance();
 	//GameManager() = default;
 	//~GameManager() = default;

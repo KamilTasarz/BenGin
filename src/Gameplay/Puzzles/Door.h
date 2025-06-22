@@ -2,6 +2,8 @@
 
 #include "../Script.h"
 
+class PointLight;
+
 class Door : public Script
 {
 public:
@@ -9,6 +11,9 @@ public:
 
 	VARIABLE(bool, isOpen);
 	VARIABLE(bool, openToSide);
+	VARIABLE(bool, activateAlarm);
+	PointLight* light = nullptr;
+
 	glm::vec3 targetPos;
 	glm::vec3 startPos;
 	glm::vec3 targetPos2;
@@ -31,7 +36,8 @@ public:
 	std::vector<Variable*> getFields() const override {
 		static Variable isOpenVar = getField_isOpen();
 		static Variable openToSideVar = getField_openToSide();
-		return { &isOpenVar, &openToSideVar };
+		static Variable activateAlarmVar = getField_activateAlarm();
+		return { &isOpenVar, &openToSideVar, &activateAlarmVar };
 	}
 };
 

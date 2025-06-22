@@ -111,7 +111,7 @@ void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
     glm::vec3 gasPos = emitter->particles[index].position;
     float distanceFromGasToSpawner = glm::distance(gasPos, spawnerPos);
 
-    float minDistance = 100.f;
+    minDistance = 100.f;
 	int size = clamp(index, 0, 15);
 
 	for (int i = 0; i < size; i++) {

@@ -80,7 +80,7 @@ void TimeRewindable::onUpdate(float deltaTime) {
 
         auto* audio = ServiceLocator::getAudioEngine();
         if (sfxId == -1) {
-            sfxId = audio->PlayMusic(audio->rewind, GameManager::instance().sfxVolume * 0.f);
+            sfxId = audio->PlayMusic(audio->rewind, GameManager::instance().sfxVolume * 80.f);
         }
     }
 
