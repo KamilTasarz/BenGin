@@ -5,8 +5,15 @@
 class Checkpoint : public Script
 {
 public:
-	glm::vec3 minColliderPosition;
-	glm::vec3 maxColliderPosition;
+	//glm::vec3 minColliderPosition;
+	//glm::vec3 maxColliderPosition;
+
+	Node* arm = nullptr;
+	Node* tank = nullptr;
+	Node* filling = nullptr;
+
+	float timer;
+	bool fillingStarted = false;
 
 	Checkpoint() = default;
 	~Checkpoint() = default;

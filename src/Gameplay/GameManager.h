@@ -47,6 +47,7 @@ public:
 	void RemoveThisPlayer(Node* player);
 	void CalculateGasSpreadingSpeed(float deltaTime);
 	void HandleLevelGeneration();
+	void onEnd();
 	void HandleRewindTimeline();
 };
 

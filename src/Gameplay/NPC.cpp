@@ -101,7 +101,8 @@ void NPC::onCollision(Node* other)
 
 void NPC::detectObstacles() {
     obstacles.clear();
-    for (Collider* box : PhysicsSystem::instance().getColliders()) {
+
+    /*for (Collider* box : PhysicsSystem::instance().getColliders()) {
         if (box->node) {
             Node* node = box->node;
             if (std::find(obstacleLayer.begin(), obstacleLayer.end(), node->getLayerName()) != obstacleLayer.end()) {
@@ -110,6 +111,26 @@ void NPC::detectObstacles() {
 
                 float distance = glm::distance(glm::vec2(ownerPos), glm::vec2(pos));
 
+                if (distance <= detectionRadius) {
+                    obstacles.push_back(node);
+                }
+            }
+        }
+    }*/
+
+    for (Collider* box : PhysicsSystem::instance().getColliders()) {
+        if (box->node) {
+            Node* node = box->node;
+
+            std::string layerName = node->getLayerName();
+
+            if (layerName == "Platform") continue;
+
+            if (std::find(obstacleLayer.begin(), obstacleLayer.end(), layerName) != obstacleLayer.end()) {
+                glm::vec3 pos = node->transform.getGlobalPosition();
+                glm::vec3 scale = node->transform.getLocalScale();
+
+                float distance = glm::distance(glm::vec2(ownerPos), glm::vec2(pos));
                 if (distance <= detectionRadius) {
                     obstacles.push_back(node);
                 }
@@ -140,6 +161,10 @@ void NPC::detectPlayer() {
                         playerVisible = true;
                         return;
                     }
+                    else if (hitNodes.size() > 1 && hitNodes[1].node->getTagName() == "Player" && hitNodes[0].node->getLayerName() == "Platform") {
+                        playerVisible = true;
+                        return;
+                    }
                 }
             }
         }
@@ -159,7 +184,10 @@ void NPC::avoidObstacles() {
 
         if (distanceToObstacle == 0.f) continue;
 
-        float weight = distanceToObstacle <= agentColliderSize ? 1.f : (avoidanceRadius - distanceToObstacle) / avoidanceRadius;
+        float normalizedDistance = glm::clamp(distanceToObstacle / avoidanceRadius, 0.f, 1.f);
+        float weight = powf(1.f - normalizedDistance, 3.f);
+
+        //float weight = distanceToObstacle <= agentColliderSize ? 1.f : (avoidanceRadius - distanceToObstacle) / avoidanceRadius;
         glm::vec2 directionToObstacleNormalized = glm::normalize(directionToObstacle);
 
         for (size_t i = 0; i < eightDirections.size(); ++i) {

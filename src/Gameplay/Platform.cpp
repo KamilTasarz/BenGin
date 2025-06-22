@@ -13,6 +13,7 @@ void Platform::onAttach(Node* owner)
 {
 	this->owner = owner;
 	std::cout << "Platform::onAttach::" << owner->name << std::endl;
+	owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("NPC"));
 }
 
 void Platform::onDetach()

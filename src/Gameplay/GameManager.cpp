@@ -147,3 +147,14 @@ void GameManager::HandleLevelGeneration() {
         levelGenerator->GenerateLevel();
     }
 }
+
+void GameManager::onEnd()
+{
+    for (Node* player : players) {
+        if (player && player->scene_graph) {
+            player->scene_graph->deleteChild(player);
+        }
+    }
+    players.clear();
+    currentPlayer = nullptr;
+}

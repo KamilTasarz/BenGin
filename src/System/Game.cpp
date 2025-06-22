@@ -698,6 +698,8 @@ void Game::run()
 }
 void Game::shutdown()
 {
+    GameManager::instance().onEnd();
+
     glDeleteTextures(1, &colorTexture);
     glDeleteTextures(1, &normalTexture);
     glDeleteTextures(1, &depthTexture);

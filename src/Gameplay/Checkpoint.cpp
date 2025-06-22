@@ -21,26 +21,52 @@ void Checkpoint::onDetach()
 
 void Checkpoint::onStart()
 {
-	minColliderPosition = owner->AABB_logic->min_point_world;
-	maxColliderPosition = owner->AABB_logic->max_point_world;
+	//minColliderPosition = owner->AABB_logic->min_point_world;
+	//maxColliderPosition = owner->AABB_logic->max_point_world;
+
+	arm = owner->getChildByNamePart("arm");
+	tank = owner->getChildByNamePart("tank");
+	filling = owner->getChildByNamePart("filling");
+
+	if (tank) tank->changeColor(glm::vec4(0.25f, 0.6f, 0.25f, 0.6f));
+	if (filling) filling->changeColor(glm::vec4(0.75f, 0.12f, 0.12f, 1.f));
+
+	fillingStarted = false;
 }
 
 void Checkpoint::onUpdate(float deltaTime)
 {
-	if (owner->is_animating && !owner->animator->isPlayingNonLooping()) return;
+	if (!arm || !tank || !filling) return;
+	
+	if (fillingStarted) {
+		if (timer < 0.f) {
+			glm::vec3 currentScale = filling->transform.getLocalScale();
+			glm::vec3 targetScale = glm::vec3(.75f, .6f, .75f);
+
+			glm::vec3 newScale = glm::mix(currentScale, targetScale, deltaTime * 2.f);
+			filling->transform.setLocalScale(newScale);
+
+			glm::vec3 newTankScale = glm::vec3(.75f) - newScale;
+			tank->transform.setLocalScale(glm::vec3(.75f, newTankScale.y, .75f));
+
+			if (targetScale.y - newScale.y < 0.02f) {
+				fillingStarted = false;
+			}
+		}
+		else {
+			timer -= deltaTime;
+		}
+	}
+
+	if (arm->is_animating && !arm->animator->isPlayingNonLooping()) return;
 	
 	Node* player = GameManager::instance().currentPlayer;
 
 	if (!owner || !player) return;
 
-	owner->AABB_logic->min_point_world = minColliderPosition;
-	owner->AABB_logic->max_point_world = maxColliderPosition;
-
-	//rotate towards player
 	glm::vec3 playerPos = player->transform.getGlobalPosition();
-	glm::vec3 ownerPos = owner->transform.getGlobalPosition();
+	glm::vec3 ownerPos = arm->transform.getGlobalPosition();
 
-	// Patrzenie tylko w poziomie (ignoruj Y)
 	glm::vec3 flatDirection = glm::normalize(glm::vec3(
 		playerPos.x - ownerPos.x,
 		0.0f,
@@ -52,22 +78,24 @@ void Checkpoint::onUpdate(float deltaTime)
 
 	glm::quat finalRotation = lookRotation * extraRotation;
 
-	owner->transform.setLocalRotation(finalRotation);
+	arm->transform.setLocalRotation(finalRotation);
 
 }
 
 void Checkpoint::onCollisionLogic(Node* other)
 {
+	if (!arm || !tank || !filling) return;
+
 	if (other->getTagName() == "Player") {
 		Node* playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
-		playerSpawner->transform.setLocalPosition(owner->transform.getGlobalPosition() * glm::vec3(1.f, 1.f, 1.f) + glm::vec3(-2.f, 0.05f, 2.5f));
-		//owner->animator->playAnimation(owner->pModel->animations[0], false);
-		if (!owner->is_animating) {
-			owner->animator->playAnimation(owner->pModel->getAnimationByName("ArmatureAction.001"), false);
-			owner->is_animating = true;
-			owner->animator->current_animation->speed = 1500.f;
+		playerSpawner->transform.setLocalPosition(owner->transform.getGlobalPosition());
+		if (!arm->is_animating) {
+			arm->animator->playAnimation(arm->pModel->getAnimationByName("ArmatureAction.001"), false);
+			arm->is_animating = true;
+			arm->animator->current_animation->speed = 1500.f;
 
-			//RewindManager::Instance().resetAllHistories();
+			timer = 0.5f;
+			fillingStarted = true;
 		}
 	}
 }
