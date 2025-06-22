@@ -162,7 +162,7 @@ void PlayerController::onUpdate(float deltaTime)
 		rb->isGravityFlipped = false;
 	}
 
-	if (!GameManager::instance->isRewinding) {
+	if (!GameManager::instance().isRewinding) {
 		pressedRight = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS);
 		pressedLeft = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS);
 
@@ -333,9 +333,9 @@ void PlayerController::Die(bool freeze, bool electrified)
 	animationController->changeState(new DeathState());
 
 	auto* audio = ServiceLocator::getAudioEngine();
-	audio->PlaySFX(audio->death, GameManager::instance->sfxVolume * 65.f);
+	audio->PlaySFX(audio->death, GameManager::instance().sfxVolume * 65.f);
 
-	if (!GameManager::instance->tutorialActive) GameManager::instance->deathCount++;
+	if (!GameManager::instance().tutorialActive) GameManager::instance().deathCount++;
 }
 
 bool PlayerController::HandleVirus(float deltaTime)

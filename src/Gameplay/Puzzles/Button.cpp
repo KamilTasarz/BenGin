@@ -75,7 +75,7 @@ void Button::onCollisionLogic(Node* other) {
 	if (other->getTagName() == "Player" || other->getTagName() == "Box") {
 		if (pressingObjects == 0) {
 			auto* audio = ServiceLocator::getAudioEngine();
-			audio->PlaySFX(audio->button_down, GameManager::instance->sfxVolume * 70.f);
+			audio->PlaySFX(audio->button_down, GameManager::instance().sfxVolume * 70.f);
 
 			targetPos = startPos - glm::vec3(0.f, 0.15f, 0.f) / owner->transform.getLocalScale().y;
 

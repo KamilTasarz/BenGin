@@ -29,14 +29,14 @@
 void TimeRewindable::onUpdate(float deltaTime) {
     if (!owner) return;
 
-	glm::vec3 newCheckpointPos = GameManager::instance->playerSpawner->transform.getGlobalPosition();
+	glm::vec3 newCheckpointPos = GameManager::instance().playerSpawner->transform.getGlobalPosition();
 	if (newCheckpointPos != lastCheckpointPos) {
 		resetHistory();
 		lastCheckpointPos = newCheckpointPos;
 	}
 
   //  if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
-  //      if (GameManager::instance->historyEmpty) {
+  //      if (GameManager::instance().historyEmpty) {
   //          isRewinding = false;
   //      }
   //      else {
@@ -47,7 +47,7 @@ void TimeRewindable::onUpdate(float deltaTime) {
   //      
   //          auto* audio = ServiceLocator::getAudioEngine();
   //          if (sfxId == -1) {
-  //              sfxId = audio->PlayMusic(audio->rewind, GameManager::instance->sfxVolume * 60.f);
+  //              sfxId = audio->PlayMusic(audio->rewind, GameManager::instance().sfxVolume * 60.f);
   //          }
   //      }
   //  }
@@ -71,7 +71,7 @@ void TimeRewindable::onUpdate(float deltaTime) {
     }
 
     // Start rewind
-    if (rewindKeyHeld && hasReleasedRewindKey && !GameManager::instance->historyEmpty) {
+    if (rewindKeyHeld && hasReleasedRewindKey && !GameManager::instance().historyEmpty) {
         isRewinding = true;
         rewindTime += deltaTime;
         rewindSpeed = pow(2, static_cast<int>(rewindTime) + 1);
@@ -80,12 +80,12 @@ void TimeRewindable::onUpdate(float deltaTime) {
 
         auto* audio = ServiceLocator::getAudioEngine();
         if (sfxId == -1) {
-            sfxId = audio->PlayMusic(audio->rewind, GameManager::instance->sfxVolume * 0.f);
+            sfxId = audio->PlayMusic(audio->rewind, GameManager::instance().sfxVolume * 0.f);
         }
     }
 
     // Stop rewind if no history left
-    if (isRewinding && GameManager::instance->historyEmpty) {
+    if (isRewinding && GameManager::instance().historyEmpty) {
         isRewinding = false;
         rewindTime = 0.f;
         hasReleasedRewindKey = false;  // czeka na ponowne puszczenie klawisza

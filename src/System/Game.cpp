@@ -14,6 +14,7 @@
 #include "../System/GuiManager.h"
 #include "../System/RenderSystem.h"
 #include "../System/SceneManager.h"
+#include "../Gameplay/GameManager.h"
 
 Ray Game::getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
 
@@ -366,6 +367,7 @@ void Game::update(float deltaTime)
     auto* audio = ServiceLocator::getAudioEngine();
     
     audio->Update();
+    GameManager::instance().Update(deltaTime, SceneManager::Instance().getCurrentScene());
 
     // Kamera
     camera->ProcessKeyboard(deltaTime, 0);
@@ -644,6 +646,8 @@ void Game::init()
 
 	ResourceManager::Instance().shader_tile->use();
 	ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
+
+    GameManager::instance().Init(SceneManager::Instance().getCurrentScene());
 }
 void Game::run()
 {

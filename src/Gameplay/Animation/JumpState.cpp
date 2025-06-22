@@ -11,7 +11,7 @@ void JumpState::enter(Node* owner) {
     owner->animator->blendAnimation(animation->jump, 50.f, true, false);
 
     auto* audio = ServiceLocator::getAudioEngine();
-    audio->PlaySFX(audio->jumping, GameManager::instance->sfxVolume * 95.f);
+    audio->PlaySFX(audio->jumping, GameManager::instance().sfxVolume * 95.f);
 }
 
 void JumpState::update(Node* owner, float deltaTime) {

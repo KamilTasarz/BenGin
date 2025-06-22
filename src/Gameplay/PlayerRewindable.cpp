@@ -5,6 +5,7 @@
 #include "../Basic/Node.h"
 #include "GameManager.h"
 #include "GameManagerRewindable.h"
+#include "UIManager.h"
 #include "RewindManager.h"
 
 REGISTER_SCRIPT(PlayerRewindable);
@@ -59,7 +60,7 @@ void PlayerRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseS
 		owner->setLayer(layer);
 	}
 
-    if (history.empty() && GameManager::instance->rewindable->history.size() > 1) {
-		GameManager::instance->RemoveCurrentPlayer();
+    if (history.empty() && GameManager::instance().uiManager->rewindable->history.size() > 1) {
+		GameManager::instance().RemoveCurrentPlayer();
     }
 }

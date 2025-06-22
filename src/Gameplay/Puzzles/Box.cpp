@@ -22,7 +22,7 @@ void Box::onStart()
 	rb = owner->getComponent<Rigidbody>();
 
 	auto* audio = ServiceLocator::getAudioEngine();
-	sfxId = audio->PlayMusic(audio->pushing, /*GameManager::instance->sfxVolume **/ 65.f);
+	sfxId = audio->PlayMusic(audio->pushing, /*GameManager::instance().sfxVolume **/ 65.f);
 }
 
 void Box::onUpdate(float deltaTime)

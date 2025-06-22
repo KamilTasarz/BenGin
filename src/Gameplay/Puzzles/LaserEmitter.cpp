@@ -23,7 +23,7 @@ void LaserEmitter::onStart()
 {
     glm::vec3 pos = owner->transform.getGlobalPosition();
     auto* audio = ServiceLocator::getAudioEngine();
-    sfxId = audio->PlayMusic(audio->laser_hit, /*GameManager::instance->sfxVolume **/ 70.f, pos);
+    sfxId = audio->PlayMusic(audio->laser_hit, /*GameManager::instance().sfxVolume **/ 70.f, pos);
     audio->SetChannel3dMinMaxDistance(sfxId, 1.0f, 20.0f);
 
 	//audio->pauseSound(sfxId);

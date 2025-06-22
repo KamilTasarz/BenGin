@@ -19,7 +19,7 @@ void LevelGenerator::onDetach()
 void LevelGenerator::onStart()
 {
 	if (playTutorial) {
-		GameManager::instance->tutorialActive = true;
+		GameManager::instance().tutorialActive = true;
 	}
 
 	if (generate) {

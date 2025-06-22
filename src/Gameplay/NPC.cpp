@@ -50,7 +50,7 @@ void NPC::onStart() {
 
 	glm::vec3 pos = owner->transform.getGlobalPosition();
     auto* audio = ServiceLocator::getAudioEngine();
-    sfxId = audio->PlayMusic(audio->propeller, /*GameManager::instance->sfxVolume **/ 75.f, pos);
+    sfxId = audio->PlayMusic(audio->propeller, /*GameManager::instance().sfxVolume **/ 75.f, pos);
 	audio->SetChannel3dMinMaxDistance(sfxId, 1.0f, 16.0f);
 }
 

@@ -33,7 +33,7 @@ void CameraFollow::onStart()
 
 void CameraFollow::onUpdate(float deltaTime)
 {
-	player = GameManager::instance->currentPlayer;
+	player = GameManager::instance().currentPlayer;
 	if (player == nullptr) return;
 
 	PlayerController* playerController = player->getComponent<PlayerController>();

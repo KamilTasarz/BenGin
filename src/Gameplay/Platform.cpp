@@ -4,6 +4,8 @@
 #include "../System/Rigidbody.h"
 #include "../Component/BoundingBox.h"
 #include "../System/Tag.h"
+#include "GameManager.h"
+#include "PlayerController.h"
 
 REGISTER_SCRIPT(Platform);
 
@@ -21,7 +23,9 @@ void Platform::onDetach()
 
 void Platform::onUpdate(float deltaTime)
 {
-	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+	bool isFlippedAndPressedUp = flipped && (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_UP) == GLFW_PRESS);
+
+	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_DOWN) == GLFW_PRESS || isFlippedAndPressedUp) {
 		//owner->setPhysic(false);
 		owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
 		timer = 0.25f;
@@ -37,6 +41,20 @@ void Platform::onUpdate(float deltaTime)
 	else {
 		//owner->setPhysic(true);
 		owner->AABB->removeIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
+	}
+
+	auto* player = GameManager::instance().currentPlayer;
+	if (!player) return;
+
+	bool isGravityFlipped = player->getComponent<PlayerController>()->isGravityFlipped;
+
+	if (!flipped && isGravityFlipped) {
+		owner->transform.setLocalRotation(glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 0, 1)));
+		flipped = true;
+	}
+	else if (flipped && !isGravityFlipped) {
+		owner->transform.setLocalRotation(glm::quat(1, 0, 0, 0));
+		flipped = false;
 	}
 }
 

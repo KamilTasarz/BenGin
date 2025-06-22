@@ -115,7 +115,7 @@ void AnimationRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& ba
 
     }
 
-    /*if (history.empty() && GameManager::instance->rewindable->history.size() > 1) {
+    /*if (history.empty() && GameManager::instance().rewindable->history.size() > 1) {
         animationController->getOwner()->animator->current_animation = animationController->idle;
         animationController->changeState(new IdleState());
     }*/

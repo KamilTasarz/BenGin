@@ -4,15 +4,14 @@
 #include "../Basic/Node.h"
 #include <deque>
 
-class TextObject;
-class SpriteObject;
 class LevelGenerator;
 class GameManagerRewindable;
+class UIManager;
 
-class GameManager : public Script
+class GameManager
 {
 public:
-	static GameManager* instance;
+	//static GameManager* instance;
 
 	float globalSmoothing = 10.f;
 	float gasSpreadingSpeed = 1.f;
@@ -20,10 +19,12 @@ public:
 	Node* playerSpawner;
 	LevelGenerator* levelGenerator;
 	InstanceManager* emitter;
+	UIManager* uiManager;
+
 	std::deque<Node*> players;
 
-	GameManagerRewindable* rewindable = nullptr;
 	bool isRewinding = false;
+	bool historyEmpty = true;
 
 	// run variables
 	float runTime = 0.f;
@@ -31,34 +32,16 @@ public:
 	float score = 0.f;
 	bool tutorialActive = false;
 
-	TextObject* scoreText;
-	TextObject* deathCountText;
-	TextObject* runTimeText;
-	TextObject* fpsText;
-	TextObject* stateText;
-	SpriteObject* playSprite;
-	SpriteObject* rewindSprite;
-	TextObject* timeline;
-	TextObject* timelineTop;
-	TextObject* timelineDown;
-
-	int startHistorySize = 0;
-	bool historyEmpty = true;
-
-	float fpsAccumulator = 0.f;
-	int frameCount = 0;
-	float timeSinceLastUpdate = 0.f;
-	const float updateInterval = 0.5f;
-
 	float musicVolume = 1.f;
 	float sfxVolume = 1.f;
 
-	GameManager() = default;
-	~GameManager() = default;
-	void onAttach(Node* owner) override;
-	void onDetach() override;
-	void onStart() override;
-	void onUpdate(float deltaTime) override;
+	static GameManager& instance();
+	//GameManager() = default;
+	//~GameManager() = default;
+	/*void onAttach(Node* owner) override;
+	void onDetach() override;*/
+	void Init(SceneGraph* scene_graph);
+	void Update(float deltaTime, SceneGraph* scene_graph);
 	void RemovePlayer();
 	void RemoveCurrentPlayer();
 	void RemoveThisPlayer(Node* player);

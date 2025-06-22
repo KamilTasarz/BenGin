@@ -29,7 +29,7 @@ void Checkpoint::onUpdate(float deltaTime)
 {
 	if (owner->is_animating && !owner->animator->isPlayingNonLooping()) return;
 	
-	Node* player = GameManager::instance->currentPlayer;
+	Node* player = GameManager::instance().currentPlayer;
 
 	if (!owner || !player) return;
 
@@ -76,6 +76,6 @@ void Checkpoint::onStayCollisionLogic(Node* other)
 {
 	auto* electrified = other->getComponent<Electrified>();
 	if (electrified && electrified->isActive) {
-		GameManager::instance->RemoveThisPlayer(other);
+		GameManager::instance().RemoveThisPlayer(other);
 	}
 }

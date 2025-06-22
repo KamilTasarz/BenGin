@@ -58,7 +58,7 @@ void Fan::onUpdate(float deltaTime)
 	// Wentylator aktywny → wznowienie tylko jeśli NIE gra
 	if (sfxId == -1) {
 		glm::vec3 pos = owner->transform.getGlobalPosition();
-		sfxId = audio->PlayMusic(audio->fan, GameManager::instance->sfxVolume * 90.f, pos);
+		sfxId = audio->PlayMusic(audio->fan, GameManager::instance().sfxVolume * 90.f, pos);
 		audio->SetChannel3dMinMaxDistance(sfxId, 3.f, 20.0f);
 	}
 

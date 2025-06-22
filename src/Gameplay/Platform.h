@@ -7,6 +7,7 @@ class Platform : public Script
 public:
 	//using SelfType = Platform;
 	float timer = 0.f;
+	bool flipped = false;
 	
 	Platform() = default;
 	virtual ~Platform() = default;
