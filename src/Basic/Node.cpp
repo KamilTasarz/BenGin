@@ -166,30 +166,44 @@ void SceneGraph::addParticleEmitter(ParticleEmitter* p) {
 
 void SceneGraph::setShaders() {
 
+    float time = glfwGetTime();
+
     glm::mat4 projection = camera->GetProjection();
     glm::mat4 view = camera->GetView();
-    ResourceManager::Instance().shader->use();
-    setLights(ResourceManager::Instance().shader);
-    ResourceManager::Instance().shader->setMat4("projection", projection);
-    ResourceManager::Instance().shader->setMat4("view", view);
-    ResourceManager::Instance().shader->setFloat("time", glfwGetTime());
 
-    if (active_point_lights >= 16) ResourceManager::Instance().shader->setInt("point_light_number", 16);
-    else ResourceManager::Instance().shader->setInt("point_light_number", active_point_lights);
+    // --- BASIC SHADER --- //
 
-    ResourceManager::Instance().shader->setInt("directional_light_number", directional_light_number);
-    ResourceManager::Instance().shader->setFloat("far_plane", 20.f);
+    auto& basic_shader = *ResourceManager::Instance().shader;
+
+    basic_shader.use();
+    setLights(&basic_shader);
+    basic_shader.setMat4("projection", projection);
+    basic_shader.setMat4("view", view);
+    basic_shader.setFloat("time", time);
+
+    if (active_point_lights >= 16) basic_shader.setInt("point_light_number", 16);
+    else basic_shader.setInt("point_light_number", active_point_lights);
+
+    basic_shader.setInt("directional_light_number", directional_light_number);
+    basic_shader.setFloat("far_plane", 20.f);
     
-    ResourceManager::Instance().shader_tile->use();
-    setLights(ResourceManager::Instance().shader_tile);
-    ResourceManager::Instance().shader_tile->setMat4("projection", projection);
-    ResourceManager::Instance().shader_tile->setMat4("view", view);
-    if (active_point_lights >= 16) ResourceManager::Instance().shader_tile->setInt("point_light_number", 16);
-    else  ResourceManager::Instance().shader_tile->setInt("point_light_number", active_point_lights);
-    ResourceManager::Instance().shader_tile->setInt("directional_light_number", directional_light_number);
-    ResourceManager::Instance().shader_tile->setFloat("far_plane", 20.f);
-    ResourceManager::Instance().shader_tile->setFloat("tile_scale", 1.f);
+    // --- TILE SHADER --- //
+
+    auto& tile_shader = *ResourceManager::Instance().shader_tile;
+
+    tile_shader.use();
+    setLights(&tile_shader);
+    tile_shader.setMat4("projection", projection);
+    tile_shader.setMat4("view", view);
+    if (active_point_lights >= 16) tile_shader.setInt("point_light_number", 16);
+    else  tile_shader.setInt("point_light_number", active_point_lights);
+    tile_shader.setInt("directional_light_number", directional_light_number);
+    tile_shader.setFloat("far_plane", 20.f);
+    tile_shader.setFloat("tile_scale", 1.f);
+    tile_shader.setFloat("time", time);
     
+    // --- INSTANCED SHADER --- //
+
     ResourceManager::Instance().shader_instanced->use();
     setLights(ResourceManager::Instance().shader_instanced);
     ResourceManager::Instance().shader_instanced->setMat4("projection", projection);
@@ -199,6 +213,8 @@ void SceneGraph::setShaders() {
     ResourceManager::Instance().shader_instanced->setFloat("scaleFactor", 0.2f);
     ResourceManager::Instance().shader_instanced->setInt("point_light_number", point_light_number);
     ResourceManager::Instance().shader_instanced->setInt("directional_light_number", directional_light_number);
+
+    // --- OUTLINE SHADER --- //
 
     ResourceManager::Instance().shader_outline->use();
     ResourceManager::Instance().shader_outline->setMat4("projection", projection);

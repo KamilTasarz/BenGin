@@ -637,7 +637,7 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name) {
 		if (type._Equal("Node")) {
 
 			if (model_id != -1) {
-				std::shared_ptr<Model> model = ResourceManager::Instance().getModel(model_id); //getModelById(models, model_id);
+				std::shared_ptr<Model> model = ResourceManager::Instance().getModel(model_id);
 
 				node = new Node(model, name, id);
 

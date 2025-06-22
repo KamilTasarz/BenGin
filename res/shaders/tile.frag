@@ -17,6 +17,8 @@ struct PointLight {
 
 	vec3 position, ambient, diffuse, specular;
 	float constant, linear, quadratic;
+    bool is_alarm;
+
 };
 
 struct DirectionLight {
@@ -66,7 +68,7 @@ uniform int is_light;
 uniform int point_light_number;
 uniform int directional_light_number;
 
-
+uniform float time;
 
 uniform sampler2D shadow_map1;
 uniform samplerCube shadow_maps[16];
@@ -135,10 +137,14 @@ mat3 calculatePointLight(vec3 viewDir, PointLight light) {
     float _distance = distance(light.position, fs_in.Pos);
     float attenuation = 1.0f / (light.quadratic * _distance * _distance + light.linear * _distance + light.constant);
 
+    float blink = 1.0;
+    if (light.is_alarm) {
+        blink = abs(sin(time * 5.0));
+    }
 
     vec3 ambient = light.ambient * vec3(color * getTiledTexture(texture_diffuse1, fs_in.Cords)) * attenuation;
-    vec3 diffuse = light.diffuse * diff * vec3(color * getTiledTexture(texture_diffuse1, fs_in.Cords)) * attenuation;
-    vec3 specular = light.specular * spec * vec3(color * getTiledTexture(texture_specular1, fs_in.Cords)) * attenuation;
+    vec3 diffuse = light.diffuse * diff * vec3(color * getTiledTexture(texture_diffuse1, fs_in.Cords)) * attenuation * blink;
+    vec3 specular = light.specular * spec * vec3(color * getTiledTexture(texture_specular1, fs_in.Cords)) * attenuation * blink;
 
     return mat3(ambient, diffuse, specular);
 }
