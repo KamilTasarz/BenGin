@@ -51,40 +51,32 @@ void SceneGraph::unmark() {
 }
 
 void SceneGraph::addChild(Node* p) {
+
     int i = 1;
 	string name = p->name;
-    /*while (root->getChildByName(p->name)) {
-        p->name = name + "_" + to_string(i);
-        i++;
-    }*/
     root->addChild(p);
 
     if (dynamic_cast<InstanceManager*>(p)) emitter = dynamic_cast<InstanceManager*>(p);
 
-    //nodes.insert(std::pair<std::string, Node*>(p->name, p));
 }
 
 void SceneGraph::addChild(Node* p, std::string name) {
+
     Node* parent = root->getChildByName(name);
     if (parent != nullptr) {
         int i = 1;
         string name = p->name;
-        /*while (root->getChildByName(p->name)) {
-            
-            p->name = name + "_" + to_string(i);
-            i++;
-        }*/
+
         parent->addChild(p);
-        //nodes.insert(std::pair<std::string, Node*>(p->name, p));
+
     }
+
 }
 
 void SceneGraph::addChild(Node* p, Node* parent) {
     
     if (parent != nullptr) {
-        
         parent->addChild(p);
-        //nodes.insert(std::pair<std::string, Node*>(p->name, p));
     }
 }
 
@@ -97,8 +89,6 @@ void SceneGraph::deleteChild(Node* p)
     auto it = std::find(siblings.begin(), siblings.end(), p);
     if (it != siblings.end()) {
         to_delete_vec.push_back(*it);
-        //nodes.erase((*it)->name);
-        //siblings.erase(it);
     }
 }
 
@@ -138,7 +128,6 @@ void SceneGraph::deleteDirectionalLight(DirectionalLight* p) {
     deleteChild(p);
 }
 
-
 void SceneGraph::addPointLight(PointLight* p) {
     if (!p->from_prefab)
         addChild(p);
@@ -177,14 +166,13 @@ void SceneGraph::addParticleEmitter(ParticleEmitter* p) {
 
 void SceneGraph::setShaders() {
 
-    
-
     glm::mat4 projection = camera->GetProjection();
     glm::mat4 view = camera->GetView();
     ResourceManager::Instance().shader->use();
     setLights(ResourceManager::Instance().shader);
     ResourceManager::Instance().shader->setMat4("projection", projection);
     ResourceManager::Instance().shader->setMat4("view", view);
+    ResourceManager::Instance().shader->setFloat("time", glfwGetTime());
 
     if (active_point_lights >= 16) ResourceManager::Instance().shader->setInt("point_light_number", 16);
     else ResourceManager::Instance().shader->setInt("point_light_number", active_point_lights);
@@ -221,16 +209,6 @@ void SceneGraph::setShaders() {
 
 void SceneGraph::draw(float width, float height, unsigned int framebuffer, bool is_editor) {
 
-    
-
-    for (auto& dir_light : directional_lights) {
-        if (dir_light->is_shining) {
-            //dir_light->render(depthMapFBO, *ResourceManager::Instance().shader_shadow);
-            //glClear(GL_DEPTH_BUFFER_BIT);
-            //root->drawShadows(*ResourceManager::Instance().shader_shadow);
-            //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        }
-    }
     int updated_this_frame = 0;
     int checked = 0;
     int total_lights = point_lights.size();
@@ -324,22 +302,6 @@ void SceneGraph::deactivateRewindShader() {
     this->is_rewinidng = false;
 }
 
-//std::string SceneGraph::generateUniqueName(const std::string& base)
-//{
-//    std::string candidate = base;
-//    int counter = 1;
-//    while (nameRegistry.contains(candidate)) {
-//        candidate = base + "_" + std::to_string(counter++);
-//    }
-//    nameRegistry.insert(candidate);
-//    return candidate;
-//}
-//
-//void SceneGraph::release(const std::string& name)
-//{
-//    nameRegistry.erase(name);
-//}
-
 void SceneGraph::setLights(Shader* shader) {
 
     shader->setVec3("cameraPosition", camera->cameraPos);
@@ -363,6 +325,7 @@ void SceneGraph::setLights(Shader* shader) {
                 shader->setVec3("point_lights[" + index + "].diffuse", glm::vec3({ 0.f, 0.f, 0.f }));
                 shader->setVec3("point_lights[" + index + "].specular", glm::vec3({ 0.f, 0.f, 0.f }));
             }
+            shader->setBool("point_lights[" + index + "].is_alarm", point_light->is_alarm);
 			
             glActiveTexture(GL_TEXTURE8 + i);
             glBindTexture(GL_TEXTURE_CUBE_MAP, point_light->depthCubemap);
@@ -415,11 +378,6 @@ void SceneGraph::drawMarkedObject() {
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        //glm::vec3 scale_matrix = marked_object->transform.getLocalScale();
-        //scale_matrix += glm::vec3(0.05f);
-        //Transform transform = marked_object->transform;
-        //transform.setLocalScale(scale_matrix);
-        //transform.computeModelMatrix();
         ResourceManager::Instance().shader_outline->use();
         ResourceManager::Instance().shader_outline->setMat4("model", marked_object->transform.getModelMatrix());
 
@@ -442,8 +400,6 @@ void SceneGraph::drawMarkedObject() {
 // ====NODE====
 
 void Node::addChild(Node* p) {
-
-    //p->name = scene_graph->generateUniqueName(p->name);
 
     children.insert(p);
     
@@ -731,9 +687,6 @@ void Node::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unor
             if (has_RB) {
                 if (is_physic_active) colliders_RB.insert(AABB);
 				else colliders_RB.erase(AABB);
-
-                //if (is_logic_active && AABB_logic) colliders_RB.insert(AABB_logic);
-				//else colliders_RB.erase(AABB_logic);
             }
         }
         else {
@@ -741,7 +694,6 @@ void Node::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unor
             if (is_logic_active && AABB_logic) colliders.erase(AABB_logic);
             if (has_RB) {
                 if (is_physic_active) colliders_RB.erase(AABB);
-                //if (is_logic_active && AABB_logic) colliders_RB.erase(AABB_logic);
             }
         }
     }
@@ -856,12 +808,10 @@ void Node::drawSelfAndChild() {
         }
 
         if (animator != nullptr && is_animating) {
-            //is_animating = true;
             auto &f = animator->final_bone_matrices;
-            for (int i = 0; i < f.size(); ++i)
+            for (int i = 0; i < f.size(); ++i) {
                 ResourceManager::Instance().shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
-
-            //ResourceManager::Instance().shader->setInt("is_animating", 1);
+            }
         }
 
         if (is_marked) {
@@ -1208,33 +1158,8 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
         animator = new Animator(model->animations[0]);
         is_animating = false;
     }
-
-    //this->no_textures = no_textures;
     
 }
-
-//Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::vec3 min_point, glm::vec3 max_point) : pModel{ model } {
-//    name = nameOfNode;
-//    id = _id;
-//    no_textures = false;
-//
-//    if (model && model->mode == "plane") {
-//        max_point = glm::vec3(0.5f, 0.0f, 0.5f);
-//        min_point = glm::vec3(-0.5f, 0.0f, -0.5f);
-//
-//    }
-//
-//    layer = TagLayerManager::Instance().getLayer("Default");
-//    tag = TagLayerManager::Instance().getTag("Default");
-//
-//    if (model && model->min_points.x != FLT_MAX) AABB = new BoundingBox(transform.getModelMatrix(), this, model->min_points, model->max_points);
-//    else AABB = new BoundingBox(transform.getModelMatrix(), this, min_point, max_point);
-//
-//    AABB_logic = AABB->clone(this);
-//    AABB_logic->is_logic = true;
-//
-//    //this->no_textures = no_textures;
-//}
 
 Node::~Node()
 {
@@ -1267,38 +1192,6 @@ Node::~Node()
 
     children.clear();
 }
-
-/*void Node::separate(const BoundingBox* other_AABB) {
-
-    float left = (other_AABB->min_point_world.x - AABB->max_point_world.x);
-    float right = (other_AABB->max_point_world.x - AABB->min_point_world.x);
-    float up = (other_AABB->min_point_world.y - AABB->max_point_world.y);
-    float down = (other_AABB->max_point_world.y - AABB->min_point_world.y);
-    float front = (other_AABB->min_point_world.z - AABB->max_point_world.z);
-    float back = (other_AABB->max_point_world.z - AABB->min_point_world.z);
-    glm::vec3 v = glm::vec3(std::abs(left) < std::abs(right) ? left : right, std::abs(up) < std::abs(down) ? up : down, std::abs(front) < std::abs(back) ? front : back);
-
-    if (std::abs(v.x) <= std::abs(v.y) && std::abs(v.x) <= std::abs(v.z)) {
-        v.y = 0.f;
-        v.z = 0.f;
-        AABB->collison = v.x > 0.f ? 1 : -1;
-    }
-    else if (std::abs(v.y) <= std::abs(v.x) && std::abs(v.y) <= std::abs(v.z)) {
-        v.x = 0.f;
-        v.z = 0.f;
-        AABB->collison = v.y > 0.f ? 2 : -2;
-    }
-    else {
-        v.x = 0.f;
-        v.y = 0.f;
-        AABB->collison = v.z > 0.f ? 3 : -3;
-    }
-
-    cout << "collison: " << AABB->collison << endl;
-
-    transform.setLocalPosition(transform.getLocalPosition() + v);
-    forceUpdateSelfAndChild();
-*/
 
 const Transform& Node::getTransform() {
     return transform;
@@ -1345,15 +1238,6 @@ void InstanceManager::updateSelfAndChild(bool controlDirty) {
         }
     }
 
-    /*
-    for (auto&& child : children)
-    {
-        bool is_dirty = child->transform.isDirty();
-        child->updateSelfAndChild(controlDirty);
-        if (is_dirty) {
-            updateBuffer(child);
-        }
-    }*/
 }
 
 void InstanceManager::checkIfInFrustrum(std::unordered_set<Collider*>& colliders,
@@ -1361,7 +1245,6 @@ void InstanceManager::checkIfInFrustrum(std::unordered_set<Collider*>& colliders
 {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
-        //in_frustrum = true;
         if (in_frustrum) {
             if (is_physic_active) colliders.insert(AABB);
             else colliders.erase(AABB);
@@ -1372,9 +1255,6 @@ void InstanceManager::checkIfInFrustrum(std::unordered_set<Collider*>& colliders
             if (has_RB) {
                 if (is_physic_active) colliders_RB.insert(AABB);
                 else colliders_RB.erase(AABB);
-
-                //if (is_logic_active && AABB_logic) colliders_RB.insert(AABB_logic);
-                //else colliders_RB.erase(AABB_logic);
             }
         }
         else {
@@ -1447,14 +1327,11 @@ void InstanceManager::prepareBuffer()
     glGenBuffers(1, &buffer_offset);
     glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
     glBufferData(GL_ARRAY_BUFFER, times.size() * sizeof(float), times.data() , GL_STATIC_DRAW);
-    //glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
     for (unsigned int i = 0; i < pModel->meshes.size(); i++)
     {
         unsigned int VAO = pModel->meshes[i].VAO;
         glBindVertexArray(VAO);
-
-        //glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
 
         GLsizei float_size = sizeof(float);
         glEnableVertexAttribArray(7);
@@ -1471,30 +1348,19 @@ void InstanceManager::prepareBuffer()
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferData(GL_ARRAY_BUFFER, max_size * sizeof(glm::vec4), nullptr, GL_STATIC_DRAW);
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
     for (unsigned int i = 0; i < pModel->meshes.size(); i++)
     {
 
 
         unsigned int VAO = pModel->meshes[i].VAO;
         glBindVertexArray(VAO);
-        //glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
         // Atrybuty wierzchołków
         GLsizei vec4_size = sizeof(glm::vec4);
         glEnableVertexAttribArray(8);
         glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, vec4_size, (void*)(0));
-        //glEnableVertexAttribArray(9);
-        //glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(vec4_size));
-        //glEnableVertexAttribArray(10);
-        //glVertexAttribPointer(10, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(2 * vec4_size));
-        //glEnableVertexAttribArray(11);
-        //glVertexAttribPointer(11, 4, GL_FLOAT, GL_FALSE, 4 * vec4_size, (void*)(3 * vec4_size));
 
         glVertexAttribDivisor(8, 1);
-        //glVertexAttribDivisor(9, 1);
-        //glVertexAttribDivisor(10, 1);
-        //glVertexAttribDivisor(11, 1);
         
         glBindVertexArray(0);
     }
@@ -1503,14 +1369,13 @@ void InstanceManager::prepareBuffer()
 
 void InstanceManager::updateBuffer(int i) {
 
-    
-
     glBindBuffer(GL_ARRAY_BUFFER, buffer_offset);
     glBufferSubData(GL_ARRAY_BUFFER, i * sizeof(float), sizeof(float), &particles[i].time);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferSubData(GL_ARRAY_BUFFER, i * sizeof(glm::vec4), sizeof(glm::vec4), &particles[i].position);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
 PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name)
@@ -1522,9 +1387,6 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
 
     prefab->prefab_instances.push_back(this);
 
-
-
-    //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
 
@@ -1537,6 +1399,7 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
 
 PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name, glm::vec3 position)
     : Node(prefab->prefab_scene_graph->root->name + name) {
+
     this->prefab = prefab;
     AABB = new BoundingBox(transform.getModelMatrix(), this);
 
@@ -1544,9 +1407,6 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
 
     prefab->prefab_instances.push_back(this);
 
-
-
-    //if (scene_graph) {
     prefab_root = prefab->clone(this->name, scene_graph);
     prefab_root->parent = this;
     transform.setLocalPosition(position);
@@ -1597,16 +1457,9 @@ void PrefabInstance::updateSelfAndChild(bool controlDirty)
     controlDirty = controlDirty || transform.isDirty();
 
     if (controlDirty) {
-        /*transform.computeModelMatrix();
-        AABB->transformAABB(transform.getModelMatrix());*/
-
-		//AABB->transformAABB(transform.getModelMatrix());
 		forceUpdateSelfAndChild();
-        //prefab_root->transform.setLocalPosition(transform.getGlobalPosition());
-        //prefab_root->transform.setLocalRotation(transform.getLocalRotation());
-        //prefab_root->transform.setLocalScale(transform.getLocalScale());
-        
     }
+
     prefab_root->updateSelfAndChild(controlDirty);
     
 }
@@ -1628,15 +1481,7 @@ void PrefabInstance::endComponents()
 		prefab_root->endComponents();
 	}
 }
-void PrefabInstance::forceUpdateSelfAndChild()
-{
-    
-   /* prefab_root->transform.setLocalPosition(transform.getLocalPosition());
-    prefab_root->transform.setLocalRotation(transform.getLocalRotation());
-    prefab_root->transform.setLocalScale(transform.getLocalScale());*/
-    
-    //prefab_root->transform.computeModelMatrix(transform.getModelMatrix());
-    
+void PrefabInstance::forceUpdateSelfAndChild() { 
 
     if (parent) {
         transform.computeModelMatrix(parent->transform.getModelMatrix());
@@ -1697,11 +1542,9 @@ void PrefabInstance::checkIfInFrustrum(std::unordered_set<Collider*>& colliders,
                 }
 
                 if (child->AABB_logic && child->is_logic_active) {
-                    //if (child->has_RB) colliders_RB.insert(child->AABB_logic);
                     colliders.insert(child->AABB_logic);
 				}
                 else {
-                    //if (child->has_RB) colliders_RB.erase(child->AABB_logic);
                     colliders.erase(child->AABB_logic);
                 }
 
@@ -1726,7 +1569,6 @@ void PrefabInstance::checkIfInFrustrum(std::unordered_set<Collider*>& colliders,
                     colliders.erase(child->AABB);
                 }
                 if (child->AABB_logic && child->is_logic_active) {
-                    //if (child->has_RB) colliders_RB.erase(child->AABB_logic);
                     colliders.erase(child->AABB_logic);
                 }
 				MirrorNode* m = dynamic_cast<MirrorNode*>(child);
@@ -1807,8 +1649,10 @@ void DirectionalLight::updateSelfAndChild(bool controlDirty)
     }
 }
 
-PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, bool _is_alarm, float quadratic, float linear, float constant, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
     : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
+
+    this->is_alarm = _is_alarm;
 
     glGenTextures(1, &depthCubemap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
@@ -1873,24 +1717,22 @@ void PointLight::updateMatrix()
     shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))); // -Z
 }
 
-Prefab::Prefab(std::string name, PrefabType prefab_type)
-{
-    //this->prefab_scene_graph = make_shared<SceneGraph>();
+Prefab::Prefab(std::string name, PrefabType prefab_type) {
+
     this->prefab_scene_graph = new SceneGraph();
     this->prefab_scene_graph->root->name = name;
     this->prefab_type = prefab_type;
     prefab_scene_graph->directional_lights.push_back(new DirectionalLight(nullptr, "editor_light", true));
     prefab_scene_graph->directional_light_number++;
-    //prefab_scene_graph->addDirectionalLight();
+
 }
 
-Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph, bool light_copy)
-{
+Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph, bool light_copy) {
+
 	Node* copy = prefab_scene_graph->root->clone(instance_name, scene_graph);
     copy->setVariablesNodes(instance_name, copy, scene_graph);
-    /*copy->scene_graph = scene_graph;*/
     for (auto& light : prefab_scene_graph->point_lights) {
-		PointLight* new_light = new PointLight(light->pModel, light->name + "_" + instance_name, light->is_shining, light->quadratic, light->linear, light->constant,
+		PointLight* new_light = new PointLight(light->pModel, light->name + "_" + instance_name, light->is_shining, light->is_alarm, light->quadratic, light->linear, light->constant,
             light->ambient, light->diffuse, light->specular);
         new_light->from_prefab = !light_copy;
         new_light->parent = copy;
@@ -1900,14 +1742,13 @@ Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph, bool lig
 		new_light->transform.computeModelMatrix();
 		new_light->is_physic_active = light->is_physic_active;
 		new_light->is_logic_active = light->is_logic_active;
-		//scene_graph->addPointLight(new_light);
+        new_light->is_alarm = light->is_alarm;
         scene_graph->point_lights.push_back(new_light);
         scene_graph->point_light_number++;
-		//new_light->parent = copy;
     }
 
-    //copy->createComponents();
     return copy;
+
 }
 
 void Prefab::notifyInstances()
@@ -1915,7 +1756,6 @@ void Prefab::notifyInstances()
     for (auto it = prefab_instances.begin(); it != prefab_instances.end();) {
         if (*it) {
 			(*it)->updateSelf();
-			//(*it)->forceUpdateSelfAndChild();
 			++it;
 		}
 		else {
@@ -2017,7 +1857,6 @@ void ParticleEmitter::draw(const glm::mat4& view, const glm::mat4& projection) {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     updateInstanceBuffer();
 
@@ -2076,9 +1915,7 @@ void ParticleEmitter::respawnParticle(Particle& particle, Node* node, glm::vec3 
     );
 
     particle.position = node->getTransform().getGlobalPosition() + random + offset;
-    //particle.velocity = glm::vec3(0.0f, 0.1f, 0.0f);
     particle.velocity = glm::vec3(0.0f, 0.5f, 0.0f);
-    //particle.life = 20.0f;
     particle.life = 3.0f;
 
 }
@@ -2198,10 +2035,6 @@ void MirrorNode::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std
             if (has_RB) {
                 if (is_physic_active) colliders_RB.insert(AABB);
                 else colliders_RB.erase(AABB);
-
-                //if (is_logic_active && AABB_logic) colliders_RB.insert(AABB_logic);
-                //else colliders_RB.erase(AABB_logic);
-
             }
 
             
@@ -2211,15 +2044,12 @@ void MirrorNode::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std
             if (is_logic_active && AABB_logic) colliders.erase(AABB_logic);
             if (mirrorCollider) colliders.erase(mirrorCollider);
             if (has_RB) {
-                if (is_physic_active) colliders_RB.erase(AABB);
-                //if (is_logic_active && AABB_logic) colliders_RB.erase(AABB_logic);
-               
+                if (is_physic_active) colliders_RB.erase(AABB);   
             }
         }
     }
     else {
         in_frustrum = true;
-
     }
 
 }

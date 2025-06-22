@@ -503,13 +503,16 @@ public:
     float quadratic;
     float linear;
     float constant;
+
+    bool is_alarm;
+
     std::vector<glm::mat4> shadowTransforms;
 
     GLuint depthCubemap;
 
     //PointLight() : Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
 
-    PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
+    PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, bool is_alarm, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
     ~PointLight() override;
 
     void render(unsigned int depthMapFBO, Shader& shader, int index);
@@ -610,11 +613,11 @@ public:
 };
 
 class PrefabInstance : public Node {
+
 public:
+
     std::shared_ptr<Prefab> prefab;
 	Node* prefab_root;
-
-
 
     PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name);
     PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name, glm::vec3 position);
