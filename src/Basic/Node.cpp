@@ -690,9 +690,12 @@ void Node::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unor
     std::unordered_set<Node*>& rooms) {
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
+        
         //in_frustrum = true;
         if (in_frustrum) {
-
+            /*if (dynamic_cast<PointLight*>(this)) {
+                scene_graph->active.insert(dynamic_cast<PointLight*>(this));
+            }*/
 			addRenderQueue();
 
 			if (is_physic_active) colliders.insert(AABB);
@@ -712,6 +715,9 @@ void Node::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unor
             if (has_RB) {
                 if (is_physic_active) colliders_RB.erase(AABB);
             }
+            /*if (dynamic_cast<PointLight*>(this)) {
+                scene_graph->active.erase(dynamic_cast<PointLight*>(this));
+            }*/
         }
     }
     else {

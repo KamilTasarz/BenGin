@@ -32,6 +32,10 @@
 #include "../System/GuiManager.h"
 #include "../System/SceneManager.h"
 
+#include "../HUD/GuiButton.h"
+
+#include "../HUD/ButtonFunctions.h"
+
 #include <glm/gtx/matrix_decompose.hpp>
 
 Editor::Editor(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::shared_ptr<Prefab>>& prefabsref_puzzle) : prefabs(prefabsref), puzzle_prefabs(prefabsref_puzzle) {
@@ -1154,29 +1158,29 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
         }
         ImGui::PopItemWidth();
 
-		ImGui::Separator();
+        ImGui::Separator();
 
-		ImGui::Text("Tag: ");
-		ImGui::SameLine();
+        ImGui::Text("Tag: ");
+        ImGui::SameLine();
 
-		std::vector<const char*> items;
+        std::vector<const char*> items;
 
         int current_tag = 0, i = 0;
 
         for (auto& s : TagLayerManager::Instance().getTags()) {
-            
-			items.push_back(s->name.c_str());
-			if (preview_node->getTagName() == s->name) {
-				current_tag = i;
-			}
+
+            items.push_back(s->name.c_str());
+            if (preview_node->getTagName() == s->name) {
+                current_tag = i;
+            }
             i++;
         }
 
         if (ImGui::Combo("Tag", &current_tag, items.data(), items.size())) {
-			preview_node->setTag(TagLayerManager::Instance().getTag(items[current_tag]));
+            preview_node->setTag(TagLayerManager::Instance().getTag(items[current_tag]));
         }
 
-		items.clear();
+        items.clear();
 
         current_tag = 0, i = 0;
 
@@ -1193,7 +1197,7 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
             preview_node->setLayer(TagLayerManager::Instance().getLayer(items[current_tag]));
         }
 
-		ImGui::Separator();
+        ImGui::Separator();
 
         if (dynamic_cast<Light*>(preview_node)) {
 
@@ -1255,7 +1259,7 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
         ImGui::Separator();
 
-		ImGui::Text("Physical Collider: ");
+        ImGui::Text("Physical Collider: ");
 
         ImGui::Checkbox("Change AABB: ", &AABB_changing);
 
@@ -1301,20 +1305,20 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
         }
         preview_node->forceUpdateSelfAndChild();
-		ImGui::Separator();
+        ImGui::Separator();
 
         if (!AABB_changing) {
-			local_point = nullptr;
+            local_point = nullptr;
         }
 
         for (auto component = preview_node->components.begin(); component != preview_node->components.end(); ) {
-            
+
             ImGui::Text((*component)->name.c_str());
 
             ImGui::SameLine();
-			ImGui::PushID((*component)->name.c_str());
+            ImGui::PushID((*component)->name.c_str());
             if (ImGui::Button("-")) {
-                
+
                 preview_node->deleteComponent(component);
                 component = preview_node->components.begin();
             }
@@ -1376,7 +1380,7 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
                             std::string combo_id = "##NodeCombo_" + field->name;
 
-                            if (ImGui::BeginCombo(combo_id.c_str() , (*n) ? (*n)->getName().c_str() : "brak")) {
+                            if (ImGui::BeginCombo(combo_id.c_str(), (*n) ? (*n)->getName().c_str() : "brak")) {
 
                                 bool is_none_selected = (*n == nullptr);
                                 if (ImGui::Selectable("<brak>", is_none_selected)) {
@@ -1403,11 +1407,11 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                     }
 
 
-                
+
                 }
                 else if (component->get()->name == "Rigidbody") {
-					Rigidbody* rb = dynamic_cast<Rigidbody*>(component->get());
-                    
+                    Rigidbody* rb = dynamic_cast<Rigidbody*>(component->get());
+
                     int depth = 10.f;
 
                     // Mass
@@ -1415,62 +1419,62 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                     ImVec2 fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
 
                     ImGui::SetCursorScreenPos(fieldPos);
-					ImGui::Text("Mass: ");
-					ImGui::SameLine();
-					ImGui::DragFloat("##mass", &rb->mass, 0.1f);
+                    ImGui::Text("Mass: ");
+                    ImGui::SameLine();
+                    ImGui::DragFloat("##mass", &rb->mass, 0.1f);
 
                     // Gravity
                     cursorPos = ImGui::GetCursorScreenPos();
                     fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
 
                     ImGui::SetCursorScreenPos(fieldPos);
-					ImGui::Text("Gravity: ");
-					ImGui::SameLine();
-					ImGui::DragFloat("##gravity", &rb->gravity, 0.1f);
+                    ImGui::Text("Gravity: ");
+                    ImGui::SameLine();
+                    ImGui::DragFloat("##gravity", &rb->gravity, 0.1f);
 
                     // Static
                     cursorPos = ImGui::GetCursorScreenPos();
                     fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
                     ImGui::SetCursorScreenPos(fieldPos);
-					ImGui::Text("Static: ");
-					ImGui::SameLine();
-					ImGui::Checkbox("##static", &rb->is_static);
+                    ImGui::Text("Static: ");
+                    ImGui::SameLine();
+                    ImGui::Checkbox("##static", &rb->is_static);
 
                     // Lock position X
-					cursorPos = ImGui::GetCursorScreenPos();
-					fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-					ImGui::SetCursorScreenPos(fieldPos);
-					ImGui::Text("Lock position X: ");
-					ImGui::SameLine();
-					ImGui::Checkbox("##lockPositionX", &rb->lockPositionX);
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(fieldPos);
+                    ImGui::Text("Lock position X: ");
+                    ImGui::SameLine();
+                    ImGui::Checkbox("##lockPositionX", &rb->lockPositionX);
 
-					// Lock position Y
-					cursorPos = ImGui::GetCursorScreenPos();
-					fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-					ImGui::SetCursorScreenPos(fieldPos);
-					ImGui::Text("Lock position Y: ");
-					ImGui::SameLine();
-					ImGui::Checkbox("##lockPositionY", &rb->lockPositionY);
+                    // Lock position Y
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(fieldPos);
+                    ImGui::Text("Lock position Y: ");
+                    ImGui::SameLine();
+                    ImGui::Checkbox("##lockPositionY", &rb->lockPositionY);
 
-					// Lock position Z
-					cursorPos = ImGui::GetCursorScreenPos();
-					fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-					ImGui::SetCursorScreenPos(fieldPos);
-					ImGui::Text("Lock position Z: ");
-					ImGui::SameLine();
-					ImGui::Checkbox("##lockPositionZ", &rb->lockPositionZ);   
+                    // Lock position Z
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    fieldPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(fieldPos);
+                    ImGui::Text("Lock position Z: ");
+                    ImGui::SameLine();
+                    ImGui::Checkbox("##lockPositionZ", &rb->lockPositionZ);
                 }
 
 
-                
+
             }
             if (component != preview_node->components.end()) {
                 ++component;
             }
-            
+
             ImGui::PopID();
 
-            
+
 
         }
 
@@ -1505,9 +1509,11 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
         std::vector<const char*> items;
         std::vector<const char*> sprites;
         std::vector<const char*> texts;
+        std::vector<const char*> functions;
 
         items.push_back("Text");
         items.push_back("Sprite");
+        items.push_back("Button");
 
         ImGui::Combo("Choose object type: ", &text_sprite, items.data(), items.size());
 
@@ -1520,7 +1526,11 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
         for (auto& o : _s) {
             sprites.push_back(o.second->name.c_str());
         }
-        
+		//functions.push_back("None");
+        for (const auto& pair : FunctionRegister::Instance().functionMap) {
+            functions.push_back(pair.first.c_str());
+        }
+
         if (text_sprite == 0) { //Text
 
 
@@ -1537,12 +1547,10 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
             ImGui::InputText("Text value ", UI_text, 256);
 
             if (ImGui::Button("ADD Text")) {
-                GuiManager::Instance().text(string(UI_text), pos_x, pos_y, (Text_names) text_id, color, order_id);
+                GuiManager::Instance().text(string(UI_text), pos_x, pos_y, (Text_names)text_id, color, order_id);
             }
         }
-        else { //Sprite
-
-
+        else if (text_sprite == 1) { //Sprite
             ImGui::Combo("Choose font and size: ", &sprite_id, sprites.data(), sprites.size());
             ImGui::DragFloat("Pos x ", &pos_x);
             ImGui::DragFloat("Pos y ", &pos_y);
@@ -1553,301 +1561,404 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
                 GuiManager::Instance().sprite(pos_x, pos_y, size, (Sprite_names)sprite_id, order_id);
             }
         }
-        ImGui::Separator();
-        
-        auto& objects = GuiManager::Instance().getObjects();
+            else { //Button
+                ImGui::Combo("Choose sprite: ", &sprite_id, sprites.data(), sprites.size());
+                ImGui::Combo("Choose sprite hovered: ", &sprite_id_hovered, sprites.data(), sprites.size());
+                ImGui::Combo("Choose font and size: ", &text_id, texts.data(), texts.size());
+                ImGui::DragFloat("Pos x ", &pos_x);
+                ImGui::DragFloat("Pos y ", &pos_y);
+                ImGui::DragFloat("Width ", &wid);
+                ImGui::DragFloat("Height ", &hei);
+                ImGui::InputText("Text value ", UI_text, 256);
+                ImGui::DragInt("Order id ", &order_id, 1, 0, 1000);
 
-        float before = -1, depth = 20.f;
-        int _size = objects.size();
-        for (int i = 0; i < _size; i++) {
-            ImGui::PushID(i);
+                if (ImGui::Button("ADD Button")) {
+                    GuiManager::Instance().button(pos_x, pos_y, wid, hei, string(UI_text), (Text_names)text_id,
+                        (Sprite_names)sprite_id, (Sprite_names)sprite_id_hovered, order_id);
 
-            if (objects[i]->order_id > before) {
-                ImGui::Text(("Layer " + std::to_string(objects[i]->order_id)).c_str());
-                before = objects[i]->order_id;
+                }
             }
-
-            ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-            ImVec2 itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-            ImGui::SetCursorScreenPos(itemPos);
-
-            if (objects[i]->getType() == TextType) {
-                TextObject* t = static_cast<TextObject*>(objects[i]);
-                ImGui::Text(("ID: " + std::to_string(t->id) + " : Text").c_str());
-
-                ImGui::SameLine();
-                if (ImGui::SmallButton("Delete")) {
-                    GuiManager::Instance().deleteText(t->id);
-                    i--;
-                    _size--;
-                    ImGui::PopID();
-                    continue;
-                }
-                
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-                int index = t->text_id, order_index = t->order_id;
-                glm::vec2 pos = t->pos;
-                if (ImGui::Combo("Font and size: ", &index, texts.data(), texts.size())) {
-                    t->text_id = index;
-                    t->text = GuiManager::Instance().getText()[index];
-                }
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-                
-                int currentSelection = t->alignment, prev = t->alignment; 
-                bool changed = false;
-                const char* labels[3] = { "LEFT", "CENTER", "RIGHT" };
-
-                for (int i = 0; i < 3; ++i) {
-                    if (i > 0)
-                        ImGui::SameLine();
-
-                    if (i == currentSelection) {
-                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 1.0f, 1.0f));
-                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.8f, 1.0f, 1.0f));
-                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.6f, 0.9f, 1.0f));
-                    }
-
-                    if (ImGui::Button(labels[i])) {
-
-                        
-
-                        currentSelection = i;
-						changed = true;
-                        if (prev == i) changed = false;
-                    }
-
-                    if (i == currentSelection && !changed)
-                        ImGui::PopStyleColor(3);
-                }
-
-                t->alignment = currentSelection;
-                
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-				ImGui::Checkbox("Visible ", &t->visible);
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-                ImGui::DragFloat("Pos x ", &pos.x);
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-                ImGui::DragFloat("Pos y ", &pos.y);
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-                ImGui::InputInt("Order id ", &order_index);
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-                float colors[3] = { t->color.x, t->color.y, t->color.z };
-                if (ImGui::ColorEdit3("Text Color ", colors)) {
-                    t->color.x = colors[0];
-                    t->color.y = colors[1];
-                    t->color.z = colors[2];
-                }
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-                char value[256];
-                strncpy_s(value, t->value.c_str(), sizeof(value));
-                value[sizeof(value) - 1] = '\0';
-                ImGui::InputText("Text value ", value, 256);
-
-                t->value = string(value);
-                t->pos = pos;
-                t->order_id = order_index;
-            }
-            else {
-                SpriteObject* s = static_cast<SpriteObject*>(objects[i]);
-                ImGui::Text(("ID: " + std::to_string(s->id) + " : Sprite").c_str());
-
-                ImGui::SameLine();
-                if (ImGui::SmallButton("Delete")) {
-                    GuiManager::Instance().deleteSprite(s->id);
-                    i--;
-                    _size--;
-                    ImGui::PopID();
-                    continue;
-                }
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-                int index = s->sprite_id, order_index = s->order_id;
-                glm::vec2 pos = s->pos;
-                float size_s = s->size;
-                if (ImGui::Combo("Sprite: ", &index, sprites.data(), sprites.size())) {
-                    s->sprite_id = index;
-                    s->sprite = GuiManager::Instance().getSprites()[index];
-                }
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-                ImGui::Checkbox("Visible ", &s->visible);
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-
-                ImGui::DragFloat("Pos x ", &pos.x);
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-                ImGui::DragFloat("Pos y ", &pos.y);
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-                ImGui::InputInt("Order id ", &order_index);
-
-                cursorPos = ImGui::GetCursorScreenPos();
-                itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
-                ImGui::SetCursorScreenPos(itemPos);
-
-                ImGui::DragFloat("Size ", &size_s, 1.f, 0.001f, 100.f);
-
-                s->size = size_s;
-                s->pos = pos;
-                s->order_id = order_index;
-            }
-
-            ImGui::PopID();
-            ImGui::Separator();
-        }
-
-        //ImGui::Separator();
-        ImGui::Text("POSTPROCESS");
-
-        ImGui::Checkbox("Post-Process Enable/Disable", &postProcessData.is_post_process);
-        
-        if (postProcessData.is_post_process) {
-
             ImGui::Separator();
 
-            ImGui::Checkbox("SSAO Enable/Disable", &postProcessData.is_ssao);
+            auto& objects = GuiManager::Instance().getObjects();
 
-            if (postProcessData.is_ssao) {
+            float before = -1, depth = 20.f;
+            int _size = objects.size();
+            for (int i = 0; i < _size; i++) {
+                ImGui::PushID(i);
 
+                if (objects[i]->order_id > before) {
+                    ImGui::Text(("Layer " + std::to_string(objects[i]->order_id)).c_str());
+                    before = objects[i]->order_id;
+                }
+
+                ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+                ImVec2 itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                ImGui::SetCursorScreenPos(itemPos);
+
+                if (objects[i]->getType() == TextType) {
+                    TextObject* t = static_cast<TextObject*>(objects[i]);
+                    ImGui::Text(("ID: " + std::to_string(t->id) + " : Text").c_str());
+
+                    ImGui::SameLine();
+                    if (ImGui::SmallButton("Delete")) {
+                        GuiManager::Instance().deleteText(t->id);
+                        i--;
+                        _size--;
+                        ImGui::PopID();
+                        continue;
+                    }
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+                    int index = t->text_id, order_index = t->order_id;
+                    glm::vec2 pos = t->pos;
+                    if (ImGui::Combo("Font and size: ", &index, texts.data(), texts.size())) {
+                        t->text_id = index;
+                        t->text = GuiManager::Instance().getText()[index];
+                    }
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    int currentSelection = t->alignment, prev = t->alignment;
+                    bool changed = false;
+                    const char* labels[3] = { "LEFT", "CENTER", "RIGHT" };
+
+                    for (int i = 0; i < 3; ++i) {
+                        if (i > 0)
+                            ImGui::SameLine();
+
+                        if (i == currentSelection) {
+                            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 1.0f, 1.0f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.8f, 1.0f, 1.0f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.6f, 0.9f, 1.0f));
+                        }
+
+                        if (ImGui::Button(labels[i])) {
+
+
+
+                            currentSelection = i;
+                            changed = true;
+                            if (prev == i) changed = false;
+                        }
+
+                        if (i == currentSelection && !changed)
+                            ImGui::PopStyleColor(3);
+                    }
+
+                    t->alignment = currentSelection;
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::Checkbox("Visible ", &t->visible);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::DragFloat("Pos x ", &pos.x);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::DragFloat("Pos y ", &pos.y);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::InputInt("Order id ", &order_index);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    float colors[3] = { t->color.x, t->color.y, t->color.z };
+                    if (ImGui::ColorEdit3("Text Color ", colors)) {
+                        t->color.x = colors[0];
+                        t->color.y = colors[1];
+                        t->color.z = colors[2];
+                    }
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    char value[256];
+                    strncpy_s(value, t->value.c_str(), sizeof(value));
+                    value[sizeof(value) - 1] = '\0';
+                    ImGui::InputText("Text value ", value, 256);
+
+                    t->value = string(value);
+                    t->pos = pos;
+                    t->order_id = order_index;
+                }
+                else if (objects[i]->getType() == SpriteType) {
+                    SpriteObject* s = static_cast<SpriteObject*>(objects[i]);
+                    ImGui::Text(("ID: " + std::to_string(s->id) + " : Sprite").c_str());
+
+                    ImGui::SameLine();
+                    if (ImGui::SmallButton("Delete")) {
+                        GuiManager::Instance().deleteSprite(s->id);
+                        i--;
+                        _size--;
+                        ImGui::PopID();
+                        continue;
+                    }
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+                    int index = s->sprite_id, order_index = s->order_id;
+                    glm::vec2 pos = s->pos;
+                    float size_s = s->size;
+                    if (ImGui::Combo("Sprite: ", &index, sprites.data(), sprites.size())) {
+                        s->sprite_id = index;
+                        s->sprite = GuiManager::Instance().getSprites()[index];
+                    }
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::Checkbox("Visible ", &s->visible);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+
+                    ImGui::DragFloat("Pos x ", &pos.x);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::DragFloat("Pos y ", &pos.y);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::InputInt("Order id ", &order_index);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::DragFloat("Size ", &size_s, 1.f, 0.001f, 100.f);
+
+                    s->size = size_s;
+                    s->pos = pos;
+                    s->order_id = order_index;
+                }
+                else {
+                    ButtonObject* b = static_cast<ButtonObject*>(objects[i]);
+                    ImGui::Text(("ID: " + std::to_string(b->id) + " : Button").c_str());
+
+                    ImGui::SameLine();
+                    if (ImGui::SmallButton("Delete")) {
+                        GuiManager::Instance().deleteButton(b->id);
+                        i--;
+                        _size--;
+                        ImGui::PopID();
+                        continue;
+                    }
+                    int order_index = b->order_id;
+                    glm::vec2 pos = b->pos;
+                    float _w = b->button->w, _h = b->button->h;
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+
+                    ImGui::Checkbox("Visible ", &b->visible);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::Checkbox("Invincible ", &b->button->is_invincible);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::DragFloat("Pos x ", &pos.x);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::DragFloat("Pos y ", &pos.y);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+
+                    ImGui::DragFloat("Width ", &_w);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::DragFloat("Heigh ", &_h);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    ImGui::InputInt("Order id ", &order_index);
+
+                    cursorPos = ImGui::GetCursorScreenPos();
+                    itemPos = ImVec2(cursorPos.x + depth, cursorPos.y);
+                    ImGui::SetCursorScreenPos(itemPos);
+
+                    char value[256];
+                    strncpy_s(value, b->button->text_object->value.c_str(), sizeof(value));
+                    value[sizeof(value) - 1] = '\0';
+                    ImGui::InputText("Text value ", value, 256);
+
+                    b->button->text_object->value = string(value);
+
+                    if (ImGui::Combo("Choose function: ", &fun_id, functions.data(), functions.size())) {
+                        //if (fun_id > 0) {
+                            b->attach(FunctionRegister::Instance().functionMap[std::string(functions[fun_id])], std::string(functions[fun_id]));
+                        //}
+                        //else {
+                          //  b->button->on_click = nullptr;
+                            //b->button->fun_name = "";
+                       // }
+                    }
+
+
+                    b->pos = pos;
+                    b->button->setParams(pos.x, pos.y, _w, _h);
+                    b->order_id = order_index;
+                }
+
+                ImGui::PopID();
                 ImGui::Separator();
-
-                ImGui::Text("SSAO Kernel Samples:");
-                if (ImGui::RadioButton("16", postProcessData.ssao_kernel_samples == 16)) postProcessData.ssao_kernel_samples = 16;
-                if (ImGui::RadioButton("32", postProcessData.ssao_kernel_samples == 32)) postProcessData.ssao_kernel_samples = 32;
-                if (ImGui::RadioButton("64", postProcessData.ssao_kernel_samples == 64)) postProcessData.ssao_kernel_samples = 64;
-                if (ImGui::RadioButton("128", postProcessData.ssao_kernel_samples == 128)) postProcessData.ssao_kernel_samples = 128;
-
-                ImGui::SliderFloat("SSAO Radius", &postProcessData.ssao_radius, 0.01f, 5.0f, "%.2f");
-
-                ImGui::SliderFloat("SSAO Bias", &postProcessData.ssao_bias, 0.001f, 0.5f, "%.3f");
-
-                ImGui::SliderFloat("SSAO Intensity", &postProcessData.ssao_intensity, 0.0f, 5.0f, "%.1f");
-
-                ImGui::SliderFloat("SSAO Noise Scale X", &postProcessData.ssao_noise_scale.x, 0.1f, 1000.0f, "%.1f");
-                ImGui::SliderFloat("SSAO Noise Scale Y", &postProcessData.ssao_noise_scale.y, 0.1f, 1000.0f, "%.1f");
-
-                ImGui::Separator();
-
             }
+        
+            //ImGui::Separator();
+            ImGui::Text("POSTPROCESS");
 
-            ImGui::Checkbox("Bloom Enable/Disable", &postProcessData.is_bloom);
+            ImGui::Checkbox("Post-Process Enable/Disable", &postProcessData.is_post_process);
 
-            if (postProcessData.is_bloom) {
-
-                ImGui::Separator();
-
-                ImGui::SliderFloat("Bloom Treshold", &postProcessData.bloom_treshold, 0.0f, 1.0f, "%.2f");
-
-                ImGui::Separator();
-
-            }
-
-            ImGui::Checkbox("Rewind Enable/Disable", &postProcessData.is_rewind);
-
-            if (postProcessData.is_rewind) {
-            
-                ImGui::Separator();
-
-                ImGui::SliderFloat("Rewind Noise Alpha", &postProcessData.rewind_noise_alpha, 0.0f, 1.0f, "%.2f");
-
-                ImGui::SliderFloat("Rewind Band Speed", &postProcessData.rewind_band_speed, 0.01f, 15.0f, "%.3f");
-
-                ImGui::SliderInt("Rewind Band Amount", &postProcessData.rewind_band_amount, 1, 20);
-                
-                ImGui::SliderFloat("Rewind Band Thickness", &postProcessData.rewind_band_thicc, 0.01f, 0.1f, "%.3f");
-
-                ImGui::SliderFloat("Rewind Ripple Frequency", &postProcessData.rewind_ripple_frequency, 1.0f, 50.0f, "%.2f");
-
-                ImGui::SliderFloat("Rewind Ripple Amplitude", &postProcessData.rewind_ripple_amplitude, 0.0001f, 0.01f, "%.4f");
-                
-                ImGui::SliderFloat("Rewind Ripple Speed", &postProcessData.rewind_ripple_speed, 0.1f, 3.0f, "%.2f");
+            if (postProcessData.is_post_process) {
 
                 ImGui::Separator();
 
-            }
+                ImGui::Checkbox("SSAO Enable/Disable", &postProcessData.is_ssao);
 
-            ImGui::Checkbox("CRT Enable/Disable", &postProcessData.is_crt_curved);
+                if (postProcessData.is_ssao) {
 
-            if (postProcessData.is_crt_curved) {
+                    ImGui::Separator();
 
-                ImGui::Separator();
+                    ImGui::Text("SSAO Kernel Samples:");
+                    if (ImGui::RadioButton("16", postProcessData.ssao_kernel_samples == 16)) postProcessData.ssao_kernel_samples = 16;
+                    if (ImGui::RadioButton("32", postProcessData.ssao_kernel_samples == 32)) postProcessData.ssao_kernel_samples = 32;
+                    if (ImGui::RadioButton("64", postProcessData.ssao_kernel_samples == 64)) postProcessData.ssao_kernel_samples = 64;
+                    if (ImGui::RadioButton("128", postProcessData.ssao_kernel_samples == 128)) postProcessData.ssao_kernel_samples = 128;
 
-                ImGui::Text("CRT Curvature:");
-                ImGui::DragFloat("X", &postProcessData.crt_curvature.x, 0.1f, 1.0f, 15.0f, "%.1f");
-                ImGui::DragFloat("Y", &postProcessData.crt_curvature.y, 0.1f, 1.0f, 10.0f, "%.1f");
+                    ImGui::SliderFloat("SSAO Radius", &postProcessData.ssao_radius, 0.01f, 5.0f, "%.2f");
 
-                ImGui::ColorEdit3("CRT Outline", glm::value_ptr(postProcessData.crt_outline_color));
+                    ImGui::SliderFloat("SSAO Bias", &postProcessData.ssao_bias, 0.001f, 0.5f, "%.3f");
 
-                ImGui::Separator();
+                    ImGui::SliderFloat("SSAO Intensity", &postProcessData.ssao_intensity, 0.0f, 5.0f, "%.1f");
 
-                ImGui::Text("CRT Lines:");
-                ImGui::DragFloat("X Resolution", &postProcessData.crt_screen_resolution.x, 1.0f, 0.0f, 1000.0f, "%.1f");
-                ImGui::DragFloat("Y Resolution", &postProcessData.crt_screen_resolution.y, 1.0f, 0.0f, 1000.0f, "%.1f");
+                    ImGui::SliderFloat("SSAO Noise Scale X", &postProcessData.ssao_noise_scale.x, 0.1f, 1000.0f, "%.1f");
+                    ImGui::SliderFloat("SSAO Noise Scale Y", &postProcessData.ssao_noise_scale.y, 0.1f, 1000.0f, "%.1f");
 
-                ImGui::DragFloat("X Factor", &postProcessData.crt_lines_sinusoid_factor.x, 0.1f, 0.01f, 3.0f, "%.2f");
-                ImGui::DragFloat("Y Factor", &postProcessData.crt_lines_sinusoid_factor.y, 0.1f, 0.01f, 3.0f, "%.2f");
+                    ImGui::Separator();
 
-                ImGui::Separator();
+                }
 
-                ImGui::Text("Vignette:");
+                ImGui::Checkbox("Bloom Enable/Disable", &postProcessData.is_bloom);
 
-                ImGui::DragFloat("X Radius", &postProcessData.crt_vignette_radius, 1.0f, 0.0f, 1000.0f, "%.1f");
+                if (postProcessData.is_bloom) {
 
-                ImGui::DragFloat("Power Factor", &postProcessData.crt_vignette_factor, 0.1f, 0.01f, 6.0f, "%.2f");
+                    ImGui::Separator();
 
-                ImGui::Separator();
+                    ImGui::SliderFloat("Bloom Treshold", &postProcessData.bloom_treshold, 0.0f, 1.0f, "%.2f");
 
-                ImGui::ColorEdit3("CRT Brightness", glm::value_ptr(postProcessData.crt_brightness));
+                    ImGui::Separator();
 
+                }
+
+                ImGui::Checkbox("Rewind Enable/Disable", &postProcessData.is_rewind);
+
+                if (postProcessData.is_rewind) {
+
+                    ImGui::Separator();
+
+                    ImGui::SliderFloat("Rewind Noise Alpha", &postProcessData.rewind_noise_alpha, 0.0f, 1.0f, "%.2f");
+
+                    ImGui::SliderFloat("Rewind Band Speed", &postProcessData.rewind_band_speed, 0.01f, 15.0f, "%.3f");
+
+                    ImGui::SliderInt("Rewind Band Amount", &postProcessData.rewind_band_amount, 1, 20);
+
+                    ImGui::SliderFloat("Rewind Band Thickness", &postProcessData.rewind_band_thicc, 0.01f, 0.1f, "%.3f");
+
+                    ImGui::SliderFloat("Rewind Ripple Frequency", &postProcessData.rewind_ripple_frequency, 1.0f, 50.0f, "%.2f");
+
+                    ImGui::SliderFloat("Rewind Ripple Amplitude", &postProcessData.rewind_ripple_amplitude, 0.0001f, 0.01f, "%.4f");
+
+                    ImGui::SliderFloat("Rewind Ripple Speed", &postProcessData.rewind_ripple_speed, 0.1f, 3.0f, "%.2f");
+
+                    ImGui::Separator();
+
+                }
+
+                ImGui::Checkbox("CRT Enable/Disable", &postProcessData.is_crt_curved);
+
+                if (postProcessData.is_crt_curved) {
+
+                    ImGui::Separator();
+
+                    ImGui::Text("CRT Curvature:");
+                    ImGui::DragFloat("X", &postProcessData.crt_curvature.x, 0.1f, 1.0f, 15.0f, "%.1f");
+                    ImGui::DragFloat("Y", &postProcessData.crt_curvature.y, 0.1f, 1.0f, 10.0f, "%.1f");
+
+                    ImGui::ColorEdit3("CRT Outline", glm::value_ptr(postProcessData.crt_outline_color));
+
+                    ImGui::Separator();
+
+                    ImGui::Text("CRT Lines:");
+                    ImGui::DragFloat("X Resolution", &postProcessData.crt_screen_resolution.x, 1.0f, 0.0f, 1000.0f, "%.1f");
+                    ImGui::DragFloat("Y Resolution", &postProcessData.crt_screen_resolution.y, 1.0f, 0.0f, 1000.0f, "%.1f");
+
+                    ImGui::DragFloat("X Factor", &postProcessData.crt_lines_sinusoid_factor.x, 0.1f, 0.01f, 3.0f, "%.2f");
+                    ImGui::DragFloat("Y Factor", &postProcessData.crt_lines_sinusoid_factor.y, 0.1f, 0.01f, 3.0f, "%.2f");
+
+                    ImGui::Separator();
+
+                    ImGui::Text("Vignette:");
+
+                    ImGui::DragFloat("X Radius", &postProcessData.crt_vignette_radius, 1.0f, 0.0f, 1000.0f, "%.1f");
+
+                    ImGui::DragFloat("Power Factor", &postProcessData.crt_vignette_factor, 0.1f, 0.01f, 6.0f, "%.2f");
+
+                    ImGui::Separator();
+
+                    ImGui::ColorEdit3("CRT Brightness", glm::value_ptr(postProcessData.crt_brightness));
+
+                }
             }
         }
+
+        ImGui::End();
+
     }
 
-    ImGui::End();
-
-}
 
 void Editor::init()
 {
@@ -1948,8 +2059,7 @@ void Editor::init()
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
-    ResourceManager::Instance().shader_tile->use();
-    ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
+
 
     //emitter = dynamic_cast<ParticleEmitter*>(editor_sceneGraph->root->getChildByName("ParticleEmitter"));
 }
@@ -2113,7 +2223,8 @@ void Editor::update(float deltaTime) {
     camera->ProcessKeyboard(deltaTime, direction);
 
     LineManager::Instance().clearLines();
-    GuiManager::Instance().update(ServiceLocator::getWindow()->deltaTime);
+
+    //GuiManager::Instance().update(ServiceLocator::getWindow()->deltaTime);
 
     // Scena
     sceneGraph->update(deltaTime);

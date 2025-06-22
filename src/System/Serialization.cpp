@@ -12,6 +12,9 @@
 #include "../System/Rigidbody.h"
 #include "../System/Tag.h"
 #include "../System/GuiManager.h"
+#include "../HUD/GuiButton.h"
+#include "../HUD/ButtonFunctions.h"
+
 
 //using namespace std;
 std::vector<std::pair<Node*, std::pair<std::string, std::string>>> script_nodes;
@@ -52,7 +55,7 @@ int saveScene(const std::string& filename, SceneGraph*& scene) {
 			object["size"] = s->size;
 			object["visible"] = s->visible;
 		}
-		else {
+		else if (o->getType() == TextType) {
 			TextObject* t = static_cast<TextObject*>(o);
 			object["type"] = "text";
 			object["ptr_id"] = t->text_id;
@@ -63,6 +66,22 @@ int saveScene(const std::string& filename, SceneGraph*& scene) {
 			object["color"] = vec3_to_json(t->color);
 			object["visible"] = t->visible;
 			object["alignment"] = t->alignment;
+		}
+		else {
+			ButtonObject* b = static_cast<ButtonObject*>(o);
+			object["type"] = "button";
+			object["ptr_id"] = b->button->sprite_base->sprite_id; // id sprite'u z gui manager
+			object["hovered_ptr_id"] = b->button->sprite_hovered->sprite_id; // id sprite'u z gui manager
+			object["text_ptr_id"] = b->button->text_object->text_id; // id textu z gui manager
+			object["id"] = b->id;
+			object["x"] = b->pos.x;
+			object["y"] = b->pos.y;
+			object["width"] = b->button->w;
+			object["height"] = b->button->h;
+			object["text_value"] = b->button->text_object->value;
+			object["visible"] = b->visible;
+			object["is_invincible"] = b->button->is_invincible;
+			object["on_click"] = b->button->fun_name;
 		}
 		objects.push_back(object);
 	}
@@ -333,7 +352,7 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 						visible = object["visible"];
 					GuiManager::Instance().sprite(x, y, size, (Sprite_names) obj_id, order, id, visible);
 				}
-				else {
+				else if (object["type"] == "text") {
 					int obj_id = object["ptr_id"];
 					unsigned int id = object["id"];
 					float x = object["x"], y = object["y"];
@@ -348,6 +367,31 @@ int loadScene(const std::string& filename, SceneGraph*& scene, std::vector<std::
 					std::string val = object["value"];
 					glm::vec3 col = json_to_vec3(object["color"]);
 					GuiManager::Instance().text(val, x, y, (Text_names)obj_id, col, order, id, visible, alignment);
+				} else {
+					int obj_id = object["ptr_id"];
+					int hovered_obj_id = object["hovered_ptr_id"];
+					int text_obj_id = object["text_ptr_id"];
+					unsigned int id = object["id"];
+					float x = object["x"], y = object["y"];
+					float width = object["width"];
+					float height = object["height"];
+					std::string text_value = object["text_value"];
+					bool visible = true;
+					if (object.contains("visible"))
+						visible = object["visible"];
+					bool is_invincible = false;
+					if (object.contains("is_invincible")) {
+						is_invincible = object["is_invincible"];
+					}
+					std::string on_click = object["on_click"];
+				
+
+					GuiManager::Instance().button(x, y, width, height, text_value, (Text_names)text_obj_id,
+						(Sprite_names)obj_id, (Sprite_names)hovered_obj_id, order, id, visible);
+					ButtonObject* buttonObj = GuiManager::Instance().findButton(id);
+					buttonObj->button->is_invincible = is_invincible;
+					std::function<void()> on_click_func = FunctionRegister::Instance().functionMap[on_click];
+					buttonObj->attach(on_click_func, on_click);
 				}
 				
 			}

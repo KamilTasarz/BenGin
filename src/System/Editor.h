@@ -64,11 +64,11 @@ private:
 	glm::vec3 edit_camera_pos;
 	glm::vec3 color = { 0.f, 0.f, 0.f };
 
-	float mass = 1.f, gravity = 1.f, pos_x = 0.f, pos_y = 0.f, size = 1.f;
+	float mass = 1.f, gravity = 1.f, pos_x = 0.f, pos_y = 0.f, size = 1.f, wid = 100.f, hei = 100.f;
 
 	
 	int current_prefab = 0, current_puzzle = 0, current_opt1 = 0, current_opt2 = 0, direction = 0, prefab_inst_to_add = 0, 
-		prefab_to_duplicate = 0, puzzle_inst_to_add = 0, puzzle_to_duplicate = 0, text_sprite = 0, text_id = 0, sprite_id = 0, order_id = 0;
+		prefab_to_duplicate = 0, puzzle_inst_to_add = 0, puzzle_to_duplicate = 0, text_sprite = 0, fun_id = 0, text_id = 0, sprite_id = 0, sprite_id_hovered = 0, order_id = 0;
 	int current_component = 0, current_script = 0;
 
 	//std::vector<BoundingBox*> colliders;

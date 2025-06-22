@@ -34,10 +34,14 @@ void GameManager::Init(SceneGraph* scene_graph)
 {
 
     playerSpawner = scene_graph->root->getChildByTag("PlayerSpawner");
-    levelGenerator = scene_graph->root->getChildByTag("LevelGenerator")->getComponent<LevelGenerator>();
-    emitter = dynamic_cast<InstanceManager*>(scene_graph->root->getChildByTag("Emitter"));
-    uiManager = scene_graph->root->getChildByTag("UIManager")->getComponent<UIManager>();
+    if (scene_graph->root->getChildByTag("LevelGenerator")) {
+        levelGenerator = scene_graph->root->getChildByTag("LevelGenerator")->getComponent<LevelGenerator>();
+    }
 
+    emitter = dynamic_cast<InstanceManager*>(scene_graph->root->getChildByTag("Emitter"));
+    if (scene_graph->root->getChildByTag("UIManager")) {
+       uiManager = scene_graph->root->getChildByTag("UIManager")->getComponent<UIManager>();
+    }
 	runTime = 0.f;
 	score = 0.f;
 	deathCount = 0;
@@ -47,6 +51,7 @@ void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
 {
 	//isRewinding = uiManager->isRewinding;
 	//historyEmpty = uiManager->rewindable->history.empty();
+	if (!emitter) return;
 
     if (!tutorialActive && !isRewinding) {
         runTime += deltaTime;
@@ -104,6 +109,8 @@ void GameManager::RemoveThisPlayer(Node* player)
 }
 
 void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
+	if (!emitter) return;
+
     int index = emitter->tail - 1;
 
     glm::vec3 spawnerPos = playerSpawner->transform.getGlobalPosition();

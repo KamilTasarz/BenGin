@@ -44,6 +44,9 @@ void Engine::init()
 	//editor->init();
 
 	camera->setAABB();
+
+	ResourceManager::Instance().shader_tile->use();
+	ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
 }
 
 void Engine::run()
