@@ -669,13 +669,17 @@ void Game::run()
 
         input();
 
-        float t4 = glfwGetTime();
-        //cout << "Input time" << t4 - t3 << endl;
-        
-        update(ServiceLocator::getWindow()->deltaTime);
+        if (!SceneManager::Instance().isSwitched()) {
 
-        draw();
-     
+            float t4 = glfwGetTime();
+            //cout << "Input time" << t4 - t3 << endl;
+
+            update(ServiceLocator::getWindow()->deltaTime);
+
+            draw();
+            //float t5 = glfwGetTime();
+
+        }
         float t = glfwGetTime();
 
         ServiceLocator::getWindow()->updateWindow();

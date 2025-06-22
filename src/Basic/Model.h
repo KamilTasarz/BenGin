@@ -120,7 +120,7 @@ public:
         for (unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shader);
     }
-
+    void Draw(Shader& shader, std::vector<unsigned int> texture);
 };
 
 inline unsigned int textureFromFile(const char* full_path, bool gamma) {

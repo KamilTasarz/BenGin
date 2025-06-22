@@ -1,5 +1,7 @@
 ﻿#include "Model.h"
 #include "Animation.h"
+#include "Mesh.h"
+#include "../ResourceManager.h"
 
 void Model::loadModel(string const& path)
 {
@@ -563,4 +565,16 @@ Animation* Model::getAnimationByName(std::string name)
         if (a->name == name) return a;
     }
     return nullptr;
+}
+
+void Model::Draw(Shader& shader, std::vector<unsigned int> texture)
+{
+
+    std::vector<std::shared_ptr<Texture>> textures;
+
+    for (int i = 0; i < texture.size(); i++) {
+	    textures.push_back(ResourceManager::Instance().getTexture(texture[i]));
+    }
+    for (unsigned int i = 0; i < meshes.size(); i++)
+        meshes[i].Draw(shader, textures);
 }

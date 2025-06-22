@@ -41,6 +41,8 @@ public:
     float lastX = (float)WINDOW_WIDTH / 2.0;
     float lastY = (float)WINDOW_HEIGHT / 2.0;
 
+	double mouseX = 0.0f, mouseY = 0.0f;
+
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
 
@@ -70,6 +72,15 @@ public:
 
 	void toggleFullscreen();
 
+	glm::vec2 getMousePosition() {
+		return glm::vec2(mouseX, mouseY);
+	}
+
+	void setMousePosition(float x, float y) {
+		//glfwSetCursorPos(window, x, y);
+		mouseX = x;
+		mouseY = y;
+	}
 };
 
 

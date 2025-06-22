@@ -386,8 +386,9 @@ void PlayerController::VirusEffect()
 	//PlayerController* player = target->getComponent<PlayerController>();
 
 	if (virusType == "blue") {
-		owner->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-
+		//owner->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+		owner->textures.clear();
+		owner->textures.push_back(20);
 		isGravityFlipped = false;
 		rb->gravity = -32.f;
 		rb->mass = 0.4f;

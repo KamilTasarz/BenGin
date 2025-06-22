@@ -200,6 +200,8 @@ public:
 
 class Animator;
 
+struct Texture;
+
 class Node {
 
 public:
@@ -241,7 +243,7 @@ public:
     bool is_animating = false;
     bool is_physic_active = true; 
     bool is_logic_active = false;
-
+    bool is_other_textures = false;
     bool is_marked = false;
 
     //Hitbox
@@ -255,7 +257,7 @@ public:
 	std::weak_ptr<Layer> layer;
 	std::weak_ptr<Tag> tag;
 
-
+    std::vector<unsigned int> textures;
 
     // ----------- CONSTRUCTORS -----------
 

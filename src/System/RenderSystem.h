@@ -6,6 +6,7 @@ class Model;
 class Animator;
 class Node;
 class SceneGraph;
+//struct Texture;
 
 struct RenderObject {
 	// Define the properties of a renderable object
@@ -13,6 +14,7 @@ struct RenderObject {
 	std::shared_ptr<Model> model;
 	glm::mat4 modelMatrix;
 	Animator* animator;
+	std::vector<unsigned int> textures;
 	float tile_scale = 1.f;
 	glm::vec4 color = { 1.f, 1.f, 1.f, 1.f }; // Default color is white
 };
