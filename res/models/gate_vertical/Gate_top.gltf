@@ -1,215 +1,206 @@
 {
-    "asset": {
-        "version": "2.0",
-        "generator": "Open Asset Import Library (assimp v3.1.118612264)"
-    },
-    "accessors": [
-        {
-            "bufferView": 0,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 1963,
-            "type": "VEC3",
-            "max": [
-                1.4999998807907105,
-                0.9260348081588745,
-                5.992000579833984
-            ],
-            "min": [
-                -1.4999998807907105,
-                -0.9260348081588745,
-                1.8268649578094483
-            ]
-        },
-        {
-            "bufferView": 1,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 1963,
-            "type": "VEC3",
-            "max": [
-                0.9999999403953552,
-                0.9999999403953552,
-                0.9999999403953552
-            ],
-            "min": [
-                -0.9999999403953552,
-                -0.9999999403953552,
-                -0.9999999403953552
-            ]
-        },
-        {
-            "bufferView": 2,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 1963,
-            "type": "VEC4",
-            "max": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "min": [
-                -1.0,
-                -1.0,
-                -1.0,
-                -1.0
-            ]
-        },
-        {
-            "bufferView": 3,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 1963,
-            "type": "VEC2",
-            "max": [
-                0.9901983737945557,
-                0.9901983737945557
-            ],
-            "min": [
-                0.009801589883863926,
-                0.02639782428741455
-            ]
-        },
-        {
-            "bufferView": 4,
-            "byteOffset": 0,
-            "componentType": 5123,
-            "count": 5760,
-            "type": "SCALAR",
-            "max": [
-                1962.0
-            ],
-            "min": [
-                0.0
-            ]
-        }
-    ],
-    "buffers": [
-        {
-            "byteLength": 105744,
-            "uri": "Gate_top.bin"
-        }
-    ],
-    "bufferViews": [
-        {
-            "buffer": 0,
-            "byteOffset": 0,
-            "byteLength": 23556,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 23556,
-            "byteLength": 23556,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 47112,
-            "byteLength": 31408,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 78520,
-            "byteLength": 15704,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 94224,
-            "byteLength": 11520,
-            "target": 34963
-        }
-    ],
-    "materials": [
-        {
-            "name": "Material",
-            "pbrMetallicRoughness": {
-                "baseColorFactor": [
-                    0.800000011920929,
-                    0.800000011920929,
-                    0.800000011920929,
-                    1.0
-                ],
-                "metallicFactor": 0.0
-            }
-        }
-    ],
-    "meshes": [
-        {
-            "name": "Cube.001",
-            "primitives": [
-                {
-                    "mode": 4,
-                    "material": 0,
-                    "indices": 4,
-                    "attributes": {
-                        "POSITION": 0,
-                        "NORMAL": 1,
-                        "TANGENT": 2,
-                        "TEXCOORD_0": 3
-                    }
-                }
-            ]
-        }
-    ],
-    "nodes": [
-        {
-            "name": "RootNode",
-            "matrix": [
-                0.009999999776482582,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.009999999776482582,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.009999999776482582,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "children": [
-                1
-            ]
-        },
-        {
-            "name": "Cube.001",
-            "matrix": [
-                100.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                -0.000016292067812173629,
-                -100.0,
-                0.0,
-                0.0,
-                100.0,
-                -0.000016292067812173629,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "mesh": 0
-        }
-    ],
-    "scenes": [
-        {
-            "nodes": [
-                0
-            ]
-        }
-    ],
-    "scene": 0
+	"asset":{
+		"generator":"Khronos glTF Blender I/O v4.2.69",
+		"version":"2.0"
+	},
+	"extensionsUsed":[
+		"KHR_materials_specular"
+	],
+	"scene":0,
+	"scenes":[
+		{
+			"name":"Scene",
+			"nodes":[
+				0
+			]
+		}
+	],
+	"nodes":[
+		{
+			"mesh":0,
+			"name":"Cube.001"
+		}
+	],
+	"materials":[
+		{
+			"doubleSided":true,
+			"extensions":{
+				"KHR_materials_specular":{
+					"specularColorTexture":{
+						"index":0
+					}
+				}
+			},
+			"name":"Material",
+			"normalTexture":{
+				"index":1
+			},
+			"pbrMetallicRoughness":{
+				"baseColorTexture":{
+					"index":2
+				},
+				"metallicFactor":0,
+				"metallicRoughnessTexture":{
+					"index":3
+				}
+			}
+		}
+	],
+	"meshes":[
+		{
+			"name":"Cube.003",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":0,
+						"NORMAL":1,
+						"TEXCOORD_0":2,
+						"COLOR_0":3,
+						"COLOR_1":4
+					},
+					"indices":5,
+					"material":0
+				}
+			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
+		},
+		{
+			"sampler":0,
+			"source":2
+		},
+		{
+			"sampler":0,
+			"source":3
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/png",
+			"name":"Gate_top_Specular.png.001",
+			"uri":"Gate_top_Specular.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Gate_top_Normal.png.001",
+			"uri":"Gate_top_Normal.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Gate_top_Diffuse.png.001",
+			"uri":"Gate_top_Diffuse.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Gate_top_Glossiness.png.001",
+			"uri":"Gate_top_Glossiness.png"
+		}
+	],
+	"accessors":[
+		{
+			"bufferView":0,
+			"componentType":5126,
+			"count":1957,
+			"max":[
+				1.5,
+				5.992000102996826,
+				0.9260348677635193
+			],
+			"min":[
+				-1.5,
+				1.8268647193908691,
+				-0.9260348677635193
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":1,
+			"componentType":5126,
+			"count":1957,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":2,
+			"componentType":5126,
+			"count":1957,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":3,
+			"componentType":5121,
+			"count":1957,
+			"normalized":true,
+			"type":"VEC4"
+		},
+		{
+			"bufferView":4,
+			"componentType":5126,
+			"count":1957,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":5,
+			"componentType":5123,
+			"count":5760,
+			"type":"SCALAR"
+		}
+	],
+	"bufferViews":[
+		{
+			"buffer":0,
+			"byteLength":23484,
+			"byteOffset":0,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":23484,
+			"byteOffset":23484,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":15656,
+			"byteOffset":46968,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":7828,
+			"byteOffset":62624,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":23484,
+			"byteOffset":70452,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":11520,
+			"byteOffset":93936,
+			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
+		}
+	],
+	"buffers":[
+		{
+			"byteLength":105456,
+			"uri":"Gate_top.bin"
+		}
+	]
 }

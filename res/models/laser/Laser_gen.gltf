@@ -1,215 +1,179 @@
 {
-    "asset": {
-        "version": "2.0",
-        "generator": "Open Asset Import Library (assimp v3.1.118612264)"
-    },
-    "accessors": [
-        {
-            "bufferView": 0,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 695,
-            "type": "VEC3",
-            "max": [
-                0.5,
-                0.5,
-                0.5375574827194214
-            ],
-            "min": [
-                -0.5,
-                -0.5,
-                0.0
-            ]
-        },
-        {
-            "bufferView": 1,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 695,
-            "type": "VEC3",
-            "max": [
-                0.980926513671875,
-                0.9808917045593262,
-                0.9999998211860657
-            ],
-            "min": [
-                -0.9808202385902405,
-                -0.9808917045593262,
-                -1.0
-            ]
-        },
-        {
-            "bufferView": 2,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 695,
-            "type": "VEC4",
-            "max": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "min": [
-                -0.9998224973678589,
-                -0.9998226165771484,
-                -0.9998224377632141,
-                -0.9998224973678589
-            ]
-        },
-        {
-            "bufferView": 3,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 695,
-            "type": "VEC2",
-            "max": [
-                0.9943515658378601,
-                0.9943515658378601
-            ],
-            "min": [
-                0.005648449528962374,
-                0.21637171506881715
-            ]
-        },
-        {
-            "bufferView": 4,
-            "byteOffset": 0,
-            "componentType": 5123,
-            "count": 2298,
-            "type": "SCALAR",
-            "max": [
-                694.0
-            ],
-            "min": [
-                0.0
-            ]
-        }
-    ],
-    "buffers": [
-        {
-            "byteLength": 37956,
-            "uri": "Laser_gen.bin"
-        }
-    ],
-    "bufferViews": [
-        {
-            "buffer": 0,
-            "byteOffset": 0,
-            "byteLength": 8340,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 8340,
-            "byteLength": 8340,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 16680,
-            "byteLength": 11120,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 27800,
-            "byteLength": 5560,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 33360,
-            "byteLength": 4596,
-            "target": 34963
-        }
-    ],
-    "materials": [
-        {
-            "name": "Material.001",
-            "pbrMetallicRoughness": {
-                "baseColorFactor": [
-                    0.800000011920929,
-                    0.800000011920929,
-                    0.800000011920929,
-                    1.0
-                ],
-                "metallicFactor": 0.0
-            }
-        }
-    ],
-    "meshes": [
-        {
-            "name": "Laser_gen",
-            "primitives": [
-                {
-                    "mode": 4,
-                    "material": 0,
-                    "indices": 4,
-                    "attributes": {
-                        "POSITION": 0,
-                        "NORMAL": 1,
-                        "TANGENT": 2,
-                        "TEXCOORD_0": 3
-                    }
-                }
-            ]
-        }
-    ],
-    "nodes": [
-        {
-            "name": "RootNode",
-            "matrix": [
-                0.009999999776482582,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.009999999776482582,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.009999999776482582,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "children": [
-                1
-            ]
-        },
-        {
-            "name": "Laser_gen",
-            "matrix": [
-                100.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                -0.000016292067812173629,
-                -100.0,
-                0.0,
-                0.0,
-                100.0,
-                -0.000016292067812173629,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "mesh": 0
-        }
-    ],
-    "scenes": [
-        {
-            "nodes": [
-                0
-            ]
-        }
-    ],
-    "scene": 0
+	"asset":{
+		"generator":"Khronos glTF Blender I/O v4.2.69",
+		"version":"2.0"
+	},
+	"extensionsUsed":[
+		"KHR_materials_specular"
+	],
+	"scene":0,
+	"scenes":[
+		{
+			"name":"Scene",
+			"nodes":[
+				0
+			]
+		}
+	],
+	"nodes":[
+		{
+			"mesh":0,
+			"name":"Laser_gen"
+		}
+	],
+	"materials":[
+		{
+			"doubleSided":true,
+			"extensions":{
+				"KHR_materials_specular":{
+					"specularColorTexture":{
+						"index":0
+					}
+				}
+			},
+			"name":"Material.001",
+			"normalTexture":{
+				"index":1
+			},
+			"pbrMetallicRoughness":{
+				"baseColorTexture":{
+					"index":2
+				},
+				"metallicFactor":0,
+				"metallicRoughnessTexture":{
+					"index":3
+				}
+			}
+		}
+	],
+	"meshes":[
+		{
+			"name":"Cube.001",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":0,
+						"NORMAL":1,
+						"TEXCOORD_0":2
+					},
+					"indices":3,
+					"material":0
+				}
+			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
+		},
+		{
+			"sampler":0,
+			"source":2
+		},
+		{
+			"sampler":0,
+			"source":3
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/png",
+			"name":"Laser_gen_Specular.png",
+			"uri":"Laser_gen_Specular.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Laser_gen_Normal.png",
+			"uri":"Laser_gen_Normal.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Laser_gen_Diffuse.png",
+			"uri":"Laser_gen_Diffuse.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Laser_gen_Glossiness.png",
+			"uri":"Laser_gen_Glossiness.png"
+		}
+	],
+	"accessors":[
+		{
+			"bufferView":0,
+			"componentType":5126,
+			"count":665,
+			"max":[
+				0.5,
+				0.5375574827194214,
+				0.5
+			],
+			"min":[
+				-0.5,
+				0,
+				-0.5
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":1,
+			"componentType":5126,
+			"count":665,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":2,
+			"componentType":5126,
+			"count":665,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":3,
+			"componentType":5123,
+			"count":2298,
+			"type":"SCALAR"
+		}
+	],
+	"bufferViews":[
+		{
+			"buffer":0,
+			"byteLength":7980,
+			"byteOffset":0,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":7980,
+			"byteOffset":7980,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":5320,
+			"byteOffset":15960,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":4596,
+			"byteOffset":21280,
+			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
+		}
+	],
+	"buffers":[
+		{
+			"byteLength":25876,
+			"uri":"Laser_gen.bin"
+		}
+	]
 }

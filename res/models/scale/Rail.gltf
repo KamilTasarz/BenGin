@@ -1,215 +1,179 @@
 {
-    "asset": {
-        "version": "2.0",
-        "generator": "Open Asset Import Library (assimp v3.1.118612264)"
-    },
-    "accessors": [
-        {
-            "bufferView": 0,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 147,
-            "type": "VEC3",
-            "max": [
-                0.42274564504623415,
-                -0.4171585738658905,
-                1.2763876914978028
-            ],
-            "min": [
-                -0.42274564504623415,
-                -0.657158613204956,
-                0.00044792890548706055
-            ]
-        },
-        {
-            "bufferView": 1,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 147,
-            "type": "VEC3",
-            "max": [
-                1.0,
-                1.0,
-                0.9999969005584717
-            ],
-            "min": [
-                -1.0,
-                -0.9957743287086487,
-                -1.0
-            ]
-        },
-        {
-            "bufferView": 2,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 147,
-            "type": "VEC4",
-            "max": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "min": [
-                -1.0,
-                -1.0,
-                -1.0,
-                -1.0
-            ]
-        },
-        {
-            "bufferView": 3,
-            "byteOffset": 0,
-            "componentType": 5126,
-            "count": 147,
-            "type": "VEC2",
-            "max": [
-                0.9753465056419373,
-                0.995157778263092
-            ],
-            "min": [
-                0.00484229251742363,
-                0.004842221736907959
-            ]
-        },
-        {
-            "bufferView": 4,
-            "byteOffset": 0,
-            "componentType": 5123,
-            "count": 354,
-            "type": "SCALAR",
-            "max": [
-                146.0
-            ],
-            "min": [
-                0.0
-            ]
-        }
-    ],
-    "buffers": [
-        {
-            "byteLength": 7764,
-            "uri": "Rail.bin"
-        }
-    ],
-    "bufferViews": [
-        {
-            "buffer": 0,
-            "byteOffset": 0,
-            "byteLength": 1764,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 1764,
-            "byteLength": 1764,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 3528,
-            "byteLength": 2352,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 5880,
-            "byteLength": 1176,
-            "target": 34962
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 7056,
-            "byteLength": 708,
-            "target": 34963
-        }
-    ],
-    "materials": [
-        {
-            "name": "DefaultMaterial",
-            "pbrMetallicRoughness": {
-                "baseColorFactor": [
-                    0.6000000238418579,
-                    0.6000000238418579,
-                    0.6000000238418579,
-                    1.0
-                ],
-                "metallicFactor": 0.0
-            }
-        }
-    ],
-    "meshes": [
-        {
-            "name": "Cube.003",
-            "primitives": [
-                {
-                    "mode": 4,
-                    "material": 0,
-                    "indices": 4,
-                    "attributes": {
-                        "POSITION": 0,
-                        "NORMAL": 1,
-                        "TANGENT": 2,
-                        "TEXCOORD_0": 3
-                    }
-                }
-            ]
-        }
-    ],
-    "nodes": [
-        {
-            "name": "RootNode",
-            "matrix": [
-                0.009999999776482582,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.009999999776482582,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.009999999776482582,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "children": [
-                1
-            ]
-        },
-        {
-            "name": "Cube.003",
-            "matrix": [
-                100.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                -0.000016292067812173629,
-                -100.0,
-                0.0,
-                0.0,
-                100.0,
-                -0.000016292067812173629,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "mesh": 0
-        }
-    ],
-    "scenes": [
-        {
-            "nodes": [
-                0
-            ]
-        }
-    ],
-    "scene": 0
+	"asset":{
+		"generator":"Khronos glTF Blender I/O v4.2.69",
+		"version":"2.0"
+	},
+	"extensionsUsed":[
+		"KHR_materials_specular"
+	],
+	"scene":0,
+	"scenes":[
+		{
+			"name":"Scene",
+			"nodes":[
+				0
+			]
+		}
+	],
+	"nodes":[
+		{
+			"mesh":0,
+			"name":"Cube.003"
+		}
+	],
+	"materials":[
+		{
+			"doubleSided":true,
+			"extensions":{
+				"KHR_materials_specular":{
+					"specularColorTexture":{
+						"index":0
+					}
+				}
+			},
+			"name":"Material.005",
+			"normalTexture":{
+				"index":1
+			},
+			"pbrMetallicRoughness":{
+				"baseColorTexture":{
+					"index":2
+				},
+				"metallicFactor":0,
+				"metallicRoughnessTexture":{
+					"index":3
+				}
+			}
+		}
+	],
+	"meshes":[
+		{
+			"name":"Cube.006",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":0,
+						"NORMAL":1,
+						"TEXCOORD_0":2
+					},
+					"indices":3,
+					"material":0
+				}
+			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
+		},
+		{
+			"sampler":0,
+			"source":2
+		},
+		{
+			"sampler":0,
+			"source":3
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/png",
+			"name":"Rail_Specular.png",
+			"uri":"Rail_Specular.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Rail_Normal.png",
+			"uri":"Rail_Normal.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Rail_Diffuse.png",
+			"uri":"Rail_Diffuse.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Rail_Glossiness.png",
+			"uri":"Rail_Glossiness.png"
+		}
+	],
+	"accessors":[
+		{
+			"bufferView":0,
+			"componentType":5126,
+			"count":131,
+			"max":[
+				0.42274561524391174,
+				1.2763876914978027,
+				0.6571585536003113
+			],
+			"min":[
+				-0.42274561524391174,
+				0.00044792890548706055,
+				0.4171585440635681
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":1,
+			"componentType":5126,
+			"count":131,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":2,
+			"componentType":5126,
+			"count":131,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":3,
+			"componentType":5123,
+			"count":354,
+			"type":"SCALAR"
+		}
+	],
+	"bufferViews":[
+		{
+			"buffer":0,
+			"byteLength":1572,
+			"byteOffset":0,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1572,
+			"byteOffset":1572,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1048,
+			"byteOffset":3144,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":708,
+			"byteOffset":4192,
+			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
+		}
+	],
+	"buffers":[
+		{
+			"byteLength":4900,
+			"uri":"Rail.bin"
+		}
+	]
 }

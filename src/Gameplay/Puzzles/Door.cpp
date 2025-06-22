@@ -120,6 +120,7 @@ void Door::ChangeState(bool state)
 
 		if (light) {
 			light->is_shining = false;
+			light->is_alarm = false;
 		}
 	}
 	else {
@@ -132,6 +133,7 @@ void Door::ChangeState(bool state)
 
 		if (light) {
 			light->is_shining = true;
+			light->is_alarm = true;
 		}
 	}
 
