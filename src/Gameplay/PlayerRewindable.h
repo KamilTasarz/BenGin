@@ -15,6 +15,7 @@ public:
     std::string virusType;
     std::string tagName;
     std::string LayerName;
+    int currentTexture;
 };
 
 class PlayerRewindable : public TimeRewindable {

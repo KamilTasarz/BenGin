@@ -112,6 +112,9 @@ void PlayerController::onDetach()
 
 void PlayerController::onStart()
 {
+	owner->textures.clear();
+	owner->textures.push_back(34);
+
 	isGravityFlipped = false;
 	deathTimer = 0.5f;
 	rb = owner->getComponent<Rigidbody>();
@@ -389,7 +392,8 @@ void PlayerController::VirusEffect()
 	if (virusType == "blue") {
 		//owner->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 		owner->textures.clear();
-		owner->textures.push_back(20);
+		owner->textures.push_back(35);
+
 		isGravityFlipped = false;
 		rb->gravity = -32.f;
 		rb->mass = 0.4f;
@@ -398,8 +402,8 @@ void PlayerController::VirusEffect()
 	else if (virusType == "green") {
 		//owner->changeColor(glm::vec4(0.5f, 0.3f, 0.7f, 1.0f));
 
-		auto ratTexture = ResourceManager::Instance().getTexture(36);
-		owner->pModel->meshes[0].textures[0] = (ratTexture);
+		owner->textures.clear();
+		owner->textures.push_back(36);
 
 		CameraFollow::instance->verticalOffset = -1.f;
 		isGravityFlipped = true;
@@ -408,8 +412,8 @@ void PlayerController::VirusEffect()
 	else if (virusType == "black") {
 		//owner->changeColor(glm::vec4(0.72f, 0.45f, 0.2f, 1.0f));
 
-		auto ratTexture = ResourceManager::Instance().getTexture(37);
-		owner->pModel->meshes[0].textures[0] = (ratTexture);
+		owner->textures.clear();
+		owner->textures.push_back(37);
 
 		rb->mass = 25.f;
 		speed *= 0.7f;

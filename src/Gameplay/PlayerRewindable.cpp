@@ -38,6 +38,7 @@ std::shared_ptr<ITimeSnapshot> PlayerRewindable::createSnapshot() {
     snap->virusType = playerController->virusType;
     snap->tagName = owner->getTagName();
 	snap->LayerName = owner->getLayerName();
+    snap->currentTexture = owner->textures[0];
     return snap;
 }
 
@@ -50,6 +51,11 @@ void PlayerRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseS
 	playerController->isElectrified = snap->isElectrified;
     playerController->virusType = snap->virusType;
     playerController->lastVirusType = "null";
+    
+    if (owner->textures[0] != snap->currentTexture) {
+        owner->textures.clear();
+        owner->textures.push_back(snap->currentTexture);
+    }
 
     if (owner->getTagName() != snap->tagName) {
         auto tag = TagLayerManager::Instance().getTag(snap->tagName);
