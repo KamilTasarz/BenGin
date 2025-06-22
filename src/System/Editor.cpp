@@ -23,7 +23,7 @@
 #include "../Component/BoundingBox.h"
 #include "../Component/CameraGlobals.h"
 #include "../Component/Camera.h"
-#include "../Grid.h"
+#include "../System/Grid.h"
 #include "../Gameplay/ScriptFactory.h"
 #include "../System/PhysicsSystem.h"
 #include "../System/LineManager.h"
@@ -33,8 +33,6 @@
 #include "../System/SceneManager.h"
 
 #include <glm/gtx/matrix_decompose.hpp>
-
-
 
 Editor::Editor(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::shared_ptr<Prefab>>& prefabsref_puzzle) : prefabs(prefabsref), puzzle_prefabs(prefabsref_puzzle) {
     icon = new Sprite(1920.f, 1080.f, "res/sprites/icon.png", 0.f, 0.f, 1.f);
@@ -139,9 +137,7 @@ void Editor::DrawNodeBlock(Node* node, int depth)
     // Nazwa
     drawList->AddText(ImVec2(itemPos.x + 4, itemPos.y), IM_COL32_WHITE, node->name.c_str());
 
-    if (ImGui::IsItemClicked())
-    {
-
+    if (ImGui::IsItemClicked()) {
         node->scene_graph->marked_object = node;
     }
 
@@ -161,8 +157,6 @@ void Editor::DrawNodeBlock(Node* node, int depth)
     std::string img2_id = "##switch_" + node->name;
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-    //ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0)); 
-    //ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
     if (dynamic_cast<Light*>(node)) {
         Light* temp = dynamic_cast<Light*>(node);
@@ -191,11 +185,7 @@ void Editor::DrawNodeBlock(Node* node, int depth)
 
     if (selectedNode == node) {
         if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
-
-            //sceneGraph->deleteChild(node);
-
             sceneGraph->to_delete = selectedNode;
-
             sceneGraph->marked_object = nullptr;
         }
 
@@ -282,7 +272,7 @@ void Editor::previewDisplay()
                 sceneGraph->addDirectionalLight(newNode);
             }
             else if (id == 31) {
-                PointLight* newNode = new PointLight(ResourceManager::Instance().getModel(6), "point_light", true, 0.032f, 0.09f);
+                PointLight* newNode = new PointLight(ResourceManager::Instance().getModel(6), "point_light", true, false, 0.032f, 0.09f);
                 newNode->transform.setLocalPosition({ 0.f, 0.f, 0.f });
                 sceneGraph->addPointLight(newNode);
             }
@@ -308,15 +298,6 @@ void Editor::previewDisplay()
 
 void Editor::RenderGuizmo()
 {
-    //ImGuiViewport* viewport = ImGui::GetMainViewport();
-    //ImGui::SetNextWindowPos(viewport->Pos);
-    //ImGui::SetNextWindowSize(viewport->Size);
-    ////ImGui::SetNextWindowViewport(viewport->ID);
-
-
-
-    //ImGui::Begin("ImGuizmo Input Layer", nullptr, window_flags);
-    // To okno jest niewidzialne, ale aktywne — i ImGuizmo może działać wewnątrz
 
     // IMGUIZMO
     Node* modified_object = sceneGraph->marked_object;
@@ -330,7 +311,6 @@ void Editor::RenderGuizmo()
             ImGuizmo::SetOrthographic(camera->mode == FRONT_ORTO); // If we want to change between perspective and orthographic it's added just in case
             ImGuizmo::SetDrawlist(); // Draw to the current window
 
-            //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
             ImGuizmo::SetRect(previewX, previewY, previewWidth, previewHeight);
 
             // Camera matrices for rendering ImGuizmo
@@ -350,82 +330,16 @@ void Editor::RenderGuizmo()
                 currentOperation, ImGuizmo::LOCAL, glm::value_ptr(_model_matrix), nullptr, useSnap ? snap : nullptr);
 
             if (ImGuizmo::IsUsing()) {
-                /*SnapResult result;
-                for (auto& collider : colliders) {
-                    if (modified_object->AABB != collider) {
-                         SnapResult tempX, tempY, tempZ;
-                         tempX = modified_object->AABB->trySnapToWallsX(*collider, 0.5f);
-                         tempY = modified_object->AABB->trySnapToWallsY(*collider, 0.5f);
-                         tempZ = modified_object->AABB->trySnapToWallsZ(*collider, 0.5f);
-                         result.shouldSnap = tempX.shouldSnap || tempY.shouldSnap || tempZ.shouldSnap;
-
-                         if (result.shouldSnap) {
-                             result.snapOffset = tempX.snapOffset + tempY.snapOffset + tempZ.snapOffset;
-                             break;
-                         }
-                    }
-                }*/
-
-
-
-
 
                 if (modified_object->parent) {
                     // w celu otrzymania loklalnych transformacji
                     _model_matrix = glm::inverse(modified_object->parent->transform.getModelMatrix()) * _model_matrix;
                 }
 
-
                 glm::vec3 translation, scale, skew;
                 glm::vec4 perspective;
                 glm::quat rotation;
-                //ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(_model_matrix), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
                 glm::decompose(_model_matrix, scale, rotation, translation, skew, perspective);
-
-
-
-
-                /*if (result.shouldSnap && !isSnapped) {
-                    translation += result.snapOffset;
-                    lastSnapOffset = result.snapOffset;
-                    snapedPosition = translation;
-                    isSnapped = true;
-                }
-                else if (isSnapped) {
-                    glm::vec3 currentOffset = translation - snapedPosition;
-                    if (glm::length(currentOffset - lastSnapOffset) > 0.5f) {
-                        isSnapped = false;
-                    }
-                }*/
-
-
-                /*if (isGridSnap) {
-                    glm::dvec3 delta = (glm::dvec3)translation - lastPos;
-                    int axis = getDominantAxis(delta);
-
-                    // 2. pobierz aktywną krawędź AABB
-                    if (axis >= 0) {
-                        float edge = sceneGraph->marked_object->AABB->min_point_world[axis];
-
-                        // 3. snap
-                        double snapValue = 1.0;
-                        float snapped = round(edge / snapValue) * snapValue;
-                        /*snapped.x = round(edge.x / snapValue) * snapValue;
-                        snapped.y = round(edge.y / snapValue) * snapValue;
-                        snapped.z = round(edge.z / snapValue) * snapValue;
-                        float offset = snapped - edge;
-
-                        if (std::abs(offset) < 0.2) {
-                            glm::dvec3 snapVec(0.0);
-                            snapVec[axis] = offset;
-                            translation += snapVec;
-                        }
-                    }
-                }*/
-
-
-
-
 
                 if (currentOperation == ImGuizmo::OPERATION::TRANSLATE) {
                     modified_object->transform.setLocalPosition(translation);
@@ -521,9 +435,6 @@ void Editor::assetBarDisplay(float x, float y, float width, float height) {
     float panelWidth = ImGui::GetContentRegionAvail().x;
     int columnCount = (int)(panelWidth / cellSize);
     if (columnCount < 1) columnCount = 1;
-
-
-
 
     ImGui::Columns(columnCount, nullptr, false);
 
@@ -1335,6 +1246,9 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
                 ImGui::PopID();
 
+                ImGui::Separator();
+                ImGui::Checkbox("Is Alarm", &temp->is_alarm);
+
             }
 
         }
@@ -2083,6 +1997,7 @@ void Editor::run() {
 void Editor::shutdown()
 {
     saveScene(SceneManager::Instance().getCurrentScenePath(), editor_sceneGraph);
+
     savePrefabs(prefabs, puzzle_prefabs);
 
     savePostProcessData("res/scene/postprocess_data.json", postProcessData);
@@ -2091,13 +2006,10 @@ void Editor::shutdown()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-
 	glDeleteTextures(1, &colorTexture);
 	glDeleteRenderbuffers(1, &depthRenderbuffer);
 	glDeleteFramebuffers(1, &framebuffer);
-	//audioEngine.Shutdown();
-	//audioEngine.Release();
-	//glfwTerminate();
+
 }
 
 // private
@@ -2146,7 +2058,7 @@ void Editor::input()
                 else if (dynamic_cast<PointLight*>(sceneGraph->marked_object)) {
                     PointLight* temp = dynamic_cast<PointLight*>(sceneGraph->marked_object);
                     PointLight* newNode = new PointLight(temp->pModel, temp->getName() + "_copy", temp->is_shining,
-                        temp->quadratic, temp->linear, temp->constant, temp->ambient, temp->diffuse, temp->specular);
+                        temp->is_alarm, temp->quadratic, temp->linear, temp->constant, temp->ambient, temp->diffuse, temp->specular);
                     newNode->transform.setLocalPosition(temp->transform.getLocalPosition());
                     newNode->transform.setLocalRotation(temp->transform.getLocalRotation());
                     newNode->transform.setLocalScale(temp->transform.getLocalScale());
@@ -2194,8 +2106,6 @@ void Editor::input()
 }
 
 void Editor::update(float deltaTime) {
-    // Audio
-    //audioEngine.Update();
 
     auto* window = ServiceLocator::getWindow();
 
@@ -2204,80 +2114,15 @@ void Editor::update(float deltaTime) {
 
     LineManager::Instance().clearLines();
     GuiManager::Instance().update(ServiceLocator::getWindow()->deltaTime);
-    //PhysicsSystem::instance().updateColliders(sceneGraph);
-    //PhysicsSystem::instance().updateCollisions();
-
 
     // Scena
     sceneGraph->update(deltaTime);
 
     sceneGraph->clearDeleteVector();
 
-    //ziom->update(deltaTime, sceneGraph->root, 100);
-
-	//ParticleEmitter* emitter = dynamic_cast<ParticleEmitter*>(sceneGraph->root->getChildByName("ParticleEmitter"));
-
-    //if (emitter)  emitter->update(deltaTime, sceneGraph->root, 400);
-
-  
-    // HUD
-    if (isHUD) {
-        //background->update(deltaTime);
-        //sprite->update(deltaTime);
-        //sprite3->update(deltaTime);
-    }
-
     if (glfwGetKey(window->window, GLFW_KEY_N) == GLFW_PRESS) angle++;
     if (glfwGetKey(window->window, GLFW_KEY_M) == GLFW_PRESS) angle--;
 
-    //glm::vec4 direction = glm::rotate(glm::mat4(1.f), glm::radians(angle), glm::vec3(0.f, 0.f, 1.f)) * glm::vec4(1.f, 0.f, 0.f, 1.f);
-    
-
-
-    /*Ray ray;
-    ray.direction = direction;
-    ray.origin = emit->transform.getGlobalPosition();
-    ray.length = 100.f;
-
-    std::vector<RayCastHit> nodes;
-    Node* lastNode = nullptr;
-    std::vector<glm::vec3> points;
-    bool checkNext = true;
-    while (checkNext) {
-        checkNext = false;
-        nodes.clear();
-        
-        if (PhysicsSystem::instance().rayCast(ray, nodes)) {
-            int i = 1;
-
-            if (nodes.size() > 1) {
-                points.push_back(ray.origin);
-                if (lastNode && lastNode == nodes[1].node) i = 2;
-                if (dynamic_cast<MirrorNode*>(nodes[i].node)) {
-                    MirrorNode* m = dynamic_cast<MirrorNode*>(nodes[i].node);
-                    checkNext = true;
-                    lastNode = m;
-                    ray.direction = m->reflectDirection(ray);
-                    if (!nodes[i].is_phys)
-                        ray.origin = nodes[i].endPoint;
-                    else
-                        ray.origin = nodes[i + 1].endPoint;
-                    ray.length = 100.f;
-                }
-                if (!checkNext) points.push_back(nodes[i].endPoint);
-            }
-
-            cout << "Przecina i parametr t: " << endl;
-            cout << direction.x << ", " << direction.y << ", " << direction.z << endl;
-            cout << "size: " << nodes.size() << endl;
-        }
-    }
-
-    
-
-    emit->forceUpdateSelfAndChild();
-
-    LineManager::Instance().addVertices(points);*/
     sceneGraph->mark(getRayWorld(window->window, camera->GetView(), camera->GetProjection()));
 
     if (ServiceLocator::getWindow()->mouse_pressed && glfwGetKey(window->window, GLFW_KEY_LEFT_CONTROL)) {
@@ -2292,6 +2137,7 @@ void Editor::update(float deltaTime) {
 }
 
 void Editor::draw() {
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glClearColor(0.f, 0.f, 0.f, 0.f);
 
@@ -2353,4 +2199,5 @@ void Editor::draw() {
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 }

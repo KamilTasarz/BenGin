@@ -29,7 +29,7 @@
     <ClCompile Include="src\Basic\Animator.cpp" />
     <ClCompile Include="src\Basic\Node.cpp" />
     <ClCompile Include="src\Component\CameraGlobals.cpp" />
-    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="src\System\Grid.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\System\Editor.cpp" />
     <ClCompile Include="src\System\Engine.cpp" />
@@ -42,7 +42,6 @@
     <ClCompile Include="src\Gameplay\PlayerController.cpp" />
     <ClCompile Include="src\System\PhysicsSystem.cpp" />
     <ClCompile Include="src\System\Rigidbody.cpp" />
-    <ClCompile Include="Tag.cpp" />
     <ClCompile Include="src\Gameplay\Puzzles\Virus.cpp" />
     <ClCompile Include="src\Gameplay\Puzzles\Scale.cpp" />
     <ClCompile Include="src\Gameplay\CameraFollow.cpp" />
@@ -109,7 +108,6 @@
     <ClInclude Include="src\Basic\Model.h" />
     <ClInclude Include="src\Basic\Node.h" />
     <ClInclude Include="src\Gameplay\Player.h" />
-    <ClInclude Include="Light.h" />
     <ClInclude Include="src\AudioEngine.h" />
     <ClInclude Include="dependencies\fmod\fmod.h" />
     <ClInclude Include="dependencies\fmod\fmod.hpp" />
@@ -155,7 +153,7 @@
     <ClInclude Include="src\Basic\Animator.h" />
     <ClInclude Include="src\System\Serialization.h" />
     <ClInclude Include="src\Component\CameraGlobals.h" />
-    <ClInclude Include="Grid.h" />
+    <ClInclude Include="src\System\Grid.h" />
     <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\System\Editor.h" />
     <ClInclude Include="src\System\Engine.h" />
@@ -256,7 +254,6 @@
     <None Include="res\shaders\particle.vert" />
     <None Include="res\shaders\gas.frag" />
     <None Include="res\shaders\gas.vert" />
-    <None Include="..\..\..\Downloads\szczur.glb" />
     <None Include="res\shaders\pp_pass.frag" />
     <None Include="res\shaders\gas.geo" />
     <None Include="res\shaders\lines.frag" />
@@ -272,6 +269,12 @@
     <None Include="res\shaders\shadow.geo" />
     <None Include="res\shaders\tile.frag" />
     <None Include="res\shaders\pp_rewind.frag" />
+    <None Include="assimp-vc143-mtd.dll" />
+    <None Include="res\config.json" />
+    <None Include=".gitignore" />
+    <None Include="CppProperties.json" />
+    <None Include="README.md" />
+    <None Include="imgui.ini" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\fmodL_vc.lib" />
