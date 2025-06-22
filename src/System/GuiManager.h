@@ -77,21 +77,17 @@ enum Sprite_names {
 	REWIND
 };
 
-//class ButtonObject : public GuiObject {
-//public:
-//	std::unique_ptr<GuiButton> button;
-//	glm::vec3 color = glm::vec3(0.f);
-//	ButtonObject(float x, float y, float w, float h, std::string text_value, Text_names font_id,
-//		Sprite_names base_sprite_id, Sprite_names hovered_sprite_id, unsigned int id, int order_id = 0) {
-//		this->pos = pos;
-//		this->order_id = order_id;
-//		this->id = id;
-//	}
-//	~ButtonObject() override = default;
-//	void render() override;
-//	ObjectType getType() override;
-//	void attach(std::function<void()> on_action);
-//};
+class ButtonObject : public GuiObject {
+public:
+	std::unique_ptr<GuiButton> button;
+	glm::vec3 color = glm::vec3(0.f);
+	ButtonObject(float x, float y, float w, float h, std::string text_value, Text_names font_id,
+		Sprite_names base_sprite_id, Sprite_names hovered_sprite_id, unsigned int id, int order_id = 0);
+	~ButtonObject() override = default;
+	void render() override;
+	ObjectType getType() override;
+	void attach(std::function<void()> on_action, std::string name);
+};
 
 
 
@@ -110,6 +106,12 @@ public:
 	static GuiManager& Instance() {
 		static GuiManager instance;
 		return instance;
+	}
+
+	~GuiManager() {
+		for (auto* o : objects) {
+			delete o;
+		}
 	}
 
 	void init(const char* path = "res/");
@@ -137,13 +139,15 @@ public:
 
 	// add button
 	void button(float x, float y, float w, float h, std::string text_value, Text_names font_id,
-		Sprite_names base_sprite_id, Sprite_names hovered_sprite_id, int id = -1, int order_id = 0);
+		Sprite_names base_sprite_id, Sprite_names hovered_sprite_id, int order_id = -1, int id = -1, bool visible = true);
 
 	TextObject* findText(unsigned int id);
 	SpriteObject* findSprite(unsigned int id);
+	ButtonObject* findButton(unsigned int id);
 
 	void deleteText(unsigned int id);
 	void deleteSprite(unsigned int id);
+	void deleteButton(unsigned int id);
 
 
 };

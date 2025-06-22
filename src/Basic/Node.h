@@ -537,6 +537,7 @@ public:
     int size = 0, point_light_number = 0, directional_light_number = 0, active_point_lights = 0;
     std::list<DirectionalLight*> directional_lights;
     std::list<PointLight*> point_lights;
+    std::unordered_set<PointLight*> active;
 
     int limit_per_frame = 2;
     std::list<PointLight*>::iterator last_index;

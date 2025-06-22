@@ -1,6 +1,8 @@
 {
     "GUI": {
-        "free_id": null,
+        "free_id": [
+            28
+        ],
         "max_id": 53,
         "objects": [
             {
@@ -15,9 +17,25 @@
                 "ptr_id": 3,
                 "type": "text",
                 "value": "Menu",
-                "visible": true,
+                "visible": false,
                 "x": 847.0,
                 "y": 676.0
+            },
+            {
+                "height": 93.0,
+                "hovered_ptr_id": 8,
+                "id": 28,
+                "is_invincible": false,
+                "on_click": "MenuButton",
+                "order": 0,
+                "ptr_id": 7,
+                "text_ptr_id": 3,
+                "text_value": "PLAY",
+                "type": "button",
+                "visible": true,
+                "width": 242.0,
+                "x": 799.0,
+                "y": 519.0
             }
         ]
     },
@@ -45,77 +63,6 @@
         "children": [
             {
                 "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "directional_light": {
-                    "ambient": {
-                        "x": 0.20000000298023224,
-                        "y": 0.20000000298023224,
-                        "z": 0.20000000298023224
-                    },
-                    "diffuse": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    },
-                    "direction": {
-                        "x": 1.0,
-                        "y": -1.0,
-                        "z": 1.0
-                    },
-                    "is_shining": true,
-                    "specular": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    }
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 6,
-                "name": "dir_light",
-                "no_textures": true,
-                "position": {
-                    "x": 0.0,
-                    "y": 3.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "DirectionalLight"
-            },
-            {
-                "AABB_logic_max": {
                     "x": 0.8969417810440063,
                     "y": 3.028329372406006,
                     "z": 2.7645697593688965
@@ -128,7 +75,7 @@
                 "id": 0,
                 "is_logic_active": false,
                 "is_physic_active": true,
-                "is_visible": true,
+                "is_visible": false,
                 "layer": "Default",
                 "model.id": 16,
                 "name": "camera_follow",
@@ -220,6 +167,77 @@
                 },
                 "tag": "Default",
                 "type": "PointLight"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "directional_light": {
+                    "ambient": {
+                        "x": 0.20000000298023224,
+                        "y": 0.20000000298023224,
+                        "z": 0.20000000298023224
+                    },
+                    "diffuse": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    },
+                    "direction": {
+                        "x": 1.0,
+                        "y": -1.0,
+                        "z": 1.0
+                    },
+                    "is_shining": true,
+                    "specular": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    }
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 6,
+                "name": "dir_light",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 3.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "DirectionalLight"
             }
         ],
         "id": 0,

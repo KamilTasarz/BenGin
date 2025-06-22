@@ -88,6 +88,13 @@ void GuiManager::update(float delta_time)
 			a->update(delta_time);
 		}
 	}
+
+	for (auto& o : objects) {
+		ButtonObject* b = dynamic_cast<ButtonObject*>(o);
+		if (b && b->button->on_click) {
+			b->button->update();
+		}
+	}
 }
 
 void GuiManager::draw()
@@ -148,6 +155,27 @@ void GuiManager::sprite(float x, float y, float size, Sprite_names sprite_id, in
 	}
 }
 
+void GuiManager::button(float x, float y, float w, float h, std::string text_value, Text_names font_id, Sprite_names base_sprite_id, Sprite_names hovered_sprite_id, int order_id, int id, bool visible)
+{
+	if (id != -1) {
+		ButtonObject* s = new ButtonObject(x ,y, w, h, text_value, font_id, base_sprite_id, hovered_sprite_id, id, order_id);
+		s->visible = visible;
+		objects.push_back(s);
+	}
+	else if (free_ids.empty()) {
+		ButtonObject* s = new ButtonObject(x, y, w, h, text_value, font_id, base_sprite_id, hovered_sprite_id, max_id, order_id);
+		s->visible = visible;
+		objects.push_back(s);
+		max_id++;
+	}
+	else {
+		ButtonObject* s = new ButtonObject(x, y, w, h, text_value, font_id, base_sprite_id, hovered_sprite_id, free_ids.back(), order_id);
+		s->visible = visible;
+		objects.push_back(s);
+		free_ids.pop_back();
+	}
+}
+
 TextObject* GuiManager::findText(unsigned int id)
 {
 	for (auto& o : objects) {
@@ -165,6 +193,17 @@ SpriteObject* GuiManager::findSprite(unsigned int id)
 		if (o->getType() == SpriteType) {
 			SpriteObject* t = static_cast<SpriteObject*>(o);
 			if (t && t->id == id) return t;
+		}
+	}
+	return nullptr;
+}
+
+ButtonObject* GuiManager::findButton(unsigned int id)
+{
+	for (auto& o : objects) {
+		if (o->getType() == ButtonType) {
+			ButtonObject* b = static_cast<ButtonObject*>(o);
+			if (b && b->id == id) return b;
 		}
 	}
 	return nullptr;
@@ -196,6 +235,19 @@ void GuiManager::deleteSprite(unsigned int id)
 	}
 }
 
+void GuiManager::deleteButton(unsigned int id)
+{
+	ButtonObject* b = findButton(id);
+	if (b) {
+		free_ids.push_back(id);
+		auto it = std::find(objects.begin(), objects.end(), b);
+		if (it != objects.end()) {
+			objects.erase(it);
+		}
+		delete b;
+	}
+}
+
 void SpriteObject::render()
 {
 	sprite.lock()->render(*ResourceManager::Instance().shader_background, pos.x, pos.y, size);
@@ -216,17 +268,25 @@ ObjectType TextObject::getType()
 	return TextType;
 }
 
-//void ButtonObject::render()
-//{
-//	button->render();
-//}
-//
-//ObjectType ButtonObject::getType()
-//{
-//	return ButtonType;
-//}
-//
-//void ButtonObject::attach(std::function<void()> on_action)
-//{
-//	button->attachFunction(on_action);
-//}
+ButtonObject::ButtonObject(float x, float y, float w, float h, std::string text_value, Text_names font_id, Sprite_names base_sprite_id, Sprite_names hovered_sprite_id, unsigned int id, int order_id)
+{
+	button = make_unique<GuiButton>(x, y, w, h, text_value, font_id, base_sprite_id, hovered_sprite_id, id, order_id);
+	this->pos = glm::vec2(x, y);
+	this->order_id = order_id;
+	this->id = id;
+}
+
+void ButtonObject::render()
+{
+	button->render();
+}
+
+ObjectType ButtonObject::getType()
+{
+	return ButtonType;
+}
+
+void ButtonObject::attach(std::function<void()> on_action, std::string name)
+{
+	button->attachFunction(on_action, name);
+}

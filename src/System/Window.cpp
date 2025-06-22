@@ -16,7 +16,7 @@ void mouseCallback(GLFWwindow* window, double posX, double posY) {
 	float x = static_cast<float>(posX);
 	float y = static_cast<float>(posY);
 
-    ServiceLocator::getWindow()->setMousePosition(posX, posY);
+    ServiceLocator::getWindow()->setMousePosition(posX, WINDOW_HEIGHT - posY);
 
 	if (ServiceLocator::getWindow()->firstMouseMovement) {
 		ServiceLocator::getWindow()->lastX = x;
@@ -47,8 +47,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 void leftClick(float value) {
-
-	std::cout << "Clicked " << value << "\n";
+    glm::vec2 pos = ServiceLocator::getWindow()->getMousePosition();
+	std::cout << "Clicked " << value << pos.x << " " << pos.y << "\n";
 
 }
 

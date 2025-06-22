@@ -642,8 +642,8 @@ void Game::init()
 	PhysicsSystem::instance().colliders_RigidBody.clear();  
 	PhysicsSystem::instance().rooms.clear();  
 
-	ResourceManager::Instance().shader_tile->use();
-	ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
+	//ResourceManager::Instance().shader_tile->use();
+	//ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
 }
 void Game::run()
 {
@@ -675,16 +675,18 @@ void Game::run()
             //cout << "Input time" << t4 - t3 << endl;
 
             update(ServiceLocator::getWindow()->deltaTime);
-
+        }
+        if (!SceneManager::Instance().isSwitched()) {
             draw();
             //float t5 = glfwGetTime();
 
+
+            float t = glfwGetTime();
+
+            ServiceLocator::getWindow()->updateWindow();
+
+            float t2 = glfwGetTime();
         }
-        float t = glfwGetTime();
-
-        ServiceLocator::getWindow()->updateWindow();
-
-        float t2 = glfwGetTime();
         //cout << "Draw time" << t2 - t << endl;
 
         //std::cout << "DeltaTime: " << ServiceLocator::getWindow()->deltaTime << std::endl;
