@@ -1,5 +1,5 @@
 #include "Grid.h"
-#include "src/Component/CameraGlobals.h"
+#include "../Component/CameraGlobals.h"
 
 void Grid::Init()
 {

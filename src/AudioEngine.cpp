@@ -422,3 +422,29 @@ void CAudioEngine::loadAllGameSounds() {
 	LoadSound(running_step, false, false, false);
 	LoadSound(rewind, false, false, false);
 }
+
+void CAudioEngine::unloadAllGameSounds() {
+
+    UnloadSound(sound1);
+    UnloadSound(button_down);
+    UnloadSound(button_up);
+    UnloadSound(gate_open);
+    UnloadSound(activation);
+    UnloadSound(electricity);
+    UnloadSound(electrified);
+    UnloadSound(jumping);
+    UnloadSound(landing);
+    UnloadSound(laser_hit);
+    UnloadSound(pushing);
+    UnloadSound(wind_blow);
+    UnloadSound(fan);
+    UnloadSound(death);
+    UnloadSound(death_spikes);
+    UnloadSound(running);
+    UnloadSound(eating);
+    UnloadSound(writing);
+    UnloadSound(propeller);
+    UnloadSound(running_step);
+    UnloadSound(rewind);
+
+}

@@ -4,7 +4,6 @@
 #include "../Basic/Node.h"
 #include "../Gameplay/Player.h"
 #include "../Component/CameraGlobals.h"
-#include "../Light.h"
 #include "../ResourceManager.h"
 #include "../Basic/Model.h"
 #include "../Gameplay/Script.h"
@@ -165,6 +164,7 @@ json save_node(Node* node) {
 		pointLightData["linear"] = point_lights->linear;
 		pointLightData["quadratic"] = point_lights->quadratic;
 		pointLightData["is_shining"] = point_lights->is_shining;
+		pointLightData["is_alarm"] = point_lights->is_alarm;
 		j["point_light"] = pointLightData;
 	}
 	else if (dynamic_cast<PrefabInstance*>(node)) {
@@ -500,9 +500,12 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 				is_shining = j["point_light"]["is_shining"];
 			}
 
-			
-
-			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, is_shining, quadratic, linear, constant, ambient, diffuse, specular);
+			bool is_alarm = false;
+			if (j["point_light"].contains("is_alarm")) {
+				is_alarm = j["point_light"]["is_alarm"];;
+			}
+		
+			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, is_shining, is_alarm, quadratic, linear, constant, ambient, diffuse, specular);
 		}
 		else if (type._Equal("DirectionalLight")) {
 			glm::vec3 ambient = json_to_vec3(j["directional_light"]["ambient"]);
@@ -549,72 +552,11 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 		node->setTag(TagLayerManager::Instance().getTag(j["tag"]));
 		node->setLayer(TagLayerManager::Instance().getLayer(j["layer"]));
 
-
-
-		/*if (j.contains("components")) {
-			for (auto& component : j["components"]) {
-				std::string component_name = component["name"];
-				
-				if (component_name._Equal("Rigidbody")) {
-					json rigidbodyJson = component["properties"];
-					node->addComponent(std::make_unique<Rigidbody>(rigidbodyJson["mass"], rigidbodyJson["gravity"], rigidbodyJson["is_static"]));
-				} else {
-					std::unique_ptr <Component> _component = ScriptFactory::instance().create(component_name);
-					json variablesJson = component["variables"];
-					Script* script = dynamic_cast<Script*>(_component.get());
-					for (json fieldJson : variablesJson) {
-						
-						std::string field_name = fieldJson["name"];
-						std::string field_type = fieldJson["field_type"];
-
-						for (const auto& field : script->getFields()) {
-							if (field.name == field_name && field.type == field_type) {
-								void* ptr = reinterpret_cast<char*>(script) + field.offset;
-								if (field.type == "float") {
-									float* f = reinterpret_cast<float*>(ptr);
-									*f = fieldJson["value"];
-								}
-								else if (field.type == "int") {
-									std::string* s = reinterpret_cast<std::string*>(ptr);
-									*s = fieldJson["value"];
-								}
-								else if (field.type == "int") {
-									int* i = reinterpret_cast<int*>(ptr);
-									*i = fieldJson["value"];
-								}
-								else if (field.type == "Node*") {
-									std::string node_in_script = fieldJson["value"];
-									script_nodes.push_back(std::make_pair(node, std::make_pair(field.name, node_in_script)));
-									
-
-								}
-							}
-						}
-
-						
-
-						
-
-						
-					}
-
-
-					node->addComponent(std::move(_component));
-				}
-
-
-				
-				
-			}
-		}*/
-
-
 		// Rekurencyjnie zapisujemy dzieci
 		for (json _j : j["children"]) {
 			Node* child = load_node(_j, prefabs, puzzle_prefabs, scene);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
-				//scene->addPointLight(point_light, node->name);
 				node->scene_graph = scene;
 				node->addChild(point_light);
 				scene->point_lights.push_back(point_light);
@@ -622,35 +564,27 @@ Node* load_node(json& j, std::vector<std::shared_ptr<Prefab>>& prefabs, std::vec
 			}
 			else if (dynamic_cast<DirectionalLight*>(child)) {
 				DirectionalLight* directional_light = dynamic_cast<DirectionalLight*>(child);
-				//scene->addDirectionalLight(directional_light, node->name);
 				node->scene_graph = scene;
 				node->addChild(directional_light);
 				scene->directional_lights.push_back(directional_light);
 				scene->directional_light_number++;
 			}
 			else {
-				//scene->addChild(child, node->name);
 				node->scene_graph = scene;
 				node->addChild(child);
 			}
 
-
 		}
+
 	}
 
-
-
 	return node;
+
 }
 
-
-
-Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
-{
+Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name) {
 
 	Node* node = nullptr;
-
-
 
 	int model_id = j["model.id"];
 	int id = j["id"];
@@ -704,7 +638,7 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 		if (type._Equal("Node")) {
 
 			if (model_id != -1) {
-				std::shared_ptr<Model> model = ResourceManager::Instance().getModel(model_id); //getModelById(models, model_id);
+				std::shared_ptr<Model> model = ResourceManager::Instance().getModel(model_id);
 
 				node = new Node(model, name, id);
 
@@ -733,7 +667,12 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			if (j["point_light"].contains("is_shining")) {
 				is_shining = j["point_light"]["is_shining"];
 			}
-			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, is_shining, quadratic, linear, constant, ambient, diffuse, specular);
+			bool is_alarm = false;
+			if (j["point_light"].contains("is_alarm")) {
+				is_alarm = j["point_light"]["is_alarm"];
+			}
+
+			node = new PointLight(ResourceManager::Instance().getModel(model_id), name, is_shining, is_alarm, quadratic, linear, constant, ambient, diffuse, specular);
 		}
 		else if (type._Equal("DirectionalLight")) {
 			glm::vec3 ambient = json_to_vec3(j["directional_light"]["ambient"]);
@@ -771,26 +710,11 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 		node->setTag(TagLayerManager::Instance().getTag(j["tag"]));
 		node->setLayer(TagLayerManager::Instance().getLayer(j["layer"]));
 
-		/*if (j.contains("components")) {
-			for (auto& component : j["components"]) {
-				std::string component_name = component["name"];
-
-				if (component_name._Equal("Rigidbody")) {
-					json rigidbodyJson = component["properties"];
-					node->addComponent(std::make_unique<Rigidbody>(rigidbodyJson["mass"], rigidbodyJson["gravity"], rigidbodyJson["is_static"]));
-				}
-				else {
-					node->addComponent(ScriptFactory::instance().create(component_name));
-				}
-			}
-		}*/
-
 		// Rekurencyjnie zapisujemy dzieci
 		for (json j : j["children"]) {
 			Node* child = load_prefab_node(j, scene, _name);
 			if (dynamic_cast<PointLight*>(child)) {
 				PointLight* point_light = dynamic_cast<PointLight*>(child);
-				//scene->addPointLight(point_light, node->name);
 				node->scene_graph = scene;
 				node->addChild(point_light);
 				scene->point_lights.push_back(point_light);
@@ -798,27 +722,22 @@ Node* load_prefab_node(json& j, SceneGraph*& scene, std::string& _name)
 			}
 			else if (dynamic_cast<DirectionalLight*>(child)) {
 				DirectionalLight* directional_light = dynamic_cast<DirectionalLight*>(child);
-				//scene->addDirectionalLight(directional_light, node->name);
 				node->scene_graph = scene;
 				node->addChild(directional_light);
 				scene->directional_lights.push_back(directional_light);
 				scene->directional_light_number++;
 			}
 			else {
-				//scene->addChild(child, node->name);
 				node->scene_graph = scene;
 				node->addChild(child);
 			}
 
-
 		}
+
 	}
-
-
 
 	return node;
 }
-
 
 std::shared_ptr<Prefab> loadPrefab(const std::string& filename)
 {
@@ -845,13 +764,10 @@ std::shared_ptr<Prefab> loadPrefab(const std::string& filename)
 		loadComponents(prefab_data, prefab->prefab_scene_graph->root, prefab->prefab_scene_graph);
 	}
 
-
 	return prefab;
 }
 
-void loadComponents(json& j, Node* node, SceneGraph* scene)
-{
-
+void loadComponents(json& j, Node* node, SceneGraph* scene) {
 
 	if (j.contains("components")) {
 		for (auto& component : j["components"]) {
@@ -1259,4 +1175,5 @@ void loadPostProcessData(const std::string& filename, PostProcessData& data) {
 	else {
 		std::cerr << "Nie mozna otworzyc pliku: " << filename << std::endl;
 	}
+
 }

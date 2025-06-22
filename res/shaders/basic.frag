@@ -17,6 +17,8 @@ struct PointLight {
 
 	vec3 position, ambient, diffuse, specular;
 	float constant, linear, quadratic;
+    bool is_alarm;
+
 };
 
 struct DirectionLight {
@@ -54,6 +56,7 @@ uniform vec3 cameraPosition;
 
 float shininess = 64.f;
 
+uniform float time;
 
 void main() {
 
@@ -62,12 +65,6 @@ void main() {
 
 	if (is_light != 1) {
     
-        // obtain normal from normal map in range [0,1]
-        //vec3 normal = texture(normal_map, fs_in.TexCoords).rgb;
-        // transform normal vector to range [-1,1]
-        //normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space
-
-        
         vec3 viewDir = normalize(cameraPosition - fs_in.Pos);
 	    mat3 res = mat3(0.f);
         for (int i = 0; i < point_light_number; i++) {
@@ -80,10 +77,6 @@ void main() {
         for (int i = 0; i < directional_light_number; i++) {
             res += calculateDirectionalLight(viewDir, directional_lights[i]);
         }
-
-
-
-        //shadow = shadow / float(point_light_number);
 
         vec3 finalColor = (res[0] + (res[1] + res[2]));
 
@@ -105,15 +98,20 @@ mat3 calculatePointLight(vec3 viewDir, PointLight light) {
     float _distance = distance(light.position, fs_in.Pos);
     float attenuation = 1.0f / (light.quadratic * _distance * _distance + light.linear * _distance + light.constant);
 
+    float blink = 1.0;
+    if (light.is_alarm) {
+        blink = abs(sin(time * 5.0));
+    }
 
     vec3 ambient = light.ambient * vec3(color * texture(texture_diffuse1, fs_in.Cords)) * attenuation;
-    vec3 diffuse = light.diffuse * diff * vec3(color * texture(texture_diffuse1, fs_in.Cords)) * attenuation;
-    vec3 specular = light.specular * spec * vec3(color * texture(texture_specular1, fs_in.Cords)) * attenuation;
+    vec3 diffuse = light.diffuse * diff * vec3(color * texture(texture_diffuse1, fs_in.Cords)) * attenuation * blink;
+    vec3 specular = light.specular * spec * vec3(color * texture(texture_specular1, fs_in.Cords)) * attenuation * blink;
 
     return mat3(ambient, diffuse, specular);
 }
 
 mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light) {
+
     vec3 lightDir = normalize(-light.direction);
     float diff = max(dot(fs_in.Normal, lightDir), 0.0);
     vec3 halfwayDir = normalize(lightDir + viewDir);
@@ -124,6 +122,7 @@ mat3 calculateDirectionalLight(vec3 viewDir, DirectionLight light) {
     vec3 specular = light.specular * spec * vec3(color * texture(texture_specular1, fs_in.Cords));
 
     return mat3(ambient, diffuse, specular);
+
 }
 
 float calculateShadow(vec4 position_from_light_perpective, sampler2D map) {
@@ -151,9 +150,7 @@ float calculateShadow(vec4 position_from_light_perpective, sampler2D map) {
     return shadow;
 }
 
-float calculateShadowPointLight(PointLight p, samplerCube map)
-{
-    //if (useShadows == 0) return 0.0;
+float calculateShadowPointLight(PointLight p, samplerCube map) {
 
     vec3 fragToLight = (fs_in.Pos - p.position);
     float currentDepth = length(fragToLight);
@@ -165,4 +162,5 @@ float calculateShadowPointLight(PointLight p, samplerCube map)
     float shadow = currentDepth - bias > closestDepth ? 1.0f : 0.0f;
 
     return shadow;
+
 }
