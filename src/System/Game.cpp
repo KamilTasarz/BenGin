@@ -649,7 +649,7 @@ void Game::init()
 
     GameManager::instance().Init(SceneManager::Instance().getCurrentScene());
 
-    glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    if (GameManager::instance().emitter) glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 }
 void Game::run()
