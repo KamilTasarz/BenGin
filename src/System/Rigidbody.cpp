@@ -89,7 +89,7 @@ void Rigidbody::onUpdate(float deltaTime)
 		rotationHistory.push_back(currentRotation);
 	}*/
 
-	smoothingFactor = GameManager::instance->globalSmoothing;
+	smoothingFactor = GameManager::instance().globalSmoothing;
 
 	// ground detection
 	glm::vec3 position = (owner->AABB->max_point_world + owner->AABB->min_point_world) / 2.f;
@@ -182,7 +182,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	}
 	if (lockPositionZ) position.z = startPos.z;
 
-    owner->transform.setLocalPosition(position);
+    owner->transform.setLocalPosition(glm::vec3(position.x, position.y, 0.f));
 
 	overrideVelocityY = false;
 	overrideVelocityX = false;

@@ -27,6 +27,11 @@ void DeathState::update(Node* owner, float deltaTime) {
 }
 
 void DeathState::exit(Node* owner) {
+    auto newTexture = owner->pModel->meshes[0].textures[0];
+
+    //reset rat texture
+    auto ratTexture = ResourceManager::Instance().getTexture(34);
+    owner->pModel->meshes[0].textures[0] = (ratTexture);
 
     auto* animation = owner->getComponent<PlayerAnimationController>();
     if (owner->animator->current_animation == animation->deathLeft) {
@@ -35,6 +40,10 @@ void DeathState::exit(Node* owner) {
     else {
         owner->pModel = ResourceManager::Instance().getModel(66);
     }
+
+    //copy texture from animated rat
+    owner->pModel->meshes[0].textures[0] = (newTexture);
+
     if (animation->currentState) {
 		delete animation->currentState;
         animation->currentState = nullptr;

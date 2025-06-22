@@ -4,34 +4,37 @@
 #include "../Basic/Animator.h"
 #include "GameManager.h"
 #include "RewindManager.h"
+#include "Puzzles/Electrified.h"
+#include "../Component/BoundingBox.h"
 
 REGISTER_SCRIPT(Checkpoint);
 
 void Checkpoint::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "Checkpoint::onAttach::" << owner->name << std::endl;
 }
 
 void Checkpoint::onDetach()
 {
-	std::cout << "Checkpoint::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 
 void Checkpoint::onStart()
 {
-	std::cout << "Checkpoint::onStart::" << owner->name << std::endl;
-	owner->color = glm::vec4(1.f, 1.f, 1.f, 0.5f);
+	minColliderPosition = owner->AABB_logic->min_point_world;
+	maxColliderPosition = owner->AABB_logic->max_point_world;
 }
 
 void Checkpoint::onUpdate(float deltaTime)
 {
 	if (owner->is_animating && !owner->animator->isPlayingNonLooping()) return;
 	
-	Node* player = GameManager::instance->currentPlayer;
+	Node* player = GameManager::instance().currentPlayer;
 
 	if (!owner || !player) return;
+
+	owner->AABB_logic->min_point_world = minColliderPosition;
+	owner->AABB_logic->max_point_world = maxColliderPosition;
 
 	//rotate towards player
 	glm::vec3 playerPos = player->transform.getGlobalPosition();
@@ -66,5 +69,13 @@ void Checkpoint::onCollisionLogic(Node* other)
 
 			//RewindManager::Instance().resetAllHistories();
 		}
+	}
+}
+
+void Checkpoint::onStayCollisionLogic(Node* other)
+{
+	auto* electrified = other->getComponent<Electrified>();
+	if (electrified && electrified->isActive) {
+		GameManager::instance().RemoveThisPlayer(other);
 	}
 }

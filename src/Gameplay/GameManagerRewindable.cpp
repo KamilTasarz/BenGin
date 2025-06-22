@@ -8,32 +8,30 @@ REGISTER_SCRIPT(GameManagerRewindable);
 
 void GameManagerRewindable::onAttach(Node* owner) {
 	this->owner = owner;
-    RewindManager::Instance().registerRewindable(this);
 }
 
 void GameManagerRewindable::onDetach() {
-	gameManager = nullptr;
+	//gameManager = nullptr;
 	owner = nullptr;
-	RewindManager::Instance().unregisterRewindable(this);
 }
 
 void GameManagerRewindable::onStart() {
-    gameManager = owner->getComponent<GameManager>();
+    //gameManager = owner->getComponent<GameManager>();
 }
 
 std::shared_ptr<ITimeSnapshot> GameManagerRewindable::createSnapshot() {
     auto snap = std::make_shared<GameManagerSnapshot>();
-    snap->runTime = gameManager->runTime;
-    snap->deathCount = gameManager->deathCount;
-    snap->score = gameManager->score;
+    snap->runTime = GameManager::instance().runTime;
+    snap->deathCount = GameManager::instance().deathCount;
+    snap->score = GameManager::instance().score;
     return snap;
 }
 
 void GameManagerRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseSnap) {
     auto snap = std::dynamic_pointer_cast<GameManagerSnapshot>(baseSnap);
-    if (!snap || !gameManager) return;
+    if (!snap) return;
 
-    gameManager->runTime = snap->runTime;
-    gameManager->deathCount = snap->deathCount;
-    gameManager->score = snap->score;
+    GameManager::instance().runTime = snap->runTime;
+    GameManager::instance().deathCount = snap->deathCount;
+    GameManager::instance().score = snap->score;
 }

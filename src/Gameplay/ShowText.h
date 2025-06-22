@@ -23,6 +23,7 @@ public:
 	bool entered = false;
 	bool writingFirstDone = false;
 	vector<char> textChars;
+	int spacesAdded = 0;
 
 	ShowText() = default;
 	~ShowText() = default;

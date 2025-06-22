@@ -32,7 +32,7 @@ void GasWall::onStart() {
 void GasWall::onUpdate(float deltaTime) {
     if (!spreading || spreadQueue.empty()) return;
 
-    if (GameManager::instance->isRewinding) return;
+    if (GameManager::instance().isRewinding) return;
 
     if (!inputDetected) {
         GLFWwindow* window = ServiceLocator::getWindow()->window;
@@ -45,7 +45,7 @@ void GasWall::onUpdate(float deltaTime) {
         return;
     }
 
-    spreadInterval = GameManager::instance->gasSpreadingSpeed;
+    spreadInterval = GameManager::instance().gasSpreadingSpeed;
 
     timer += deltaTime;
     if (timer >= spreadInterval * spreadSpeed) {

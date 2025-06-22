@@ -13,7 +13,7 @@ struct GameManagerSnapshot : public ITimeSnapshot {
 
 class GameManagerRewindable : public TimeRewindable {
 public:
-    GameManager* gameManager = nullptr;
+    //UIManager* gameManager = nullptr;
 
     void onAttach(Node* owner) override;
     void onDetach() override;

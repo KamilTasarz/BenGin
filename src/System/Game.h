@@ -76,6 +76,7 @@ public:
 	void debug_print();
 
 	void loadSounds();
+	void unloadSounds();
 
 	void renderQuadWithTexture(GLuint tex);
 	void renderQuadWithTextures(GLuint tex0, GLuint tex1);

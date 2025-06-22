@@ -25,7 +25,7 @@ void Modifier::onCollisionLogic(Node* other)
 {
     switch (currentModifier) {
     case ModifierType::Slippery:
-        GameManager::instance->globalSmoothing = 1.f;
+        GameManager::instance().globalSmoothing = 1.f;
         break;
     }
 }

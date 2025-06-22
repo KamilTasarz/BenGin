@@ -112,6 +112,9 @@ void PlayerController::onDetach()
 
 void PlayerController::onStart()
 {
+	owner->textures.clear();
+	owner->textures.push_back(34);
+
 	isGravityFlipped = false;
 	deathTimer = 0.5f;
 	rb = owner->getComponent<Rigidbody>();
@@ -130,6 +133,9 @@ void PlayerController::onStart()
 		owner->addComponent(std::make_unique<PlayerRewindable>());
 		rewindable = owner->getComponent<PlayerRewindable>();
 	}
+
+	auto ratTexture = ResourceManager::Instance().getTexture(34);
+	owner->pModel->meshes[0].textures[0] = (ratTexture);
 }
 
 void PlayerController::onUpdate(float deltaTime)
@@ -159,7 +165,7 @@ void PlayerController::onUpdate(float deltaTime)
 		rb->isGravityFlipped = false;
 	}
 
-	if (!GameManager::instance->isRewinding) {
+	if (!GameManager::instance().isRewinding) {
 		pressedRight = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS);
 		pressedLeft = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS);
 
@@ -330,9 +336,9 @@ void PlayerController::Die(bool freeze, bool electrified)
 	animationController->changeState(new DeathState());
 
 	auto* audio = ServiceLocator::getAudioEngine();
-	audio->PlaySFX(audio->death, GameManager::instance->sfxVolume * 65.f);
+	audio->PlaySFX(audio->death, GameManager::instance().sfxVolume * 65.f);
 
-	if (!GameManager::instance->tutorialActive) GameManager::instance->deathCount++;
+	if (!GameManager::instance().tutorialActive) GameManager::instance().deathCount++;
 }
 
 bool PlayerController::HandleVirus(float deltaTime)
@@ -383,26 +389,31 @@ void PlayerController::ApplyVirusEffect()
 
 void PlayerController::VirusEffect()
 {
-	//PlayerController* player = target->getComponent<PlayerController>();
-
 	if (virusType == "blue") {
 		//owner->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 		owner->textures.clear();
-		owner->textures.push_back(20);
+		owner->textures.push_back(35);
+
 		isGravityFlipped = false;
 		rb->gravity = -32.f;
 		rb->mass = 0.4f;
 		jumpForce *= 1.2f;
 	}
 	else if (virusType == "green") {
-		owner->changeColor(glm::vec4(0.8f, 0.5f, 0.8f, 1.0f));
+		//owner->changeColor(glm::vec4(0.5f, 0.3f, 0.7f, 1.0f));
+
+		owner->textures.clear();
+		owner->textures.push_back(36);
 
 		CameraFollow::instance->verticalOffset = -1.f;
 		isGravityFlipped = true;
 		rb->gravity = 32.f;
 	}
 	else if (virusType == "black") {
-		owner->changeColor(glm::vec4(0.f, 0.0f, 0.0f, 1.0f));
+		//owner->changeColor(glm::vec4(0.72f, 0.45f, 0.2f, 1.0f));
+
+		owner->textures.clear();
+		owner->textures.push_back(37);
 
 		rb->mass = 25.f;
 		speed *= 0.7f;

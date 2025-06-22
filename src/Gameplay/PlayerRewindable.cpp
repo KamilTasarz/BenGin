@@ -5,6 +5,7 @@
 #include "../Basic/Node.h"
 #include "GameManager.h"
 #include "GameManagerRewindable.h"
+#include "UIManager.h"
 #include "RewindManager.h"
 
 REGISTER_SCRIPT(PlayerRewindable);
@@ -37,6 +38,7 @@ std::shared_ptr<ITimeSnapshot> PlayerRewindable::createSnapshot() {
     snap->virusType = playerController->virusType;
     snap->tagName = owner->getTagName();
 	snap->LayerName = owner->getLayerName();
+    snap->currentTexture = owner->textures[0];
     return snap;
 }
 
@@ -49,6 +51,11 @@ void PlayerRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseS
 	playerController->isElectrified = snap->isElectrified;
     playerController->virusType = snap->virusType;
     playerController->lastVirusType = "null";
+    
+    if (owner->textures[0] != snap->currentTexture) {
+        owner->textures.clear();
+        owner->textures.push_back(snap->currentTexture);
+    }
 
     if (owner->getTagName() != snap->tagName) {
         auto tag = TagLayerManager::Instance().getTag(snap->tagName);
@@ -59,7 +66,7 @@ void PlayerRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseS
 		owner->setLayer(layer);
 	}
 
-    if (history.empty() && GameManager::instance->rewindable->history.size() > 1) {
-		GameManager::instance->RemoveCurrentPlayer();
+    if (history.empty() && GameManager::instance().uiManager->rewindable->history.size() > 1) {
+		GameManager::instance().RemoveCurrentPlayer();
     }
 }

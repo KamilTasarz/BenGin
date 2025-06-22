@@ -14,7 +14,7 @@ void LandState::enter(Node* owner) {
     owner->animator->blendAnimation(animation->fall, 50.f, true, false);
 
     auto* audio = ServiceLocator::getAudioEngine();
-    audio->PlaySFX(audio->landing, GameManager::instance->sfxVolume * 90.f);
+    audio->PlaySFX(audio->landing, GameManager::instance().sfxVolume * 90.f);
 }
 
 void LandState::update(Node* owner, float deltaTime) {

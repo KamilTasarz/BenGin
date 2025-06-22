@@ -17,7 +17,7 @@ void RunState::enter(Node* owner) {
     owner->animator->blendAnimation(animation->run, 50.f, true, true);
 
     auto* audio = ServiceLocator::getAudioEngine();
-    sfxId = audio->PlayMusic(audio->running, GameManager::instance->sfxVolume * 75.f);
+    sfxId = audio->PlayMusic(audio->running, GameManager::instance().sfxVolume * 75.f);
 
 	owner->getChildByNamePart("run_particles")->getComponent<Particles>()->emit = true;
 }

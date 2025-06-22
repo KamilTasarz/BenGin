@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include "GameManager.h"
+#include "../System/Tag.h"
 
 REGISTER_SCRIPT(NPC);
 
@@ -33,6 +34,9 @@ void NPC::onStart() {
     // Inicjalizacja, np. znalezienie gracza w scenie
     // player = owner->scene_graph->findNodeByTag("Player");
 
+    owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Platform"));
+    owner->AABB_logic->addIgnoredLayer(TagLayerManager::Instance().getLayer("Platform"));
+
     startPos = owner->transform.getGlobalPosition();
     rb = owner->getComponent<Rigidbody>();
 	rb->smoothingFactor = .02f;
@@ -46,7 +50,7 @@ void NPC::onStart() {
 
 	glm::vec3 pos = owner->transform.getGlobalPosition();
     auto* audio = ServiceLocator::getAudioEngine();
-    sfxId = audio->PlayMusic(audio->propeller, /*GameManager::instance->sfxVolume **/ 75.f, pos);
+    sfxId = audio->PlayMusic(audio->propeller, /*GameManager::instance().sfxVolume **/ 75.f, pos);
 	audio->SetChannel3dMinMaxDistance(sfxId, 1.0f, 16.0f);
 }
 

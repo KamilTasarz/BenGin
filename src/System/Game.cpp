@@ -14,6 +14,7 @@
 #include "../System/GuiManager.h"
 #include "../System/RenderSystem.h"
 #include "../System/SceneManager.h"
+#include "../Gameplay/GameManager.h"
 
 Ray Game::getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
 
@@ -366,6 +367,7 @@ void Game::update(float deltaTime)
     auto* audio = ServiceLocator::getAudioEngine();
     
     audio->Update();
+    GameManager::instance().Update(deltaTime, SceneManager::Instance().getCurrentScene());
 
     // Kamera
     camera->ProcessKeyboard(deltaTime, 0);
@@ -641,9 +643,14 @@ void Game::init()
 	PhysicsSystem::instance().colliders.clear();
 	PhysicsSystem::instance().colliders_RigidBody.clear();  
 	PhysicsSystem::instance().rooms.clear();  
-
+	
 	//ResourceManager::Instance().shader_tile->use();
 	//ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
+
+    GameManager::instance().Init(SceneManager::Instance().getCurrentScene());
+
+    glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 }
 void Game::run()
 {
@@ -696,11 +703,27 @@ void Game::run()
 }
 void Game::shutdown()
 {
+    glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    unloadSounds();
     glDeleteTextures(1, &colorTexture);
     glDeleteTextures(1, &normalTexture);
     glDeleteTextures(1, &depthTexture);
+    glDeleteTextures(1, &noise_texture);
+    glDeleteTextures(1, &pingpongTexture[0]);
+    glDeleteTextures(1, &pingpongTexture[1]);
+    glDeleteTextures(1, &rewindColorBuffer);
+    glDeleteTextures(1, &ssaoColorBuffer);
+    glDeleteTextures(1, &ssaoBlurColorBuffer);
+    glDeleteTextures(1, &crtColorBuffer);
     glDeleteRenderbuffers(1, &depthRenderbuffer);
     glDeleteFramebuffers(1, &framebuffer);
+    glDeleteFramebuffers(1, &bloomFBO);
+    glDeleteFramebuffers(1, &crtFBO);
+    glDeleteFramebuffers(1, &pingpongFBO[0]);
+    glDeleteFramebuffers(1, &pingpongFBO[1]);
+    glDeleteFramebuffers(1, &rewindFBO);
+    glDeleteFramebuffers(1, &ssaoFBO);
+    glDeleteFramebuffers(1, &ssaoBlurFBO);
     //glfwTerminate();
 }
 
@@ -800,3 +823,12 @@ void Game::loadSounds() {
     audio->loadAllGameSounds();
     
 }
+
+void Game::unloadSounds() {
+
+    auto* audio = ServiceLocator::getAudioEngine();
+
+    audio->unloadAllGameSounds();
+
+}
+

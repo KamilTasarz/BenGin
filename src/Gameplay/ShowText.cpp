@@ -46,16 +46,34 @@ void ShowText::onUpdate(float deltaTime)
 		timer = 0.f + GameMath::RandomFloat(-speed / 2, speed / 2);
 
 		if (!textObjectSecond->value.empty()) {
-			textObjectSecond->value.pop_back();
+			for (int i = 0; i < spacesAdded + 1; i++)
+				textObjectSecond->value.pop_back();
+
+			spacesAdded = textSecond.size() - textObjectSecond->value.size();
+			textObjectSecond->value += std::string(spacesAdded, ' ');
+
+			if (spacesAdded == textSecond.size()) {
+				textObjectSecond->value = "";
+				spacesAdded = 0;
+			}
 
 			auto* audio = ServiceLocator::getAudioEngine();
-			audio->PlaySFX(audio->writing, GameManager::instance->sfxVolume * 80.f);
+			audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
 		}
 		else if (!textObject->value.empty()) {
-			textObject->value.pop_back();
+			for (int i = 0; i < spacesAdded + 1; i++)
+				textObject->value.pop_back();
 
+			spacesAdded = text.size() - textObject->value.size();
+			textObject->value += std::string(spacesAdded, ' ');
+
+			if (spacesAdded == text.size()) {
+				textObject->value = "";
+				spacesAdded = 0;
+			}
+			
 			auto* audio = ServiceLocator::getAudioEngine();
-			audio->PlaySFX(audio->writing, GameManager::instance->sfxVolume * 80.f);
+			audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
 		}
 		else {
 			isDeleting = false;
@@ -69,15 +87,27 @@ void ShowText::onUpdate(float deltaTime)
 			textChars.erase(textChars.begin());
 
 			if (!writingFirstDone) {
+				for (int i = 0; i < spacesAdded; i++)
+					textObject->value.pop_back();
+
 				textObject->value += c;
+
+				spacesAdded = text.size() - textObject->value.size();
+				textObject->value += std::string(spacesAdded, ' ');
 			}
 			else {
+				for (int i = 0; i < spacesAdded; i++)
+					textObjectSecond->value.pop_back();
+
 				textObjectSecond->value += c;
+
+				spacesAdded = textSecond.size() - textObjectSecond->value.size();
+				textObjectSecond->value += std::string(spacesAdded, ' ');
 			}
 
 			if (c != ' ') {
 				auto* audio = ServiceLocator::getAudioEngine();
-				audio->PlaySFX(audio->writing, GameManager::instance->sfxVolume * 80.f);
+				audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
 			}
 		}
 		else {

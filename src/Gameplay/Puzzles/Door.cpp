@@ -114,7 +114,7 @@ void Door::ChangeState(bool state)
 
 	glm::vec3 pos = owner->transform.getGlobalPosition();
 	auto* audio = ServiceLocator::getAudioEngine();
-	sfxId = audio->PlayMusic(audio->gate_open, GameManager::instance->sfxVolume * 80.f, pos);
+	sfxId = audio->PlayMusic(audio->gate_open, GameManager::instance().sfxVolume * 80.f, pos);
 	audio->SetChannel3dMinMaxDistance(sfxId, 3.0f, 20.0f);
 }
 

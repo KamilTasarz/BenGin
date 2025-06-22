@@ -73,7 +73,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	bool isDead = owner->getComponent<PlayerController>()->isDead;
 	if (isDead && allFinished) {
 		
-		/*if (currentState && GameManager::instance->currentPlayer == owner)
+		/*if (currentState && GameManager::instance().currentPlayer == owner)
 			changeState(new DeathState());*/
 		
 		//if (currentState)

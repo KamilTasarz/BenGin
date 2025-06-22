@@ -25,7 +25,7 @@ void Electrified::onStart()
 		//owner->scene_graph->root->forceUpdateSelfAndChild();
 		glm::vec3 pos = owner->transform.getGlobalPosition();
 		auto* audio = ServiceLocator::getAudioEngine();
-		sfxId = audio->PlayMusic(audio->electricity, GameManager::instance->sfxVolume * 70.f, pos);
+		sfxId = audio->PlayMusic(audio->electricity, GameManager::instance().sfxVolume * 70.f, pos);
 		audio->SetChannel3dMinMaxDistance(sfxId, 3.0f, 20.0f);
 	}	
 
@@ -61,6 +61,6 @@ void Electrified::onCollisionLogic(Node* other)
 
 		glm::vec3 pos = owner->transform.getGlobalPosition();
 		auto* audio = ServiceLocator::getAudioEngine();
-		audio->PlaySFX(audio->electrified, GameManager::instance->sfxVolume * 70.f);
+		audio->PlaySFX(audio->electrified, GameManager::instance().sfxVolume * 70.f);
 	}
 }

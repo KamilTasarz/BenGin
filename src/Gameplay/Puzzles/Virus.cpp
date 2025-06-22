@@ -41,8 +41,8 @@ void Virus::onUpdate(float deltaTime)
 	//rewindable->isCollected = isCollected;
 
 	//rewindable->player = player;
-	if (!GameManager::instance->currentPlayer) return;
-	PlayerController* player = GameManager::instance->currentPlayer->getComponent<PlayerController>();
+	if (!GameManager::instance().currentPlayer) return;
+	PlayerController* player = GameManager::instance().currentPlayer->getComponent<PlayerController>();
 
 	if (!isCollected && !modelChanged || player->isDead) {
 		int modelId = -1;
@@ -101,7 +101,7 @@ void Virus::onCollisionLogic(Node* other)
 		if (isCollected) return;
 
 		auto* audio = ServiceLocator::getAudioEngine();
-		audio->PlaySFX(audio->eating, GameManager::instance->sfxVolume * 80.f);
+		audio->PlaySFX(audio->eating, GameManager::instance().sfxVolume * 80.f);
 
 		isCollected = true;
 		modelChanged = false;

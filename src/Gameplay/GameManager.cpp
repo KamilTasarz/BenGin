@@ -1,123 +1,56 @@
 #include "GameManager.h"
 #include "../Basic/Node.h"
-#include "RegisterScript.h"
+//#include "RegisterScript.h"
 #include "PlayerSpawner.h"
 #include "LevelGenerator.h"
 #include "../System/GuiManager.h"
 #include "GameManagerRewindable.h"
 #include "PlayerRewindable.h"
 #include "RewindManager.h"
+#include "UIManager.h"
 
-REGISTER_SCRIPT(GameManager);
+//REGISTER_SCRIPT(GameManager);
 
-GameManager* GameManager::instance = nullptr;
+//GameManager* GameManager::instance = nullptr;
 
-void GameManager::onAttach(Node* owner)
+GameManager& GameManager::instance()
 {
-	GameManager::instance = this;
-    this->owner = owner;
+    static GameManager instance;
+    return instance;
 }
 
-void GameManager::onDetach()
+//void GameManager::onAttach(Node* owner)
+//{
+//	//GameManager::instance = this;
+//    this->owner = owner;
+//}
+//
+//void GameManager::onDetach()
+//{
+//    owner = nullptr;
+//}
+
+void GameManager::Init(SceneGraph* scene_graph)
 {
-    owner = nullptr;
-}
 
-void GameManager::onStart()
-{
-
-    playerSpawner = owner->scene_graph->root->getChildByTag("PlayerSpawner");
-	//playerSpawner->getComponent<PlayerSpawner>()->spawnPlayer();
-
-    levelGenerator = owner->scene_graph->root->getChildByTag("LevelGenerator")->getComponent<LevelGenerator>();
-    emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
-
-    scoreText = GuiManager::Instance().findText(0);
-	runTimeText = GuiManager::Instance().findText(1);
-	deathCountText = GuiManager::Instance().findText(2);
-	stateText = GuiManager::Instance().findText(3);
-	fpsText = GuiManager::Instance().findText(5);
-	timeline = GuiManager::Instance().findText(11);
-	timelineTop = GuiManager::Instance().findText(12);
-	timelineDown = GuiManager::Instance().findText(13);
-	playSprite = GuiManager::Instance().findSprite(15);
-	rewindSprite = GuiManager::Instance().findSprite(16);
+    playerSpawner = scene_graph->root->getChildByTag("PlayerSpawner");
+    levelGenerator = scene_graph->root->getChildByTag("LevelGenerator")->getComponent<LevelGenerator>();
+    emitter = dynamic_cast<InstanceManager*>(scene_graph->root->getChildByTag("Emitter"));
+    uiManager = scene_graph->root->getChildByTag("UIManager")->getComponent<UIManager>();
 
 	runTime = 0.f;
 	score = 0.f;
 	deathCount = 0;
-
-	rewindable = owner->getComponent<GameManagerRewindable>();
-	if (rewindable == nullptr) {
-		owner->addComponent(std::make_unique<GameManagerRewindable>());
-		rewindable = owner->getComponent<GameManagerRewindable>();
-	}
 }
 
-void GameManager::onUpdate(float deltaTime)
+void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
 {
-	isRewinding = rewindable->isRewinding;
-    
-	historyEmpty = rewindable->history.empty();
+	//isRewinding = uiManager->isRewinding;
+	//historyEmpty = uiManager->rewindable->history.empty();
 
-    if (isRewinding) {
-        stateText->value = "REWIND";
-		rewindSprite->visible = true;
-		playSprite->visible = false;
-
-        HandleRewindTimeline();
-		timeline->visible = true;
-		timelineTop->visible = true;
-		timelineDown->visible = true;
-	}
-    else {
-        stateText->value = "PLAY";
-        rewindSprite->visible = false;
-        playSprite->visible = true;
-
-		startHistorySize = rewindable->history.size();
-		timeline->visible = false;
-		timelineTop->visible = false;
-		timelineDown->visible = false;
-    }
-
-    if (!tutorialActive) {
-        if (!isRewinding) {
-            runTime += deltaTime;
-            score += deltaTime * 10.f / gasSpreadingSpeed;
-        }
-
-        int minutes = static_cast<int>(runTime) / 60;
-        int seconds = static_cast<int>(runTime) % 60;
-
-        std::string minutesText = minutes < 10 ? "0" + std::to_string(minutes) : std::to_string(minutes);
-        std::string secondsText = seconds < 10 ? "0" + std::to_string(seconds) : std::to_string(seconds);
-        runTimeText->value = minutesText + ":" + secondsText;
-
-        std::string scoreWithZeros = std::format("{:05}", static_cast<int>(score));
-        scoreText->value = "SCORE:" + scoreWithZeros;
-
-        deathCountText->value = "DEATHS:" + std::to_string(deathCount);
-    }
-    else if (tutorialActive && scoreText->visible) {
-        scoreText->visible = false;
-        runTimeText->visible = false;
-        deathCountText->visible = false;
-    }
-
-    timeSinceLastUpdate += deltaTime;
-    fpsAccumulator += 1.f / deltaTime; // fps dla tej jednej klatki
-    frameCount++;
-
-    // co 0.5 sekundy aktualizujemy wynik
-    if (timeSinceLastUpdate >= updateInterval) {
-        float avgFps = fpsAccumulator / frameCount;
-        fpsText->value = "FPS: " + std::to_string(static_cast<int>(avgFps));
-
-        // resetujemy akumulator
-        timeSinceLastUpdate = 0.f;
-        fpsAccumulator = 0.f;
-        frameCount = 0;
+    if (!tutorialActive && !isRewinding) {
+        runTime += deltaTime;
+        score += deltaTime * 10.f / gasSpreadingSpeed;
     }
 
     if (players.size() > 12) {
@@ -133,7 +66,7 @@ void GameManager::RemovePlayer()
 	if (players.empty()) return;
 
 	Node* playerToRemove = players.front();
-	owner->scene_graph->deleteChild(playerToRemove);
+	playerToRemove->scene_graph->deleteChild(playerToRemove);
     players.pop_front();
 }
 
@@ -145,10 +78,29 @@ void GameManager::RemoveCurrentPlayer()
     auto* player = playerToRemove->getComponent<PlayerRewindable>();
     RewindManager::Instance().unregisterRewindable(player);
 
-    owner->scene_graph->deleteChild(playerToRemove);
+    playerToRemove->scene_graph->deleteChild(playerToRemove);
     players.pop_back();
 
     if (!players.empty()) currentPlayer = players.back();
+}
+
+void GameManager::RemoveThisPlayer(Node* player)
+{
+	if (!player || players.empty()) return;
+
+    player->scene_graph->deleteChild(player);
+
+    auto playerNode = std::find(players.begin(), players.end(), player);
+    if (playerNode != players.end()) {
+        players.erase(playerNode);
+    }
+
+	if (players.empty()) {
+		currentPlayer = nullptr;
+	}
+	else {
+		currentPlayer = players.back();
+	}
 }
 
 void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
@@ -194,16 +146,4 @@ void GameManager::HandleLevelGeneration() {
     if (distanceToLevelGen < 40.f) {
         levelGenerator->GenerateLevel();
     }
-}
-
-void GameManager::HandleRewindTimeline()
-{
-	int timelineSize = 29;
-    int historySize = rewindable->history.size();
-    int mappedHistorySize = static_cast<int>((historySize / (float)startHistorySize) * timelineSize);
-
-    std::string speed = historySize > 0 ? std::to_string(rewindable->rewindSpeed) + + "x " : "-:- ";
-    std::string timelineText = speed + std::string(mappedHistorySize, '|') + std::string(timelineSize - mappedHistorySize, '-');
-
-	timeline->value = timelineText;
 }

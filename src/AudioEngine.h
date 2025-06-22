@@ -104,6 +104,7 @@ public:
     FMOD_VECTOR glmToFmod(const glm::vec3& vPosition);
 
     void loadAllGameSounds();
+    void unloadAllGameSounds();
     
     // Not from tutorial so potentially some real garbage code
     void stopSound(int nChannelId);

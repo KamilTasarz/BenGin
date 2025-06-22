@@ -48,24 +48,22 @@ void Fan::onUpdate(float deltaTime)
 		if (sfxId != -1 && audio->IsPlaying(sfxId)) {
 			audio->pauseSound(sfxId);
 			sfxId = -1;
-
-			targetFanSpeed = 0.f;
-
-			if (particleEmitter) particleEmitter->emit = false;
 		}
+		targetFanSpeed = 0.f;
+		if (particleEmitter) particleEmitter->emit = false;
+
 		return;
 	}
 
 	// Wentylator aktywny → wznowienie tylko jeśli NIE gra
 	if (sfxId == -1) {
 		glm::vec3 pos = owner->transform.getGlobalPosition();
-		sfxId = audio->PlayMusic(audio->fan, GameManager::instance->sfxVolume * 90.f, pos);
+		sfxId = audio->PlayMusic(audio->fan, GameManager::instance().sfxVolume * 90.f, pos);
 		audio->SetChannel3dMinMaxDistance(sfxId, 3.f, 20.0f);
-
-		targetFanSpeed = 10.f;
-
-		if (particleEmitter) particleEmitter->emit = true;
 	}
+
+	targetFanSpeed = 10.f;
+	if (particleEmitter) particleEmitter->emit = true;
 }
 
 void Fan::onStayCollisionLogic(Node* other)

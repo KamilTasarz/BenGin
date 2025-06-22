@@ -26,8 +26,8 @@ void CameraProp::onStart()
 void CameraProp::onUpdate(float deltaTime)
 {
     // Pozycja gracza i kamery
-    if (!GameManager::instance->currentPlayer) return;
-    glm::vec3 playerPos = GameManager::instance->currentPlayer->transform.getGlobalPosition();
+    if (!GameManager::instance().currentPlayer) return;
+    glm::vec3 playerPos = GameManager::instance().currentPlayer->transform.getGlobalPosition();
     glm::vec3 cameraPos = owner->transform.getGlobalPosition();
 
     // Ró¿nice pozycji
