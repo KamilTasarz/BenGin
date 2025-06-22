@@ -387,11 +387,9 @@ void PlayerController::ApplyVirusEffect()
 void PlayerController::VirusEffect()
 {
 	if (virusType == "blue") {
-		//owner->changeColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.5f));
-
-		auto ratTexture = ResourceManager::Instance().getTexture(35);
-		owner->pModel->meshes[0].textures[0] = (ratTexture);
-
+		//owner->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+		owner->textures.clear();
+		owner->textures.push_back(20);
 		isGravityFlipped = false;
 		rb->gravity = -32.f;
 		rb->mass = 0.4f;

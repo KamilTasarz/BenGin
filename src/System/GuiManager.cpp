@@ -3,6 +3,7 @@
 #include "../HUD/Sprite.h"
 #include "../ResourceManager.h"
 #include "../System/Window.h"
+#include "../HUD/GuiButton.h"
 
 void GuiManager::init(const char* path)
 {
@@ -214,3 +215,18 @@ ObjectType TextObject::getType()
 {
 	return TextType;
 }
+
+//void ButtonObject::render()
+//{
+//	button->render();
+//}
+//
+//ObjectType ButtonObject::getType()
+//{
+//	return ButtonType;
+//}
+//
+//void ButtonObject::attach(std::function<void()> on_action)
+//{
+//	button->attachFunction(on_action);
+//}

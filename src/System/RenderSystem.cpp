@@ -3,11 +3,13 @@
 #include "../Basic/Node.h"
 #include "../Basic/Model.h"
 #include "../Basic/Animator.h"
+#include "../Basic/Mesh.h"
 
 void RenderSystem::addAnimatedObject(Node* obj)
 {
 	RenderObject renderObj;
 	renderObj.model = obj->pModel;
+	if (!obj->textures.empty()) renderObj.textures = obj->textures; 
 	renderObj.color = glm::vec4(obj->color);
 	renderObj.modelMatrix = obj->transform.getModelMatrix();
 	renderObj.animator = obj->animator;
@@ -19,6 +21,7 @@ void RenderSystem::addStaticObject(Node* obj)
 	RenderObject renderObj;
 	renderObj.color = glm::vec4(obj->color);
 	renderObj.model = obj->pModel;
+	if (!obj->textures.empty()) renderObj.textures = obj->textures;
 	renderObj.modelMatrix = obj->transform.getModelMatrix();
 	renderObj.animator = nullptr; // Static objects typically don't have animators
 	staticObjects.push_back(renderObj);
@@ -29,6 +32,7 @@ void RenderSystem::addTileObject(Node* obj)
 	RenderObject renderObj;
 	renderObj.model = obj->pModel;
 	renderObj.color = glm::vec4(obj->color);
+	if (!obj->textures.empty()) renderObj.textures = obj->textures;
 	renderObj.modelMatrix = obj->transform.getModelMatrix();
 	renderObj.animator = nullptr; // Tile objects typically don't have animators
 	renderObj.tile_scale = obj->pModel->tile_scale;
@@ -45,7 +49,12 @@ void RenderSystem::render()
 		ResourceManager::Instance().shader_tile->setVec4("color", color);
 		ResourceManager::Instance().shader_tile->setFloat("tile_scale", obj.tile_scale);
 		ResourceManager::Instance().shader_tile->setMat4("model", obj.modelMatrix);
-		obj.model->Draw(*ResourceManager::Instance().shader_tile);
+		if (obj.textures.empty()) {
+			obj.model->Draw(*ResourceManager::Instance().shader_tile);
+		}
+		else {
+			obj.model->Draw(*ResourceManager::Instance().shader_tile, obj.textures);
+		}
 	}
 
 	ResourceManager::Instance().shader->use();
@@ -62,15 +71,25 @@ void RenderSystem::render()
 		for (int i = 0; i < f.size(); ++i) {
 			ResourceManager::Instance().shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
 		}
-
-		obj.model->Draw(*ResourceManager::Instance().shader);
+		if (obj.textures.empty()) {
+			obj.model->Draw(*ResourceManager::Instance().shader);
+		}
+		else {
+			obj.model->Draw(*ResourceManager::Instance().shader, obj.textures);
+		}
+		
 	}
 	ResourceManager::Instance().shader->setInt("is_animating", 0);
 	for (const auto& obj : staticObjects) {
 		ResourceManager::Instance().shader->setMat4("model", obj.modelMatrix);
 		glm::vec4 color = glm::vec4(obj.color);
 		ResourceManager::Instance().shader->setVec4("color", color);
-		obj.model->Draw(*ResourceManager::Instance().shader);
+		if (obj.textures.empty()) {
+			obj.model->Draw(*ResourceManager::Instance().shader);
+		}
+		else {
+			obj.model->Draw(*ResourceManager::Instance().shader, obj.textures);
+		}
 	}
 
 

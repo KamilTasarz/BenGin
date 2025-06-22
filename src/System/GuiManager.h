@@ -4,9 +4,10 @@
 
 class Sprite;
 class Text;
+class GuiButton;
 
 enum ObjectType {
-	SpriteType, TextType
+	SpriteType, TextType, ButtonType
 };
 
 class GuiObject {
@@ -57,9 +58,9 @@ public:
 };
 
 enum Text_names {
-	ARIAL_16, 
-	ARIAL_32, 
-	ARIAL_48, 
+	ARIAL_16,
+	ARIAL_32,
+	ARIAL_48,
 	ARIAL_64,
 	VCR_64,
 	VCR_48,
@@ -75,6 +76,24 @@ enum Sprite_names {
 	PLAY,
 	REWIND
 };
+
+//class ButtonObject : public GuiObject {
+//public:
+//	std::unique_ptr<GuiButton> button;
+//	glm::vec3 color = glm::vec3(0.f);
+//	ButtonObject(float x, float y, float w, float h, std::string text_value, Text_names font_id,
+//		Sprite_names base_sprite_id, Sprite_names hovered_sprite_id, unsigned int id, int order_id = 0) {
+//		this->pos = pos;
+//		this->order_id = order_id;
+//		this->id = id;
+//	}
+//	~ButtonObject() override = default;
+//	void render() override;
+//	ObjectType getType() override;
+//	void attach(std::function<void()> on_action);
+//};
+
+
 
 class GuiManager
 {
@@ -115,6 +134,10 @@ public:
 
 	// add sprite or animated sprite object to render
 	void sprite(float x, float y, float size, Sprite_names sprite_id, int order_id = -1, int id = -1, bool visible = true);
+
+	// add button
+	void button(float x, float y, float w, float h, std::string text_value, Text_names font_id,
+		Sprite_names base_sprite_id, Sprite_names hovered_sprite_id, int id = -1, int order_id = 0);
 
 	TextObject* findText(unsigned int id);
 	SpriteObject* findSprite(unsigned int id);
