@@ -36,7 +36,7 @@ public:
     SpriteObject* cheeseSprite;
 	std::string lastVirusType = "null";
 
-    //bool inGas = false;
+    bool isGamepadConnected = false;
     bool is_pressed = false;
 	std::string virusType = "none";
     float deathTimer;

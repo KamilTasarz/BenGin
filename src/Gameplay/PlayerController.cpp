@@ -155,6 +155,10 @@ void PlayerController::onStart()
 
 void PlayerController::onUpdate(float deltaTime)
 {
+	isGamepadConnected = glfwJoystickIsGamepad(GLFW_JOYSTICK_1);
+
+	cout << "\nGamepad connected?: " << isGamepadConnected << endl;
+
 	if (isDead) return;
 
 	isDying = false;
@@ -189,14 +193,14 @@ void PlayerController::onUpdate(float deltaTime)
 		pressedRight = (
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || 
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS ||
-			axisX > 0.4f ||
+			axisX > 0.1f ||
 			dpadRight
 			);
 		
 		pressedLeft = (
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || 
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS ||
-			axisX < -0.4f ||
+			axisX < -0.1f ||
 			dpadLeft
 			);
 

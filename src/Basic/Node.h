@@ -359,15 +359,13 @@ public:
 
     void virtual drawShadows(Shader& shader);
 
-    std::string getName() {
+    const std::string& getName() const {
         return name;
     }
 
     void rename(std::string new_name) {
         this->name = new_name;
     }
-
-    //void separate(const BoundingBox* other_AABB);
 
     const Transform& getTransform();
 
@@ -449,14 +447,10 @@ public:
 };
 
 class DirectionalLight : public Light {
+
 public:
+
     glm::vec3 direction;
-
-
-    /*DirectionalLight() : Light(nullptr, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)) {
-        this->direction = glm::vec3(1.f, -1.f, 1.f);
-        view_projection = glm::mat4(1.f);
-    }*/
 
     DirectionalLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 direction = glm::vec3(1.f, -1.f, 1.f), glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
     ~DirectionalLight() override;
@@ -491,8 +485,6 @@ public:
 
     GLuint depthCubemap;
 
-    //PointLight() : Light(shared_ptr<Model> model, std::string nameOfNode, glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(0.8f)), quadratic(0.032f), linear(0.09f), constant(1.f) {}
-
     PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, bool is_alarm, float quadratic, float linear, float constant = 1.f, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
     ~PointLight() override;
 
@@ -521,7 +513,7 @@ public:
     std::list<PointLight*> point_lights;
     std::unordered_set<PointLight*> active;
 
-    int limit_per_frame = 2;
+    int limit_per_frame = 1;
     std::list<PointLight*>::iterator last_index;
 
 	Grid* grid = nullptr;
@@ -578,7 +570,7 @@ class PrefabInstance;
 class Prefab {
 
 public:
-    //shared_ptr<SceneGraph> prefab_scene_graph;
+
     SceneGraph* prefab_scene_graph;
 	PrefabType prefab_type;
 	std::vector<PrefabInstance*> prefab_instances;
