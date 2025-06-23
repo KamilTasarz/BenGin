@@ -42,7 +42,7 @@ private:
     unsigned int VBO, EBO;
 
     // initializes all the buffer objects/arrays
-    void setupMesh() {
+    void setupMesh() noexcept {
   
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
@@ -95,24 +95,10 @@ public:
         setupMesh();
     }
 
-    // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<shared_ptr<Texture>>&& textures) 
+    Mesh(vector<Vertex>&& vertices, vector<shared_ptr<Texture>>&& textures)
+        : vertices(std::move(vertices)), textures(std::move(textures)), is_EBO(false)
     {
-        this->vertices = vertices;
-        this->indices = indices;
-        this->textures = textures;
-        is_EBO = true;
-        // now that we have all the required data, set the vertex buffers and its attribute pointers.
-        setupMesh();
-
-    }
-
-    Mesh(vector<Vertex> vertices, vector<shared_ptr<Texture>>&& textures)
-    {
-        this->vertices = vertices;
-        this->textures = textures;
-        is_EBO = false;
-        // now that we have all the required data, set the vertex buffers and its attribute pointers.
+       
         setupMesh();
     }
 
@@ -170,7 +156,7 @@ public:
 
     }
 
-    void Draw(Shader& shader, std::vector<shared_ptr<Texture>>& texture) const
+    void Draw(Shader& shader, const std::vector<shared_ptr<Texture>>& texture) const
     {
         bool setFallback = texture.size() < 2;
 
