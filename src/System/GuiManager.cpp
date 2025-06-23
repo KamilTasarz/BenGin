@@ -4,6 +4,7 @@
 #include "../ResourceManager.h"
 #include "../System/Window.h"
 #include "../HUD/GuiButton.h"
+#include "SceneManager.h"
 
 void GuiManager::init(const char* path)
 {
@@ -93,6 +94,7 @@ void GuiManager::update(float delta_time)
 		ButtonObject* b = dynamic_cast<ButtonObject*>(o);
 		if (b && b->button->on_click) {
 			b->button->update();
+			if (SceneManager::Instance().isSwitched()) break;
 		}
 	}
 }

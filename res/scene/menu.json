@@ -3,7 +3,7 @@
         "free_id": [
             28
         ],
-        "max_id": 53,
+        "max_id": 55,
         "objects": [
             {
                 "alignment": 0,
@@ -22,26 +22,74 @@
                 "y": 676.0
             },
             {
-                "height": 93.0,
+                "alignment": 0,
+                "color": {
+                    "x": 0.7303921580314636,
+                    "y": 0.7303921580314636,
+                    "z": 0.7303921580314636
+                },
+                "id": 29,
+                "order": 0,
+                "ptr_id": 4,
+                "type": "text",
+                "value": "Nick:",
+                "visible": true,
+                "x": 738.0,
+                "y": 1000.0
+            },
+            {
+                "height": 100.0,
                 "hovered_ptr_id": 8,
                 "id": 28,
                 "is_invincible": false,
                 "on_click": "MenuButton",
                 "order": 0,
                 "ptr_id": 7,
-                "text_ptr_id": 3,
+                "text_ptr_id": 4,
                 "text_value": "PLAY",
                 "type": "button",
                 "visible": true,
-                "width": 242.0,
-                "x": 799.0,
-                "y": 519.0
+                "width": 200.0,
+                "x": 786.0,
+                "y": 633.0
+            },
+            {
+                "alignment": 0,
+                "color": {
+                    "x": 0.7303921580314636,
+                    "y": 0.7303921580314636,
+                    "z": 0.7303921580314636
+                },
+                "id": 53,
+                "order": 0,
+                "ptr_id": 4,
+                "type": "text",
+                "value": "_____",
+                "visible": true,
+                "x": 918.0,
+                "y": 1000.0
+            },
+            {
+                "height": 62.0,
+                "hovered_ptr_id": 8,
+                "id": 54,
+                "is_invincible": true,
+                "on_click": "NickButton",
+                "order": 0,
+                "ptr_id": 7,
+                "text_ptr_id": 4,
+                "text_value": "Click",
+                "type": "button",
+                "visible": true,
+                "width": 577.0,
+                "x": 624.0,
+                "y": 1000.0
             }
         ]
     },
     "camera": {
-        "Pitch": -6.899964809417725,
-        "Yaw": -181.7054443359375,
+        "Pitch": -0.6999800205230713,
+        "Yaw": -168.30569458007813,
         "mode": 2,
         "position": {
             "x": 17.639524459838867,
@@ -131,6 +179,50 @@
                 },
                 "tag": "Default",
                 "type": "DirectionalLight"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "AABB_logic_min": {
+                    "x": -1.0,
+                    "y": -1.0,
+                    "z": -1.0
+                },
+                "components": [
+                    {
+                        "name": "KeyboardWrite",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": false,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "keyboard_controller",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
             },
             {
                 "AABB_logic_max": {

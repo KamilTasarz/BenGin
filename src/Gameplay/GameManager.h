@@ -35,6 +35,8 @@ public:
 	float musicVolume = 1.f;
 	float sfxVolume = 1.f;
 
+	std::string player_name;
+
 	//glm::vec3 closestParticlePos = glm::vec3(0, 0, 0);
 	float minPlayerToParticleDistance = 100.f;
 

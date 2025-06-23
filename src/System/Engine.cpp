@@ -59,7 +59,7 @@ void Engine::run()
 
 		game->play = true;
 		if (!engine_work) break;
-		SceneManager::Instance().reset();
+		SceneManager::Instance().goToScene(0);
 		SceneManager::Instance().resetSwitched();
 		game->init();
 		game->run();

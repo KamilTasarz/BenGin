@@ -162,6 +162,7 @@ void GameManager::HandleLevelGeneration() {
 
 void GameManager::onEnd()
 {
+	if (!currentPlayer) return;
     for (Node* player : players) {
         if (player && player->scene_graph) {
             player->scene_graph->deleteChild(player);
