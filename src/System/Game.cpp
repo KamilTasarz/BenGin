@@ -654,8 +654,8 @@ void Game::init()
     //MusicManager::instance().StartGameMusic();
    
     int scene = SceneManager::Instance().currentSceneIndex;
-    if (scene == 1) MusicManager::instance().Init();
-    else if (scene == 0) MusicManager::instance().StartGameTransition();
+    if (scene == 0) MusicManager::instance().Init();
+    else if (scene == 1) MusicManager::instance().StartGameTransition();
 
     if (GameManager::instance().emitter) glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -711,7 +711,7 @@ void Game::run()
 }
 void Game::shutdown()
 {
-    GameManager::instance().onEnd();
+    //GameManager::instance().onEnd();
     MusicManager::instance().onEnd();
 
     glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

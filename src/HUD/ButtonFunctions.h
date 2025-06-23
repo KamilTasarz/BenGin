@@ -3,7 +3,7 @@
 #include "../config.h"
 
 void MenuButton();
-
+void NickButton();
 
 class FunctionRegister {
 public:
@@ -13,7 +13,8 @@ public:
 	}
 
     std::map<std::string, std::function<void()>> functionMap = {
-    {"MenuButton", MenuButton}
+	{"MenuButton", MenuButton},
+	{"NickButton", NickButton}
     };
 };
 

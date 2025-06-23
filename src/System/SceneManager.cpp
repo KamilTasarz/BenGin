@@ -3,6 +3,7 @@
 #include "../System/Serialization.h"
 #include "../System/PrefabRegistry.h"
 #include "../System/GuiManager.h"
+#include "../Gameplay/GameManager.h"
 #include <fstream>
 
 SceneManager::~SceneManager()
@@ -16,12 +17,13 @@ SceneManager::~SceneManager()
 
 void SceneManager::next()
 {
-	
+	GameManager::instance().onEnd();
 	switched = true; // Set switched to true to indicate a scene switch
 	if (sceneGraph) {
 		delete sceneGraph;
 	}
 	GuiManager::Instance().getObjects().clear();
+
 	if (currentSceneIndex + 1 < scenes.size())
 	{
 		currentSceneIndex++;
@@ -40,11 +42,13 @@ void SceneManager::next()
 
 void SceneManager::previous()
 {
+	GameManager::instance().onEnd();
 	switched = true; // Set switched to true to indicate a scene switch
 	if (sceneGraph) {
 		delete sceneGraph;
 	}
 	GuiManager::Instance().getObjects().clear();
+	
 	if (currentSceneIndex - 1 >= 0)
 	{
 		currentSceneIndex--;
@@ -61,6 +65,7 @@ void SceneManager::previous()
 
 void SceneManager::goToScene(unsigned int index)
 {
+	GameManager::instance().onEnd();
 	switched = true; // Set switched to true to indicate a scene switch
 	if (sceneGraph) {
 		delete sceneGraph;
@@ -77,6 +82,7 @@ void SceneManager::goToScene(unsigned int index)
 
 void SceneManager::reset()
 {
+	GameManager::instance().onEnd();
 	switched = true; // Set switched to true to indicate a scene switch
 	if (sceneGraph) {
 		delete sceneGraph;
