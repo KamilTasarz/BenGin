@@ -8,7 +8,7 @@ class TextObject;
 class SpriteObject;
 class PlayerRewindable;
 
-class PlayerController : public Script
+class PlayerController final : public Script
 {
 public:
 
@@ -48,6 +48,7 @@ public:
     float scale_factor = 1.f;
 	bool pressedRight = false;
 	bool pressedLeft = false;
+    bool jumpPressed = false;
 
     bool debugMode = false;
     bool debugTogglePressed = false;

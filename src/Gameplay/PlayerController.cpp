@@ -118,15 +118,11 @@ float PlayerController::getPadAxis(int axis) {
 	
 }
 
-void PlayerController::onAttach(Node* owner)
-{
+void PlayerController::onAttach(Node* owner) {
 	this->owner = owner;
-	std::cout << "PlayerController::onAttach::" << owner->name << std::endl;
 }
 
-void PlayerController::onDetach()
-{
-	std::cout << "PlayerController::onDetach::" << owner->name << std::endl;
+void PlayerController::onDetach() {
 	owner = nullptr;
 }
 
@@ -153,7 +149,7 @@ void PlayerController::onStart()
 		rewindable = owner->getComponent<PlayerRewindable>();
 	}
 
-	auto ratTexture = ResourceManager::Instance().getTexture(34);
+	const auto ratTexture = ResourceManager::Instance().getTexture(34);
 	owner->pModel->meshes[0].textures[0] = (ratTexture);
 }
 
@@ -197,7 +193,18 @@ void PlayerController::onUpdate(float deltaTime)
 			dpadRight
 			);
 		
-		pressedLeft = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS);
+		pressedLeft = (
+			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || 
+			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS ||
+			axisX < -0.4f ||
+			dpadLeft
+			);
+
+		jumpPressed = (
+			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS ||
+			isPadButtonPressed(GLFW_GAMEPAD_BUTTON_A) ||
+			isPadButtonPressed(GLFW_GAMEPAD_BUTTON_X)
+			);
 
 		if (!rb->overrideVelocityX) rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
 
@@ -250,12 +257,10 @@ void PlayerController::onUpdate(float deltaTime)
 			return;
 		}
 
-		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-			//std::cout << "Gracz probuje skoczyc" << std::endl;
+		if (jumpPressed) {
 
 			if ((rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
 
-				//rb->overrideVelocityY = true;
 				if (isGravityFlipped) rb->velocityY = -jumpForce;
 				else rb->velocityY = jumpForce;
 
@@ -333,10 +338,7 @@ void PlayerController::onUpdate(float deltaTime)
 	lastVirusType = virusType;
 }
 
-
-void PlayerController::onEnd()
-{
-}
+void PlayerController::onEnd() {}
 
 void PlayerController::Die(bool freeze, bool electrified)
 {
@@ -350,7 +352,6 @@ void PlayerController::Die(bool freeze, bool electrified)
 	}
 	else if (freeze) {
 		Rigidbody* rb = owner->getComponent<Rigidbody>();
-		//owner->deleteComponent(rb);
 		rb->is_static = true;
 	}
 
@@ -404,14 +405,12 @@ bool PlayerController::HandleVirus(float deltaTime)
 
 void PlayerController::ApplyVirusEffect()
 {
-	//PlayerController* player = target->getComponent<PlayerController>();
 
 	rb->gravity = -32.f;
 	rb->mass = 1.f;
 	speed = 9.f;
 	isGravityFlipped = false;
 	jumpForce = 19.f;
-	//virusType = "none";
 	CameraFollow::instance->verticalOffset = 3.f;
 
 	VirusEffect();
@@ -420,7 +419,6 @@ void PlayerController::ApplyVirusEffect()
 void PlayerController::VirusEffect()
 {
 	if (virusType == "blue") {
-		//owner->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 		owner->textures.clear();
 		owner->textures.push_back(35);
 
@@ -430,7 +428,6 @@ void PlayerController::VirusEffect()
 		jumpForce *= 1.2f;
 	}
 	else if (virusType == "green") {
-		//owner->changeColor(glm::vec4(0.5f, 0.3f, 0.7f, 1.0f));
 
 		owner->textures.clear();
 		owner->textures.push_back(36);
@@ -440,7 +437,6 @@ void PlayerController::VirusEffect()
 		rb->gravity = 32.f;
 	}
 	else if (virusType == "black") {
-		//owner->changeColor(glm::vec4(0.72f, 0.45f, 0.2f, 1.0f));
 
 		owner->textures.clear();
 		owner->textures.push_back(37);

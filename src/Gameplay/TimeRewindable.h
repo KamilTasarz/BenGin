@@ -20,6 +20,9 @@ public:
 	glm::vec3 lastCheckpointPos;
     int sfxId = -1;
 
+    bool isPadButtonPressed(int button);
+    bool isPadButtonReleased(int button);
+
     virtual void onUpdate(float deltaTime) override;
     void resetHistory();
 
