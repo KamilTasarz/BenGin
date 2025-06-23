@@ -1,4 +1,5 @@
 #include "AudioEngine.h"
+#include <glm/common.hpp>
 
 // ---
 //      ErrorCheck checks if all FMOD calls were successful
@@ -280,7 +281,14 @@ void CAudioEngine::SetChannelvolume(int nChannelId, float fVolumedB)
     if (tFoundIt == sgpImplementation->mChannels.end()) { return; }
 
     // Set volume of the channel
-    CAudioEngine::ErrorCheck(tFoundIt->second->setVolume(dbToVolume(fVolumedB)));
+    //CAudioEngine::ErrorCheck(tFoundIt->second->setVolume(dbToVolume(fVolumedB)));
+
+    float volumeLinear = glm::clamp(fVolumedB, 0.f, 100.f) / 100.f;
+    bool isPlaying = false;
+    tFoundIt->second->isPlaying(&isPlaying);
+    if (isPlaying) {
+        CAudioEngine::ErrorCheck(tFoundIt->second->setVolume(volumeLinear));
+    }
 }
 
 bool CAudioEngine::IsEventPlaying(const string& strEventName) const
@@ -421,6 +429,16 @@ void CAudioEngine::loadAllGameSounds() {
 	LoadSound(propeller, true, true, false);
 	LoadSound(running_step, false, false, false);
 	LoadSound(rewind, false, false, false);
+
+    // music
+    LoadSound(musicMenu, false, true, false);
+    LoadSound(musicPlay, false, true, false);
+    LoadSound(musicPause, false, true, false);
+    LoadSound(musicBase, false, true, false);
+    LoadSound(musicStage1, false, true, false);
+    LoadSound(musicStage2, false, true, false);
+    LoadSound(musicStage3, false, true, false);
+    LoadSound(musicStage4, false, true, false);
 }
 
 void CAudioEngine::unloadAllGameSounds() {
@@ -447,4 +465,13 @@ void CAudioEngine::unloadAllGameSounds() {
     UnloadSound(running_step);
     UnloadSound(rewind);
 
+    // music
+    UnloadSound(musicMenu);
+    UnloadSound(musicPlay);
+    UnloadSound(musicPause);
+    UnloadSound(musicBase);
+    UnloadSound(musicStage1);
+    UnloadSound(musicStage2);
+    UnloadSound(musicStage3);
+    UnloadSound(musicStage4);
 }

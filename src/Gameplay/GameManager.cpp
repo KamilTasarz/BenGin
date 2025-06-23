@@ -109,16 +109,17 @@ void GameManager::RemoveThisPlayer(Node* player)
 }
 
 void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
-	if (!emitter) return;
+	if (!emitter || !currentPlayer) return;
 
     int index = emitter->tail - 1;
 
     glm::vec3 spawnerPos = playerSpawner->transform.getGlobalPosition();
+    glm::vec3 playerPos = currentPlayer->transform.getGlobalPosition();
 
     glm::vec3 gasPos = emitter->particles[index].position;
     float distanceFromGasToSpawner = glm::distance(gasPos, spawnerPos);
 
-    minDistance = 100.f;
+    float minDistance = 100.f;
 	int size = clamp(index, 0, 15);
 
 	for (int i = 0; i < size; i++) {
@@ -127,6 +128,10 @@ void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
 		if (i == 0 || distance < minDistance) {
 			minDistance = distance;
 		}
+        distance = glm::distance(particlePos, playerPos);
+        if (i == 0 || distance < minPlayerToParticleDistance) {
+            minPlayerToParticleDistance = distance;
+        }
 	}
 
     gasSpreadingSpeed = 10.f / minDistance;

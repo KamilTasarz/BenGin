@@ -6,25 +6,26 @@ class MusicManager
 {
 public:
 	int menuId = -1;
-	int stageOneId = -1;
-	int stageTwoId = -1;
-	int stageThreeId = -1;
-	int stageFourId = -1;
+	int baseId = -1;
+	int transitionId = -1;
 
-	bool menuActive = true;
-	bool stageOneActive = false;
-	bool stageTwoActive = false;
-	bool stageThreeActive = false;
-	bool stageFourActive = false;
+	bool menuActive = false;
+	bool pauseActive = false;
+	bool transitionActive = false;
 
-	float stageTwoVolume = 0.f;
-	float stageThreeVolume = 0.f;
-	float stageFourVolume = 0.f;
+	int currentStage = 1;
+	float stageVolumes[4] = { 0.f, 0.f, 0.f, 0.f };
+	int stageChannels[4] = { -1, -1, -1, -1 };
 
-	glm::vec2 distanceToPlayer;
+	float beatTime = 1.92f;
+	float timer = 0.f;
+	float overflownBeatTime = 0.f;
 
+	static MusicManager& instance();
 	void Init();
 	void Update(float deltaTime);
+	void StartGameTransition();
 	void StartGameMusic();
+	int getTargetStage(float distance, bool isInGas);
 	void onEnd();
 };

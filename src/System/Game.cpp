@@ -15,6 +15,7 @@
 #include "../System/RenderSystem.h"
 #include "../System/SceneManager.h"
 #include "../Gameplay/GameManager.h"
+#include "../Gameplay/MusicManager.h"
 
 Ray Game::getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
 
@@ -368,6 +369,7 @@ void Game::update(float deltaTime)
     
     audio->Update();
     GameManager::instance().Update(deltaTime, SceneManager::Instance().getCurrentScene());
+    MusicManager::instance().Update(deltaTime);
 
     // Kamera
     camera->ProcessKeyboard(deltaTime, 0);
@@ -648,6 +650,7 @@ void Game::init()
 	//ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
 
     GameManager::instance().Init(SceneManager::Instance().getCurrentScene());
+    MusicManager::instance().StartGameMusic();
 
     if (GameManager::instance().emitter) glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -704,6 +707,7 @@ void Game::run()
 void Game::shutdown()
 {
     GameManager::instance().onEnd();
+    MusicManager::instance().onEnd();
 
     glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     unloadSounds();

@@ -48,7 +48,7 @@ struct Implementation {
 class CAudioEngine {
 
 public:
-
+    // sfx
     std::string sound1 = "res/audios/sounds/bonk.ogg";
     std::string button_down = "res/audios/sounds/button_down.ogg";
     std::string button_up = "res/audios/sounds/button_up.ogg";
@@ -71,6 +71,16 @@ public:
 	std::string propeller = "res/audios/sounds/tv_propeller.ogg";
     std::string running_step = "res/audios/sounds/running_step.ogg";
     std::string rewind = "res/audios/sounds/rewind.ogg";
+
+    //music
+    std::string musicMenu = "res/audios/music/musicMenu.mp3";
+    std::string musicPlay = "res/audios/music/musicPlay.mp3";
+    std::string musicPause = "res/audios/music/musicPause.mp3";
+    std::string musicBase = "res/audios/music/musicBase.mp3";
+    std::string musicStage1 = "res/audios/music/musicStage1.mp3";
+    std::string musicStage2 = "res/audios/music/musicStage2.mp3";
+    std::string musicStage3 = "res/audios/music/musicStage3.mp3";
+    std::string musicStage4 = "res/audios/music/musicStage4.mp3";
 
     static void Init();
     static void Update();
