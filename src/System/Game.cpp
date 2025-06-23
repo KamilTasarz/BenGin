@@ -81,13 +81,13 @@ void Game::draw()
     // glClearColor(.01f, .01f, .01f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    float t = glfwGetTime();
+    //float t = glfwGetTime();
 
     SceneManager::Instance().getCurrentScene()->draw(viewWidth, viewHeight, framebuffer); // Po tym etapie mamy gotowe color texture 
     
-    float t2 = glfwGetTime();
+    //float t2 = glfwGetTime();
 
-    std::cout << "DRAW: " << t2 - t << std::endl;
+    //std::cout << "DRAW: " << t2 - t << std::endl;
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     LineManager::Instance().drawLines();
@@ -235,9 +235,6 @@ void Game::draw()
         }
 
         if (postProcessData.is_rewind) {
-        
-            /* Tu dodamy obsluge uniformow i wgl */
-            // Przy ustawieniu uniformu bool do shadera sprawdzaj to ze sceneGraph
 
             glBindFramebuffer(GL_FRAMEBUFFER, rewindFBO);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -247,7 +244,7 @@ void Game::draw()
 
             rewindShader.setBool("is_rewind", SceneManager::Instance().getCurrentScene()->is_rewinidng);
 
-            rewindShader.setFloat("time", glfwGetTime());
+            rewindShader.setFloat("time", time);
 
             rewindShader.setFloat("noise_alpha", postProcessData.rewind_noise_alpha);
             rewindShader.setFloat("band_speed", postProcessData.rewind_band_speed);
@@ -307,7 +304,7 @@ void Game::draw()
 
                 ResourceManager::Instance().shader_PostProcess_noise->use();
                 ResourceManager::Instance().shader_PostProcess_noise->setInt("image", 0);
-                ResourceManager::Instance().shader_PostProcess_noise->setFloat("time", glfwGetTime());
+                ResourceManager::Instance().shader_PostProcess_noise->setFloat("time", time);
                 ResourceManager::Instance().shader_PostProcess_noise->setFloat("alpha", alpha);
                 ResourceManager::Instance().shader_PostProcess_noise->setVec2("resolution", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
 
@@ -329,23 +326,7 @@ void Game::draw()
 
     }
 
-    //glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    //background->render(*ResourceManager::Instance().shader_background);
-    //sprite2->render(*ResourceManager::Instance().shader_background);
-    //sprite3->render(*ResourceManager::Instance().shader_background);
-    //sprite->render(*ResourceManager::Instance().shader_background);
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    //text->renderText("Fps: " + to_string(fpsValue), 4.f * WINDOW_WIDTH / 5.f, WINDOW_HEIGHT - 100.f, *ResourceManager::Instance().shader_text, glm::vec3(1.f, 0.3f, 0.3f));
-    //text->renderText("We have text render!", 200, 200, *ResourceManager::Instance().shader_text, glm::vec3(0.6f, 0.6f, 0.98f));
-
-
-
-
     glDisable(GL_DEPTH_TEST);
-
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    // glClear(GL_COLOR_BUFFER_BIT);
         
     ResourceManager::Instance().shader_PostProcess_pass->use();
 
@@ -355,9 +336,9 @@ void Game::draw()
 
     glEnable(GL_DEPTH_TEST);
 
-    t2 = glfwGetTime();
+    //t2 = glfwGetTime();
 
-    std::cout << "DRAW: " << t2 - t << std::endl;
+    //std::cout << "DRAW: " << t2 - t << std::endl;
 
 	
 }
@@ -375,23 +356,23 @@ void Game::update(float deltaTime)
     camera->ProcessKeyboard(deltaTime, 0);
     LineManager::Instance().clearLines();
 
-	float t = glfwGetTime();
+	//float t = glfwGetTime();
 	PhysicsSystem::instance().updateColliders(SceneManager::Instance().getCurrentScene());
-    float t2 = glfwGetTime();
+    //float t2 = glfwGetTime();
 	PhysicsSystem::instance().updateCollisions();
-	float t3 = glfwGetTime();
+	//float t3 = glfwGetTime();
     SceneManager::Instance().getCurrentScene()->update(deltaTime);
-    float t4 = glfwGetTime();
+    //float t4 = glfwGetTime();
     SceneManager::Instance().getCurrentScene()->clearDeleteVector();
 
     GuiManager::Instance().update(ServiceLocator::getWindow()->deltaTime);
 
     // HUD
-	cout << "FPS: " << 1.f / deltaTime << endl;
+	/*cout << "FPS: " << 1.f / deltaTime << endl;
     cout << "updateColldiers" << t2 - t << endl;
 	cout << "updateCollisions" << t3 - t2 << endl;
 	cout << "updateSceneGraph" << t4 - t3 << endl;
-	cout << "Total" << t4 - t << endl << endl   ;
+	cout << "Total" << t4 - t << endl << endl   ;*/
     
 }
 
