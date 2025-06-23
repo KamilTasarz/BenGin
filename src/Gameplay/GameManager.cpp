@@ -32,7 +32,6 @@ GameManager& GameManager::instance()
 
 void GameManager::Init(SceneGraph* scene_graph)
 {
-
     playerSpawner = scene_graph->root->getChildByTag("PlayerSpawner");
     if (scene_graph->root->getChildByTag("LevelGenerator")) {
         levelGenerator = scene_graph->root->getChildByTag("LevelGenerator")->getComponent<LevelGenerator>();
@@ -42,6 +41,7 @@ void GameManager::Init(SceneGraph* scene_graph)
     if (scene_graph->root->getChildByTag("UIManager")) {
        uiManager = scene_graph->root->getChildByTag("UIManager")->getComponent<UIManager>();
     }
+
 	runTime = 0.f;
 	score = 0.f;
 	deathCount = 0;
