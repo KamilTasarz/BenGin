@@ -14,12 +14,15 @@ public:
 	bool transitionActive = false;
 
 	int currentStage = 1;
+	float menuVolume = 0.f;
 	float stageVolumes[4] = { 0.f, 0.f, 0.f, 0.f };
 	int stageChannels[4] = { -1, -1, -1, -1 };
 
 	float beatTime = 1.92f;
 	float timer = 0.f;
 	float overflownBeatTime = 0.f;
+
+	float volume = 80.f;
 
 	static MusicManager& instance();
 	void Init();

@@ -13,11 +13,12 @@ class SceneManager
 {
 private:
 	std::vector<OrderedScene> scenes;
-	int currentSceneIndex = -1;
 	SceneGraph* sceneGraph = nullptr;
 	bool switched = false;
 
 public:
+	int currentSceneIndex = -1;
+
 	SceneManager() = default;
 	~SceneManager();
 

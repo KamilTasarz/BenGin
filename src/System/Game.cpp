@@ -303,7 +303,7 @@ void Game::draw()
 
 
             if (alpha < 1.f) {
-                alpha += 0.01f;
+                alpha += ServiceLocator::getWindow()->deltaTime * 0.6f;
 
                 ResourceManager::Instance().shader_PostProcess_noise->use();
                 ResourceManager::Instance().shader_PostProcess_noise->setInt("image", 0);
@@ -650,7 +650,12 @@ void Game::init()
 	//ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
 
     GameManager::instance().Init(SceneManager::Instance().getCurrentScene());
-    MusicManager::instance().StartGameMusic();
+
+    //MusicManager::instance().StartGameMusic();
+   
+    int scene = SceneManager::Instance().currentSceneIndex;
+    if (scene == 1) MusicManager::instance().Init();
+    else if (scene == 0) MusicManager::instance().StartGameTransition();
 
     if (GameManager::instance().emitter) glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 

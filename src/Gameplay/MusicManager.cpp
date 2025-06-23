@@ -12,46 +12,13 @@ MusicManager& MusicManager::instance()
 
 void MusicManager::Init()
 {
+    menuVolume = volume;
+
 	auto* audio = ServiceLocator::getAudioEngine();
-	menuId = audio->PlayMusic(audio->musicMenu, GameManager::instance().sfxVolume * 80.f);
+	menuId = audio->PlayMusic(audio->musicMenu, GameManager::instance().sfxVolume * menuVolume);
 
 	menuActive = true;
 }
-
-//void MusicManager::Update(float deltaTime)
-//{
-//	auto* audio = ServiceLocator::getAudioEngine();
-//	Node* player = GameManager::instance().currentPlayer;
-//
-//	if (!player) {
-//		return;
-//	}
-//	else if (player && menuActive) {
-//		menuActive = false;
-//
-//		audio->PlaySFX(audio->musicPlay, GameManager::instance().sfxVolume * 80.f);
-//
-//		StartGameMusic();
-//	}
-//
-//	float fadeSpeed = 1.f;
-//	float targetVolume = GameManager::instance().sfxVolume * 80.f;
-//
-//	float distFromPlayerToGas = GameManager::instance().minDistance;
-//	bool isInGas = player->getComponent<PlayerController>()->isInGas;
-//
-//	float targetVolumeTwo = (distFromPlayerToGas < 25.f) ? targetVolume : 0.f;
-//	stageTwoVolume = glm::mix(stageTwoVolume, targetVolumeTwo, deltaTime / fadeSpeed);
-//	audio->SetChannelvolume(stageTwoId, stageTwoVolume);
-//
-//	float targetVolumeThree = (distFromPlayerToGas < 10.f) ? targetVolume : 0.f;
-//	stageThreeVolume = glm::mix(stageThreeVolume, targetVolumeThree, deltaTime / fadeSpeed);
-//	audio->SetChannelvolume(stageThreeId, stageThreeVolume);
-//
-//	float targetVolumeFour = (distFromPlayerToGas < 2.f || isInGas) ? targetVolume : 0.f;
-//	stageFourVolume = glm::mix(stageFourVolume, targetVolumeFour, deltaTime / fadeSpeed);
-//	audio->SetChannelvolume(stageFourId, stageFourVolume);
-//}
 
 void MusicManager::Update(float deltaTime)
 {
@@ -64,6 +31,12 @@ void MusicManager::Update(float deltaTime)
     }
     else if (transitionActive) {
         if (audio->IsPlaying(transitionId)) {
+
+            if (audio->IsPlaying(menuId)) {
+                menuVolume = glm::mix(menuVolume, 0.f, deltaTime * 2.f);
+                audio->SetChannelvolume(menuId, menuVolume);
+            }
+
             return;
         }
         else {
@@ -72,8 +45,8 @@ void MusicManager::Update(float deltaTime)
         }
     }
 
-    float fadeSpeed = .5f;
-    float targetVolume = GameManager::instance().sfxVolume * 85.f;
+    float fadeSpeed = 1.f;
+    float targetVolume = GameManager::instance().sfxVolume * volume;
 
     float distance = GameManager::instance().minPlayerToParticleDistance;
     bool isInGas = player->getComponent<PlayerController>()->isInGas;
@@ -113,17 +86,17 @@ void MusicManager::StartGameTransition() {
     menuActive = false;
 
     auto* audio = ServiceLocator::getAudioEngine();
-    transitionId = audio->PlayMusic(audio->musicBase, GameManager::instance().sfxVolume * 85.f);
+    transitionId = audio->PlayMusic(audio->musicPlay, GameManager::instance().sfxVolume * volume);
 
-    audio->stopSound(menuId);
+    //audio->stopSound(menuId);
 }
 
 void MusicManager::StartGameMusic()
 {
 	auto* audio = ServiceLocator::getAudioEngine();
-	baseId = audio->PlayMusic(audio->musicBase, GameManager::instance().sfxVolume * 80.f);
+	baseId = audio->PlayMusic(audio->musicBase, GameManager::instance().sfxVolume * volume);
 
-    stageChannels[0] = audio->PlayMusic(audio->musicStage1, GameManager::instance().sfxVolume * 85.f);
+    stageChannels[0] = audio->PlayMusic(audio->musicStage1, GameManager::instance().sfxVolume * volume);
     stageChannels[1] = audio->PlayMusic(audio->musicStage2, GameManager::instance().sfxVolume * 0.f);
     stageChannels[2] = audio->PlayMusic(audio->musicStage3, GameManager::instance().sfxVolume * 0.f);
     stageChannels[3] = audio->PlayMusic(audio->musicStage4, GameManager::instance().sfxVolume * 0.f);
@@ -150,7 +123,7 @@ void MusicManager::onEnd() {
     stageChannels[2] = -1;
     stageChannels[3] = -1;
 
-    menuActive = false;
+    //menuActive = false;
 
     beatTime = 1.92f;
     timer = 0.f;

@@ -432,7 +432,7 @@ void CAudioEngine::loadAllGameSounds() {
 
     // music
     LoadSound(musicMenu, false, true, false);
-    LoadSound(musicPlay, false, true, false);
+    LoadSound(musicPlay, false, false, false);
     LoadSound(musicPause, false, true, false);
     LoadSound(musicBase, false, true, false);
     LoadSound(musicStage1, false, true, false);
