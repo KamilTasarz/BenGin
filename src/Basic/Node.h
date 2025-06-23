@@ -41,7 +41,7 @@ struct Ray {
 
 class SceneGraph;
 
-class Transform {
+class Transform final {
 
 protected:
 

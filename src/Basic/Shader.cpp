@@ -42,7 +42,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     glCompileShader(vertex);
     // wypisanie błędów kompilacji
     glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-    if (!success) {
+    if (!success) [[unlikely]] {
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     };
@@ -54,7 +54,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     glCompileShader(fragment);
     // wypisanie błędów kompilacji
     glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-    if (!success)
+    if (!success) [[unlikely]]
     {
         glGetShaderInfoLog(fragment, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
@@ -68,7 +68,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 
     // print linking errors if any
     glGetProgramiv(ID, GL_LINK_STATUS, &success);
-    if (!success)
+    if (!success) [[unlikely]]
     {
         glGetProgramInfoLog(ID, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
@@ -128,7 +128,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
     glCompileShader(vertex);
     // wypisanie błędów kompilacji
     glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-    if (!success) {
+    if (!success) [[unlikely]] {
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     };
@@ -139,7 +139,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
     glCompileShader(geometry);
     // wypisanie błędów kompilacji
     glGetShaderiv(geometry, GL_COMPILE_STATUS, &success);
-    if (!success) {
+    if (!success) [[unlikely]] {
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED\n" << infoLog << std::endl;
     };
@@ -151,7 +151,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
     glCompileShader(fragment);
     // wypisanie błędów kompilacji
     glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-    if (!success)
+    if (!success) [[unlikely]]
     {
         glGetShaderInfoLog(fragment, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
@@ -166,7 +166,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
 
     // print linking errors if any
     glGetProgramiv(ID, GL_LINK_STATUS, &success);
-    if (!success)
+    if (!success) [[unlikely]]
     {
         glGetProgramInfoLog(ID, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
@@ -221,7 +221,7 @@ int Shader::getUniformLocation(const std::string& name) {
         return uniformLocationCache[name];
 
     int location = glGetUniformLocation(ID, name.c_str());
-    if (location == -1) {
+    if (location == -1) [[unlikely]] {
         std::cerr << "Warning: uniform '" << name << "' not found in shader!\n";
     }
 
