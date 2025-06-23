@@ -316,7 +316,7 @@ void Game::draw()
                 glEnable(GL_DEPTH_TEST);
             }
 
-            float t2 = glfwGetTime();
+            //float t2 = glfwGetTime();
 
 			//std::cout << "draw time: " << t2 - t << std::endl;
 
@@ -639,13 +639,13 @@ void Game::run()
             ServiceLocator::getWindow()->deltaTime = 0.0f;
         }
 
-        float t3 = glfwGetTime();
+        //float t3 = glfwGetTime();
 
         input();
 
         if (!SceneManager::Instance().isSwitched()) {
 
-            float t4 = glfwGetTime();
+            //float t4 = glfwGetTime();
 
             update(ServiceLocator::getWindow()->deltaTime);
         }
@@ -653,11 +653,11 @@ void Game::run()
             draw();
 
 
-            float t = glfwGetTime();
+            //float t = glfwGetTime();
 
             ServiceLocator::getWindow()->updateWindow();
 
-            float t2 = glfwGetTime();
+            //float t2 = glfwGetTime();
         }
 
 	}
