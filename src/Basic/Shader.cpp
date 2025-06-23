@@ -214,3 +214,18 @@ void Shader::setVec4(const std::string& name, float x, float y, float z, float w
 void Shader::setMat4(const std::string& name, const glm::mat4& mat) const {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
+
+int Shader::getUniformLocation(const std::string& name) {
+    
+    if (uniformLocationCache.contains(name))
+        return uniformLocationCache[name];
+
+    int location = glGetUniformLocation(ID, name.c_str());
+    if (location == -1) {
+        std::cerr << "Warning: uniform '" << name << "' not found in shader!\n";
+    }
+
+    uniformLocationCache[name] = location;
+    return location;
+
+}

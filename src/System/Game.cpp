@@ -372,8 +372,7 @@ void Game::update(float deltaTime)
     // Kamera
     camera->ProcessKeyboard(deltaTime, 0);
     LineManager::Instance().clearLines();
-    // Scena
-    //sceneGraph->root->checkIfInFrustrum();
+
 	float t = glfwGetTime();
 	PhysicsSystem::instance().updateColliders(SceneManager::Instance().getCurrentScene());
     float t2 = glfwGetTime();
@@ -390,10 +389,7 @@ void Game::update(float deltaTime)
     cout << "updateColldiers" << t2 - t << endl;
 	cout << "updateCollisions" << t3 - t2 << endl;
 	cout << "updateSceneGraph" << t4 - t3 << endl;
-    //background->update(deltaTime);
-    //sprite->update(deltaTime);
-    //sprite3->update(deltaTime);
-    
+	cout << "Total" << t4 - t << endl << endl   ;
     
 }
 
@@ -407,24 +403,13 @@ Game::Game(std::vector<std::shared_ptr<Prefab>>& prefabsref, std::vector<std::sh
 
 void Game::init()
 {
-
     is_initialized = true;
-
-    //GuiManager::Instance().init();
-    
-    
-    //SceneManager::Instance().reset();
-    
-	//SceneManager::Instance().getCurrentScene();
-
-	//loadScene("res/scene/scene.json", sceneGraph, prefabs, puzzle_prefabs);
 
     loadPostProcessData("res/scene/postprocess_data.json", postProcessData);
 
     // SSAO
     ssao_kernel = updateSSAOKernel(postProcessData.ssao_kernel_samples);
     generateNoiseTexture();
-    debug_print();
 
     SceneManager::Instance().getCurrentScene()->forcedUpdate();
 
@@ -440,8 +425,8 @@ void Game::init()
 	
     alpha = 0.f;
 
-    int fbWidth = viewWidth;
-    int fbHeight = viewHeight;
+    const int fbWidth = viewWidth;
+    const int fbHeight = viewHeight;
 
     // 1. Tekstura kolorów
     glGenTextures(1, &colorTexture);
@@ -461,11 +446,6 @@ void Game::init()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    // 3. Bufor głębokości
-    /*glGenRenderbuffers(1, &depthRenderbuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, fbWidth, fbHeight);*/
-
     // 3. Tekstura głębokości
     glGenTextures(1, &depthTexture);
     glBindTexture(GL_TEXTURE_2D, depthTexture);
@@ -474,8 +454,6 @@ void Game::init()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    //float border[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    //glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
 
     // 4. Framebuffer
     glGenFramebuffers(1, &framebuffer);
@@ -483,7 +461,6 @@ void Game::init()
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);       // Color / albedo + lighting
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normalTexture, 0);      // Normal
-    //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer); // Depth
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);        // Depth
 
     GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
@@ -650,7 +627,7 @@ void Game::init()
 
     GameManager::instance().Init(SceneManager::Instance().getCurrentScene());
 
-    glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 }
 void Game::run()
@@ -680,12 +657,10 @@ void Game::run()
         if (!SceneManager::Instance().isSwitched()) {
 
             float t4 = glfwGetTime();
-            //cout << "Input time" << t4 - t3 << endl;
 
             update(ServiceLocator::getWindow()->deltaTime);
 
             draw();
-            //float t5 = glfwGetTime();
 
         }
         float t = glfwGetTime();
@@ -693,9 +668,7 @@ void Game::run()
         ServiceLocator::getWindow()->updateWindow();
 
         float t2 = glfwGetTime();
-        //cout << "Draw time" << t2 - t << endl;
 
-        //std::cout << "DeltaTime: " << ServiceLocator::getWindow()->deltaTime << std::endl;
 	}
 
     if (glfwWindowShouldClose(ServiceLocator::getWindow()->window)) engine_work = false;
@@ -723,7 +696,7 @@ void Game::shutdown()
     glDeleteFramebuffers(1, &rewindFBO);
     glDeleteFramebuffers(1, &ssaoFBO);
     glDeleteFramebuffers(1, &ssaoBlurFBO);
-    //glfwTerminate();
+
 }
 
 std::vector<glm::vec3> Game::updateSSAOKernel(unsigned int samples)
@@ -783,17 +756,6 @@ void Game::generateNoiseTexture() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     glBindTexture(GL_TEXTURE_2D, 0);
-
-}
-
-void Game::debug_print() {
-
-    for (int i = 0; i < ssao_kernel.size(); ++i) {
-        glm::vec3 v = ssao_kernel[i];
-        std::cout << "Kernel[" << i << "]: ("
-            << v.x << ", " << v.y << ", " << v.z << ")\n";
-    }
-
 
 }
 
