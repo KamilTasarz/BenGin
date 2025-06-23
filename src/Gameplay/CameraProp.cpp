@@ -8,19 +8,16 @@ REGISTER_SCRIPT(CameraProp);
 void CameraProp::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "CameraProp::onAttach::" << owner->name << std::endl;
 }
 
 void CameraProp::onDetach()
 {
-	std::cout << "CameraProp::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 
 void CameraProp::onStart()
 {
-	std::cout << "CameraProp::onStart::" << owner->name << std::endl;
-	// Initialize camera properties here if needed
+
 }
 
 void CameraProp::onUpdate(float deltaTime)

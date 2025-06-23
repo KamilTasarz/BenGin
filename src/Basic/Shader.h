@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <unordered_map>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -12,6 +13,10 @@
 
 
 class Shader {
+
+private:
+
+    std::unordered_map<std::string, int> uniformLocationCache;
 
 public:
     
@@ -29,6 +34,8 @@ public:
     void setVec4(const std::string& name, const glm::vec4& value) const;
     void setVec4(const std::string& name, float x, float y, float z, float w) const;
     void setMat4(const std::string& name, const glm::mat4& mat) const;
+
+    int getUniformLocation(const std::string& name);
 
 };
 

@@ -26,7 +26,7 @@ void LevelGenerator::onStart()
 		GenerateLevel();
 	}
 	else {
-		std::cout << "Level generation is disabled." << std::endl;
+		//std::cout << "Level generation is disabled." << std::endl;
 	}
 }
 

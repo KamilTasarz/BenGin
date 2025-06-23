@@ -8,7 +8,7 @@ class TextObject;
 class SpriteObject;
 class PlayerRewindable;
 
-class PlayerController : public Script
+class PlayerController final : public Script
 {
 public:
 
@@ -48,6 +48,7 @@ public:
     float scale_factor = 1.f;
 	bool pressedRight = false;
 	bool pressedLeft = false;
+    bool jumpPressed = false;
 
     bool debugMode = false;
     bool debugTogglePressed = false;
@@ -58,6 +59,10 @@ public:
 
     PlayerController() = default;
     virtual ~PlayerController() = default;
+
+    bool isPadButtonPressed(int button);
+
+    float getPadAxis(int axis);
 
     void onAttach(Node* owner) override;
 
@@ -78,7 +83,7 @@ public:
     void VirusEffect();
 
     bool CheckIfInGas();
-
+    
     std::vector<Variable*> getFields() const override { 
         static Variable speedVar = getField_speed();
         static Variable jumpForceVar = getField_jumpForce();

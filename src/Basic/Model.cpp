@@ -8,12 +8,6 @@ void Model::loadModel(string const& path)
     // read file via ASSIMP
     Assimp::Importer importer;
 
-    /*std::cout << "Obsługiwane formaty:\n";
-    for (size_t i = 0; i < importer.GetImporterCount(); ++i) {
-        const aiImporterDesc* desc = importer.GetImporterInfo(i);
-        std::cout << "- " << desc->mName << " (" << desc->mFileExtensions << ")\n";
-    }*/
-
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace); //| aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
     // check for errors
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
@@ -96,11 +90,6 @@ void Model::processNode(aiNode* node, const aiScene* scene)
         processNode(node->mChildren[i], scene);
     }
 
-
-
-    /*max_points.x = ceil(max_points.x - min_points.x) + min_points.x;
-    max_points.y = ceil(max_points.y - min_points.y) + min_points.y;
-    max_points.z = ceil(max_points.z - min_points.z) + min_points.z;*/
 }
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
@@ -192,20 +181,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     }
     // process materials
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-    //aiTexture* _textures =  scene->mTextures[mesh->mMaterialIndex];
-    // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
-    // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
-    // Same applies to other texture as the following list summarizes:
-    // diffuse: texture_diffuseN
-    // specular: texture_specularN
-    // normal: texture_normalN
-
-
 
     aiString path;
     if (material->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS) {
         std::string texPath = path.C_Str();
-        // Załaduj plik tekstury (np. przez stb_image)
     }
 
 
@@ -225,7 +204,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     extractBoneWeightForVertices(vertices, mesh, scene);
 
     // return a mesh object created from the extracted mesh data
-    return Mesh(vertices, indices, std::move(textures));
+    return Mesh(std::move(vertices), std::move(indices), std::move(textures));
 }
 
 void Model::extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
@@ -405,10 +384,8 @@ void Model::loadCube(std::vector<shared_ptr<Texture>>&& textures)
 
     };
 
-
     // data to fill
     vector<Vertex> vertices;
-    //vector<Texture> textures;
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < 36; i++)
@@ -436,22 +413,7 @@ void Model::loadCube(std::vector<shared_ptr<Texture>>&& textures)
         vertices.push_back(vertex);
     }
 
-    /*for (short i = 0; i < texture_number; i++) {
-        Texture texture;
-        texture.id = textureFromFile(texture_names[i]);
-        texture.path = string(texture_names[i]);
-        const string specular_name = "spec";
-        if (texture.path.find(specular_name, 0) != string::npos) {
-            texture.type = "texture_specular";
-        }
-        else {
-            texture.type = "texture_diffuse";
-        }
-        textures.push_back(texture);
-        textures_loaded.push_back(texture);
-    }*/
-
-    meshes.push_back(Mesh(vertices, std::move(textures)));
+    meshes.push_back(Mesh(std::move(vertices), std::move(textures)));
 }
 
 void Model::loadPlane(vector<shared_ptr<Texture>>&& textures)
@@ -501,18 +463,7 @@ void Model::loadPlane(vector<shared_ptr<Texture>>&& textures)
 
     }
 
-    /*for (short i = 0; i < texture_number; i++) {
-        Texture texture;
-        texture.id = textureFromFile(texture_names[i]);
-        texture.path = string(texture_names[i]);
-        const string specular_name = "spec";
-        if (texture.path.find(specular_name, 0) != string::npos) texture.type = "texture_specular";
-        else texture.type = "texture_diffuse";
-        textures.push_back(texture);
-        textures_loaded.push_back(texture);
-    }*/
-
-    meshes.push_back(Mesh(vertices, std::move(textures)));
+    meshes.push_back(Mesh(std::move(vertices), std::move(textures)));
 }
 
 void Model::loadAnimations()
@@ -567,7 +518,7 @@ Animation* Model::getAnimationByName(std::string name)
     return nullptr;
 }
 
-void Model::Draw(Shader& shader, std::vector<unsigned int> texture)
+void Model::Draw(Shader& shader, const std::vector<unsigned int>& texture)
 {
 
     std::vector<std::shared_ptr<Texture>> textures;
