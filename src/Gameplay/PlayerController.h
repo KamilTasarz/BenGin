@@ -59,6 +59,10 @@ public:
     PlayerController() = default;
     virtual ~PlayerController() = default;
 
+    bool isPadButtonPressed(int button);
+
+    float getPadAxis(int axis);
+
     void onAttach(Node* owner) override;
 
     void onDetach() override;
@@ -78,7 +82,7 @@ public:
     void VirusEffect();
 
     bool CheckIfInGas();
-
+    
     std::vector<Variable*> getFields() const override { 
         static Variable speedVar = getField_speed();
         static Variable jumpForceVar = getField_jumpForce();

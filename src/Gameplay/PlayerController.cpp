@@ -96,10 +96,30 @@ UIAnimator cheeseSpriteAnimator(glm::vec2(1705, 145));
 
 REGISTER_SCRIPT(PlayerController);
 
+bool PlayerController::isPadButtonPressed(int button) {
+	
+	if (!glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) return false;
+	GLFWgamepadstate state;
+	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
+		return state.buttons[button] == GLFW_PRESS;
+	}
+	return false;
+
+}
+
+float PlayerController::getPadAxis(int axis) {
+
+	if (!glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) return 0.0f;
+	GLFWgamepadstate state;
+	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
+		return state.axes[axis];
+	}
+	return 0.0f;
+	
+}
+
 void PlayerController::onAttach(Node* owner)
 {
-	//speed = 5.f;
-	//doors = nullptr;
 	this->owner = owner;
 	std::cout << "PlayerController::onAttach::" << owner->name << std::endl;
 }
@@ -120,7 +140,6 @@ void PlayerController::onStart()
 	rb = owner->getComponent<Rigidbody>();
 	rb->lockPositionZ = true;
 	rb->isPlayer = true;
-	//rb->smoothingFactor = 10.f;
 	timerIndicator = owner->getChildByNamePart("timer");
 	scale_factor = owner->transform.getLocalScale().x;
 	emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
@@ -166,7 +185,18 @@ void PlayerController::onUpdate(float deltaTime)
 	}
 
 	if (!GameManager::instance().isRewinding) {
-		pressedRight = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS);
+
+		const float axisX = getPadAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
+		const bool dpadLeft = isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_LEFT);
+		const bool dpadRight = isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT);
+
+		pressedRight = (
+			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || 
+			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS ||
+			axisX > 0.4f ||
+			dpadRight
+			);
+		
 		pressedLeft = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS);
 
 		if (!rb->overrideVelocityX) rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
@@ -344,7 +374,7 @@ void PlayerController::Die(bool freeze, bool electrified)
 bool PlayerController::HandleVirus(float deltaTime)
 {
 	timerIndicator->setActive(true);
-	float smoothing = 10.f;
+	constexpr float smoothing = 10.f;
 
 	glm::vec3 currentScale = timerIndicator->transform.getLocalScale();
 	glm::vec3 targetScale = glm::vec3(0.2f, deathTimer * 4.f, 0.2f);
