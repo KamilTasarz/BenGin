@@ -81,6 +81,7 @@ public:
     std::string musicStage2 = "res/audios/music/musicStage2.mp3";
     std::string musicStage3 = "res/audios/music/musicStage3.mp3";
     std::string musicStage4 = "res/audios/music/musicStage4.mp3";
+    std::string musicRewind = "res/audios/music/musicRewind.mp3";
 
     static void Init();
     static void Update();

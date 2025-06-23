@@ -13,6 +13,7 @@
 #include "Animation/DeathState.h"
 #include "Animation/TurnState.h"
 #include "Animation/PushState.h"
+#include "MusicManager.h"
 
 bool TimeRewindable::isPadButtonPressed(int button) {
 
@@ -62,10 +63,12 @@ void TimeRewindable::onUpdate(float deltaTime) {
 
         owner->scene_graph->activateRewindShader();
 
-        auto* audio = ServiceLocator::getAudioEngine();
+        //MusicManager::instance().PlayRewindSound();
+
+        /*auto* audio = ServiceLocator::getAudioEngine();
         if (sfxId == -1) {
             sfxId = audio->PlayMusic(audio->rewind, GameManager::instance().sfxVolume * 80.f);
-        }
+        }*/
     }
 
     // Stop rewind if no history left
@@ -76,9 +79,11 @@ void TimeRewindable::onUpdate(float deltaTime) {
 
         owner->scene_graph->deactivateRewindShader();
 
-        auto* audio = ServiceLocator::getAudioEngine();
+        //MusicManager::instance().StopRewindSound();
+
+        /*auto* audio = ServiceLocator::getAudioEngine();
         audio->pauseSound(sfxId);
-        sfxId = -1;
+        sfxId = -1;*/
     }
 
     // Stop rewind if key released manually
@@ -89,9 +94,11 @@ void TimeRewindable::onUpdate(float deltaTime) {
 
         owner->scene_graph->deactivateRewindShader();
 
-        auto* audio = ServiceLocator::getAudioEngine();
+        //MusicManager::instance().StopRewindSound();
+
+        /*auto* audio = ServiceLocator::getAudioEngine();
         audio->pauseSound(sfxId);
-        sfxId = -1;
+        sfxId = -1;*/
     }
 
     if (isRewinding) {
@@ -103,6 +110,7 @@ void TimeRewindable::onUpdate(float deltaTime) {
     }
     else {
         pushSnapshot(createSnapshot());
+        //MusicManager::instance().StopRewindSound();
     }
 }
 
