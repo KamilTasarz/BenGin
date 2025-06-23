@@ -383,7 +383,7 @@ bool PlayerController::HandleVirus(float deltaTime)
 	glm::vec3 newScale = glm::mix(currentScale, targetScale, deltaTime * smoothing);
 	timerIndicator->transform.setLocalScale(newScale);
 
-	std::cout << "Gracz biegnie: " << isRunning << ", gracz skacze: " << isJumping << std::endl;
+	//std::cout << "Gracz biegnie: " << isRunning << ", gracz skacze: " << isJumping << std::endl;
 
 	if (isRunning || !rb->groundUnderneath || rewindable->isRewinding) {
 		deathTimer = 0.8f;
@@ -446,7 +446,7 @@ void PlayerController::VirusEffect()
 		jumpForce *= 0.8f;
 	}
 	else {
-		std::cout << "Unknown virus type!" << std::endl;
+		//std::cout << "Unknown virus type!" << std::endl;
 	}
 }
 

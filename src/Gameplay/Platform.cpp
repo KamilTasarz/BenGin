@@ -34,12 +34,12 @@ float Platform::getPadAxis(int axis) {
 void Platform::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "Platform::onAttach::" << owner->name << std::endl;
+	//std::cout << "Platform::onAttach::" << owner->name << std::endl;
 }
 
 void Platform::onDetach()
 {
-	std::cout << "Platform::onDetach::" << owner->name << std::endl;
+	//std::cout << "Platform::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 
@@ -94,7 +94,7 @@ void Platform::onStayCollisionLogic(Node* other)
 		owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
 		timer = 0.25f;
 
-		std::cout << "wejscie pod platforme" << std::endl;
+		//std::cout << "wejscie pod platforme" << std::endl;
 	}
 }
 

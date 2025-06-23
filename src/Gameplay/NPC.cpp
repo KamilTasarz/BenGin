@@ -133,9 +133,9 @@ void NPC::detectPlayer() {
                 if (PhysicsSystem::instance().rayCast(ray, hitNodes, distance, owner)) {
                     if (hitNodes.size() > 0 && hitNodes[0].node->getTagName() == "Player") {
                         
-                        for (auto hit : hitNodes) {
-                            std::cout << hit.node->getTagName() << std::endl;
-                        }
+                        //for (auto hit : hitNodes) {
+                        //    std::cout << hit.node->getTagName() << std::endl;
+                        //}
                         
                         playerVisible = true;
                         return;

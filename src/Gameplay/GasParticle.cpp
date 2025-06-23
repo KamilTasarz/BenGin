@@ -17,7 +17,7 @@ void GasParticle::onAttach(Node* owner)
 
 void GasParticle::onDetach()
 {
-	std::cout << "GasParticle::onDetach::" << owner->name << std::endl;
+	//std::cout << "GasParticle::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 

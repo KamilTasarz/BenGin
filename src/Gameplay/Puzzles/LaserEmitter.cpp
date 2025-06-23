@@ -61,7 +61,7 @@ void LaserEmitter::onUpdate(float deltaTime)
                 Node* hitNode = nodes[i].node;
 
 
-				std::cout << "obiekt: " << owner->getName() << " trafi w: " << hitNode->getName() << std::endl;
+				//std::cout << "obiekt: " << owner->getName() << " trafi w: " << hitNode->getName() << std::endl;
 
                 // Pomijamy powtórne trafienia tego samego obiektu, np. w petli odbic
                 if (hitNode == lastNode || (lastNode && hitNode->parent == lastNode->parent)) continue;
@@ -72,7 +72,7 @@ void LaserEmitter::onUpdate(float deltaTime)
                 if (auto mirror = dynamic_cast<MirrorNode*>(hitNode)) {
                     // Lustro: refleksja
                     if (dynamic_cast<BoundingBox*>(collider)) {
-                        std::cout << "LaserEmitter::onUpdate: Trafiono w lustro: " << hitNode->getName() << std::endl;
+                        //std::cout << "LaserEmitter::onUpdate: Trafiono w lustro: " << hitNode->getName() << std::endl;
                         
                         for (size_t j = i; j < nodes.size(); ++j) {
                             if (nodes[j].node == hitNode && dynamic_cast<RectOBB*>(nodes[j].collider)) {
