@@ -1123,7 +1123,7 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
         // Parent and reparent section
 
         // Get viable parent options
-        std::set<Node*> parent_options = root->root->getAllChildren();
+        std::unordered_set<Node*> parent_options = root->root->getAllChildren();
         parent_options.erase(preview_node);
 
         parent_options.insert(root->root);

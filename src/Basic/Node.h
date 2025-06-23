@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#ifndef NODE_H
-#define NODE_H
-
 #include "../config.h"
 
 #include <glm/gtc/quaternion.hpp>
@@ -14,7 +11,6 @@
 #include <set>
 
 #include "../System/Component.h"
-//#include "../System/Tag.h"
 
 class BoundingBox;
 class Collider;
@@ -29,15 +25,12 @@ class RectOBB;
 struct Particle;    
 struct ParticleInstanceData;
 
-//class Component;
 
 struct Ray {
 	glm::vec3 origin;
 	glm::vec3 direction;
     float length = 1.f;
 };
-
-
 
 class SceneGraph;
 
@@ -60,18 +53,6 @@ protected:
     // Local Matrix getter
     glm::mat4 getLocalModelMatrix()
     {
-        // X, Y and Z rotations
-        //const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(m_eulerRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
-        //const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(m_eulerRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        //const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(m_eulerRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-        //// Combining three rotation matrices
-        //const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
-
-        /*glm::quat qx = glm::angleAxis(glm::radians(m_quat.x), glm::vec3(1, 0, 0));
-        glm::quat qy = glm::angleAxis(glm::radians(m_quat.y), glm::vec3(0, 1, 0));
-        glm::quat qz = glm::angleAxis(glm::radians(m_quat.z), glm::vec3(0, 0, 1));
-        glm::quat rotation = qy * qx * qz;*/
 		glm::mat4 rotationMatrix = glm::mat4_cast(m_quat);
 
         // Combining translation, rotation and scale matrices and returning them as a local model matrix
@@ -111,14 +92,14 @@ public:
     // Set position and set "isDirty" to true, for the program to know changes have been made
     void setLocalPosition(const glm::vec3& newPosition)
     {
-            m_pos = newPosition;
+        m_pos = newPosition;
         m_isDirty = true;
     }
 
     // Set rotation and set "isDirty" to true, for the program to know changes have been made
     void setLocalRotation(const glm::vec3& newRotation)
     {
-        glm::vec3 eulerRadians = glm::radians(newRotation);
+        const glm::vec3 eulerRadians = glm::radians(newRotation);
         m_quat = glm::quat(eulerRadians);
         m_isDirty = true;
     }
@@ -225,9 +206,7 @@ public:
 	SceneGraph* scene_graph;
 
     // Children list
-    std::set<Node*> children;
-
-
+    std::unordered_set<Node*> children;
 
     int size = 0;
 
@@ -321,8 +300,8 @@ public:
     Node* clone(std::string instance_name, SceneGraph* new_scene_graph = nullptr);
     void setVariablesNodes(std::string instance_name, Node* root, SceneGraph* new_scene_graph = nullptr);
 
-    std::set<Node*> getAllChildren() {
-        std::set<Node*> result;
+    std::unordered_set<Node*> getAllChildren() {
+        std::unordered_set<Node*> result;
         collectAllChildren(result);
         return result;
     }
@@ -340,7 +319,7 @@ public:
     virtual void checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB, std::unordered_set<Node*>& rooms);
     virtual void checkIfInFrustrumLogic(std::unordered_set<Collider*>& colliders_logic, std::unordered_set<Collider*>& colliders_RB_logic);
 
-    void collectAllChildren(std::set<Node*>& out) {
+    void collectAllChildren(std::unordered_set<Node*>& out) {
         for (Node* child : children) {
             if (out.insert(child).second) { // If it's the first occurence of the child
                 child->collectAllChildren(out);
@@ -555,9 +534,6 @@ public:
 
     bool is_rewinidng = false;
 
-    //std::unordered_set<std::string> nameRegistry;
-    //std::unordered_map<std::string, Node*> nodes;
-
     SceneGraph();
 
     ~SceneGraph() {
@@ -587,8 +563,7 @@ public:
     void mark(Ray ray);
     void activateRewindShader();
     void deactivateRewindShader();
-    //std::string generateUniqueName(const std::string& base);
-    //void release(const std::string& name);
+
 };
 
 enum PrefabType {
@@ -714,5 +689,3 @@ public:
     void checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unordered_set<Collider*>& colliders_RB, 
         std::unordered_set<Node*>& rooms) override;
 };
-
-#endif // !NODE_H
