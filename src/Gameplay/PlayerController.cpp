@@ -261,17 +261,25 @@ void PlayerController::onUpdate(float deltaTime)
 			return;
 		}
 
-		if (jumpPressed) {
+		if (!jumpPressed && was_jump_pressed) {
+			jump_released = true;
+		}
 
-			if ((rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
-
-				if (isGravityFlipped) rb->velocityY = -jumpForce;
-				else rb->velocityY = jumpForce;
+		if (jumpPressed && !was_jump_pressed) {
+			if (jump_released && (rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
+				if (isGravityFlipped)
+					rb->velocityY = -jumpForce;
+				else
+					rb->velocityY = jumpForce;
 
 				isJumping = true;
 				canJump = false;
+
+				jump_released = false;
 			}
 		}
+
+		was_jump_pressed = jumpPressed;
 	}
 
 	if (virusType != "none") {
@@ -340,6 +348,7 @@ void PlayerController::onUpdate(float deltaTime)
 	cheeseSpriteAnimator.Update(deltaTime, cheeseSprite);
 
 	lastVirusType = virusType;
+
 }
 
 void PlayerController::onEnd() {}
