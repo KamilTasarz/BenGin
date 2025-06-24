@@ -8,10 +8,12 @@ public:
 	int menuId = -1;
 	int baseId = -1;
 	int transitionId = -1;
+	int rewindId = -1;
 
 	bool menuActive = false;
 	bool pauseActive = false;
 	bool transitionActive = false;
+	bool rewindActive = false;
 
 	int currentStage = 1;
 	float menuVolume = 0.f;
@@ -30,5 +32,7 @@ public:
 	void StartGameTransition();
 	void StartGameMusic();
 	int getTargetStage(float distance, bool isInGas);
+	void PlayRewindSound();
+	void StopRewindSound();
 	void onEnd();
 };

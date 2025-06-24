@@ -12,12 +12,12 @@ REGISTER_SCRIPT(Button);
 void Button::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "Button::onAttach::" << owner->name << std::endl;
+	//std::cout << "Button::onAttach::" << owner->name << std::endl;
 }
 
 void Button::onDetach()
 {
-	std::cout << "Button::onDetach::" << owner->name << std::endl;
+	//std::cout << "Button::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 

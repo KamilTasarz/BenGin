@@ -73,7 +73,6 @@ public:
 
 	std::vector<glm::vec3> updateSSAOKernel(unsigned int samples);
 	void generateNoiseTexture();
-	void debug_print();
 
 	void loadSounds();
 	void unloadSounds();

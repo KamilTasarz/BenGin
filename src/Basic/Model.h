@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#ifndef MODEL_H
-#define MODEL_H
-
 #include <glad/glad.h> 
 
 #include <glm/glm.hpp>
@@ -120,7 +117,7 @@ public:
         for (unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shader);
     }
-    void Draw(Shader& shader, std::vector<unsigned int> texture);
+    void Draw(Shader& shader, const std::vector<unsigned int>& texture);
 };
 
 inline unsigned int textureFromFile(const char* full_path, bool gamma) {
@@ -182,4 +179,3 @@ inline unsigned int textureFromFile(const char* path, const string& directory, b
     return textureFromFile(filename.c_str(), gamma);
 }
 
-#endif

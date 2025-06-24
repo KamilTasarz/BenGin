@@ -96,17 +96,33 @@ UIAnimator cheeseSpriteAnimator(glm::vec2(1705, 145));
 
 REGISTER_SCRIPT(PlayerController);
 
-void PlayerController::onAttach(Node* owner)
-{
-	//speed = 5.f;
-	//doors = nullptr;
-	this->owner = owner;
-	std::cout << "PlayerController::onAttach::" << owner->name << std::endl;
+bool PlayerController::isPadButtonPressed(int button) {
+	
+	if (!glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) return false;
+	GLFWgamepadstate state;
+	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
+		return state.buttons[button] == GLFW_PRESS;
+	}
+	return false;
+
 }
 
-void PlayerController::onDetach()
-{
-	std::cout << "PlayerController::onDetach::" << owner->name << std::endl;
+float PlayerController::getPadAxis(int axis) {
+
+	if (!glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) return 0.0f;
+	GLFWgamepadstate state;
+	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
+		return state.axes[axis];
+	}
+	return 0.0f;
+	
+}
+
+void PlayerController::onAttach(Node* owner) {
+	this->owner = owner;
+}
+
+void PlayerController::onDetach() {
 	owner = nullptr;
 }
 
@@ -120,7 +136,6 @@ void PlayerController::onStart()
 	rb = owner->getComponent<Rigidbody>();
 	rb->lockPositionZ = true;
 	rb->isPlayer = true;
-	//rb->smoothingFactor = 10.f;
 	timerIndicator = owner->getChildByNamePart("timer");
 	scale_factor = owner->transform.getLocalScale().x;
 	emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
@@ -134,7 +149,7 @@ void PlayerController::onStart()
 		rewindable = owner->getComponent<PlayerRewindable>();
 	}
 
-	auto ratTexture = ResourceManager::Instance().getTexture(34);
+	const auto ratTexture = ResourceManager::Instance().getTexture(34);
 	owner->pModel->meshes[0].textures[0] = (ratTexture);
 }
 
@@ -166,8 +181,30 @@ void PlayerController::onUpdate(float deltaTime)
 	}
 
 	if (!GameManager::instance().isRewinding) {
-		pressedRight = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS);
-		pressedLeft = (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS);
+
+		const float axisX = getPadAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
+		const bool dpadLeft = isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_LEFT);
+		const bool dpadRight = isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT);
+
+		pressedRight = (
+			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || 
+			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS ||
+			axisX > 0.4f ||
+			dpadRight
+			);
+		
+		pressedLeft = (
+			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || 
+			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS ||
+			axisX < -0.4f ||
+			dpadLeft
+			);
+
+		jumpPressed = (
+			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS ||
+			isPadButtonPressed(GLFW_GAMEPAD_BUTTON_A) ||
+			isPadButtonPressed(GLFW_GAMEPAD_BUTTON_X)
+			);
 
 		if (!rb->overrideVelocityX) rb->targetVelocityX = (pressedRight - pressedLeft) * speed;
 
@@ -220,12 +257,10 @@ void PlayerController::onUpdate(float deltaTime)
 			return;
 		}
 
-		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-			//std::cout << "Gracz probuje skoczyc" << std::endl;
+		if (jumpPressed) {
 
 			if ((rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
 
-				//rb->overrideVelocityY = true;
 				if (isGravityFlipped) rb->velocityY = -jumpForce;
 				else rb->velocityY = jumpForce;
 
@@ -303,10 +338,7 @@ void PlayerController::onUpdate(float deltaTime)
 	lastVirusType = virusType;
 }
 
-
-void PlayerController::onEnd()
-{
-}
+void PlayerController::onEnd() {}
 
 void PlayerController::Die(bool freeze, bool electrified)
 {
@@ -320,7 +352,6 @@ void PlayerController::Die(bool freeze, bool electrified)
 	}
 	else if (freeze) {
 		Rigidbody* rb = owner->getComponent<Rigidbody>();
-		//owner->deleteComponent(rb);
 		rb->is_static = true;
 	}
 
@@ -344,7 +375,7 @@ void PlayerController::Die(bool freeze, bool electrified)
 bool PlayerController::HandleVirus(float deltaTime)
 {
 	timerIndicator->setActive(true);
-	float smoothing = 10.f;
+	constexpr float smoothing = 10.f;
 
 	glm::vec3 currentScale = timerIndicator->transform.getLocalScale();
 	glm::vec3 targetScale = glm::vec3(0.2f, deathTimer * 4.f, 0.2f);
@@ -352,7 +383,7 @@ bool PlayerController::HandleVirus(float deltaTime)
 	glm::vec3 newScale = glm::mix(currentScale, targetScale, deltaTime * smoothing);
 	timerIndicator->transform.setLocalScale(newScale);
 
-	std::cout << "Gracz biegnie: " << isRunning << ", gracz skacze: " << isJumping << std::endl;
+	//std::cout << "Gracz biegnie: " << isRunning << ", gracz skacze: " << isJumping << std::endl;
 
 	if (isRunning || !rb->groundUnderneath || rewindable->isRewinding) {
 		deathTimer = 0.8f;
@@ -374,14 +405,12 @@ bool PlayerController::HandleVirus(float deltaTime)
 
 void PlayerController::ApplyVirusEffect()
 {
-	//PlayerController* player = target->getComponent<PlayerController>();
 
 	rb->gravity = -32.f;
 	rb->mass = 1.f;
 	speed = 9.f;
 	isGravityFlipped = false;
 	jumpForce = 19.f;
-	//virusType = "none";
 	CameraFollow::instance->verticalOffset = 3.f;
 
 	VirusEffect();
@@ -390,7 +419,6 @@ void PlayerController::ApplyVirusEffect()
 void PlayerController::VirusEffect()
 {
 	if (virusType == "blue") {
-		//owner->changeColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 		owner->textures.clear();
 		owner->textures.push_back(35);
 
@@ -400,7 +428,6 @@ void PlayerController::VirusEffect()
 		jumpForce *= 1.2f;
 	}
 	else if (virusType == "green") {
-		//owner->changeColor(glm::vec4(0.5f, 0.3f, 0.7f, 1.0f));
 
 		owner->textures.clear();
 		owner->textures.push_back(36);
@@ -410,7 +437,6 @@ void PlayerController::VirusEffect()
 		rb->gravity = 32.f;
 	}
 	else if (virusType == "black") {
-		//owner->changeColor(glm::vec4(0.72f, 0.45f, 0.2f, 1.0f));
 
 		owner->textures.clear();
 		owner->textures.push_back(37);
@@ -420,7 +446,7 @@ void PlayerController::VirusEffect()
 		jumpForce *= 0.8f;
 	}
 	else {
-		std::cout << "Unknown virus type!" << std::endl;
+		//std::cout << "Unknown virus type!" << std::endl;
 	}
 }
 

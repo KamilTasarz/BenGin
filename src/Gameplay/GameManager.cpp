@@ -1,6 +1,5 @@
 #include "GameManager.h"
 #include "../Basic/Node.h"
-//#include "RegisterScript.h"
 #include "PlayerSpawner.h"
 #include "LevelGenerator.h"
 #include "../System/GuiManager.h"
@@ -9,30 +8,14 @@
 #include "RewindManager.h"
 #include "UIManager.h"
 
-//REGISTER_SCRIPT(GameManager);
-
-//GameManager* GameManager::instance = nullptr;
-
 GameManager& GameManager::instance()
 {
     static GameManager instance;
     return instance;
 }
 
-//void GameManager::onAttach(Node* owner)
-//{
-//	//GameManager::instance = this;
-//    this->owner = owner;
-//}
-//
-//void GameManager::onDetach()
-//{
-//    owner = nullptr;
-//}
-
 void GameManager::Init(SceneGraph* scene_graph)
 {
-
     playerSpawner = scene_graph->root->getChildByTag("PlayerSpawner");
     if (scene_graph->root->getChildByTag("LevelGenerator")) {
         levelGenerator = scene_graph->root->getChildByTag("LevelGenerator")->getComponent<LevelGenerator>();
@@ -42,6 +25,7 @@ void GameManager::Init(SceneGraph* scene_graph)
     if (scene_graph->root->getChildByTag("UIManager")) {
        uiManager = scene_graph->root->getChildByTag("UIManager")->getComponent<UIManager>();
     }
+
 	runTime = 0.f;
 	score = 0.f;
 	deathCount = 0;
@@ -49,8 +33,7 @@ void GameManager::Init(SceneGraph* scene_graph)
 
 void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
 {
-	//isRewinding = uiManager->isRewinding;
-	//historyEmpty = uiManager->rewindable->history.empty();
+	
 	if (!emitter) return;
 
     if (!tutorialActive && !isRewinding) {
@@ -145,7 +128,7 @@ void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
 		gasSpreadingSpeed /= modifier;
     }
 
-    std::cout << gasSpreadingSpeed << std::endl;
+    //std::cout << gasSpreadingSpeed << std::endl;
 }
 
 void GameManager::HandleLevelGeneration() {

@@ -1,5 +1,4 @@
 #include "TimeRewindable.h"
-//#include "../Window/ServiceLocator.h"
 #include "RegisterScript.h"
 #include <GLFW/glfw3.h>
 #include "GameManager.h"
@@ -14,17 +13,30 @@
 #include "Animation/DeathState.h"
 #include "Animation/TurnState.h"
 #include "Animation/PushState.h"
+#include "MusicManager.h"
 
-//REGISTER_SCRIPT(TimeRewindable);
-//
-//void TimeRewindable::onAttach(Node* owner) {
-//    this->owner = owner;
-//}
-//
-//void TimeRewindable::onDetach() {
-//    history.clear();
-//    owner = nullptr;
-//}
+bool TimeRewindable::isPadButtonPressed(int button) {
+
+    if (!glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) return false;
+    GLFWgamepadstate state;
+    if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
+        return state.buttons[button] == GLFW_PRESS;
+    }
+    return false;
+
+}
+
+bool TimeRewindable::isPadButtonReleased(int button) {
+
+    if (!glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) return false;
+    GLFWgamepadstate state;
+    if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
+        return state.buttons[button] == GLFW_RELEASE;
+    }
+    return false;
+
+}
+
 
 void TimeRewindable::onUpdate(float deltaTime) {
     if (!owner) return;
@@ -34,36 +46,9 @@ void TimeRewindable::onUpdate(float deltaTime) {
 		resetHistory();
 		lastCheckpointPos = newCheckpointPos;
 	}
-
-  //  if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS) {
-  //      if (GameManager::instance().historyEmpty) {
-  //          isRewinding = false;
-  //      }
-  //      else {
-  //          isRewinding = true;
-
-  //          rewindTime += deltaTime;
-		//    rewindSpeed = pow(2, static_cast<int>(rewindTime) + 1);
-  //      
-  //          auto* audio = ServiceLocator::getAudioEngine();
-  //          if (sfxId == -1) {
-  //              sfxId = audio->PlayMusic(audio->rewind, GameManager::instance().sfxVolume * 60.f);
-  //          }
-  //      }
-  //  }
-  //  if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE && isRewinding || !isRewinding) {
-  //      auto* animationController = owner->getComponent<PlayerAnimationController>();
-  //      //if (comp) comp->changeState(new IdleState());
-  //      isRewinding = false;
-		//rewindTime = 0.f;
-
-  //      auto* audio = ServiceLocator::getAudioEngine();
-  //      audio->stopSound(sfxId);
-  //      sfxId = -1;
-  //  }
     
-    bool rewindKeyHeld = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS;
-    bool rewindKeyReleased = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE;
+    bool rewindKeyHeld = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS || isPadButtonPressed(GLFW_GAMEPAD_BUTTON_B) || isPadButtonPressed(GLFW_GAMEPAD_BUTTON_Y);
+    bool rewindKeyReleased = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE || isPadButtonReleased(GLFW_GAMEPAD_BUTTON_B) || isPadButtonReleased(GLFW_GAMEPAD_BUTTON_Y);
 
     // Klawisz puœci³ => zezwól na ponowne cofanie przy kolejnym naciœniêciu
     if (rewindKeyReleased) {
@@ -78,10 +63,12 @@ void TimeRewindable::onUpdate(float deltaTime) {
 
         owner->scene_graph->activateRewindShader();
 
-        auto* audio = ServiceLocator::getAudioEngine();
+        //MusicManager::instance().PlayRewindSound();
+
+        /*auto* audio = ServiceLocator::getAudioEngine();
         if (sfxId == -1) {
             sfxId = audio->PlayMusic(audio->rewind, GameManager::instance().sfxVolume * 80.f);
-        }
+        }*/
     }
 
     // Stop rewind if no history left
@@ -92,9 +79,11 @@ void TimeRewindable::onUpdate(float deltaTime) {
 
         owner->scene_graph->deactivateRewindShader();
 
-        auto* audio = ServiceLocator::getAudioEngine();
+        //MusicManager::instance().StopRewindSound();
+
+        /*auto* audio = ServiceLocator::getAudioEngine();
         audio->pauseSound(sfxId);
-        sfxId = -1;
+        sfxId = -1;*/
     }
 
     // Stop rewind if key released manually
@@ -105,9 +94,11 @@ void TimeRewindable::onUpdate(float deltaTime) {
 
         owner->scene_graph->deactivateRewindShader();
 
-        auto* audio = ServiceLocator::getAudioEngine();
+        //MusicManager::instance().StopRewindSound();
+
+        /*auto* audio = ServiceLocator::getAudioEngine();
         audio->pauseSound(sfxId);
-        sfxId = -1;
+        sfxId = -1;*/
     }
 
     if (isRewinding) {
@@ -119,6 +110,7 @@ void TimeRewindable::onUpdate(float deltaTime) {
     }
     else {
         pushSnapshot(createSnapshot());
+        //MusicManager::instance().StopRewindSound();
     }
 }
 

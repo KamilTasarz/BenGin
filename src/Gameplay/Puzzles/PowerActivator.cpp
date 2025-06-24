@@ -47,7 +47,7 @@ void PowerActivator::onStayCollisionLogic(Node* other)
 
 	if (!electrified->isActive) return;
 
-	std::cout << "PowerActivator::onCollisionLogic::" << owner->name << std::endl;
+	//std::cout << "PowerActivator::onCollisionLogic::" << owner->name << std::endl;
 	isActivated = true;
 	ChangeState(activate);
 }
@@ -57,7 +57,7 @@ void PowerActivator::onExitCollisionLogic(Node* other)
 	Electrified* electrified = other->getComponent<Electrified>();
 	if (electrified == nullptr) return;
 
-	std::cout << "PowerActivator::onCollisionLogic::" << owner->name << std::endl;
+	//std::cout << "PowerActivator::onCollisionLogic::" << owner->name << std::endl;
 	isActivated = false;
 	ChangeState(!activate);
 }

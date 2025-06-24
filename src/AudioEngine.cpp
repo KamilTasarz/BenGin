@@ -439,6 +439,7 @@ void CAudioEngine::loadAllGameSounds() {
     LoadSound(musicStage2, false, true, false);
     LoadSound(musicStage3, false, true, false);
     LoadSound(musicStage4, false, true, false);
+    LoadSound(musicRewind, false, true, false);
 }
 
 void CAudioEngine::unloadAllGameSounds() {
@@ -474,4 +475,5 @@ void CAudioEngine::unloadAllGameSounds() {
     UnloadSound(musicStage2);
     UnloadSound(musicStage3);
     UnloadSound(musicStage4);
+    UnloadSound(musicRewind);
 }

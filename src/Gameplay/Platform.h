@@ -5,21 +5,24 @@
 class Platform : public Script
 {
 public:
-	//using SelfType = Platform;
+
 	float timer = 0.f;
 	bool flipped = false;
+	bool downPressed = false;
 	
 	Platform() = default;
 	virtual ~Platform() = default;
 	void onAttach(Node* owner) override;
 	void onDetach() override;
-	//void onStart() override;
+
+	bool isPadButtonPressed(int button);
+	float getPadAxis(int button);
+
 	void onUpdate(float deltaTime) override;
 	void onStayCollisionLogic(Node* other);
-	//void onEnd() override;
-	
-	//void onCollisionLogic(Node* other) override;
+
 	void onExitCollisionLogic(Node* other) override;
 	void onStayCollision(Node* other) override;
+
 };
 

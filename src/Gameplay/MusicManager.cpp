@@ -36,6 +36,9 @@ void MusicManager::Update(float deltaTime)
                 menuVolume = glm::mix(menuVolume, 0.f, deltaTime * 2.f);
                 audio->SetChannelvolume(menuId, menuVolume);
             }
+            else {
+                audio->stopSound(menuId);
+            }
 
             return;
         }
@@ -43,6 +46,17 @@ void MusicManager::Update(float deltaTime)
             StartGameMusic();
             transitionActive = false;
         }
+    }
+
+    /*if (GameManager::instance().isRewinding && !rewindActive) {
+        PlayRewindSound();
+    }
+    else if (!GameManager::instance().isRewinding && rewindActive) {
+        StopRewindSound();
+    }*/
+
+    if (rewindActive) {
+        return;
     }
 
     float fadeSpeed = 1.f;
@@ -60,7 +74,7 @@ void MusicManager::Update(float deltaTime)
     for (int i = 0; i < 4; ++i) {
         float desiredVolume = (i + 1 == targetStage) ? targetVolume : 0.f;
         stageVolumes[i] = glm::mix(stageVolumes[i], desiredVolume, deltaTime / fadeSpeed);
-        audio->SetChannelvolume(stageChannels[i], stageVolumes[i]);
+        audio->SetChannelvolume(stageChannels[i], stageVolumes[i] * 0.3f);
     }
 
     // zmiana co takt
@@ -94,9 +108,11 @@ void MusicManager::StartGameTransition() {
 void MusicManager::StartGameMusic()
 {
 	auto* audio = ServiceLocator::getAudioEngine();
-	baseId = audio->PlayMusic(audio->musicBase, GameManager::instance().sfxVolume * volume);
+	//baseId = audio->PlayMusic(audio->musicBase, GameManager::instance().sfxVolume * volume * 0.f);
 
     stageChannels[0] = audio->PlayMusic(audio->musicStage1, GameManager::instance().sfxVolume * volume);
+    stageVolumes[0] = GameManager::instance().sfxVolume * volume * 0.3f;
+
     stageChannels[1] = audio->PlayMusic(audio->musicStage2, GameManager::instance().sfxVolume * 0.f);
     stageChannels[2] = audio->PlayMusic(audio->musicStage3, GameManager::instance().sfxVolume * 0.f);
     stageChannels[3] = audio->PlayMusic(audio->musicStage4, GameManager::instance().sfxVolume * 0.f);
@@ -111,6 +127,26 @@ int MusicManager::getTargetStage(float distance, bool isInGas)
 	else if (distance < 8.f) return 3;
 	else if (distance < 20.f) return 2;
 	else return 1;
+}
+
+void MusicManager::PlayRewindSound() {
+    auto* audio = ServiceLocator::getAudioEngine();
+
+    for (int i = 0; i < 4; ++i) {
+        stageVolumes[i] = 0.f;
+        audio->SetChannelvolume(stageChannels[i], stageVolumes[i]);
+    }
+
+    rewindActive = true;
+    rewindId = audio->PlayMusic(audio->musicRewind, GameManager::instance().sfxVolume * volume * 0.6f);
+}
+
+void MusicManager::StopRewindSound() {
+    auto* audio = ServiceLocator::getAudioEngine();
+    
+    rewindActive = false;
+    audio->stopSound(rewindId);
+    audio->StopChannel(rewindId);
 }
 
 void MusicManager::onEnd() {
