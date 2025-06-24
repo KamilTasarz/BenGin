@@ -4,6 +4,10 @@
 
 void MenuButton();
 void NickButton();
+void LeaderboardButton();
+void ReturnButton();
+void ExitButton();
+
 
 class FunctionRegister {
 public:
@@ -14,7 +18,10 @@ public:
 
     std::map<std::string, std::function<void()>> functionMap = {
 	{"MenuButton", MenuButton},
-	{"NickButton", NickButton}
+	{"NickButton", NickButton},
+	{"LeaderboardButton", LeaderboardButton},
+	{"ReturnButton", ReturnButton},
+	{"ExitButton", ExitButton}
     };
 };
 

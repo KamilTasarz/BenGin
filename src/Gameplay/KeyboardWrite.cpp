@@ -118,7 +118,7 @@ void KeyboardWrite::onUpdate(float deltaTime)
 		}
 
 		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_ENTER) == GLFW_PRESS) {
-			if (!isPressed) {
+			if (!isPressed_ent) {
 				if (lastSign) {
 					text.pop_back(); // remove cursor
 					lastSign = false;
@@ -126,11 +126,11 @@ void KeyboardWrite::onUpdate(float deltaTime)
 				GameManager::instance().player_name = text;
 				isActive = false;
 				lastSign = false;
-
+				isPressed_ent = true;
 			}
 		}
 		else {
-			isPressed = false;
+			isPressed_ent = false;
 		}
 		textObject->value = text;
 	}
