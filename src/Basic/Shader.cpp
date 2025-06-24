@@ -24,7 +24,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
         fragmentCode = fShaderStream.str();
 
     }
-    catch (std::ifstream::failure e) {
+    catch (std::ios_base::failure& e) {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
     }
 
@@ -109,7 +109,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
         geoCode = gShaderStream.str();
 
     }
-    catch (std::ifstream::failure e) {
+    catch (std::ios_base::failure& e) {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
     }
 
@@ -140,7 +140,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
     // wypisanie błędów kompilacji
     glGetShaderiv(geometry, GL_COMPILE_STATUS, &success);
     if (!success) [[unlikely]] {
-        glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+        glGetShaderInfoLog(geometry, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED\n" << infoLog << std::endl;
     };
 
@@ -178,49 +178,48 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
     glDeleteShader(fragment);
 }
 
-void Shader::use()
-{
+void Shader::use() noexcept {
     glUseProgram(ID);
 }
 
-void Shader::setBool(const std::string& name, bool value) const {
+void Shader::setBool(const std::string& name, bool value) const noexcept {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), int(value));
 }
 
-void Shader::setInt(const std::string& name, int value) const {
+void Shader::setInt(const std::string& name, int value) const noexcept {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void Shader::setFloat(const std::string& name, float value) const {
+void Shader::setFloat(const std::string& name, float value) const noexcept {
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void Shader::setVec2(const std::string& name, const glm::vec2& value) const {
+void Shader::setVec2(const std::string& name, const glm::vec2& value) const noexcept {
     glUniform2fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
 }
 
-void Shader::setVec3(const std::string& name, const glm::vec3& value) const {
+void Shader::setVec3(const std::string& name, const glm::vec3& value) const noexcept {
     glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
 }
 
-void Shader::setVec4(const std::string& name, const glm::vec4& value) const {
+void Shader::setVec4(const std::string& name, const glm::vec4& value) const noexcept {
     glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
 }
 
-void Shader::setVec4(const std::string& name, float x, float y, float z, float w) const {
+void Shader::setVec4(const std::string& name, float x, float y, float z, float w) const noexcept {
     glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w);
 }
 
-void Shader::setMat4(const std::string& name, const glm::mat4& mat) const {
+void Shader::setMat4(const std::string& name, const glm::mat4& mat) const noexcept {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
-int Shader::getUniformLocation(const std::string& name) {
+[[nodiscard]] int Shader::getUniformLocation(const std::string& name) {
     
     if (uniformLocationCache.contains(name))
         return uniformLocationCache[name];
 
-    int location = glGetUniformLocation(ID, name.c_str());
+    const int location = glGetUniformLocation(ID, name.c_str());
     if (location == -1) [[unlikely]] {
         std::cerr << "Warning: uniform '" << name << "' not found in shader!\n";
     }

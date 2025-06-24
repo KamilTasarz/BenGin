@@ -155,6 +155,10 @@ void PlayerController::onStart()
 
 void PlayerController::onUpdate(float deltaTime)
 {
+	isGamepadConnected = glfwJoystickIsGamepad(GLFW_JOYSTICK_1);
+
+	cout << "\nGamepad connected?: " << isGamepadConnected << endl;
+
 	if (isDead) return;
 
 	isDying = false;
@@ -189,14 +193,14 @@ void PlayerController::onUpdate(float deltaTime)
 		pressedRight = (
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || 
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS ||
-			axisX > 0.4f ||
+			axisX > 0.1f ||
 			dpadRight
 			);
 		
 		pressedLeft = (
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || 
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS ||
-			axisX < -0.4f ||
+			axisX < -0.1f ||
 			dpadLeft
 			);
 
@@ -257,17 +261,25 @@ void PlayerController::onUpdate(float deltaTime)
 			return;
 		}
 
-		if (jumpPressed) {
+		if (!jumpPressed && was_jump_pressed) {
+			jump_released = true;
+		}
 
-			if ((rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
-
-				if (isGravityFlipped) rb->velocityY = -jumpForce;
-				else rb->velocityY = jumpForce;
+		if (jumpPressed && !was_jump_pressed) {
+			if (jump_released && (rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
+				if (isGravityFlipped)
+					rb->velocityY = -jumpForce;
+				else
+					rb->velocityY = jumpForce;
 
 				isJumping = true;
 				canJump = false;
+
+				jump_released = false;
 			}
 		}
+
+		was_jump_pressed = jumpPressed;
 	}
 
 	if (virusType != "none") {
@@ -336,6 +348,7 @@ void PlayerController::onUpdate(float deltaTime)
 	cheeseSpriteAnimator.Update(deltaTime, cheeseSprite);
 
 	lastVirusType = virusType;
+
 }
 
 void PlayerController::onEnd() {}

@@ -18,7 +18,7 @@ void Engine::init()
 {
 	srand(static_cast<unsigned int>(time(nullptr)));
 
-	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Beta Version 1.2.0");
+	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Beta Version 1.3.0");
 	ServiceLocator::provide(window);
 	
 	audio = new CAudioEngine();
@@ -38,10 +38,8 @@ void Engine::init()
 	SceneManager::Instance().Initialize();
 
 	game = new Game(prefabs, prefabs_puzzle);
-	//game->init();
 
 	editor = new Editor(prefabs, prefabs_puzzle);
-	//editor->init();
 
 	camera->setAABB();
 
@@ -69,11 +67,7 @@ void Engine::run()
 
 void Engine::shutdown()
 {
-
 	saveTagLayers();
-	//editor->shutdown();
-	//game->shutdown();
-	//glfwTerminate();
 
 	ServiceLocator::shutdownServices();
 

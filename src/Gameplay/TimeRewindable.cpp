@@ -116,9 +116,6 @@ void TimeRewindable::onUpdate(float deltaTime) {
 
 void TimeRewindable::pushSnapshot(std::shared_ptr<ITimeSnapshot> snapshot) {
     history.push_back(snapshot);
-
-    // Optional: implement size/time limit
-    // while (history.size() > limit) history.pop_front();
 }
 
 void TimeRewindable::resetHistory() {

@@ -54,13 +54,13 @@ void Platform::onUpdate(float deltaTime)
 
 	const float axisY = getPadAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
 
-	bool isFlippedAndPressedUp = flipped && (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_UP) == GLFW_PRESS || isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_UP) || axisY > 0.4f);
+	bool isFlippedAndPressedUp = flipped && (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_UP) == GLFW_PRESS || isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_UP) || axisY < -0.1f);
 
 	downPressed = (
 		glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_S) == GLFW_PRESS ||
 		glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_DOWN) == GLFW_PRESS ||
 		isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_DOWN) ||
-		axisY < -0.4f
+		axisY > 0.1f
 		);
 
 	if (downPressed || isFlippedAndPressedUp) {
@@ -107,8 +107,6 @@ void Platform::onStayCollisionLogic(Node* other)
 	if (other->getTagName() == "Player") {
 		owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
 		timer = 0.25f;
-
-		//std::cout << "wejscie pod platforme" << std::endl;
 	}
 }
 

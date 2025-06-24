@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#ifndef BOUNDING_BOX_H
-#define BOUNDING_BOX_H
-
 #include "../Basic/Shader.h"
 #include <unordered_set>
 
@@ -104,7 +101,7 @@ public:
 
 };
 
-class Capsule {
+class Capsule final {
 public:
 	glm::vec3 A, B, mid;
 	float radius, height;
@@ -130,7 +127,7 @@ public:
 	void setBuffers();
 };
 
-class RectOBB : public Collider {
+class RectOBB final : public Collider {
 public:
 	unsigned int VAO = 0, VBO = 0;
 	glm::mat4 model;
@@ -149,5 +146,3 @@ public:
 	void draw(Shader& shader);
 	bool isRayIntersects(glm::vec3 direction, glm::vec3 origin, float& t, glm::vec3& endPoint) override;
 };
-
-#endif

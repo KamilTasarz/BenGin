@@ -1,5 +1,4 @@
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -24,19 +23,17 @@ public:
 
     Shader(const char* vertexPath, const char* fragmentPath);
     Shader(const char* vertexPath, const char* fragmentPath, const char* getmetryPath);
-    void use();
+    void use() noexcept;
 
-    void setBool(const std::string& name, bool value) const;
-    void setInt(const std::string& name, int value) const;
-    void setFloat(const std::string& name, float value) const;
-    void setVec2(const std::string& name, const glm::vec2& value) const;
-    void setVec3(const std::string& name, const glm::vec3& value) const;
-    void setVec4(const std::string& name, const glm::vec4& value) const;
-    void setVec4(const std::string& name, float x, float y, float z, float w) const;
-    void setMat4(const std::string& name, const glm::mat4& mat) const;
+    void setBool(const std::string& name, bool value) const noexcept;
+    void setInt(const std::string& name, int value) const noexcept;
+    void setFloat(const std::string& name, float value) const noexcept;
+    void setVec2(const std::string& name, const glm::vec2& value) const noexcept;
+    void setVec3(const std::string& name, const glm::vec3& value) const noexcept;
+    void setVec4(const std::string& name, const glm::vec4& value) const noexcept;
+    void setVec4(const std::string& name, float x, float y, float z, float w) const noexcept;
+    void setMat4(const std::string& name, const glm::mat4& mat) const noexcept;
 
-    int getUniformLocation(const std::string& name);
+    [[nodiscard]] int getUniformLocation(const std::string& name);
 
 };
-
-#endif

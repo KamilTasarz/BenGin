@@ -20,6 +20,7 @@ public:
     VARIABLE(Node*, mouse);
     VARIABLE(int, id);
 	VARIABLE(bool, isGravityFlipped);
+    //VARIABLE(float, jump_cooldown);
     
 	Rigidbody* rb = nullptr;
 	bool isGrounded = false;
@@ -36,7 +37,12 @@ public:
     SpriteObject* cheeseSprite;
 	std::string lastVirusType = "null";
 
-    //bool inGas = false;
+    //const float jump_cooldown = 1.0f;
+    //float jump_timer = 0.0f;
+
+    bool was_jump_pressed = false;
+    bool jump_released = true;
+    bool isGamepadConnected = false;
     bool is_pressed = false;
 	std::string virusType = "none";
     float deathTimer;
