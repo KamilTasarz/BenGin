@@ -48,7 +48,7 @@ void LevelGenerator::GenerateLevel()
 		roomName = "tutorial_";
 		levelIndex = directionLength;
 		
-		if (directionLength == 5) {
+		if (directionLength == 6) {
 			playTutorial = false;
 			directionLength = 0;
 			roomNumber = 0;

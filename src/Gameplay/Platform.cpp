@@ -65,7 +65,7 @@ void Platform::onUpdate(float deltaTime)
 
 	if (downPressed || isFlippedAndPressedUp) {
 		owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
-		timer = 0.25f;
+		timer = 0.3f;
 	}
 	
 	if (timer > 0.f) {
@@ -106,7 +106,7 @@ void Platform::onStayCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
 		owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
-		timer = 0.25f;
+		timer = 0.3f;
 	}
 }
 
