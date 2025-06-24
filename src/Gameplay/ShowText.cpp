@@ -128,7 +128,7 @@ void ShowText::onUpdate(float deltaTime)
 void ShowText::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
-		if (!isWriting && !entered) {
+		if (!isWriting && !entered && !startWithText) {
 			isWriting = true;
 			entered = true;
 			writingFirstDone = false;
@@ -140,6 +140,13 @@ void ShowText::onCollisionLogic(Node* other)
 			for (char c : text) {
 				textChars.push_back(c);
 			}
+		}
+		else if (startWithText && !entered) {
+			isWriting = false;
+			entered = true;
+
+			textObject->value = text;
+			textObjectSecond->value = textSecond;
 		}
 	}
 }

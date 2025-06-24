@@ -160,7 +160,7 @@ void Rigidbody::onUpdate(float deltaTime)
 		velocityY += gravity * deltaTime;
 	}
 
-	velocityY *= (1.0f - drag * deltaTime);
+	velocityY *= (1.0f - dragY * deltaTime);
 	if (useVelocityZ) velocityZ *= (1.0f - drag * deltaTime);
 
 	// veltical movement limit

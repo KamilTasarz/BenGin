@@ -77,6 +77,7 @@ void Platform::onUpdate(float deltaTime)
 	}
 	else {
 		owner->AABB->removeIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
+		owner->AABB->removeIgnoredLayer(TagLayerManager::Instance().getLayer("Box"));
 	}
 
 	auto* player = GameManager::instance().currentPlayer;
@@ -106,6 +107,11 @@ void Platform::onStayCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
 		owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Player"));
+		timer = 0.3f;
+	}
+
+	if (other->getTagName() == "Box" && !flipped) {
+		owner->AABB->addIgnoredLayer(TagLayerManager::Instance().getLayer("Box"));
 		timer = 0.3f;
 	}
 }

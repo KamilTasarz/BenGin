@@ -12,6 +12,7 @@ public:
 	VARIABLE(std::string, text);
 	VARIABLE(std::string, textSecond);
 	VARIABLE(float, speed);
+	VARIABLE(bool, startWithText);
 
 	//std::string text = "Escape from the gas!";
 
@@ -39,7 +40,8 @@ public:
 		static Variable textVar = getField_text();
 		static Variable textSecondVar = getField_textSecond();
 		static Variable speedVar = getField_speed();
-		return { &textVar, &textSecondVar, &speedVar };
+		static Variable startWithTextVar = getField_startWithText();
+		return { &textVar, &textSecondVar, &speedVar, &startWithTextVar };
 	}
 };
 

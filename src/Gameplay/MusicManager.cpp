@@ -115,23 +115,21 @@ void MusicManager::StartGameMusic()
     auto* audio = ServiceLocator::getAudioEngine();
     FMOD::System* fmodSystem = audio->GetLowLevelSystem();
 
-    // Pobierz g³ówn¹ grupê kana³ów
+    // Pobierz master channel group i utwórz (jeœli trzeba) w³asn¹ grupê muzyczn¹
     FMOD::ChannelGroup* masterGroup = nullptr;
     fmodSystem->getMasterChannelGroup(&masterGroup);
+    if (!musicGroup) {
+        fmodSystem->createChannelGroup("MusicGroup", &musicGroup);
+        masterGroup->addGroup(musicGroup);
+    }
 
-    // Utwórz wspóln¹ grupê dla muzyki (opcjonalnie zachowaj jako zmienn¹ cz³onkowsk¹)
-    musicGroup = nullptr;
-    fmodSystem->createChannelGroup("MusicGroup", &musicGroup);
-
-    // Pobierz aktualny zegar DSP
+    // Pobierz aktualny zegar DSP i sample rate
     unsigned long long dspClock = 0;
     masterGroup->getDSPClock(&dspClock, nullptr);
-
-    // Pobierz sample rate
     int sampleRate = 0;
     fmodSystem->getSoftwareFormat(&sampleRate, nullptr, nullptr);
 
-    // Delay ~450ms (mo¿esz zwiêkszyæ do np. 700ms jeœli desync nadal siê zdarza)
+    // Ustal opóŸnienie startu np. 450ms
     unsigned long long delaySamples = static_cast<unsigned long long>(sampleRate * 0.45f);
     unsigned long long startDelay = dspClock + delaySamples;
 
@@ -142,13 +140,10 @@ void MusicManager::StartGameMusic()
         audio->musicStage4
     };
 
-    float initialVolumes[4] = {
-        GameManager::instance().sfxVolume * volume * 0.3f, // tylko stage1 aktywny na start
-        0.f,
-        0.f,
-        0.f
-    };
+    float baseVol = GameManager::instance().sfxVolume * volume * 0.3f;
+    float initialVolumes[4] = { baseVol, 0.f, 0.f, 0.f };
 
+    // Odtwarzaj ka¿dy kana³ w paused, ustawiaj¹c delay i g³oœnoœæ, potem unpause
     for (int i = 0; i < 4; ++i) {
         FMOD::Sound* sound = audio->GetSoundByName(stageNames[i]);
         if (!sound) {
@@ -158,29 +153,25 @@ void MusicManager::StartGameMusic()
 
         FMOD::Channel* channel = nullptr;
         fmodSystem->playSound(sound, nullptr, true, &channel);
+        if (!channel) continue;
 
-        if (channel) {
-            // Ustaw kana³ w grupie muzyki
-            channel->setChannelGroup(musicGroup);
+        channel->setChannelGroup(musicGroup);
+        // ustaw liniowy poziom g³oœnoœci [0..1]
+        channel->setVolume(glm::clamp(initialVolumes[i], 0.f, 1.f));
 
-            // Jeœli kana³ ma byæ "wyciszony" - u¿yj mute
-            bool isMuted = (initialVolumes[i] <= 0.001f);
-            //channel->setMute(isMuted);
-            channel->setVolume(initialVolumes[i] / 100.f);
+        // ustaw sample-dok³adne opóŸnienie startu
+        channel->setDelay(startDelay, 0, true);
 
-            // Ustaw wspólny delay dla synchronizacji
-            channel->setDelay(startDelay, 0, true);
+        // odblokuj kana³
+        channel->setPaused(false);
 
-            // Start odtwarzania
-            channel->setPaused(false);
-
-            // Zarejestruj kana³ w Twoim systemie
-            stageChannels[i] = audio->generateChannelId();
-            audio->RegisterChannel(stageChannels[i], channel);
-            stageVolumes[i] = initialVolumes[i];
-        }
+        // zarejestruj kana³
+        stageChannels[i] = audio->generateChannelId();
+        audio->RegisterChannel(stageChannels[i], channel);
+        stageVolumes[i] = initialVolumes[i];
     }
 
+    // Nie ma ju¿ potrzeby pausing/ unpausing grupy — kana³y same wystartowa³y.
     beatTime = 1.92f;
     timer = 0.f;
 }
