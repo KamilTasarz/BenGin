@@ -93,7 +93,7 @@ void GuiManager::update(float delta_time)
 
 	for (auto& o : objects) {
 		ButtonObject* b = dynamic_cast<ButtonObject*>(o);
-		if (b && b->button->on_click) {
+		if (b && b->button->on_click && b->visible) {
 			b->button->update();
 			if (SceneManager::Instance().isSwitched()) break;
 		}

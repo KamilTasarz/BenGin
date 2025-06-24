@@ -1,17 +1,71 @@
 {
     "GUI": {
         "free_id": null,
-        "max_id": 58,
+        "max_id": 61,
         "objects": [
             {
-                "id": 55,
+                "alignment": 1,
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "id": 2,
                 "order": 0,
-                "ptr_id": 9,
-                "size": 1.0,
-                "type": "sprite",
+                "ptr_id": 4,
+                "type": "text",
+                "value": "TOP 10 PLAYERS:",
                 "visible": true,
-                "x": 0.0,
-                "y": 0.0
+                "x": 2680.0,
+                "y": 780.0
+            },
+            {
+                "alignment": 0,
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "id": 58,
+                "order": 0,
+                "ptr_id": 6,
+                "type": "text",
+                "value": "Nick",
+                "visible": true,
+                "x": 2450.0,
+                "y": 700.0
+            },
+            {
+                "alignment": 2,
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "id": 59,
+                "order": 0,
+                "ptr_id": 6,
+                "type": "text",
+                "value": "Score",
+                "visible": true,
+                "x": 2930.0,
+                "y": 700.0
+            },
+            {
+                "alignment": 2,
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "id": 60,
+                "order": 0,
+                "ptr_id": 6,
+                "type": "text",
+                "value": "1.",
+                "visible": true,
+                "x": 2450.0,
+                "y": 668.0
             },
             {
                 "height": 100.0,
@@ -26,7 +80,7 @@
                 "type": "button",
                 "visible": true,
                 "width": 450.0,
-                "x": 735.0,
+                "x": 535.0,
                 "y": 450.0
             },
             {
@@ -42,8 +96,8 @@
                 "type": "button",
                 "visible": true,
                 "width": 577.0,
-                "x": 624.0,
-                "y": 1000.0
+                "x": 468.0,
+                "y": 774.0
             },
             {
                 "alignment": 0,
@@ -58,8 +112,8 @@
                 "type": "text",
                 "value": "_____",
                 "visible": true,
-                "x": 960.0,
-                "y": 1000.0
+                "x": 760.0,
+                "y": 780.0
             },
             {
                 "height": 100.0,
@@ -74,7 +128,7 @@
                 "type": "button",
                 "visible": true,
                 "width": 450.0,
-                "x": 735.0,
+                "x": 535.0,
                 "y": 600.0
             },
             {
@@ -90,8 +144,8 @@
                 "type": "text",
                 "value": "Nick:",
                 "visible": true,
-                "x": 960.0,
-                "y": 1000.0
+                "x": 760.0,
+                "y": 780.0
             },
             {
                 "alignment": 0,
@@ -122,7 +176,7 @@
                 "type": "button",
                 "visible": true,
                 "width": 450.0,
-                "x": 735.0,
+                "x": 535.0,
                 "y": 300.0
             },
             {
@@ -138,19 +192,29 @@
                 "type": "button",
                 "visible": true,
                 "width": 450.0,
-                "x": 2655.0,
-                "y": 150.0
+                "x": 2455.0,
+                "y": 250.0
+            },
+            {
+                "id": 55,
+                "order": 2,
+                "ptr_id": 10,
+                "size": 1.0,
+                "type": "sprite",
+                "visible": true,
+                "x": 0.0,
+                "y": 0.0
             }
         ]
     },
     "camera": {
-        "Pitch": -7.0999755859375,
-        "Yaw": -90.20707702636719,
+        "Pitch": -0.49995312094688416,
+        "Yaw": 268.09405517578125,
         "mode": 2,
         "position": {
-            "x": 0.9750034213066101,
-            "y": 10.29655647277832,
-            "z": 29.660017013549805
+            "x": 1.737260103225708,
+            "y": 0.3490310609340668,
+            "z": 8.805667877197266
         }
     },
     "scene": {
@@ -234,156 +298,6 @@
                     "y": -0.5,
                     "z": -0.5
                 },
-                "components": [
-                    {
-                        "name": "KeyboardWrite",
-                        "variables": null
-                    },
-                    {
-                        "name": "AnimatedMenu",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": false,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 6,
-                "name": "point_light",
-                "no_textures": true,
-                "point_light": {
-                    "ambient": {
-                        "x": 0.20000000298023224,
-                        "y": 0.20000000298023224,
-                        "z": 0.20000000298023224
-                    },
-                    "constant": 1.0,
-                    "diffuse": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    },
-                    "is_alarm": false,
-                    "is_shining": true,
-                    "linear": 0.09000000357627869,
-                    "quadratic": 0.03200000151991844,
-                    "specular": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    }
-                },
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 4.021246433258057
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "PointLight"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 6,
-                "name": "point_light",
-                "no_textures": true,
-                "point_light": {
-                    "ambient": {
-                        "x": 0.20000000298023224,
-                        "y": 0.20000000298023224,
-                        "z": 0.20000000298023224
-                    },
-                    "constant": 1.0,
-                    "diffuse": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    },
-                    "is_alarm": false,
-                    "is_shining": true,
-                    "linear": 0.09000000357627869,
-                    "quadratic": 0.03200000151991844,
-                    "specular": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    }
-                },
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 4.021246433258057
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "PointLight"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
                 "directional_light": {
                     "ambient": {
                         "x": 0.20000000298023224,
@@ -433,6 +347,162 @@
                 },
                 "tag": "Default",
                 "type": "DirectionalLight"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "AABB_logic_min": {
+                    "x": -1.0,
+                    "y": -1.0,
+                    "z": -1.0
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "camera_follow",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 6,
+                "name": "point_light",
+                "no_textures": true,
+                "point_light": {
+                    "ambient": {
+                        "x": 0.20000000298023224,
+                        "y": 0.20000000298023224,
+                        "z": 0.20000000298023224
+                    },
+                    "constant": 1.0,
+                    "diffuse": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    },
+                    "is_alarm": false,
+                    "is_shining": true,
+                    "linear": 0.09000000357627869,
+                    "quadratic": 0.03200000151991844,
+                    "specular": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    }
+                },
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 4.021246433258057
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "PointLight"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "AABB_logic_min": {
+                    "x": -1.0,
+                    "y": -1.0,
+                    "z": -1.0
+                },
+                "components": [
+                    {
+                        "name": "KeyboardWrite",
+                        "variables": null
+                    },
+                    {
+                        "name": "AnimatedMenu",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "keyboard_controller",
+                "no_textures": true,
+                "position": {
+                    "x": 3.3079636096954346,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
             }
         ],
         "id": 0,

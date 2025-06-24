@@ -7,9 +7,26 @@
 
 void MenuButton()
 {
-    SceneManager::Instance().next();
-    MusicManager::instance().StartGameTransition();
-    std::cout << "You clicked button in Menu." << std::endl;
+	SceneGraph* s = SceneManager::Instance().getCurrentScene();
+	
+    //SceneManager::Instance().next();
+    //MusicManager::instance().StartGameTransition();
+    //std::cout << "You clicked button in Menu." << std::endl;
+    if (s) {
+        s->alpha_anim = 0.f; // Reset alpha to start moving back
+        s->menu_anim = true; // Set menu animation flag to true
+        Node* keywriter = s->root->getChildByName("keyboard_controller");
+        if (keywriter) {
+            AnimatedMenu* script = keywriter->getComponent<AnimatedMenu>();
+            if (script) {
+                script->endAnim = true;
+				script->endAnimTimer = 0.f; // Reset end animation timer
+            }
+
+        }
+
+
+    }
 }
 
 void NickButton()

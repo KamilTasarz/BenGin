@@ -110,6 +110,21 @@ void SceneManager::resetSwitched()
 	switched = false;
 }
 
+void SceneManager::LateNext()
+{
+	late_next = true;
+}
+
+void SceneManager::resetLateNext()
+{
+	late_next = false;
+}
+
+bool SceneManager::isLateNext() const
+{
+	return late_next;
+}
+
 SceneGraph* SceneManager::getCurrentScene()
 {
 

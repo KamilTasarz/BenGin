@@ -38,8 +38,11 @@ void GuiButton::attachFunction(std::function<void()> onClick, std::string fun_na
 
 void GuiButton::render()
 {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	if (!is_invincible) {
 		if (is_hovered) {
+			
 			float sprite_w = sprite_hovered->sprite.lock()->sprite_w;
 			float sprite_h = sprite_hovered->sprite.lock()->sprite_h;
 			sprite_hovered->sprite.lock()->sprite_w = w;
@@ -47,8 +50,11 @@ void GuiButton::render()
 			sprite_hovered->render();
 			sprite_hovered->sprite.lock()->sprite_w = sprite_w;
 			sprite_hovered->sprite.lock()->sprite_h = sprite_h;
+			text_object->color = glm::vec4(0.f, 0.f, 0.f, 1.f);
+			
 		}
 		else {
+			
 			float sprite_w = sprite_base->sprite.lock()->sprite_w;
 			float sprite_h = sprite_base->sprite.lock()->sprite_h;
 			sprite_base->sprite.lock()->sprite_w = w;
@@ -56,6 +62,8 @@ void GuiButton::render()
 			sprite_base->render();
 			sprite_base->sprite.lock()->sprite_w = sprite_w;
 			sprite_base->sprite.lock()->sprite_h = sprite_h;
+			text_object->color = glm::vec4(1.f);
+			
 		}
 		text_object->render();
 	}

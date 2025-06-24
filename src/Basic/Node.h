@@ -508,6 +508,10 @@ public:
 	Node* to_delete = nullptr;
     std::vector<Node*> to_delete_vec;
 
+    //dziala tylko w menu
+    bool menu_anim = false;
+    float alpha_anim = 2.f;
+
     int size = 0, point_light_number = 0, directional_light_number = 0, active_point_lights = 0;
     std::list<DirectionalLight*> directional_lights;
     std::list<PointLight*> point_lights;
