@@ -14,7 +14,7 @@ class SceneManager
 private:
 	std::vector<OrderedScene> scenes;
 	SceneGraph* sceneGraph = nullptr;
-	bool switched = false;
+	bool switched = false, late_next = false;
 
 public:
 	int currentSceneIndex = -1;
@@ -42,6 +42,10 @@ public:
 
 	bool isSwitched() const;
 	void resetSwitched();
+
+	void LateNext();
+	void resetLateNext();
+	bool isLateNext() const;
 
 	//get pointer to current scene graph
 	SceneGraph* getCurrentScene();

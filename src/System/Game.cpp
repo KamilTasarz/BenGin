@@ -64,12 +64,34 @@ void Game::input()
 
 }
 
+void Game::drawQuadTvMenu() {
+
+    if (SceneManager::Instance().getCurrentScene()->alpha_anim < 1.f) {
+        //alpha += ServiceLocator::getWindow()->deltaTime * 0.6f;
+        glDisable(GL_DEPTH_TEST);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        ResourceManager::Instance().shader_PostProcess_noise->use();
+        ResourceManager::Instance().shader_PostProcess_noise->setInt("image", 0);
+        ResourceManager::Instance().shader_PostProcess_noise->setFloat("time", time);
+        ResourceManager::Instance().shader_PostProcess_noise->setFloat("alpha", SceneManager::Instance().getCurrentScene()->alpha_anim);
+        ResourceManager::Instance().shader_PostProcess_noise->setVec2("resolution", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, crtColorBuffer);
+        glBindVertexArray(quadVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+        glEnable(GL_DEPTH_TEST);
+    }
+}
+
 void Game::draw()
 {
 	
     //float t = glfwGetTime();
 
-    float time = glfwGetTime();
+    time = glfwGetTime();
     float fpsValue = 1.f / ServiceLocator::getWindow()->deltaTime;
 
     // Render sceny do framebuffera
@@ -92,8 +114,9 @@ void Game::draw()
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     LineManager::Instance().drawLines();
 	
-	
-
+    if (SceneManager::Instance().getCurrentScene()->menu_anim && SceneManager::Instance().currentSceneIndex == 0) {
+        drawQuadTvMenu();
+    }
     GuiManager::Instance().draw();
 	
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -615,9 +638,14 @@ void Game::init()
     if (scene == 0) MusicManager::instance().Init();
     else if (scene == 1) MusicManager::instance().StartGameTransition();
 
-    if (GameManager::instance().emitter) glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-
+    if (scene == 1) {
+        glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		postProcessData.is_crt_curved = true;
+    }
+    else {
+        glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        postProcessData.is_crt_curved = false;
+    }
 }
 void Game::run()
 {
@@ -648,6 +676,15 @@ void Game::run()
             //float t4 = glfwGetTime();
 
             update(ServiceLocator::getWindow()->deltaTime);
+
+            if (SceneManager::Instance().isLateNext()) {
+                SceneManager::Instance().next();
+				
+				if (SceneManager::Instance().currentSceneIndex == 1) {
+					MusicManager::instance().StartGameTransition();
+				}
+				SceneManager::Instance().resetLateNext();
+            }
         }
         if (!SceneManager::Instance().isSwitched()) {
             draw();

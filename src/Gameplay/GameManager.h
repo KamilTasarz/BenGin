@@ -10,8 +10,18 @@ class UIManager;
 
 class GameManager
 {
+private:
+	GameManager() {}
+
 public:
 	//static GameManager* instance;
+
+	GameManager(const GameManager&) = delete;
+	GameManager& operator=(const GameManager&) = delete;
+	GameManager(GameManager&&) = delete;
+	GameManager& operator=(GameManager&&) = delete;
+
+
 
 	float globalSmoothing = 10.f;
 	float gasSpreadingSpeed = 1.f;
@@ -39,6 +49,8 @@ public:
 
 	//glm::vec3 closestParticlePos = glm::vec3(0, 0, 0);
 	float minPlayerToParticleDistance = 100.f;
+
+
 
 	static GameManager& instance();
 	//GameManager() = default;

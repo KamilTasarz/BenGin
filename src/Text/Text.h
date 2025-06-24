@@ -87,8 +87,12 @@ public:
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows,
                 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -108,6 +112,7 @@ public:
         shader.setMat4("projection", screen_projection);
         shader.setInt("letter", 0);
 
+
         glDepthFunc(GL_ALWAYS);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -115,12 +120,27 @@ public:
         glActiveTexture(GL_TEXTURE0);
 
         unsigned int width = 0;
+        unsigned int line_width = 0;
 
-        for (auto c = text_value.begin(); c != text_value.end(); c++) {
-            char value = *c;
+        for (auto it = text_value.begin(); it != text_value.end(); ++it) {
+            char value = *it;
+
+            if (value == '\n') {
+                if (line_width > width)
+                    width = line_width;
+                line_width = 0;
+                continue;
+            }
+
             Character character = characters[value];
-			width += (character.offset_chars >> 6); //offset_chars is in 64th of pixels
+            line_width += character.offset_chars / 64.0f;
         }
+
+        if (line_width > width)
+            width = line_width;
+
+        float original_x = x; // Zapamiętaj oryginalną pozycję x
+        float line_spacing = 1.5f * characters['A'].size.y; // Przykładowe odstępy między liniami, możesz dostosować
 
 		if (alignment == CENTER) {
 			x -= width / 2.f;
@@ -129,15 +149,30 @@ public:
 			x -= width;
 		}
 
+        
         for (auto c = text_value.begin(); c != text_value.end(); c++) {
             char value = *c;
             Character character = characters[value];
+
+            if (value == '\n') {
+                y -= line_spacing;   // Przesuń w dół — możesz dostosować spacing
+                if (alignment == CENTER)
+                    x = original_x - width / 2.f;
+                else if (alignment == RIGHT)
+                    x = original_x - width;
+                else
+                    x = original_x;
+
+                continue;
+            }
 
             float glypth_x = x + character.offset_baseline.x;
             float glypth_y = y + character.offset_baseline.y - character.size.y;
 
             float glypth_w = character.size.x;
             float glypth_h = character.size.y;
+
+            
 
             float vertices[] = {
                 glypth_x, glypth_y + glypth_h,            0.0f, 0.0f,
@@ -156,7 +191,7 @@ public:
 
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
-            x += (character.offset_chars >> 6); 
+            x += character.offset_chars / 64.0f;
         }
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindVertexArray(0);

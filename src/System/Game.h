@@ -52,6 +52,7 @@ private:
 	unsigned int ssaoFBO, ssaoColorBuffer, ssaoBlurFBO, ssaoBlurColorBuffer, crtColorBuffer;
 
 	float alpha = 0.f;
+	float time;
 
 	glm::vec2 normalizedMouse;
 
@@ -77,6 +78,7 @@ public:
 	void loadSounds();
 	void unloadSounds();
 
+	void drawQuadTvMenu();
 	void renderQuadWithTexture(GLuint tex);
 	void renderQuadWithTextures(GLuint tex0, GLuint tex1);
 	Ray getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection);
