@@ -14,7 +14,7 @@ void LandState::enter(Node* owner) {
     owner->animator->blendAnimation(animation->fall, 50.f, true, false);
 
     auto* audio = ServiceLocator::getAudioEngine();
-    audio->PlaySFX(audio->landing, GameManager::instance().sfxVolume * 90.f);
+    sfxId = audio->PlayMusic(audio->landing, GameManager::instance().sfxVolume * 90.f);
 }
 
 void LandState::update(Node* owner, float deltaTime) {
@@ -40,4 +40,14 @@ void LandState::update(Node* owner, float deltaTime) {
 void LandState::exit(Node* owner) {
     PlayerController* p = owner->getComponent<PlayerController>();
     p->canJump = true;
+
+    auto* audio = ServiceLocator::getAudioEngine();
+    if (audio->IsPlaying(sfxId)) {
+        audio->stopSound(sfxId);
+        sfxId = -1;
+    }
+}
+
+std::string LandState::getName() const {
+    return "LandState";
 }

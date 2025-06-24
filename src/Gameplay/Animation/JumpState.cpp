@@ -11,7 +11,7 @@ void JumpState::enter(Node* owner) {
     owner->animator->blendAnimation(animation->jump, 50.f, true, false);
 
     auto* audio = ServiceLocator::getAudioEngine();
-    audio->PlaySFX(audio->jumping, GameManager::instance().sfxVolume * 95.f);
+    sfxId = audio->PlayMusic(audio->jumping, GameManager::instance().sfxVolume * 95.f);
 }
 
 void JumpState::update(Node* owner, float deltaTime) {
@@ -24,4 +24,14 @@ void JumpState::update(Node* owner, float deltaTime) {
     animation->changeState(new RiseState());
 }
 
-void JumpState::exit(Node* owner) {}
+void JumpState::exit(Node* owner) {
+    auto* audio = ServiceLocator::getAudioEngine();
+    if (audio->IsPlaying(sfxId)) {
+        audio->stopSound(sfxId);
+        sfxId = -1;
+    }
+}
+
+std::string JumpState::getName() const {
+    return "JumpState";
+}

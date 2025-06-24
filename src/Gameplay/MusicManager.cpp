@@ -120,7 +120,7 @@ void MusicManager::StartGameMusic()
     fmodSystem->getMasterChannelGroup(&masterGroup);
 
     // Utwórz wspóln¹ grupê dla muzyki (opcjonalnie zachowaj jako zmienn¹ cz³onkowsk¹)
-    FMOD::ChannelGroup* musicGroup = nullptr;
+    musicGroup = nullptr;
     fmodSystem->createChannelGroup("MusicGroup", &musicGroup);
 
     // Pobierz aktualny zegar DSP
@@ -223,7 +223,10 @@ void MusicManager::onEnd() {
     stageChannels[2] = -1;
     stageChannels[3] = -1;
 
-    //menuActive = false;
+    if (musicGroup) {
+        musicGroup->release();
+        musicGroup = nullptr;
+    }
 
     beatTime = 1.92f;
     timer = 0.f;

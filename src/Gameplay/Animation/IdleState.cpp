@@ -34,3 +34,7 @@ void IdleState::update(Node* owner, float deltaTime) {
 }
 
 void IdleState::exit(Node* owner) {}
+
+std::string IdleState::getName() const {
+    return "IdleState";
+}

@@ -50,3 +50,7 @@ void DeathState::exit(Node* owner) {
     }
     animation->allFinished = true;
 }
+
+std::string DeathState::getName() const {
+    return "DeathState";
+}

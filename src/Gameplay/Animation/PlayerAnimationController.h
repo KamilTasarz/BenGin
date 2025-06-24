@@ -63,5 +63,6 @@ public:
 	void changeState(IPlayerAnimState* newState);
 	void StartRotation(bool& conditionFlag, bool desiredState, float angleDegrees, const glm::vec3& axis);
 	void UpdateRotation(float deltaTime);
+	std::string GetCurrentStateName();
 };
 

@@ -46,3 +46,7 @@ void PushState::update(Node* owner, float deltaTime) {
 }
 
 void PushState::exit(Node* owner) {}
+
+std::string PushState::getName() const {
+    return "PushState";
+}

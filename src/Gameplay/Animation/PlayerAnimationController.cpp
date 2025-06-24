@@ -165,6 +165,11 @@ void PlayerAnimationController::changeState(IPlayerAnimState* newState) {
 	if (currentState)
 		currentState->exit(owner);
 
+	if (currentState && currentState->getName() == newState->getName()) {
+		delete newState;
+		return;
+	}
+
 	delete currentState;
 	currentState = newState;
 
@@ -197,3 +202,6 @@ void PlayerAnimationController::UpdateRotation(float deltaTime)
 	}
 }
 
+std::string PlayerAnimationController::GetCurrentStateName() {
+	return currentState ? currentState->getName() : "None";
+}

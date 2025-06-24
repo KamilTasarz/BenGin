@@ -52,3 +52,7 @@ void TurnState::update(Node* owner, float deltaTime) {
 }
 
 void TurnState::exit(Node* owner) {}
+
+std::string TurnState::getName() const {
+    return "TurnState";
+}

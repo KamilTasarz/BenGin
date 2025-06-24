@@ -23,7 +23,6 @@ struct Vector3 {
 
 struct Implementation {
 
-    FMOD::ChannelGroup* mpMusicChannelGroup;
     Implementation();
     ~Implementation();
 

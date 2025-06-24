@@ -87,28 +87,32 @@ void AnimationRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& ba
 		
         if (owner->animator) {
             std::string name_anim = owner->animator->current_animation->name;
-            if (name_anim == "Idle") {
+
+            if (name_anim == "Idle" && animationController->GetCurrentStateName() != "IdleState") {
                 animationController->changeState(new IdleState());
             }
-            else if (name_anim == "Run") {
+            else if (name_anim == "Run" && animationController->GetCurrentStateName() != "RunState") {
                 animationController->changeState(new RunState());
             }
-            else if (name_anim == "PushFinal") {
+            else if (name_anim == "PushFinal" && animationController->GetCurrentStateName() != "PushState") {
                 animationController->changeState(new PushState());
             }
-            else if (name_anim == "JumpFall") {
+            else if (name_anim == "JumpStart" && animationController->GetCurrentStateName() != "JumpState") {
+                animationController->changeState(new JumpState());
+            }
+            else if (name_anim == "JumpFall" && animationController->GetCurrentStateName() != "FallState") {
                 animationController->changeState(new FallState());
             }
-            else if (name_anim == "JumpUp") {
+            else if (name_anim == "JumpUp" && animationController->GetCurrentStateName() != "RiseState") {
                 animationController->changeState(new RiseState());
             }
-            else if (name_anim == "JumpEnd") {
+            else if (name_anim == "JumpEnd" && animationController->GetCurrentStateName() != "LandState") {
                 animationController->changeState(new LandState());
             }
-            else if (name_anim == "Turn") {
+            else if (name_anim == "Turn" && animationController->GetCurrentStateName() != "TurnState") {
                 animationController->changeState(new TurnState());
             }
-            else if (name_anim == "DeadBackTailLeft" || name_anim == "DeadBackTailRight") {
+            else if ((name_anim == "DeadBackTailLeft" || name_anim == "DeadBackTailRight") && animationController->GetCurrentStateName() != "DeathState") {
                 animationController->changeState(new DeathState());
             }
         }

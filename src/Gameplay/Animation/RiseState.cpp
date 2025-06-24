@@ -20,3 +20,7 @@ void RiseState::update(Node* owner, float deltaTime) {
 }
 
 void RiseState::exit(Node* owner) {}
+
+std::string RiseState::getName() const {
+    return "RiseState";
+}

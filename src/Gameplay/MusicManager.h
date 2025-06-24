@@ -1,10 +1,13 @@
 #pragma once
 
 #include <glm/ext/vector_float2.hpp>
+#include <fmod/fmod.hpp>
 
 class MusicManager
 {
 public:
+	FMOD::ChannelGroup* musicGroup = nullptr;
+
 	int menuId = -1;
 	int baseId = -1;
 	int transitionId = -1;

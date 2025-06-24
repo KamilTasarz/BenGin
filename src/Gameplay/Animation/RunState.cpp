@@ -48,3 +48,7 @@ void RunState::exit(Node* owner) {
 
     owner->getChildByNamePart("run_particles")->getComponent<Particles>()->emit = false;
 }
+
+std::string RunState::getName() const {
+    return "RunState";
+}

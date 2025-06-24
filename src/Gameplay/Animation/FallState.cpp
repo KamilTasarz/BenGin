@@ -24,3 +24,7 @@ void FallState::update(Node* owner, float deltaTime) {
 }
 
 void FallState::exit(Node* owner) {}
+
+std::string FallState::getName() const {
+    return "FallState";
+}

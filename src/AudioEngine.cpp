@@ -15,8 +15,6 @@ Implementation::Implementation() {
     mpSystem = NULL;
     // We create low level system which handles all the low level stuff
     CAudioEngine::ErrorCheck(mpStudioSystem->getCoreSystem(&mpSystem));
-
-    CAudioEngine::ErrorCheck(mpSystem->createChannelGroup("MusicGroup", &mpMusicChannelGroup));
 }
 
 Implementation::~Implementation() {
@@ -24,10 +22,6 @@ Implementation::~Implementation() {
     CAudioEngine::ErrorCheck(mpStudioSystem->unloadAll());
     // Shuts down the systems
     CAudioEngine::ErrorCheck(mpStudioSystem->release());
-
-    if (mpMusicChannelGroup) {
-        CAudioEngine::ErrorCheck(mpMusicChannelGroup->release());
-    }
 }
 
 void Implementation::Update() {
@@ -388,50 +382,50 @@ void CAudioEngine::resumeSound(int nChannelId)
     CAudioEngine::ErrorCheck(tFoundIt->second->setPaused(false));
 }
 
-std::vector<int> CAudioEngine::PlayMusicTracks(const std::vector<std::string>& trackNames)
-{
-    std::vector<int> channelIds;
-    if (trackNames.empty()) {
-        return channelIds;
-    }
-
-    for (const auto& soundName : trackNames) {
-        auto tFoundIt = sgpImplementation->mSounds.find(soundName);
-        if (tFoundIt == sgpImplementation->mSounds.end()) {
-            std::cout << "ERROR: Music track not found: " << soundName << std::endl;
-            channelIds.push_back(-1);
-            continue;
-        }
-
-        int nChannelId = sgpImplementation->mnNextChannelId++;
-        FMOD::Channel* pChannel = nullptr;
-
-        // Odtwórz dŸwiêk w stanie wstrzymanym (true) i przypisz go do mpMusicChannelGroup
-        ErrorCheck(sgpImplementation->mpSystem->playSound(
-            tFoundIt->second,
-            sgpImplementation->mpMusicChannelGroup, // <-- KLUCZOWA ZMIANA: przypisanie do grupy
-            true, // <-- start w stanie wstrzymanym (paused)
-            &pChannel
-        ));
-
-        if (pChannel) {
-            sgpImplementation->mChannels[nChannelId] = pChannel;
-            channelIds.push_back(nChannelId);
-        }
-        else {
-            channelIds.push_back(-1);
-        }
-    }
-    return channelIds;
-}
-
-void CAudioEngine::StartMusicGroup()
-{
-    if (sgpImplementation->mpMusicChannelGroup) {
-        // "Odpauzowuje" ca³¹ grupê naraz, co gwarantuje synchronizacjê
-        ErrorCheck(sgpImplementation->mpMusicChannelGroup->setPaused(false));
-    }
-}
+//std::vector<int> CAudioEngine::PlayMusicTracks(const std::vector<std::string>& trackNames)
+//{
+//    std::vector<int> channelIds;
+//    if (trackNames.empty()) {
+//        return channelIds;
+//    }
+//
+//    for (const auto& soundName : trackNames) {
+//        auto tFoundIt = sgpImplementation->mSounds.find(soundName);
+//        if (tFoundIt == sgpImplementation->mSounds.end()) {
+//            std::cout << "ERROR: Music track not found: " << soundName << std::endl;
+//            channelIds.push_back(-1);
+//            continue;
+//        }
+//
+//        int nChannelId = sgpImplementation->mnNextChannelId++;
+//        FMOD::Channel* pChannel = nullptr;
+//
+//        // Odtwórz dŸwiêk w stanie wstrzymanym (true) i przypisz go do mpMusicChannelGroup
+//        ErrorCheck(sgpImplementation->mpSystem->playSound(
+//            tFoundIt->second,
+//            sgpImplementation->mpMusicChannelGroup, // <-- KLUCZOWA ZMIANA: przypisanie do grupy
+//            true, // <-- start w stanie wstrzymanym (paused)
+//            &pChannel
+//        ));
+//
+//        if (pChannel) {
+//            sgpImplementation->mChannels[nChannelId] = pChannel;
+//            channelIds.push_back(nChannelId);
+//        }
+//        else {
+//            channelIds.push_back(-1);
+//        }
+//    }
+//    return channelIds;
+//}
+//
+//void CAudioEngine::StartMusicGroup()
+//{
+//    if (sgpImplementation->mpMusicChannelGroup) {
+//        // "Odpauzowuje" ca³¹ grupê naraz, co gwarantuje synchronizacjê
+//        ErrorCheck(sgpImplementation->mpMusicChannelGroup->setPaused(false));
+//    }
+//}
 
 FMOD::System* CAudioEngine::GetLowLevelSystem() {
     return sgpImplementation->mpSystem;
