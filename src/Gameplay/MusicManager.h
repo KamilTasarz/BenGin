@@ -23,6 +23,7 @@ public:
 	float beatTime = 1.92f;
 	float timer = 0.f;
 	float overflownBeatTime = 0.f;
+	float transitionTimer = 0.f;
 
 	float volume = 80.f;
 

@@ -23,6 +23,7 @@ struct Vector3 {
 
 struct Implementation {
 
+    FMOD::ChannelGroup* mpMusicChannelGroup;
     Implementation();
     ~Implementation();
 
@@ -121,6 +122,18 @@ public:
     void stopSound(int nChannelId);
     void pauseSound(int nChannelId);
     void resumeSound(int nChannelId);
+
+    std::vector<int> PlayMusicTracks(const std::vector<std::string>& trackNames);
+
+    void StartMusicGroup();
+
+    FMOD::System* GetLowLevelSystem();
+
+    int generateChannelId();
+
+    FMOD::Sound* GetSoundByName(const std::string& name);
+
+    void RegisterChannel(int channelId, FMOD::Channel* channel);
 
 };
 

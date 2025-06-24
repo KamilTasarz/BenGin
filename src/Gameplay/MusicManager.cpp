@@ -30,22 +30,21 @@ void MusicManager::Update(float deltaTime)
         return;
     }
     else if (transitionActive) {
-        if (audio->IsPlaying(transitionId)) {
+        transitionTimer -= deltaTime;
 
-            if (audio->IsPlaying(menuId)) {
-                menuVolume = glm::mix(menuVolume, 0.f, deltaTime * 2.f);
-                audio->SetChannelvolume(menuId, menuVolume);
-            }
-            else {
-                audio->stopSound(menuId);
-            }
-
-            return;
+        if (audio->IsPlaying(menuId)) {
+            menuVolume = glm::mix(menuVolume, 0.f, deltaTime * 2.f);
+            audio->SetChannelvolume(menuId, menuVolume);
         }
         else {
+            audio->stopSound(menuId);
+        }
+
+        if (transitionTimer <= 0.f) {
             StartGameMusic();
             transitionActive = false;
         }
+        return;
     }
 
     /*if (GameManager::instance().isRewinding && !rewindActive) {
@@ -102,20 +101,85 @@ void MusicManager::StartGameTransition() {
     auto* audio = ServiceLocator::getAudioEngine();
     transitionId = audio->PlayMusic(audio->musicPlay, GameManager::instance().sfxVolume * volume);
 
-    //audio->stopSound(menuId);
+    FMOD::Sound* transitionSound = audio->GetSoundByName(audio->musicPlay);
+    if (transitionSound) {
+        unsigned int lengthMs = 0;
+        transitionSound->getLength(&lengthMs, FMOD_TIMEUNIT_MS);
+
+        transitionTimer = (lengthMs - 500) / 1000.0f;
+    }
 }
 
 void MusicManager::StartGameMusic()
 {
-	auto* audio = ServiceLocator::getAudioEngine();
-	//baseId = audio->PlayMusic(audio->musicBase, GameManager::instance().sfxVolume * volume * 0.f);
+    auto* audio = ServiceLocator::getAudioEngine();
+    FMOD::System* fmodSystem = audio->GetLowLevelSystem();
 
-    stageChannels[0] = audio->PlayMusic(audio->musicStage1, GameManager::instance().sfxVolume * volume);
-    stageVolumes[0] = GameManager::instance().sfxVolume * volume * 0.3f;
+    // Pobierz g³ówn¹ grupê kana³ów
+    FMOD::ChannelGroup* masterGroup = nullptr;
+    fmodSystem->getMasterChannelGroup(&masterGroup);
 
-    stageChannels[1] = audio->PlayMusic(audio->musicStage2, GameManager::instance().sfxVolume * 0.f);
-    stageChannels[2] = audio->PlayMusic(audio->musicStage3, GameManager::instance().sfxVolume * 0.f);
-    stageChannels[3] = audio->PlayMusic(audio->musicStage4, GameManager::instance().sfxVolume * 0.f);
+    // Utwórz wspóln¹ grupê dla muzyki (opcjonalnie zachowaj jako zmienn¹ cz³onkowsk¹)
+    FMOD::ChannelGroup* musicGroup = nullptr;
+    fmodSystem->createChannelGroup("MusicGroup", &musicGroup);
+
+    // Pobierz aktualny zegar DSP
+    unsigned long long dspClock = 0;
+    masterGroup->getDSPClock(&dspClock, nullptr);
+
+    // Pobierz sample rate
+    int sampleRate = 0;
+    fmodSystem->getSoftwareFormat(&sampleRate, nullptr, nullptr);
+
+    // Delay ~450ms (mo¿esz zwiêkszyæ do np. 700ms jeœli desync nadal siê zdarza)
+    unsigned long long delaySamples = static_cast<unsigned long long>(sampleRate * 0.45f);
+    unsigned long long startDelay = dspClock + delaySamples;
+
+    const std::string stageNames[4] = {
+        audio->musicStage1,
+        audio->musicStage2,
+        audio->musicStage3,
+        audio->musicStage4
+    };
+
+    float initialVolumes[4] = {
+        GameManager::instance().sfxVolume * volume * 0.3f, // tylko stage1 aktywny na start
+        0.f,
+        0.f,
+        0.f
+    };
+
+    for (int i = 0; i < 4; ++i) {
+        FMOD::Sound* sound = audio->GetSoundByName(stageNames[i]);
+        if (!sound) {
+            audio->LoadSound(stageNames[i], false, true, false);
+            sound = audio->GetSoundByName(stageNames[i]);
+        }
+
+        FMOD::Channel* channel = nullptr;
+        fmodSystem->playSound(sound, nullptr, true, &channel);
+
+        if (channel) {
+            // Ustaw kana³ w grupie muzyki
+            channel->setChannelGroup(musicGroup);
+
+            // Jeœli kana³ ma byæ "wyciszony" - u¿yj mute
+            bool isMuted = (initialVolumes[i] <= 0.001f);
+            //channel->setMute(isMuted);
+            channel->setVolume(initialVolumes[i] / 100.f);
+
+            // Ustaw wspólny delay dla synchronizacji
+            channel->setDelay(startDelay, 0, true);
+
+            // Start odtwarzania
+            channel->setPaused(false);
+
+            // Zarejestruj kana³ w Twoim systemie
+            stageChannels[i] = audio->generateChannelId();
+            audio->RegisterChannel(stageChannels[i], channel);
+            stageVolumes[i] = initialVolumes[i];
+        }
+    }
 
     beatTime = 1.92f;
     timer = 0.f;

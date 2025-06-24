@@ -10,10 +10,15 @@ public:
 	bool flipped = false;
 	bool downPressed = false;
 	
+	glm::vec3 startMinPos;
+	glm::vec3 startMaxPos;
+
 	Platform() = default;
 	virtual ~Platform() = default;
 	void onAttach(Node* owner) override;
 	void onDetach() override;
+
+	void onStart() override;
 
 	bool isPadButtonPressed(int button);
 	float getPadAxis(int button);

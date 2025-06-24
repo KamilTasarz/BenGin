@@ -44,6 +44,11 @@ void Platform::onDetach()
 	owner = nullptr;
 }
 
+void Platform::onStart() {
+	startMinPos = owner->AABB_logic->min_point_local;
+	startMaxPos = owner->AABB_logic->max_point_local;
+}
+
 void Platform::onUpdate(float deltaTime)
 {
 
@@ -80,11 +85,19 @@ void Platform::onUpdate(float deltaTime)
 	bool isGravityFlipped = player->getComponent<PlayerController>()->isGravityFlipped;
 
 	if (!flipped && isGravityFlipped) {
-		owner->transform.setLocalRotation(glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 0, 1)));
+		//owner->transform.setLocalRotation(glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 0, 1)));
+		owner->AABB_logic->min_point_local.z += 0.9f;
+		owner->AABB_logic->max_point_local.z += 0.9f;
+		owner->AABB_logic->min_point_world.z += 0.9f;
+		owner->AABB_logic->max_point_world.z += 0.9f;
 		flipped = true;
 	}
 	else if (flipped && !isGravityFlipped) {
-		owner->transform.setLocalRotation(glm::quat(1, 0, 0, 0));
+		//owner->transform.setLocalRotation(glm::quat(1, 0, 0, 0));
+		owner->AABB_logic->min_point_local.z -= 0.9f;
+		owner->AABB_logic->max_point_local.z -= 0.9f;
+		owner->AABB_logic->min_point_world.z -= 0.9f;
+		owner->AABB_logic->max_point_world.z -= 0.9f;
 		flipped = false;
 	}
 }
