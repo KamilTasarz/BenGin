@@ -2,9 +2,12 @@
 
 #include "Script.h"
 
+class PrefabInstance;
+
 struct Particle
 {
-	Node* prefab;
+	Node* prefab = nullptr;
+	PrefabInstance* instance = nullptr;
 	glm::vec3 position;
 	glm::vec3 velocity;
 	float size;

@@ -1677,9 +1677,7 @@ void DirectionalLight::updateSelfAndChild(bool controlDirty)
 }
 
 PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, bool _is_alarm, float quadratic, float linear, float constant, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
-    : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant) {
-
-    this->is_alarm = _is_alarm;
+    : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant), is_alarm(_is_alarm) {
 
     glGenTextures(1, &depthCubemap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
@@ -1693,6 +1691,8 @@ PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, boo
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    
+    lastlightPos = glm::vec3(FLT_MAX);
 }
 
 PointLight::~PointLight()
@@ -1716,32 +1716,37 @@ void PointLight::render(unsigned int depthMapFBO, Shader& shader, int index)
 
     shader.use();
     updateMatrix();
-    shader.setMat4("shadowMatrices[0]", shadowTransforms[0]);
-    shader.setMat4("shadowMatrices[1]", shadowTransforms[1]);
-    shader.setMat4("shadowMatrices[2]", shadowTransforms[2]);
-    shader.setMat4("shadowMatrices[3]", shadowTransforms[3]);
-    shader.setMat4("shadowMatrices[4]", shadowTransforms[4]);
-    shader.setMat4("shadowMatrices[5]", shadowTransforms[5]);
+    uploadMatrices(shader);
+
 	glm::vec3 lightPos = transform.getGlobalPosition();
     shader.setVec3("lightPos", lightPos);
     shader.setFloat("far_plane", 20.f);
 
 }
 
+void PointLight::uploadMatrices(Shader& shader) const
+{
+    for (int i = 0; i < 6; ++i)
+        shader.setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+}
 
 void PointLight::updateMatrix()
 {
     
     glm::vec3 lightPos = transform.getGlobalPosition();
     
+    if (lightPos == lastlightPos) [[likely]] return;
+    lastlightPos = lightPos;
+
     glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 20.f);
     shadowTransforms.clear();
-    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0))); // +X
-    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0))); // -X
-    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1))); // +Y
-    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1))); // -Y
-    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0))); // +Z
-    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))); // -Z
+    shadowTransforms.reserve(6);
+    shadowTransforms.emplace_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)));
+    shadowTransforms.emplace_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)));
+    shadowTransforms.emplace_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)));
+    shadowTransforms.emplace_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)));
+    shadowTransforms.emplace_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)));
+    shadowTransforms.emplace_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0)));
 }
 
 Prefab::Prefab(std::string name, PrefabType prefab_type) {

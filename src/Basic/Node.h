@@ -475,6 +475,8 @@ public:
 class PointLight : public Light {
 public:
 
+    glm::vec3 lastlightPos;
+
     float quadratic;
     float linear;
     float constant;
@@ -491,11 +493,16 @@ public:
     void render(unsigned int depthMapFBO, Shader& shader, int index);
 
     void updateMatrix();
+    void uploadMatrices(Shader& shader) const;
 
-    std::vector<glm::mat4>& getMatrix() {
-        updateMatrix();
+    const std::vector<glm::mat4>& getMatrix() const {
         return shadowTransforms;
     }
+
+    /*std::vector<glm::mat4>& getMatrix() {
+        updateMatrix();
+        return shadowTransforms;
+    }*/
 };
 
 
