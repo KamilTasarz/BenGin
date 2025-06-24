@@ -13,6 +13,7 @@ public:
 	bool isActive = false;
 	bool isPressed = false;
 	bool isPressed_back = false;
+	bool isPressed_ent = false;
 	bool lastSign = false;
 	float timer = 0.f, buffer = 0.5f;
 

@@ -1828,9 +1828,22 @@ void Editor::propertiesWindowDisplay(SceneGraph* root, Node* preview_node, float
 
                     b->button->text_object->value = string(value);
 
-                    if (ImGui::Combo("Choose function: ", &fun_id, functions.data(), functions.size())) {
+                    int id = 0, i = 0;
+
+					for (auto& f : functions) {
+						if (b->button->fun_name.empty()) {
+							id = 0;
+							break;
+						}
+						if (b->button->fun_name == std::string(f)) {
+							id = i;
+							break;
+						}
+                        i++;
+                    }
+                    if (ImGui::Combo("Choose function: ", &id, functions.data(), functions.size())) {
                         //if (fun_id > 0) {
-                            b->attach(FunctionRegister::Instance().functionMap[std::string(functions[fun_id])], std::string(functions[fun_id]));
+                            b->attach(FunctionRegister::Instance().functionMap[std::string(functions[id])], std::string(functions[id]));
                         //}
                         //else {
                           //  b->button->on_click = nullptr;

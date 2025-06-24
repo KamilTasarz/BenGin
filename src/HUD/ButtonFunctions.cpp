@@ -3,6 +3,7 @@
 #include "../Gameplay/MusicManager.h"
 #include "../Basic/Node.h"
 #include "../Gameplay/KeyboardWrite.h"
+#include "../Gameplay/AnimatedMenu.h"
 
 void MenuButton()
 {
@@ -26,4 +27,50 @@ void NickButton()
 
     
     }
+}
+
+void LeaderboardButton()
+{
+    SceneGraph* s = SceneManager::Instance().getCurrentScene();
+    if (s) {
+        Node* keywriter = s->root->getChildByName("keyboard_controller");
+        if (keywriter) {
+            AnimatedMenu* script = keywriter->getComponent<AnimatedMenu>();
+            if (script) {
+                script->isActive = true;
+				script->right = true; // Move to the right
+                //script->alfa = 0.f; // Reset alfa to start moving back
+            }
+
+        }
+
+
+    }
+}
+
+void ReturnButton()
+{
+    SceneGraph* s = SceneManager::Instance().getCurrentScene();
+    if (s) {
+        Node* keywriter = s->root->getChildByName("keyboard_controller");
+        if (keywriter) {
+            AnimatedMenu* script = keywriter->getComponent<AnimatedMenu>();
+            if (script) {
+                script->isActive = true;
+                script->right = false; // Move to the right
+				//script->alfa = 0.f; // Reset alfa to start moving back
+            }
+
+        }
+
+
+    }
+}
+
+void ExitButton()
+{
+	auto* window = ServiceLocator::getWindow();
+	if (window) {
+		glfwSetWindowShouldClose(window->window, true);
+	}
 }

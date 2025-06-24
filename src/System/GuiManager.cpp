@@ -11,6 +11,7 @@ void GuiManager::init(const char* path)
 	objects.clear();
 	sprites.clear();
 	texts.clear();
+	free_ids.clear();
 
 	std::string pathStr(path);
 	if (fs::exists(pathStr + "config.json")) {

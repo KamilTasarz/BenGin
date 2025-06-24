@@ -24,7 +24,8 @@ void GuiButton::setParams(float x, float y, float w, float h)
 {
 	this->w = w;
 	this->h = h;
-	text_object->pos = glm::vec2(x + w / 2, y);
+	pos = glm::vec2(x, y);
+	text_object->pos = glm::vec2(x + w / 2, y + h / 3);
 	sprite_base->pos = pos;
 	sprite_hovered->pos = pos;
 }
