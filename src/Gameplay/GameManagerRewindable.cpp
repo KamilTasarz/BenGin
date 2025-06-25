@@ -34,4 +34,5 @@ void GameManagerRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& 
     GameManager::instance().runTime = snap->runTime;
     GameManager::instance().deathCount = snap->deathCount;
     GameManager::instance().score = snap->score;
+    snap.reset();
 }

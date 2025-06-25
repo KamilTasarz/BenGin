@@ -7,7 +7,7 @@ class PrefabInstance;
 struct Particle
 {
 	Node* prefab = nullptr;
-	PrefabInstance* instance = nullptr;
+	//PrefabInstance* instance = nullptr;
 	glm::vec3 position;
 	glm::vec3 velocity;
 	float size;
@@ -50,7 +50,7 @@ public:
 	float playerVerticalOffset = 0.5f;
 
 	Particles() = default;
-	~Particles() = default;
+	~Particles();
 	void onAttach(Node* owner) override;
 	void onDetach() override;
 	void onStart() override;

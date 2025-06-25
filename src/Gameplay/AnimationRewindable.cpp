@@ -115,5 +115,5 @@ void AnimationRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& ba
         }
 
     }
-
+    snap.reset();
 }

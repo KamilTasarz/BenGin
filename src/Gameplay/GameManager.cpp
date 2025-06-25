@@ -143,6 +143,17 @@ void GameManager::HandleLevelGeneration() {
     }
 }
 
+void GameManager::print() {
+
+	cout << "==================================" << endl;
+    cout << "Konstruktory: " << constructors << endl;
+    cout << "Scene Konstruktory: " << constructorsScene << endl;
+    cout << "Destruktory: " << destructors << endl;
+    cout << "Scene Destruktory: " << destructorsScene << endl;
+	cout << "Global Smoothing: " << globalSmoothing << endl;
+	cout << "=================================" << endl;
+}
+
 void GameManager::onEnd()
 {
 	if (!currentPlayer) return;
@@ -154,8 +165,4 @@ void GameManager::onEnd()
     players.clear();
     currentPlayer = nullptr;
 
-    cout << "Konstruktory: " << constructors << endl;
-    cout << "Scene Konstruktory: " << constructorsScene << endl;
-    cout << "Destruktory: " << destructors << endl;
-    cout << "Scene Destruktory: " << destructorsScene << endl;
 }

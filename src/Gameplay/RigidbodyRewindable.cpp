@@ -39,4 +39,5 @@ void RigidbodyRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& ba
 	rigidbody->velocityX = snap->velocityX;
 	rigidbody->velocityY = snap->velocityY;
 	rigidbody->is_static = snap->is_static; 
+    snap.reset();
 }

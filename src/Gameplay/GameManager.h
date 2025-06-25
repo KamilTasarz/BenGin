@@ -60,5 +60,6 @@ public:
 	void onEnd();
 	void increment(int val);
 	void HandleRewindTimeline();
+	void print();
 };
 

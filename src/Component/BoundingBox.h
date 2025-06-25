@@ -141,6 +141,15 @@ public:
 		transform(model);
 	};
 
+	~RectOBB() {
+		if (VAO != 0) {
+			glDeleteVertexArrays(1, &VAO);
+			glDeleteBuffers(1, &VBO);
+			VAO = 0;
+			VBO = 0;
+		}
+	}
+
 	void transform(glm::mat4 _model);
 	void setBuffers();
 	void draw(Shader& shader);

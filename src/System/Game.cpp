@@ -666,7 +666,7 @@ void Game::run()
 }
 void Game::shutdown()
 {
-    //GameManager::instance().onEnd();
+    GameManager::instance().print();
     MusicManager::instance().onEnd();
 
     glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

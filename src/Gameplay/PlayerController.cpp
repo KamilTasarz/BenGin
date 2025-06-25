@@ -158,7 +158,6 @@ void PlayerController::onUpdate(float deltaTime)
 {
 	isGamepadConnected = glfwJoystickIsGamepad(GLFW_JOYSTICK_1);
 
-	cout << "\nGamepad connected?: " << isGamepadConnected << endl;
 
 	if (isDead) return;
 

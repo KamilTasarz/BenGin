@@ -66,7 +66,7 @@ void MusicManager::Update(float deltaTime)
 
     int targetStage = getTargetStage(distance, isInGas);
 
-    std::cout << "Distance to gas: " << distance << ", targetStage: " << targetStage << std::endl;
+    //std::cout << "Distance to gas: " << distance << ", targetStage: " << targetStage << std::endl;
 
     // plynna zmiana
 

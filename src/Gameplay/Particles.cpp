@@ -5,6 +5,11 @@
 
 REGISTER_SCRIPT(Particles);
 
+Particles::~Particles()
+{
+    
+}
+
 void Particles::onAttach(Node* owner) {
     this->owner = owner;
 }
@@ -14,7 +19,7 @@ void Particles::onDetach() {
 		if (particle.prefab) {
 			owner->scene_graph->deleteChild(particle.prefab);
 		}
-        delete particle.instance;
+       // delete particle.instance;
 	}
 	particles.clear();
     this->owner = nullptr;
@@ -73,12 +78,9 @@ void Particles::onUpdate(float deltaTime) {
 
 void Particles::onEnd()
 {
-	for (auto& particle : particles) {
-		if (particle.prefab) {
-			//owner->scene_graph->deleteChild(particle.prefab);
-		}
+	//for (auto& particle : particles) {
         //delete particle.instance;
-	}
+	//}
 	particles.clear();
 }
 
@@ -134,8 +136,9 @@ void Particles::SpawnParticle(float deltaTime) {
 	particle->transform.setLocalScale(glm::vec3(p.size));
 
 	p.prefab = particle;
-    p.instance = pref;
-
+   // p.instance = pref;
+    pref->prefab_root = nullptr;
+    delete pref;
     particles.push_back(p);
     owner->scene_graph->addChild(particle);
 }
