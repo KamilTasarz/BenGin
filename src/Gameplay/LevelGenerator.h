@@ -24,6 +24,7 @@ public:
 	bool goingRight = true;
 	bool goingUp = false;
 	bool goingDown = false;
+	bool nextGoesUp = true;
 
 	int directionLength = 0;
 	int roomNumber = 0;

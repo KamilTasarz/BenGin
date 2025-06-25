@@ -2,6 +2,7 @@
 #include "../../Basic/Node.h"
 #include "../RegisterScript.h"
 
+#include "../../System/Rigidbody.h"
 REGISTER_SCRIPT(MirrorRotator);
 
 void MirrorRotator::onAttach(Node* owner)
@@ -18,6 +19,8 @@ void MirrorRotator::onStart()
 {
 	startPosition = owner->transform.getLocalPosition();
 	startRotation = mirrorNode->transform.getLocalRotation();
+
+	owner->getComponent<Rigidbody>()->lockPositionY = true;
 }
 
 void MirrorRotator::onUpdate(float deltaTime)
@@ -32,6 +35,6 @@ void MirrorRotator::onUpdate(float deltaTime)
 	float offset = newPositionX - startPosition.x;
 	float angle = rotationAngle * offset / movingRange;	
 
-	glm::quat newRotation = startRotation * glm::quat(glm::vec3(0.f, 0.f, glm::radians(angle)));
+	glm::quat newRotation = startRotation * glm::quat(glm::vec3(glm::radians(angle), 0.f, 0.f));
 	mirrorNode->transform.setLocalRotation(newRotation);
 }
