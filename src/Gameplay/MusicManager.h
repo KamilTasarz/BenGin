@@ -13,12 +13,14 @@ public:
 	int baseId = -1;
 	int transitionId = -1;
 	int rewindId = -1;
+	int deathId = -1;
 
 	bool menuActive = false;
 	bool pauseActive = false;
 	bool transitionActive = false;
 	bool rewindActive = false;
 	bool gameMusicActive = false;
+	bool deathActive = false;
 
 	int currentStage = 1;
 	float menuVolume = 0.f;
@@ -40,5 +42,7 @@ public:
 	int getTargetStage(float distance, bool isInGas);
 	void PlayRewindSound();
 	void StopRewindSound();
+	void PlayDeathMusic();
+	void StopDeathMusic();
 	void onEnd();
 };

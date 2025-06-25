@@ -57,6 +57,7 @@ public:
 	bool added_stats = false;
 
 	bool start = false, end = false, end_screen = false;
+	bool playDeathMusic = false;
 
 	float musicVolume = 1.f;
 	float sfxVolume = 1.f;

@@ -132,7 +132,7 @@ void LevelGenerator::GenerateLevel()
 		}
 	}
 	else if (goingDown) {
-		if ((changeDirection < directionChangeChance && directionLength >= minimalVerticalLevelCount) || directionLength >= maximalVerticalLevelCount) {
+		if ((changeDirection < directionChangeChance && directionLength >= minimalVerticalLevelCount) || directionLength >= maximalVerticalLevelCount || directionLength >= levelsDownCount) {
 			roomName = "room_down_right_";
 			levelIndex = 1;
 			directionLength = 0;
