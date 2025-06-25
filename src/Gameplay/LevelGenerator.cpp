@@ -25,6 +25,11 @@ void LevelGenerator::onStart()
 
 	playTutorial = GameManager::instance().tutorialActive;
 
+	if (!playTutorial) {
+		nextGoesUp = (GameMath::RandomInt(0, 1) == 0);
+	}
+
+
 	if (generate) {
 		GenerateLevel();
 	}
@@ -62,7 +67,8 @@ void LevelGenerator::GenerateLevel()
 	else if (goingRight) {
 		// change direction
 		if ((changeDirection < directionChangeChance && directionLength > minimalHorizontalLevelCount) || directionLength >= maximalHorizontalLevelCount) {
-			bool chooseUp = !goingDown;
+			bool chooseUp = nextGoesUp;
+			nextGoesUp = !nextGoesUp;
 
 			if (chooseUp) {
 				roomName = "room_right_up_";

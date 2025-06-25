@@ -20,6 +20,7 @@ void RunState::enter(Node* owner) {
     sfxId = audio->PlayMusic(audio->running, GameManager::instance().sfxVolume * 75.f);
 
 	//owner->getChildByNamePart("run_particles")->getComponent<Particles>()->emit = true;
+
 }
 
 void RunState::update(Node* owner, float deltaTime) {
