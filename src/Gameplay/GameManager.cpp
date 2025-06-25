@@ -3,10 +3,13 @@
 #include "PlayerSpawner.h"
 #include "LevelGenerator.h"
 #include "../System/GuiManager.h"
+#include "../System/SceneManager.h"
 #include "GameManagerRewindable.h"
 #include "PlayerRewindable.h"
 #include "RewindManager.h"
 #include "UIManager.h"
+#include "../config.h"
+#include <fstream>
 
 GameManager& GameManager::instance()
 {
@@ -25,16 +28,54 @@ void GameManager::Init(SceneGraph* scene_graph)
     if (scene_graph->root->getChildByTag("UIManager")) {
        uiManager = scene_graph->root->getChildByTag("UIManager")->getComponent<UIManager>();
     }
-
+	game_over = false;
 	runTime = 0.f;
 	score = 0.f;
 	deathCount = 0;
+    added_stats = false;
+    json stats;
+	std::ifstream file("res/leaderboard.json");
+	if (file.is_open()) {
+		file >> stats;
+		file.close();
+        playerStats.clear();
+        for (json row : stats) {
+			Player_stats playerStat;
+			playerStat.name = row["name"].get<std::string>();
+			playerStat.score = row["score"].get<int>();
+			
+			playerStats.push_back(playerStat);
+        }
+		std::sort(playerStats.begin(), playerStats.end(), [](const Player_stats& a, const Player_stats& b) {
+			return a.score > b.score;
+			});
+	}
 }
 
 void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
 {
 	
 	if (!emitter) return;
+
+    if (game_over && !added_stats) {
+		added_stats = true;
+		Player_stats playerStat;
+		playerStat.name = player_name;
+		playerStat.score = (int) score;
+		playerStats.push_back(playerStat);
+		std::sort(playerStats.begin(), playerStats.end(), [](const Player_stats& a, const Player_stats& b) {
+			return a.score > b.score;
+			});
+		// Save to file
+		json stats;
+		for (const auto& stat : playerStats) {
+			stats.push_back({ {"name", stat.name.empty() ? "GUEST" : stat.name}, {"score", (int)stat.score}});
+		}
+		std::ofstream outFile("res/leaderboard.json");
+		outFile << stats.dump(4);
+		outFile.close();
+        SceneManager::Instance().next();
+    }
 
     if (!tutorialActive && !isRewinding) {
         runTime += deltaTime;

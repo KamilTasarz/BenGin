@@ -99,7 +99,7 @@ void Window::initializeWindow() {
     glEnable(GL_BLEND);
 
     // Gamma correction???
-    //glEnable(GL_FRAMEBUFFER_SRGB);
+    glEnable(GL_FRAMEBUFFER_SRGB);
 
     // -- CULLING -- //
 

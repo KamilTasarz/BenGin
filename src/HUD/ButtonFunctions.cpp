@@ -4,6 +4,7 @@
 #include "../Basic/Node.h"
 #include "../Gameplay/KeyboardWrite.h"
 #include "../Gameplay/AnimatedMenu.h"
+#include "../Gameplay/GameManager.h"
 
 void MenuButton()
 {
@@ -90,4 +91,10 @@ void ExitButton()
 	if (window) {
 		glfwSetWindowShouldClose(window->window, true);
 	}
+}
+
+void CheckboxButton()
+{
+	GameManager::instance().tutorialActive = !GameManager::instance().tutorialActive;
+
 }

@@ -1,7 +1,7 @@
 {
     "GUI": {
         "free_id": null,
-        "max_id": 61,
+        "max_id": 65,
         "objects": [
             {
                 "alignment": 1,
@@ -68,6 +68,58 @@
                 "y": 668.0
             },
             {
+                "alignment": 1,
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "id": 61,
+                "order": 0,
+                "ptr_id": 6,
+                "type": "text",
+                "value": "Tutorial",
+                "visible": true,
+                "x": 760.0,
+                "y": 265.0
+            },
+            {
+                "id": 62,
+                "order": 0,
+                "ptr_id": 13,
+                "size": 0.800000011920929,
+                "type": "sprite",
+                "visible": true,
+                "x": 610.0,
+                "y": 240.0
+            },
+            {
+                "id": 63,
+                "order": 0,
+                "ptr_id": 14,
+                "size": 0.800000011920929,
+                "type": "sprite",
+                "visible": false,
+                "x": 610.0,
+                "y": 240.0
+            },
+            {
+                "height": 64.0,
+                "hovered_ptr_id": 13,
+                "id": 64,
+                "is_invincible": true,
+                "on_click": "CheckboxButton",
+                "order": 0,
+                "ptr_id": 13,
+                "text_ptr_id": 6,
+                "text_value": "Tutorial",
+                "type": "button",
+                "visible": true,
+                "width": 282.0,
+                "x": 610.0,
+                "y": 240.0
+            },
+            {
                 "height": 100.0,
                 "hovered_ptr_id": 8,
                 "id": 30,
@@ -81,7 +133,7 @@
                 "visible": true,
                 "width": 450.0,
                 "x": 535.0,
-                "y": 450.0
+                "y": 470.0
             },
             {
                 "height": 62.0,
@@ -129,7 +181,7 @@
                 "visible": true,
                 "width": 450.0,
                 "x": 535.0,
-                "y": 600.0
+                "y": 620.0
             },
             {
                 "alignment": 2,
@@ -177,7 +229,7 @@
                 "visible": true,
                 "width": 450.0,
                 "x": 535.0,
-                "y": 300.0
+                "y": 320.0
             },
             {
                 "height": 100.0,
@@ -208,8 +260,8 @@
         ]
     },
     "camera": {
-        "Pitch": -0.49995312094688416,
-        "Yaw": 268.09405517578125,
+        "Pitch": 4.300046920776367,
+        "Yaw": 278.3940734863281,
         "mode": 2,
         "position": {
             "x": 1.737260103225708,
@@ -229,6 +281,54 @@
             "z": -1.0
         },
         "children": [
+            {
+                "AABB_logic_max": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "AABB_logic_min": {
+                    "x": -1.0,
+                    "y": -1.0,
+                    "z": -1.0
+                },
+                "components": [
+                    {
+                        "name": "KeyboardWrite",
+                        "variables": null
+                    },
+                    {
+                        "name": "AnimatedMenu",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "keyboard_controller",
+                "no_textures": true,
+                "position": {
+                    "x": 3.3079636096954346,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
             {
                 "AABB_logic_max": {
                     "x": 0.5,
@@ -407,54 +507,6 @@
                 },
                 "tag": "Default",
                 "type": "PointLight"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "AABB_logic_min": {
-                    "x": -1.0,
-                    "y": -1.0,
-                    "z": -1.0
-                },
-                "components": [
-                    {
-                        "name": "KeyboardWrite",
-                        "variables": null
-                    },
-                    {
-                        "name": "AnimatedMenu",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "keyboard_controller",
-                "no_textures": true,
-                "position": {
-                    "x": 3.3079636096954346,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "Node"
             }
         ],
         "id": 0,

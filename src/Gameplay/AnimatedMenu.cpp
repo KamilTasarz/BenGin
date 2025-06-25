@@ -10,6 +10,8 @@ REGISTER_SCRIPT(AnimatedMenu);
 
 void AnimatedMenu::onStart()
 {
+	isGamepadConnected = false;
+	
 	play = GuiManager::Instance().findButton(28);
 	lead = GuiManager::Instance().findButton(30);
 	//background = GuiManager::Instance().findSprite(55);
@@ -40,13 +42,24 @@ void AnimatedMenu::onStart()
 	nick_column = GuiManager::Instance().findText(58);
 	score_column = GuiManager::Instance().findText(59);
 	num_column = GuiManager::Instance().findText(60);
+	nick_button = GuiManager::Instance().findButton(54);
 	if (nick_column) {
 		nick2_x = nick_column->pos.x;
-		for (int i = 0; i < 10; i++) nick_column->value += "\nKAMIL";
+		int i = 0;
+		for (Player_stats& p : GameManager::instance().playerStats) {
+			if (i >= 10) break;
+			nick_column->value += "\n" + p.name;
+			i++;
+		}
 	}
 	if (score_column) {
 		scr_x = score_column->pos.x;
-		for (int i = 0; i < 10; i++) score_column->value += "\n1000";
+		int i = 0;
+		for (Player_stats& p : GameManager::instance().playerStats) {
+			if (i >= 10) break;
+			score_column->value += "\n" + std::to_string(p.score);
+			i++;
+		}
 	}
 	if (num_column) {
 		num_x = num_column->pos.x;
@@ -56,7 +69,23 @@ void AnimatedMenu::onStart()
 	if (top) {
 		top_x = top->pos.x;
 	}
-
+	checkbox_marked = GuiManager::Instance().findSprite(63);
+	checkbox = GuiManager::Instance().findSprite(62);
+	tutorial = GuiManager::Instance().findText(61);
+	check_button = GuiManager::Instance().findButton(64);
+	if (checkbox_marked) {
+		checkbox_marked->visible = GameManager::instance().tutorialActive;
+		c1 = checkbox_marked->pos.x;
+	}
+	if (checkbox) {
+		c2 = checkbox->pos.x;
+	}
+	if (tutorial) {
+		t = tutorial->pos.x;
+	}
+	if (check_button) {
+		b = check_button->button->pos.x;
+	}
 }
 
 
@@ -71,6 +100,152 @@ float smoothstep(float edge0, float edge1, float x) {
 
 void AnimatedMenu::onUpdate(float deltaTime)
 {
+	isGamepadConnected = glfwJoystickIsGamepad(GLFW_JOYSTICK_1);
+
+	if (checkbox_marked) {
+		_tutorial = GameManager::instance().tutorialActive;
+		checkbox_marked->visible = _tutorial;
+	}
+
+	if (isGamepadConnected) {
+
+		bool ok_button = isPadButtonPressed(GLFW_GAMEPAD_BUTTON_A);
+
+		if (buttonId == 0) {
+			if (isMenu) {
+				if (play) {
+					play->button->is_hovered = true;
+					if (ok_button) {
+						if (!pressed_ok_button) {
+							play->button->on_click();
+							pressed_ok_button = true;
+						}
+					}
+					else {
+						pressed_ok_button = false;
+					}
+				}
+			}
+			else {
+				if (back) {
+					back->button->is_hovered = true;
+				}
+				if (ok_button) {
+					if (!pressed_ok_button) {
+						back->button->on_click();
+						isMenu = true;
+						buttonId = 1;
+						pressed_ok_button = true;
+					}
+				}
+				else {
+					pressed_ok_button = false;
+				}
+				
+			}
+		}
+		else if (buttonId == 1) {
+			if (lead) {
+				lead->button->is_hovered = true;
+				
+				if (ok_button) {
+					if (!pressed_ok_button) {
+						lead->button->on_click();
+						isMenu = false;
+						buttonId = 0;
+						pressed_ok_button = true;
+					}
+				}
+				else {
+					pressed_ok_button = false;
+				}
+				
+				
+			}
+		}
+		else if (buttonId == 2) {
+			if (exit) {
+				exit->button->is_hovered = true;
+				if (ok_button) {
+					if (!pressed_ok_button) {
+						exit->button->on_click();
+						pressed_ok_button = true;
+					}
+				}
+				else {
+					pressed_ok_button = false;
+				}
+			}
+		}
+		else if (buttonId == 3) {
+			if (check_button) {
+				check_button->button->is_hovered = true;
+				if (ok_button) {
+					if (!pressed_ok_button) {
+						check_button->button->on_click();
+						pressed_ok_button = true;
+					}
+				}
+				else {
+					pressed_ok_button = false;
+				}
+			}
+		}
+		else if (buttonId == 4) {
+			if (nick_button) {
+				nick_button->button->is_hovered = true;
+				if (ok_button) {
+					if (!pressed_ok_button) {
+						nick_button->button->on_click();
+						pressed_ok_button = true;
+					}
+				}
+				else {
+					pressed_ok_button = false;
+				}
+			}
+		}
+
+		//float axisX = getPadAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
+		float axisY = getPadAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
+		//float axisX2 = getPadAxis(GLFW_GAMEPAD_AXIS_RIGHT_X);
+		float axisY2 = getPadAxis(GLFW_GAMEPAD_AXIS_RIGHT_Y);
+
+		float dead_zone = 0.6f;
+
+		bool up = isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_UP) || axisY < -dead_zone || axisY2 < - dead_zone;
+		bool down = isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_DOWN) || axisY > dead_zone || axisY2 > dead_zone;
+		
+		if (up) {
+			if (!pressed) {
+				pressed = true;
+				if (buttonId > 0) {
+					buttonId--;
+				}
+				else {
+					buttonId = 4;
+				}
+			}
+		}
+		else if (down) {
+			if (!pressed) {
+				pressed = true;
+				if (buttonId < 4) {
+					buttonId++;
+				}
+				else {
+					buttonId = 0;
+				}
+			}
+		}
+		else {
+			pressed = false;
+		}
+
+		if (!isMenu) buttonId = 0;
+		
+	}
+
 	if (isActive) {
 
 		if (right) {
@@ -117,6 +292,23 @@ void AnimatedMenu::onUpdate(float deltaTime)
 			float x = back_x + dx;
 			back->button->setParams(x, y, w, h);
 		}
+		if (check_button) {
+			float w = check_button->button->w, h = check_button->button->h, y = check_button->button->pos.y;
+			float x = b + dx;
+			check_button->button->setParams(x, y, w, h);
+		}
+		if (checkbox_marked) {
+			float x = c1 + dx;
+			checkbox_marked->pos.x = x;
+		}
+		if (checkbox) {
+			float x = c2 + dx;
+			checkbox->pos.x = x;
+		}
+		if (tutorial) {
+			float x = t + dx;
+			tutorial->pos.x = x;
+		}
 		if (nick) {
 			float x = nick_x + dx;
 			nick->pos.x = x;
@@ -158,6 +350,31 @@ void AnimatedMenu::onUpdate(float deltaTime)
 		if (nickname) {
 			nickname->visible = false;
 		}
+		if (tutorial) {
+			tutorial->visible = false;
+		}
+		if (nick_column) {
+			nick_column->visible = false;
+		}
+		if (score_column) {
+			score_column->visible = false;
+		}
+		if (num_column) {
+			num_column->visible = false;
+		}
+		if (top) {
+			top->visible = false;
+		}
+		if (check_button) {
+			check_button->visible = false;
+		}
+		if (checkbox_marked) {
+			checkbox_marked->visible = false;
+		}
+		if (checkbox) {
+			checkbox->visible = false;
+		}
+
 		if (ending) {
 			tv->size = 1.f + 2.f * endAnimTimer;
 			tv->pos.x = (- (750.f * 3.f) + 960.f) * endAnimTimer;
@@ -179,4 +396,28 @@ void AnimatedMenu::onUpdate(float deltaTime)
 			endAnimTimer = 0.f;
 		}
 	}
+}
+
+bool AnimatedMenu::isPadButtonPressed(int button)
+{
+
+	if (!glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) return false;
+	GLFWgamepadstate state;
+	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
+		return state.buttons[button] == GLFW_PRESS;
+	}
+	return false;
+
+}
+
+float AnimatedMenu::getPadAxis(int axis)
+{
+
+	if (!glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) return 0.0f;
+	GLFWgamepadstate state;
+	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
+		return state.axes[axis];
+	}
+	return 0.0f;
+
 }

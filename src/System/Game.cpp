@@ -384,7 +384,9 @@ void Game::update(float deltaTime)
     //float t2 = glfwGetTime();
 	PhysicsSystem::instance().updateCollisions();
 	//float t3 = glfwGetTime();
-    SceneManager::Instance().getCurrentScene()->update(deltaTime);
+    if (!GameManager::instance().game_over) {
+        SceneManager::Instance().getCurrentScene()->update(deltaTime);
+    }
     //float t4 = glfwGetTime();
     SceneManager::Instance().getCurrentScene()->clearDeleteVector();
 
@@ -622,6 +624,8 @@ void Game::init()
 
     SceneManager::Instance().getCurrentScene()->forcedUpdate();
 
+    GameManager::instance().Init(SceneManager::Instance().getCurrentScene());
+
     SceneManager::Instance().getCurrentScene()->root->createComponents();
 	PhysicsSystem::instance().colliders.clear();
 	PhysicsSystem::instance().colliders_RigidBody.clear();  
@@ -630,7 +634,7 @@ void Game::init()
 	//ResourceManager::Instance().shader_tile->use();
 	//ResourceManager::Instance().shader_tile->setFloat("start_time", glfwGetTime());
 
-    GameManager::instance().Init(SceneManager::Instance().getCurrentScene());
+    
 
     //MusicManager::instance().StartGameMusic();
    
