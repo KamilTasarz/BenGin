@@ -5,6 +5,16 @@
 
 REGISTER_SCRIPT(Particles);
 
+//Particles::~Particles()
+//{
+//    for (auto& particle : particles) {
+//        if (particle.prefab) {
+//            owner->scene_graph->deleteChild(particle.prefab);
+//        }
+//    }
+//    particles.clear();
+//}
+
 void Particles::onAttach(Node* owner) {
     this->owner = owner;
 }
@@ -23,7 +33,7 @@ void Particles::onStart() {
 }
 
 void Particles::onUpdate(float deltaTime) {
-    if (false) {
+    if (emit) {
         spawnTimer += deltaTime;
 
         float timePerParticle = 1.0f / emissionRate;

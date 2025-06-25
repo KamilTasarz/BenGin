@@ -184,8 +184,8 @@ void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
         gasSpreadingSpeed = glm::clamp(gasSpreadingSpeed, 0.3f, 200.f);
 	}
     else {
-        gasSpreadingSpeed = glm::clamp(gasSpreadingSpeed, 0.3f, 3.f);
         float modifier = 1.f + runTime / 300.f;
+        gasSpreadingSpeed = glm::clamp(gasSpreadingSpeed, 0.3f / modifier, 3.f / modifier);
 		gasSpreadingSpeed /= modifier;
     }
 

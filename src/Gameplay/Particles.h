@@ -48,6 +48,8 @@ public:
 
 	Particles() = default;
 	~Particles() = default;
+	//~Particles() override;
+
 	void onAttach(Node* owner) override;
 	void onDetach() override;
 	void onStart() override;
