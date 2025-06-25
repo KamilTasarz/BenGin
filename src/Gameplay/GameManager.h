@@ -8,8 +8,16 @@ class LevelGenerator;
 class GameManagerRewindable;
 class UIManager;
 
+struct Player_stats {
+	std::string name;
+	int score;
+};
+
 class GameManager
 {
+
+using json = nlohmann::json;
+
 private:
 	GameManager() {}
 
@@ -41,6 +49,8 @@ public:
 	int deathCount = 0;
 	float score = 0.f;
 	bool tutorialActive = false;
+	bool game_over = false;
+	bool added_stats = false;
 
 	float musicVolume = 1.f;
 	float sfxVolume = 1.f;
@@ -51,7 +61,7 @@ public:
 	//glm::vec3 closestParticlePos = glm::vec3(0, 0, 0);
 	float minPlayerToParticleDistance = 100.f;
 
-
+	std::vector<Player_stats> playerStats;
 
 	static GameManager& instance();
 	//GameManager() = default;

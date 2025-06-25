@@ -67,6 +67,7 @@ void GuiButton::render()
 		}
 		text_object->render();
 	}
+	is_hovered = false;
 }
 
 void GuiButton::update()
@@ -75,11 +76,8 @@ void GuiButton::update()
 	if (mousePOS.x > pos.x && mousePOS.x < pos.x + w && mousePOS.y > pos.y && mousePOS.y < pos.y + h) {
 		is_hovered = true;
 	}
-	else {
-		is_hovered = false;
-	}
 
-	if (glfwGetMouseButton(ServiceLocator::getWindow()->window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS && is_hovered && !is_pressed) {
+	if (glfwGetMouseButton(ServiceLocator::getWindow()->window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS && is_hovered) {
 		if (!is_pressed) {
 			is_pressed = true;
 			on_click();

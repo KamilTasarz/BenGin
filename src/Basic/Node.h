@@ -533,7 +533,7 @@ public:
     SceneGraph();
 
     ~SceneGraph() {
-
+        delete root;
 
     }
 

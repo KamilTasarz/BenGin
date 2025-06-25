@@ -7,7 +7,7 @@ void NickButton();
 void LeaderboardButton();
 void ReturnButton();
 void ExitButton();
-
+void CheckboxButton();
 
 class FunctionRegister {
 public:
@@ -21,7 +21,8 @@ public:
 	{"NickButton", NickButton},
 	{"LeaderboardButton", LeaderboardButton},
 	{"ReturnButton", ReturnButton},
-	{"ExitButton", ExitButton}
+	{"ExitButton", ExitButton},
+	{"CheckboxButton", CheckboxButton}
     };
 };
 

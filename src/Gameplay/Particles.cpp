@@ -23,7 +23,7 @@ void Particles::onStart() {
 }
 
 void Particles::onUpdate(float deltaTime) {
-    if (emit) {
+    if (false) {
         spawnTimer += deltaTime;
 
         float timePerParticle = 1.0f / emissionRate;
@@ -76,11 +76,11 @@ void Particles::onUpdate(float deltaTime) {
 
 void Particles::onEnd()
 {
-	for (auto& particle : particles) {
+	/*for (auto& particle : particles) {
 		if (particle.prefab) {
 			owner->scene_graph->deleteChild(particle.prefab);
 		}
-	}
+	}*/
 	particles.clear();
 }
 

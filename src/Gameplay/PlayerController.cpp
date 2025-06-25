@@ -301,7 +301,7 @@ void PlayerController::onUpdate(float deltaTime)
 			gasTimer += checkDelay;
 
 			if (gasTimer > 1.5f) {
-				Die(false);
+				GameManager::instance().game_over = true;
 			}
 		}
 		else {
