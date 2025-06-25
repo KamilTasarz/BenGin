@@ -12,64 +12,26 @@
     "children": [
         {
             "AABB_logic_max": {
-                "x": 0.8804694414138794,
-                "y": 0.525274932384491,
-                "z": 1.5136229991912842
+                "x": 0.8805449604988098,
+                "y": 0.46398884057998657,
+                "z": 0.9320573210716248
             },
             "AABB_logic_min": {
-                "x": -0.8860781788825989,
-                "y": -0.23966972529888153,
-                "z": -0.5027202367782593
+                "x": -0.8860030770301819,
+                "y": -0.3009558320045471,
+                "z": -1.2226781845092773
             },
             "AABB_max": {
-                "x": 0.8804694414138794,
-                "y": 0.525274932384491,
-                "z": 1.5182065963745117
+                "x": 0.6070132255554199,
+                "y": 0.4639644920825958,
+                "z": 0.5071916580200195
             },
             "AABB_min": {
-                "x": -0.8860781788825989,
-                "y": -0.23966972529888153,
-                "z": -0.5027202367782593
+                "x": -0.6143162250518799,
+                "y": -0.3009558320045471,
+                "z": -1.4722859859466553
             },
             "children": [
-                {
-                    "AABB_logic_max": {
-                        "x": 0.474066823720932,
-                        "y": 0.3993677794933319,
-                        "z": 0.04359506815671921
-                    },
-                    "AABB_logic_min": {
-                        "x": -0.39980030059814453,
-                        "y": -0.5038861632347107,
-                        "z": -0.12012781202793121
-                    },
-                    "id": 0,
-                    "is_logic_active": false,
-                    "is_physic_active": false,
-                    "is_visible": true,
-                    "layer": "Default",
-                    "model.id": 56,
-                    "name": "wing_right",
-                    "no_textures": false,
-                    "position": {
-                        "x": 0.8497737646102905,
-                        "y": 0.12868447601795197,
-                        "z": 1.4457775354385376
-                    },
-                    "rotation": {
-                        "w": 1.0,
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "tag": "Default",
-                    "type": "Node"
-                },
                 {
                     "AABB_logic_max": {
                         "x": 0.39980030059814453,
@@ -90,9 +52,47 @@
                     "name": "wing_left",
                     "no_textures": false,
                     "position": {
-                        "x": -0.8485223054885864,
-                        "y": 0.13927492499351501,
-                        "z": 1.4420653581619263
+                        "x": -0.8433661460876465,
+                        "y": 0.07676830142736435,
+                        "z": 0.7753986716270447
+                    },
+                    "rotation": {
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "tag": "Default",
+                    "type": "Node"
+                },
+                {
+                    "AABB_logic_max": {
+                        "x": 0.474066823720932,
+                        "y": 0.3993677794933319,
+                        "z": 0.04359506815671921
+                    },
+                    "AABB_logic_min": {
+                        "x": -0.39980030059814453,
+                        "y": -0.5038861632347107,
+                        "z": -0.12012781202793121
+                    },
+                    "id": 0,
+                    "is_logic_active": false,
+                    "is_physic_active": false,
+                    "is_visible": true,
+                    "layer": "Default",
+                    "model.id": 56,
+                    "name": "wing_right",
+                    "no_textures": false,
+                    "position": {
+                        "x": 0.8368368744850159,
+                        "y": 0.06140608713030815,
+                        "z": 0.779110848903656
                     },
                     "rotation": {
                         "w": 1.0,
@@ -126,22 +126,22 @@
                         {
                             "field_type": "float",
                             "name": "detectionRadius",
-                            "value": 10.0
+                            "value": 12.0
                         },
                         {
                             "field_type": "float",
                             "name": "playerDetectionRadius",
-                            "value": 6.0
+                            "value": 7.0
                         },
                         {
                             "field_type": "float",
                             "name": "avoidanceRadius",
-                            "value": 3.0
+                            "value": 6.0
                         },
                         {
                             "field_type": "float",
                             "name": "agentColliderSize",
-                            "value": 3.0
+                            "value": 2.200000047683716
                         },
                         {
                             "field_type": "float",
@@ -151,7 +151,7 @@
                         {
                             "field_type": "float",
                             "name": "continueFleeTime",
-                            "value": 0.5
+                            "value": 1.5
                         },
                         {
                             "field_type": "float",
@@ -166,7 +166,7 @@
                         {
                             "field_type": "float",
                             "name": "minWaitTime",
-                            "value": 0.5
+                            "value": 1.0
                         },
                         {
                             "field_type": "float",
@@ -176,7 +176,7 @@
                         {
                             "field_type": "float",
                             "name": "maxSpeed",
-                            "value": 6.0
+                            "value": 11.0
                         }
                     ]
                 },
@@ -188,22 +188,22 @@
                         "lockPositionX": false,
                         "lockPositionY": false,
                         "lockPositionZ": false,
-                        "mass": 1.0
+                        "mass": 2.0
                     }
                 }
             ],
             "id": 0,
-            "is_logic_active": false,
+            "is_logic_active": true,
             "is_physic_active": true,
             "is_visible": true,
             "layer": "Default",
-            "model.id": 54,
+            "model.id": 69,
             "name": "body",
             "no_textures": false,
             "position": {
                 "x": 0.0,
-                "y": -0.5,
-                "z": -2.980232594040899e-08
+                "y": 0.5,
+                "z": 0.0
             },
             "rotation": {
                 "w": 0.7071067690849304,
@@ -389,7 +389,7 @@
     "scale": {
         "x": 1.0,
         "y": 1.0,
-        "z": 1.5
+        "z": 1.0
     },
     "tag": "Default",
     "type": "Node"

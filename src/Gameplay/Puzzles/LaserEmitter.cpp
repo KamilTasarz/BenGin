@@ -100,6 +100,10 @@ void LaserEmitter::onUpdate(float deltaTime)
                         if (auto obs = hitNode->getComponent<LaserObserver>())
                             obs->Activate();
                     }
+                    else if (hitNode->getLayerName() == "Platform") {
+                        continue;
+                    }
+
                     auto* audio = ServiceLocator::getAudioEngine();
                     audio->SetChannel3dPosition(sfxId, hitPoint);
 
