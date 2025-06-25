@@ -1,5 +1,6 @@
 #include "AnimationRewindable.h"
 #include "../Basic/Node.h"
+#include "../Basic/Model.h"
 #include "Animation/PlayerAnimationController.h"
 #include "../Basic/Animator.h"
 #include "RegisterScript.h"
@@ -118,9 +119,5 @@ void AnimationRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& ba
         }
 
     }
-
-    /*if (history.empty() && GameManager::instance().rewindable->history.size() > 1) {
-        animationController->getOwner()->animator->current_animation = animationController->idle;
-        animationController->changeState(new IdleState());
-    }*/
+    snap.reset();
 }

@@ -5,16 +5,6 @@
 
 REGISTER_SCRIPT(Particles);
 
-//Particles::~Particles()
-//{
-//    for (auto& particle : particles) {
-//        if (particle.prefab) {
-//            owner->scene_graph->deleteChild(particle.prefab);
-//        }
-//    }
-//    particles.clear();
-//}
-
 void Particles::onAttach(Node* owner) {
     this->owner = owner;
 }
@@ -24,6 +14,7 @@ void Particles::onDetach() {
 		if (particle.prefab) {
 			owner->scene_graph->deleteChild(particle.prefab);
 		}
+       // delete particle.instance;
 	}
 	particles.clear();
     this->owner = nullptr;
@@ -47,10 +38,6 @@ void Particles::onUpdate(float deltaTime) {
         it->age += deltaTime;
 
         if (distortion != 0.0f) {
-            /*it->velocity.x += distortion * ((rand() % 200 - 100) / 100.0f) * deltaTime;
-            it->velocity.y += distortion * ((rand() % 200 - 100) / 100.0f) * deltaTime;
-            it->velocity.z += distortion * ((rand() % 200 - 100) / 100.0f) * deltaTime;*/
-
 			it->velocity.x += distortion * ((rand() / (float)RAND_MAX) - 0.5f);
 			it->velocity.y += distortion * ((rand() / (float)RAND_MAX) - 0.5f);
 			it->velocity.z += distortion * ((rand() / (float)RAND_MAX) - 0.5f);
@@ -86,15 +73,11 @@ void Particles::onUpdate(float deltaTime) {
 
 void Particles::onEnd()
 {
-	/*for (auto& particle : particles) {
-		if (particle.prefab) {
-			owner->scene_graph->deleteChild(particle.prefab);
-		}
-	}*/
 	particles.clear();
 }
 
 void Particles::SpawnParticle(float deltaTime) {
+
     Particle p;
 
     p.position.x = owner->transform.getGlobalPosition().x + ((rand() / (float)RAND_MAX) - 0.5f) * areaX;
@@ -130,7 +113,13 @@ void Particles::SpawnParticle(float deltaTime) {
 	p.velocity.y = dir.y * speed.y;
 	p.velocity.z = dir.z * speed.z;
 
-    PrefabInstance* pref = new PrefabInstance(PrefabRegistry::FindPuzzleByName(particlePrefab), owner->scene_graph, "particle", owner->getTransform().getLocalPosition());
+    PrefabInstance* pref = new PrefabInstance (
+        PrefabRegistry::FindPuzzleByName(particlePrefab),
+        owner->scene_graph,
+        "particle",
+        owner->getTransform().getLocalPosition()
+    );
+
     Node* particle = pref->prefab_root->getChildById(0);
 
     if (owner->getTagName() == "Box") p.position.y += playerVerticalOffset;
@@ -139,7 +128,9 @@ void Particles::SpawnParticle(float deltaTime) {
 	particle->transform.setLocalScale(glm::vec3(p.size));
 
 	p.prefab = particle;
-
+   // p.instance = pref;
+    pref->prefab_root = nullptr;
+    delete pref;
     particles.push_back(p);
     owner->scene_graph->addChild(particle);
 }

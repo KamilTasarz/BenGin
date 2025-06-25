@@ -21,6 +21,9 @@ class Grid
 			gridShader = new Shader("res/shaders/grid.vert", "res/shaders/grid.frag");
 			Init();
         }
+        ~Grid() {
+            delete gridShader;
+        }
         void Init(); // tworzy VAO, VBO, ładuje shader
 		void Update(); // aktualizuje VBO
         void Draw();

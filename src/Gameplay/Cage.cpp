@@ -4,6 +4,7 @@
 #include "GameManager.h"
 #include "../Basic/Animator.h"
 #include "PlayerController.h"
+#include "../Basic/Model.h"
 
 REGISTER_SCRIPT(Cage);
 

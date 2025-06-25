@@ -479,8 +479,7 @@ void Model::loadAnimations()
     }
 
     for (int i = 0; i < scene->mNumAnimations; i++) {
-        Animation* anim = new Animation(scene->mAnimations[i], *this, scene);
-        animations.push_back(anim);
+        animations.push_back(std::make_unique<Animation>(scene->mAnimations[i], *this, scene));
     }
 }
 
@@ -502,18 +501,11 @@ Model::Model(std::vector<shared_ptr<Texture>>&& textures, int id, string mode, f
 
 }
 
-Model::~Model()
-{
-    for (int i = 0; i < animations.size(); i++) {
-        delete animations[i];
-    }
-    animations.clear();
-}
 
 Animation* Model::getAnimationByName(std::string name)
 {
     for (auto& a : animations) {
-        if (a->name == name) return a;
+        if (a->name == name) return a.get();
     }
     return nullptr;
 }

@@ -35,7 +35,7 @@ public:
 	glm::vec3 previousPosition;
 	float deltaX, deltaY;
 
-	IPlayerAnimState* currentState = nullptr;
+	std::unique_ptr<IPlayerAnimState> currentState = nullptr;
 
 	bool gravityFlipped = false;
 	bool facingRight = true;

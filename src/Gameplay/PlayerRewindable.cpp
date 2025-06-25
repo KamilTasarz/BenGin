@@ -69,4 +69,5 @@ void PlayerRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseS
     if (history.empty() && GameManager::instance().uiManager->rewindable->history.size() > 1) {
 		GameManager::instance().RemoveCurrentPlayer();
     }
+    snap.reset();
 }

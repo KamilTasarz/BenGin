@@ -38,4 +38,5 @@ void VirusRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseSn
 	virus->isCollected = snap->isCollected;
 	owner->transform.setLocalRotation(snap->rotation);
 	virus->modelChanged = false;
+	snap.reset();
 }

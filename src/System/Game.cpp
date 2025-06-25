@@ -679,7 +679,7 @@ void Game::run()
     while (!glfwWindowShouldClose(ServiceLocator::getWindow()->window) && play) {
 
         if (SceneManager::Instance().isSwitched()) {
-            
+            ServiceLocator::provide(std::make_unique<CAudioEngine>());
             shutdown();
             init();
             SceneManager::Instance().resetSwitched();
@@ -704,7 +704,7 @@ void Game::run()
 
             if (SceneManager::Instance().isLateNext()) {
                 SceneManager::Instance().next();
-				
+                ServiceLocator::provide(std::make_unique<CAudioEngine>());
 				if (SceneManager::Instance().currentSceneIndex == 1) {
 					MusicManager::instance().StartGameTransition();
 					//GameManager::instance().start = true;
@@ -729,11 +729,15 @@ void Game::run()
 }
 void Game::shutdown()
 {
-    //GameManager::instance().onEnd();
+    GameManager::instance().print();
     MusicManager::instance().onEnd();
 
     glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     unloadSounds();
+
+    auto* audio = ServiceLocator::getAudioEngine();
+    audio->Reset();
+
     glDeleteTextures(1, &colorTexture);
     glDeleteTextures(1, &normalTexture);
     glDeleteTextures(1, &depthTexture);

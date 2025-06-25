@@ -42,4 +42,5 @@ void NPCRewindable::applySnapshot(const std::shared_ptr<ITimeSnapshot>& baseSnap
 	tv->tvAI->getOwner()->setPhysic(snap->isPhysic);
 	tv->targetVelocity = snap->targetVelocity;
 	tv->currentVelocity = snap->currentVelocity;
+	snap.reset();
 }

@@ -105,4 +105,5 @@ void TimeRewindable::pushSnapshot(std::shared_ptr<ITimeSnapshot> snapshot) {
 
 void TimeRewindable::resetHistory() {
 	history.clear();
+    
 }

@@ -30,6 +30,11 @@ public:
 			final_bone_matrices.push_back(glm::mat4(1.0f));
 	}
 
+	~Animator() {
+		final_bone_matrices.clear();
+		final_bone_matrices.shrink_to_fit();
+	}
+
 	void playAnimation(Animation* animation, bool repeat = true);
 	void blendAnimation(Animation* next_animation, float duration, bool into_next = false, bool repeat = false);
 	bool isPlayingNonLooping() const;

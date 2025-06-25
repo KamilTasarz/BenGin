@@ -33,13 +33,38 @@ Implementation::Implementation() {
 }
 
 Implementation::~Implementation() {
-    if (mpMusicChannelGroup) {
-        CAudioEngine::ErrorCheck(mpMusicChannelGroup->release());
+
+
+    for (auto& [id, channel] : mChannels) {
+        if (channel) {
+            channel->stop();
+        }
     }
-    
-    // Unloads all assets
+    mChannels.clear();
+
+    for (auto& [name, event] : mEvents) {
+        if (event) {
+            event->stop(FMOD_STUDIO_STOP_IMMEDIATE);
+            event->release();
+        }
+    }
+    mEvents.clear();
+
+    for (auto& [name, sound] : mSounds) {
+        if (sound) {
+            sound->release();
+        }
+    }
+    mSounds.clear();
+
+    for (auto& [name, bank] : mBanks) {
+        if (bank) {
+            bank->unload();
+        }
+    }
+    mBanks.clear();
+
     CAudioEngine::ErrorCheck(mpStudioSystem->unloadAll());
-    // Shuts down the systems
     CAudioEngine::ErrorCheck(mpStudioSystem->release());
 }
 
@@ -64,8 +89,8 @@ void Implementation::Update() {
         mChannels.erase(it);
     }
     // We call the update of the system
-    CAudioEngine::ErrorCheck(mpStudioSystem->update());
-    CAudioEngine::ErrorCheck(mpSystem->update());
+    if (mpStudioSystem) CAudioEngine::ErrorCheck(mpStudioSystem->update());
+    if (mpSystem) CAudioEngine::ErrorCheck(mpSystem->update());
 }
 
 Implementation* sgpImplementation = nullptr;
@@ -80,6 +105,7 @@ void CAudioEngine::Update()
 {
     // Calls update from the Implementation structure
     sgpImplementation->Update();
+
 }
 
 void CAudioEngine::Shutdown()
@@ -96,6 +122,41 @@ int CAudioEngine::ErrorCheck(FMOD_RESULT result)
         return 1;
     }
     return 0;
+}
+
+void CAudioEngine::Reset() {
+
+    if (!sgpImplementation) return;
+
+    for (auto& [id, channel] : sgpImplementation->mChannels) {
+        if (channel) {
+            channel->stop();
+        }
+    }
+    sgpImplementation->mChannels.clear();
+
+    for (auto& [name, event] : sgpImplementation->mEvents) {
+        if (event) {
+            event->stop(FMOD_STUDIO_STOP_IMMEDIATE);
+            event->release();
+        }
+    }
+    sgpImplementation->mEvents.clear();
+
+    for (auto& [name, sound] : sgpImplementation->mSounds) {
+        if (sound) {
+            sound->release();
+        }
+    }
+    sgpImplementation->mSounds.clear();
+
+    for (auto& [name, bank] : sgpImplementation->mBanks) {
+        if (bank) {
+            bank->unload();
+        }
+    }
+    sgpImplementation->mBanks.clear();
+
 }
 
 void CAudioEngine::LoadBank(const string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags)
@@ -259,16 +320,6 @@ void CAudioEngine::StopEvent(const string& strEventName, bool bImmediate)
     CAudioEngine::ErrorCheck(tFoundIt->second->stop(eMode));
 }
 
-//void CAudioEngine::GetEventParameter(const string& strEventName, const string& strEventParameter, float* parameter)
-//{
-//    auto tFoundIt = sgpImplementation->mEvents.find(strEventName);
-//    if (tFoundIt == sgpImplementation->mEvents.end())
-//        return;
-//    FMOD::Studio::ParameterInstance* pParameter = NULL;
-//    CAudioEngine::ErrorCheck(tFoundIt->second->getParameter(strParameterName.c_str(), &pParameter));
-//    CAudioEngine::ErrorCheck(pParameter->getValue(parameter));
-//}
-
 void CAudioEngine::SetChannel3dPosition(int nChannelId, const glm::vec3& vPosition)
 {
     // Find channel by id
@@ -300,7 +351,6 @@ void CAudioEngine::SetChannelvolume(int nChannelId, float fVolumedB)
     if (tFoundIt == sgpImplementation->mChannels.end()) { return; }
 
     // Set volume of the channel
-    //CAudioEngine::ErrorCheck(tFoundIt->second->setVolume(dbToVolume(fVolumedB)));
 
     float volumeLinear = glm::clamp(fVolumedB, 0.f, 100.f) / 100.f;
     bool isPlaying = false;
@@ -319,9 +369,9 @@ bool CAudioEngine::IsEventPlaying(const string& strEventName) const
         return false;
 
     // This playback tells us if the event is playing or no
-    FMOD_STUDIO_PLAYBACK_STATE* state = NULL;
-    if (tFoundIt->second->getPlaybackState(state) == FMOD_STUDIO_PLAYBACK_PLAYING) {
-        return true;
+    FMOD_STUDIO_PLAYBACK_STATE state;
+    if (tFoundIt->second->getPlaybackState(&state) == FMOD_OK) {
+        return state == FMOD_STUDIO_PLAYBACK_PLAYING;
     }
     return false;
 }

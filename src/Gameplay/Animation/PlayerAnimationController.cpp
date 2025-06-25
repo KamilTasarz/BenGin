@@ -59,8 +59,6 @@ void PlayerAnimationController::onStart()
 
 	owner->animator->blendAnimation(sleep, 50.f, false, false);
 
-	//owner->animator->current_animation;
-
 	rewindable = owner->getComponent<AnimationRewindable>();
 	if (rewindable == nullptr) {
 		owner->addComponent(std::make_unique<AnimationRewindable>());
@@ -72,23 +70,10 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 {
 	bool isDead = owner->getComponent<PlayerController>()->isDead;
 	if (isDead && allFinished) {
-		
-		/*if (currentState && GameManager::instance().currentPlayer == owner)
-			changeState(new DeathState());*/
-		
-		//if (currentState)
-		//	currentState->update(owner, deltaTime);
-
-		/*if (currentState) {
-			currentState->exit(owner);
-			delete currentState;
-			currentState = nullptr;
-		}*/
-		
 		return;
 	}
 
-	if (isDead && !allFinished && !dynamic_cast<DeathState*>(currentState)) {
+	if (isDead && !allFinished && !dynamic_cast<DeathState*>(currentState.get())) {
 		changeState(new DeathState());
 	}
 
@@ -158,20 +143,14 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 
 void PlayerAnimationController::onEnd()
 {
-	delete currentState;
+
 }
 
 void PlayerAnimationController::changeState(IPlayerAnimState* newState) {
 	if (currentState)
 		currentState->exit(owner);
 
-	if (currentState && currentState->getName() == newState->getName()) {
-		delete newState;
-		return;
-	}
-
-	delete currentState;
-	currentState = newState;
+	currentState.reset(newState);
 
 	if (currentState)
 		currentState->enter(owner);

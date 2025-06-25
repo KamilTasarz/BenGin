@@ -1,5 +1,6 @@
 #include "PlayerController.h"
 #include "../Basic/Node.h"
+#include "../Basic/Model.h"
 #include "RegisterScript.h"
 #include "../System/Tag.h"
 #include "PlayerSpawner.h"
@@ -160,7 +161,6 @@ void PlayerController::onUpdate(float deltaTime)
 	isGamepadConnected = glfwJoystickIsGamepad(GLFW_JOYSTICK_1);
 	GameManager::instance().isGamepadConnected = isGamepadConnected;
 
-	cout << "\nGamepad connected?: " << isGamepadConnected << endl;
 
 	if (isDead) return;
 

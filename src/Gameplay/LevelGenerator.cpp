@@ -171,9 +171,12 @@ void LevelGenerator::GenerateLevel()
 	currentRooms.push_back(pref);
 
 	if (currentRooms.size() > 5) {
+		Node* toRemove = currentRooms.front();
 		//Node* oldest = currentRooms.front();
 		//owner->scene_graph->deleteChild(oldest);
 
 		currentRooms.pop_front();
+		owner->scene_graph->deleteChild(toRemove);
+
 	}
 }
