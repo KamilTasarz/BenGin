@@ -671,6 +671,10 @@ void Game::shutdown()
 
     glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     unloadSounds();
+
+    auto* audio = ServiceLocator::getAudioEngine();
+    audio->Reset();
+
     glDeleteTextures(1, &colorTexture);
     glDeleteTextures(1, &normalTexture);
     glDeleteTextures(1, &depthTexture);
