@@ -54,13 +54,13 @@ void Platform::onUpdate(float deltaTime)
 
 	const float axisY = getPadAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
 
-	bool isFlippedAndPressedUp = flipped && (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_UP) == GLFW_PRESS || isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_UP) || axisY < -0.1f);
+	bool isFlippedAndPressedUp = flipped && (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_UP) == GLFW_PRESS || isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_UP) || axisY < -0.8f);
 
 	downPressed = (
 		glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_S) == GLFW_PRESS ||
 		glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_DOWN) == GLFW_PRESS ||
 		isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_DOWN) ||
-		axisY > 0.1f
+		axisY > 0.8f
 		);
 
 	if (downPressed || isFlippedAndPressedUp) {

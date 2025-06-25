@@ -196,14 +196,14 @@ void PlayerController::onUpdate(float deltaTime)
 		pressedRight = (
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_RIGHT) == GLFW_PRESS || 
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_D) == GLFW_PRESS ||
-			axisX > 0.1f ||
+			axisX > 0.3f ||
 			dpadRight
 			);
 		
 		pressedLeft = (
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_LEFT) == GLFW_PRESS || 
 			glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_A) == GLFW_PRESS ||
-			axisX < -0.1f ||
+			axisX < -0.3f ||
 			dpadLeft
 			);
 

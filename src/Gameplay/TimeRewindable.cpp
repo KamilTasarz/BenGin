@@ -48,7 +48,7 @@ void TimeRewindable::onUpdate(float deltaTime) {
 	}
     
     bool rewindKeyHeld = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS || isPadButtonPressed(GLFW_GAMEPAD_BUTTON_B) || isPadButtonPressed(GLFW_GAMEPAD_BUTTON_Y);
-    bool rewindKeyReleased = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE || isPadButtonReleased(GLFW_GAMEPAD_BUTTON_B) || isPadButtonReleased(GLFW_GAMEPAD_BUTTON_Y);
+    bool rewindKeyReleased = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE && isPadButtonReleased(GLFW_GAMEPAD_BUTTON_B) && isPadButtonReleased(GLFW_GAMEPAD_BUTTON_Y);
 
     // Klawisz puœci³ => zezwól na ponowne cofanie przy kolejnym naciœniêciu
     if (rewindKeyReleased) {
