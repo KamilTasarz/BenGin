@@ -73,4 +73,7 @@ void Engine::shutdown()
 
 	delete editor;
 	delete game;
+
+	prefabs.clear();
+	prefabs_puzzle.clear();
 }

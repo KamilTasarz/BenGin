@@ -535,10 +535,7 @@ public:
 
     SceneGraph();
 
-    ~SceneGraph() {
-
-
-    }
+    ~SceneGraph();
 
     void unmark();
     void addChild(Node* p);
@@ -583,6 +580,7 @@ public:
 	std::vector<PrefabInstance*> prefab_instances;
 
     Prefab(std::string name = "Prefab", PrefabType prefab_type = HORIZONTAL_RIGHT);
+    ~Prefab();
 
     Node* clone(std::string instance_name, SceneGraph *scene_graph, bool light_copy = false);
 
@@ -606,6 +604,7 @@ public:
         }
 
 		delete prefab_root;
+        prefab.reset();
 	}
 
     void set_prefab_colliders(Node* node);

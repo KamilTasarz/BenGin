@@ -153,4 +153,9 @@ void GameManager::onEnd()
     }
     players.clear();
     currentPlayer = nullptr;
+
+    cout << "Konstruktory: " << constructors << endl;
+    cout << "Scene Konstruktory: " << constructorsScene << endl;
+    cout << "Destruktory: " << destructors << endl;
+    cout << "Scene Destruktory: " << destructorsScene << endl;
 }

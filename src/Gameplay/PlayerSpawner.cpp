@@ -1,5 +1,6 @@
 #include "PlayerSpawner.h"
 #include "../Basic/Node.h"
+#include "../Basic/Model.h"
 #include "../System/PrefabRegistry.h"
 #include "RegisterScript.h"
 #include "GameManager.h"

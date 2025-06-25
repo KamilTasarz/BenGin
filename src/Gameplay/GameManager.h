@@ -13,6 +13,11 @@ class GameManager
 public:
 	//static GameManager* instance;
 
+	int constructors = 0;
+	int constructorsScene = 0;
+	int destructors = 0;
+	int destructorsScene = 0;
+
 	float globalSmoothing = 10.f;
 	float gasSpreadingSpeed = 1.f;
 	Node* currentPlayer;
@@ -53,6 +58,7 @@ public:
 	void CalculateGasSpreadingSpeed(float deltaTime);
 	void HandleLevelGeneration();
 	void onEnd();
+	void increment(int val);
 	void HandleRewindTimeline();
 };
 

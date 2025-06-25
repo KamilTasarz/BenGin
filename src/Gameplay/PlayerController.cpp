@@ -1,5 +1,6 @@
 #include "PlayerController.h"
 #include "../Basic/Node.h"
+#include "../Basic/Model.h"
 #include "RegisterScript.h"
 #include "../System/Tag.h"
 #include "PlayerSpawner.h"

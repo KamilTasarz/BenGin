@@ -75,9 +75,9 @@ void Particles::onEnd()
 {
 	for (auto& particle : particles) {
 		if (particle.prefab) {
-			owner->scene_graph->deleteChild(particle.prefab);
+			//owner->scene_graph->deleteChild(particle.prefab);
 		}
-        delete particle.instance;
+        //delete particle.instance;
 	}
 	particles.clear();
 }

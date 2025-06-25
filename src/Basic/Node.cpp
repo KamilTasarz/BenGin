@@ -20,11 +20,14 @@
 #include "../System/PhysicsSystem.h"
 #include "../System/RenderSystem.h"
 
+#include "../Gameplay/GameManager.h"
+
 using namespace std;
 
 
 SceneGraph::SceneGraph()
 {
+
     if (!point_lights.empty())
         last_index = point_lights.begin();
     else
@@ -42,6 +45,17 @@ SceneGraph::SceneGraph()
 
     glGenFramebuffers(1, &depthMapFBO);
 
+    GameManager::instance().constructorsScene++;
+
+}
+
+SceneGraph::~SceneGraph()
+{
+    GameManager::instance().destructorsScene++;
+    delete root;
+    root = nullptr;
+    delete grid;
+    grid = nullptr;
 
 }
 
@@ -715,9 +729,7 @@ void Node::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unor
             if (has_RB) {
                 if (is_physic_active) colliders_RB.erase(AABB);
             }
-            /*if (dynamic_cast<PointLight*>(this)) {
-                scene_graph->active.erase(dynamic_cast<PointLight*>(this));
-            }*/
+
         }
     }
     else {
@@ -1155,6 +1167,7 @@ Node::Node(std::string nameOfNode, int _id) {
 
     layer = TagLayerManager::Instance().getLayer("Default");
     tag = TagLayerManager::Instance().getTag("Default");
+    GameManager::instance().constructors++;
 }
 
 Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::vec3 min_point, glm::vec3 max_point) : pModel{ model } {
@@ -1178,16 +1191,17 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
     AABB_logic->is_logic = true;
 
     if (model && model->has_animations) {
-        animator = new Animator(model->animations[0]);
+        animator = new Animator(model->animations[0].get());
         is_animating = false;
     }
 
     color = glm::vec4(1.f);
-
+    GameManager::instance().constructors++;
 }
 
 Node::~Node()
 {
+    GameManager::instance().destructors++;
     if (scene_graph && !scene_graph->is_editing) {
         endComponents();
     }
@@ -1637,10 +1651,12 @@ Light::Light(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shin
 DirectionalLight::DirectionalLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
     : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), direction(direction) {
     updateMatrix();
+    GameManager::instance().constructors++;
 }
 
 DirectionalLight::~DirectionalLight()
 {
+    GameManager::instance().destructors++;
     scene_graph->directional_lights.remove(this);
 	scene_graph->directional_light_number--;
     glDeleteTextures(1, &depthMap);
@@ -1693,10 +1709,13 @@ PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, boo
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     
     lastlightPos = glm::vec3(FLT_MAX);
+
+    GameManager::instance().constructors++;
 }
 
 PointLight::~PointLight()
 {
+    GameManager::instance().destructors++;
     scene_graph->point_lights.remove(this);
 	scene_graph->point_light_number--;
     glDeleteTextures(1, &depthMap);
@@ -1751,12 +1770,19 @@ void PointLight::updateMatrix()
 
 Prefab::Prefab(std::string name, PrefabType prefab_type) {
 
+    GameManager::instance().constructors++;
     this->prefab_scene_graph = new SceneGraph();
     this->prefab_scene_graph->root->name = name;
     this->prefab_type = prefab_type;
     prefab_scene_graph->directional_lights.push_back(new DirectionalLight(nullptr, "editor_light", true));
     prefab_scene_graph->directional_light_number++;
 
+}
+
+Prefab::~Prefab()
+{
+    delete prefab_scene_graph;
+    prefab_scene_graph = nullptr;
 }
 
 Node* Prefab::clone(std::string instance_name, SceneGraph* scene_graph, bool light_copy) {
@@ -1971,6 +1997,7 @@ unsigned int ParticleEmitter::firstUnusedParticle() {
 
 MirrorNode::MirrorNode(std::shared_ptr<Model> model, std::string nameOfNode) : Node(model, nameOfNode, 0, {-1.f, 0.f, -1.f}, {1.f, 0.f, 1.f}) {
    mirrorCollider = new RectOBB(transform.getModelMatrix(), this);
+   GameManager::instance().constructors++;
 }
 
 glm::vec3 MirrorNode::reflectDirection(Ray ray)
