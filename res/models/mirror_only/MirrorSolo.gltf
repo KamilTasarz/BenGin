@@ -15,10 +15,10 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Cube.020",
+			"name":"Cube.037",
 			"translation":[
 				0,
-				3.143876314163208,
+				20.867210388183594,
 				0
 			]
 		}
@@ -26,7 +26,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material.016",
+			"name":"MirrorSolo",
 			"normalTexture":{
 				"index":0
 			},
@@ -42,7 +42,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Cube.007",
+			"name":"Cube.037",
 			"primitives":[
 				{
 					"attributes":{
@@ -73,79 +73,79 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"Material.016_Normal",
-			"uri":"Material_016_Normal.png"
+			"name":"DefaultMaterial_Normal",
+			"uri":"DefaultMaterial_Normal.png"
 		},
 		{
 			"mimeType":"image/png",
-			"name":"Material.016_Base_color",
-			"uri":"Material_016_Base_color.png"
+			"name":"DefaultMaterial_Base_color",
+			"uri":"DefaultMaterial_Base_color.png"
 		},
 		{
 			"mimeType":"image/png",
-			"name":"Material.016_Metallic-Material.016_Roughness",
-			"uri":"Material_016_Metallic-Material_016_Roughness.png"
+			"name":"DefaultMaterial_Metallic-DefaultMaterial_Roughness",
+			"uri":"DefaultMaterial_Metallic-DefaultMaterial_Roughness.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":100,
+			"count":160,
 			"max":[
-				1,
-				1.2114005088806152,
-				1
+				1.0100274085998535,
+				1.4343016147613525,
+				0.1688523292541504
 			],
 			"min":[
-				-1,
-				-1.1478919982910156,
-				-1.09689199924469
+				-1.0100274085998535,
+				-1.4343016147613525,
+				-0.1688523292541504
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":100,
+			"count":160,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":100,
+			"count":160,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":156,
+			"count":228,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":1200,
+			"byteLength":1920,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1200,
-			"byteOffset":1200,
+			"byteLength":1920,
+			"byteOffset":1920,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":800,
-			"byteOffset":2400,
+			"byteLength":1280,
+			"byteOffset":3840,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":312,
-			"byteOffset":3200,
+			"byteLength":456,
+			"byteOffset":5120,
 			"target":34963
 		}
 	],
@@ -157,8 +157,8 @@
 	],
 	"buffers":[
 		{
-			"byteLength":3512,
-			"uri":"MirrorOnly.bin"
+			"byteLength":5576,
+			"uri":"MirrorSolo.bin"
 		}
 	]
 }
