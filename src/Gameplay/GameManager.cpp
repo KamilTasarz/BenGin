@@ -7,6 +7,7 @@
 #include "PlayerRewindable.h"
 #include "RewindManager.h"
 #include "UIManager.h"
+#include "MusicManager.h"
 
 GameManager& GameManager::instance()
 {
@@ -127,6 +128,18 @@ void GameManager::CalculateGasSpreadingSpeed(float deltaTime) {
         float modifier = 1.f + runTime / 300.f;
 		gasSpreadingSpeed /= modifier;
     }
+
+    static bool prevRewind = false;
+    bool currentRewind = isRewinding;
+
+    if (currentRewind && !prevRewind) {
+        MusicManager::instance().PlayRewindSound();
+    }
+    else if (!currentRewind && prevRewind) {
+        MusicManager::instance().StopRewindSound();
+    }
+
+    prevRewind = currentRewind;
 
     //std::cout << gasSpreadingSpeed << std::endl;
 }

@@ -424,6 +424,7 @@ void PlayerController::ApplyVirusEffect()
 
 	rb->gravity = -32.f;
 	rb->mass = 1.f;
+	rb->dragY = 1.f;
 	speed = 9.f;
 	isGravityFlipped = false;
 	jumpForce = 23.f;
@@ -441,7 +442,8 @@ void PlayerController::VirusEffect()
 		isGravityFlipped = false;
 		rb->gravity = -32.f;
 		rb->mass = 0.4f;
-		jumpForce *= 1.2f;
+		rb->dragY = 0.5f;
+		jumpForce *= 1.5f;
 	}
 	else if (virusType == "green") {
 

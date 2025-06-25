@@ -92,6 +92,28 @@ void MusicManager::Update(float deltaTime)
     }*/
 
     currentStage = targetStage;
+
+    if (gameMusicActive) {
+        resyncTimer -= deltaTime;
+        if (resyncTimer <= 0.0f) {
+            resyncTimer = 1.0f; // Resetuj timer na nastêpn¹ sekundê
+
+            FMOD::Channel* masterChannel = audio->GetChannel(stageChannels[0]);
+            if (masterChannel) {
+                // Pobierz pozycjê odtwarzania œcie¿ki-lidera w próbkach (najdok³adniej)
+                unsigned int masterPosition = 0;
+                masterChannel->getPosition(&masterPosition, FMOD_TIMEUNIT_MS);
+
+                // PrzejdŸ przez pozosta³e œcie¿ki i ustaw ich pozycjê na tak¹ sam¹ jak u lidera
+                for (int i = 1; i < 4; ++i) {
+                    FMOD::Channel* followerChannel = audio->GetChannel(stageChannels[i]);
+                    if (followerChannel) {
+                        followerChannel->setPosition(masterPosition, FMOD_TIMEUNIT_MS);
+                    }
+                }
+            }
+        }
+    }
 }
 
 void MusicManager::StartGameTransition() {
@@ -112,6 +134,10 @@ void MusicManager::StartGameTransition() {
 
 void MusicManager::StartGameMusic()
 {
+    if (gameMusicActive) return;
+
+    gameMusicActive = true;
+    
     auto* audio = ServiceLocator::getAudioEngine();
     FMOD::System* fmodSystem = audio->GetLowLevelSystem();
 
@@ -174,6 +200,47 @@ void MusicManager::StartGameMusic()
     // Nie ma ju¿ potrzeby pausing/ unpausing grupy — kana³y same wystartowa³y.
     beatTime = 1.92f;
     timer = 0.f;
+
+    //if (gameMusicActive) return;
+
+    //gameMusicActive = true;
+    //auto* audio = ServiceLocator::getAudioEngine();
+
+    //// 1. Przygotuj listê œcie¿ek do odtworzenia
+    //std::vector<std::string> tracksToPlay = {
+    //    audio->musicStage1,
+    //    audio->musicStage2,
+    //    audio->musicStage3,
+    //    audio->musicStage4
+    //};
+
+    //// 2. Wywo³aj funkcjê silnika, która przygotuje kana³y (w stanie pauzy)
+    //std::vector<int> newChannelIds = audio->PlayMusicTracks(tracksToPlay);
+
+    //// 3. Wywo³aj funkcjê silnika, która uruchomi je wszystkie idealnie w tym samym momencie
+    //audio->StartMusicGroup();
+
+    //// 4. Przypisz zwrócone ID kana³ów do lokalnych zmiennych
+    //if (newChannelIds.size() == 4) {
+    //    for (int i = 0; i < 4; ++i) {
+    //        stageChannels[i] = newChannelIds[i];
+    //    }
+    //}
+
+    //// 5. Ustaw g³oœnoœci pocz¹tkowe (wszystkie na 0, a potem pêtla Update zajmie siê reszt¹)
+    //for (int i = 0; i < 4; ++i) {
+    //    stageVolumes[i] = 0.f; // Zacznij z cisz¹
+    //    if (stageChannels[i] != -1) {
+    //        audio->SetChannelvolume(stageChannels[i], 0.f);
+    //    }
+    //}
+
+    //for (int i = 0; i < 4; ++i) {
+    //    stageVolumes[i] = 100.f; // <- zamiast 0.f
+    //    if (stageChannels[i] != -1) {
+    //        audio->SetChannelvolume(stageChannels[i], 100.f);
+    //    }
+    //}
 }
 
 int MusicManager::getTargetStage(float distance, bool isInGas)
@@ -193,7 +260,7 @@ void MusicManager::PlayRewindSound() {
     }
 
     rewindActive = true;
-    rewindId = audio->PlayMusic(audio->musicRewind, GameManager::instance().sfxVolume * volume * 0.6f);
+    rewindId = audio->PlayMusic(audio->musicRewind, GameManager::instance().musicVolume * volume);
 }
 
 void MusicManager::StopRewindSound() {
@@ -218,6 +285,8 @@ void MusicManager::onEnd() {
         musicGroup->release();
         musicGroup = nullptr;
     }
+
+    gameMusicActive = false;
 
     beatTime = 1.92f;
     timer = 0.f;
