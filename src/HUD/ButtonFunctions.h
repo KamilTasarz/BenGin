@@ -8,6 +8,8 @@ void LeaderboardButton();
 void ReturnButton();
 void ExitButton();
 void CheckboxButton();
+void ReturnToMenuButton();
+void ReRunButton();
 
 class FunctionRegister {
 public:
@@ -22,7 +24,9 @@ public:
 	{"LeaderboardButton", LeaderboardButton},
 	{"ReturnButton", ReturnButton},
 	{"ExitButton", ExitButton},
-	{"CheckboxButton", CheckboxButton}
+	{"CheckboxButton", CheckboxButton},
+	{"ReturnToMenuButton", ReturnToMenuButton},
+	{"ReRunButton", ReRunButton}
     };
 };
 

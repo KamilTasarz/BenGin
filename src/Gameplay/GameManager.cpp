@@ -27,13 +27,22 @@ void GameManager::Init(SceneGraph* scene_graph)
 
     emitter = dynamic_cast<InstanceManager*>(scene_graph->root->getChildByTag("Emitter"));
     if (scene_graph->root->getChildByTag("UIManager")) {
-       uiManager = scene_graph->root->getChildByTag("UIManager")->getComponent<UIManager>();
+        uiManager = scene_graph->root->getChildByTag("UIManager")->getComponent<UIManager>();
     }
-	game_over = false;
-	runTime = 0.f;
-	score = 0.f;
-	deathCount = 0;
+    game_over = false;
+    runTime = 0.f;
+    score = 0.f;
+    deathCount = 0;
     added_stats = false;
+
+
+    if (last_run.name.empty()) {
+        last_run.name = "NONE";
+        last_run.score = 0;
+    }
+
+    start = true;
+
     json stats;
 	std::ifstream file("res/leaderboard.json");
 	if (file.is_open()) {
@@ -63,19 +72,29 @@ void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
 		Player_stats playerStat;
 		playerStat.name = player_name;
 		playerStat.score = (int) score;
+        last_run.name = player_name.empty() ? "GUEST" : player_name;
+        last_run.score = (int)score;
 		playerStats.push_back(playerStat);
 		std::sort(playerStats.begin(), playerStats.end(), [](const Player_stats& a, const Player_stats& b) {
 			return a.score > b.score;
 			});
 		// Save to file
+        int i = 0;
 		json stats;
 		for (const auto& stat : playerStats) {
-			stats.push_back({ {"name", stat.name.empty() ? "GUEST" : stat.name}, {"score", (int)stat.score}});
+            i++;
+            stats.push_back({ {"name", stat.name.empty() ? "GUEST" : stat.name}, {"score", (int)stat.score}});
+            if (last_run.name == stat.name && last_run.score == stat.score) {
+                place = i;
+            }
+            
 		}
 		std::ofstream outFile("res/leaderboard.json");
 		outFile << stats.dump(4);
 		outFile.close();
-        SceneManager::Instance().next();
+        //SceneManager::Instance().next();
+		end = true;
+        end_screen = true;
     }
 
     if (!tutorialActive && !isRewinding) {

@@ -86,6 +86,20 @@ void AnimatedMenu::onStart()
 	if (check_button) {
 		b = check_button->button->pos.x;
 	}
+	returnToBenuButton = GuiManager::Instance().findButton(65);
+	if (returnToBenuButton) {
+		returnToBenuButton->visible = false;
+
+	}
+	rerun = GuiManager::Instance().findButton(66);
+	if (rerun) {
+		rerun->visible = false;
+	}
+	last_run = GuiManager::Instance().findText(67);
+	if (last_run) {
+		last_run->value = GameManager::instance().last_run.name + ": " + std::to_string(GameManager::instance().last_run.score);
+		last_run->visible = false;
+	}
 }
 
 
@@ -246,6 +260,66 @@ void AnimatedMenu::onUpdate(float deltaTime)
 		
 	}
 
+	if (!GameManager::instance().end_screen) {
+		if (play)
+			play->visible = true;
+		if (lead)
+			lead->visible = true;
+		if (exit)
+			exit->visible = true;
+		if (nick) {
+			nick->visible = true;
+		}
+		if (returnToBenuButton) {
+			returnToBenuButton->visible = false;
+
+		}
+		if (nickname) {
+			nickname->visible = true;
+		}
+		if (tutorial) {
+			tutorial->visible = true;
+		}
+		if (nick_column) {
+			float x = nick2_x + dx;
+			nick_column->pos.x = x;
+			nick_column->visible = true;
+		}
+		if (score_column) {
+			float x = scr_x + dx;
+			score_column->pos.x = x;
+			score_column->visible = true;
+		}
+		if (num_column) {
+			float x = num_x + dx;
+			num_column->pos.x = x;
+			num_column->visible = true;
+
+		}
+		if (tv) {
+			tv->visible = true;
+		}
+		if (top) {
+			float x = top_x + dx;
+			top->pos.x = x;
+			top->visible = true;
+		}
+		
+		if (check_button) {
+			check_button->visible = true;
+		}
+		
+		if (checkbox) {
+			checkbox->visible = true;
+		}
+		if (rerun) {
+			rerun->visible = false;
+		}
+		if (last_run) {
+			last_run->visible = false;
+		}
+	}
+
 	if (isActive) {
 
 		if (right) {
@@ -374,26 +448,113 @@ void AnimatedMenu::onUpdate(float deltaTime)
 		if (checkbox) {
 			checkbox->visible = false;
 		}
+		if (!reverse) {
+			if (ending) {
+				tv->size = 1.f + 2.f * endAnimTimer;
+				tv->pos.x = (-(750.f * 3.f) + 960.f) * endAnimTimer;
+				tv->pos.y = (-(540.f * 3.f) + 540.f) * endAnimTimer;
+			}
+			endAnimTimer += deltaTime;
+			if (starting && endAnimTimer > endAnimStartBuffor) {
+				ending = true;
+				starting = false;
+				endAnimTimer = 0.f;
+			}
+			if (ending && endAnimTimer > endAnimEndBuffor) {
 
-		if (ending) {
-			tv->size = 1.f + 2.f * endAnimTimer;
-			tv->pos.x = (- (750.f * 3.f) + 960.f) * endAnimTimer;
-			tv->pos.y = (-(540.f * 3.f) + 540.f) * endAnimTimer;
-		} 
-		endAnimTimer += deltaTime;
-		if (starting && endAnimTimer > endAnimStartBuffor) {
-			ending = true;
-			starting = false;
-			endAnimTimer = 0.f;
+				SceneManager::Instance().LateNext();
+
+				endAnim = false;
+				ending = false;
+				starting = true;
+				endAnimTimer = 0.f;
+			}
 		}
-		if (ending && endAnimTimer > endAnimEndBuffor) {
-			
-			SceneManager::Instance().LateNext();
+		else {
+			if (ending) {
+				tv->size = 2.f * endAnimTimer + 1.f;
+				tv->pos.x = (-(750.f * 3.f) + 960.f) * endAnimTimer;
+				tv->pos.y = (-(540.f * 3.f) + 540.f) * endAnimTimer;
+			}
+			endAnimTimer -= deltaTime;
+			if (ending && endAnimTimer < 0.f) {
+				ending = false;
+				starting = true;
+				endAnimTimer = endAnimEndBuffor;
+			}
+			if (starting && endAnimTimer < 0.f) {
 
-			endAnim = false;
-			ending = false;
-			starting = true;
-			endAnimTimer = 0.f;
+				endAnim = false;
+				ending = false;
+				starting = false;
+				endAnimTimer = 0.f;
+				SceneManager::Instance().getCurrentScene()->alpha_anim = 1.f;
+				SceneManager::Instance().getCurrentScene()->menu_anim = false;
+				GameManager::instance().end = false;
+				GameManager::instance().start = false;
+				GameManager::instance().end_screen = false;
+			}
+		}
+	}
+	if (GameManager::instance().end_screen) {
+
+		if (play)
+			play->visible = false;
+		if (lead)
+			lead->visible = false;
+		if (exit)
+			exit->visible = false;
+		if (nick) {
+			nick->visible = false;
+		}
+		if (nickname) {
+			nickname->visible = false;
+		}
+		if (tutorial) {
+			tutorial->visible = false;
+		}
+		if (nick_column) {
+			float x = nick2_x - max_dx + 200.f;
+			nick_column->pos.x = x;
+			nick_column->visible = true;
+		}
+		if (score_column) {
+			float x = scr_x - max_dx + 200.f;
+			score_column->pos.x = x;
+			score_column->visible = true;
+		}
+		if (num_column) {
+			float x = num_x - max_dx + 200.f;
+			num_column->pos.x = x;
+			num_column->visible = true;
+
+		}
+		if (tv) {
+			tv->visible = false;
+		}
+		if (top) {
+			float x = top_x - max_dx + 200.f;
+			top->pos.x = x;
+			top->visible = true;
+		}
+		if (returnToBenuButton) {
+			returnToBenuButton->visible = true;
+		}
+		if (check_button) {
+			check_button->visible = false;
+		}
+		if (checkbox_marked) {
+			checkbox_marked->visible = false;
+		}
+		if (checkbox) {
+			checkbox->visible = false;
+		}
+		if (rerun) {
+			rerun->visible = true;
+		}
+		if (last_run) {
+			last_run->value = "Last run: " + std::to_string(GameManager::instance().place) + ". " + GameManager::instance().last_run.name + ": " + std::to_string(GameManager::instance().last_run.score);
+			last_run->visible = true;
 		}
 	}
 }

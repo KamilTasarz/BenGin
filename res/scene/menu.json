@@ -1,7 +1,7 @@
 {
     "GUI": {
         "free_id": null,
-        "max_id": 65,
+        "max_id": 68,
         "objects": [
             {
                 "alignment": 1,
@@ -118,6 +118,54 @@
                 "width": 282.0,
                 "x": 610.0,
                 "y": 240.0
+            },
+            {
+                "height": 100.0,
+                "hovered_ptr_id": 8,
+                "id": 65,
+                "is_invincible": false,
+                "on_click": "ReturnToMenuButton",
+                "order": 0,
+                "ptr_id": 7,
+                "text_ptr_id": 4,
+                "text_value": "RETURN TO MENU",
+                "type": "button",
+                "visible": true,
+                "width": 550.0,
+                "x": 685.0,
+                "y": 50.0
+            },
+            {
+                "height": 100.0,
+                "hovered_ptr_id": 8,
+                "id": 66,
+                "is_invincible": false,
+                "on_click": "ReRunButton",
+                "order": 0,
+                "ptr_id": 3,
+                "text_ptr_id": 4,
+                "text_value": "AGAIN",
+                "type": "button",
+                "visible": true,
+                "width": 550.0,
+                "x": 685.0,
+                "y": 155.0
+            },
+            {
+                "alignment": 1,
+                "color": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "id": 67,
+                "order": 0,
+                "ptr_id": 5,
+                "type": "text",
+                "value": "Last run:",
+                "visible": true,
+                "x": 960.0,
+                "y": 280.0
             },
             {
                 "height": 100.0,
@@ -253,7 +301,7 @@
                 "ptr_id": 10,
                 "size": 1.0,
                 "type": "sprite",
-                "visible": true,
+                "visible": false,
                 "x": 0.0,
                 "y": 0.0
             }
@@ -281,54 +329,6 @@
             "z": -1.0
         },
         "children": [
-            {
-                "AABB_logic_max": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "AABB_logic_min": {
-                    "x": -1.0,
-                    "y": -1.0,
-                    "z": -1.0
-                },
-                "components": [
-                    {
-                        "name": "KeyboardWrite",
-                        "variables": null
-                    },
-                    {
-                        "name": "AnimatedMenu",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "keyboard_controller",
-                "no_textures": true,
-                "position": {
-                    "x": 3.3079636096954346,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
             {
                 "AABB_logic_max": {
                     "x": 0.5,
@@ -402,44 +402,6 @@
             },
             {
                 "AABB_logic_max": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "AABB_logic_min": {
-                    "x": -1.0,
-                    "y": -1.0,
-                    "z": -1.0
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "camera_follow",
-                "no_textures": true,
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
                     "x": 0.5,
                     "y": 0.5,
                     "z": 0.5
@@ -507,6 +469,92 @@
                 },
                 "tag": "Default",
                 "type": "PointLight"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "AABB_logic_min": {
+                    "x": -1.0,
+                    "y": -1.0,
+                    "z": -1.0
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "camera_follow",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "AABB_logic_min": {
+                    "x": -1.0,
+                    "y": -1.0,
+                    "z": -1.0
+                },
+                "components": [
+                    {
+                        "name": "KeyboardWrite",
+                        "variables": null
+                    },
+                    {
+                        "name": "AnimatedMenu",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "keyboard_controller",
+                "no_textures": true,
+                "position": {
+                    "x": 3.3079636096954346,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
             }
         ],
         "id": 0,

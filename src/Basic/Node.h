@@ -580,6 +580,7 @@ public:
 	std::vector<PrefabInstance*> prefab_instances;
 
     Prefab(std::string name = "Prefab", PrefabType prefab_type = HORIZONTAL_RIGHT);
+    ~Prefab();
 
     Node* clone(std::string instance_name, SceneGraph *scene_graph, bool light_copy = false);
 
