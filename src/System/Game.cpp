@@ -88,7 +88,9 @@ void Game::drawQuadTvMenu() {
 
 void Game::draw()
 {
-	
+    if (!GameManager::instance().end_screen && SceneManager::Instance().currentSceneIndex == 0) {
+        postProcessData.is_crt_curved = false;
+    }
     //float t = glfwGetTime();
 
     time = glfwGetTime();
@@ -321,9 +323,25 @@ void Game::draw()
             glBindVertexArray(0);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
-            if (alpha < 1.f) {
+            if (GameManager::instance().start) {
                 alpha += ServiceLocator::getWindow()->deltaTime * 0.6f;
+            }
+            else if (GameManager::instance().end) {
+                alpha -= ServiceLocator::getWindow()->deltaTime * 1.5f;
+                if (GameManager::instance().end_screen) {
+                    postProcessData.is_crt_curved = true;
+                }
+            }
+            if (alpha > 1.f) {
+                GameManager::instance().start = false;
+            }
+            if (alpha < 1.f) {
+
+                if (alpha < 0.f) {
+                    GameManager::instance().end = false;
+                    SceneManager::Instance().next();
+				}
+
 
                 ResourceManager::Instance().shader_PostProcess_noise->use();
                 ResourceManager::Instance().shader_PostProcess_noise->setInt("image", 0);
@@ -649,6 +667,9 @@ void Game::init()
     else {
         glfwSetInputMode(ServiceLocator::getWindow()->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         postProcessData.is_crt_curved = false;
+        if (GameManager::instance().end_screen) {
+            postProcessData.is_crt_curved = true;
+        }
     }
 }
 void Game::run()
@@ -686,6 +707,7 @@ void Game::run()
 				
 				if (SceneManager::Instance().currentSceneIndex == 1) {
 					MusicManager::instance().StartGameTransition();
+					//GameManager::instance().start = true;
 				}
 				SceneManager::Instance().resetLateNext();
             }

@@ -9,8 +9,8 @@ class GameManagerRewindable;
 class UIManager;
 
 struct Player_stats {
-	std::string name;
-	int score;
+	std::string name = "";
+	int score = 0;
 };
 
 class GameManager
@@ -52,6 +52,8 @@ public:
 	bool game_over = false;
 	bool added_stats = false;
 
+	bool start = false, end = false, end_screen = false;
+
 	float musicVolume = 1.f;
 	float sfxVolume = 1.f;
 
@@ -62,6 +64,9 @@ public:
 	float minPlayerToParticleDistance = 100.f;
 
 	std::vector<Player_stats> playerStats;
+
+	Player_stats last_run;
+	int place = 0;
 
 	static GameManager& instance();
 	//GameManager() = default;

@@ -16,11 +16,14 @@ public:
 	ButtonObject* back = nullptr;
 	ButtonObject* nick_button = nullptr;
 	ButtonObject* check_button = nullptr;
+	ButtonObject* returnToBenuButton = nullptr;
+	ButtonObject* rerun = nullptr;
 	SpriteObject* checkbox = nullptr;
 	SpriteObject* checkbox_marked = nullptr;
 	SpriteObject* background = nullptr;
 	SpriteObject* tv = nullptr;
 	TextObject* tutorial = nullptr;
+	TextObject* last_run = nullptr;
 	TextObject* nick = nullptr;
 	TextObject* nickname = nullptr;
 	TextObject* nick_column = nullptr;
@@ -28,7 +31,7 @@ public:
 	TextObject* num_column = nullptr;
 	TextObject* top = nullptr;
 	std::string text;
-	bool isActive = false, endAnim = false, ending = false, starting = true, _tutorial = false;
+	bool isActive = false, endAnim = false, ending = false, starting = true, _tutorial = false, reverse = false;
 	bool right = true;
 	bool isGamepadConnected = false;
 	float timer = 0.f, buffer = 0.5f, dx = 0.f, max_dx = 1920.f, spd = 2.f;
