@@ -41,17 +41,17 @@ bool TimeRewindable::isPadButtonReleased(int button) {
 void TimeRewindable::onUpdate(float deltaTime) {
     if (!owner) return;
 
-	glm::vec3 newCheckpointPos = GameManager::instance().playerSpawner->transform.getGlobalPosition();
-	if (newCheckpointPos != lastCheckpointPos) {
-		resetHistory();
-		lastCheckpointPos = newCheckpointPos;
-	}
-    
+    glm::vec3 newCheckpointPos = GameManager::instance().playerSpawner->transform.getGlobalPosition();
+    if (newCheckpointPos != lastCheckpointPos) {
+        resetHistory();
+        lastCheckpointPos = newCheckpointPos;
+    }
+
     bool rewindKeyHeld = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_PRESS || isPadButtonPressed(GLFW_GAMEPAD_BUTTON_B) || isPadButtonPressed(GLFW_GAMEPAD_BUTTON_Y);
-    bool rewindKeyReleased = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE && isPadButtonReleased(GLFW_GAMEPAD_BUTTON_B) && isPadButtonReleased(GLFW_GAMEPAD_BUTTON_Y);
+    //bool rewindKeyReleased = glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_R) == GLFW_RELEASE && isPadButtonReleased(GLFW_GAMEPAD_BUTTON_B) && isPadButtonReleased(GLFW_GAMEPAD_BUTTON_Y);
 
     // Klawisz puœci³ => zezwól na ponowne cofanie przy kolejnym naciœniêciu
-    if (rewindKeyReleased) {
+    if (!rewindKeyHeld) {
         hasReleasedRewindKey = true;
     }
 
@@ -77,7 +77,7 @@ void TimeRewindable::onUpdate(float deltaTime) {
     }
 
     // Stop rewind if key released manually
-    if (rewindKeyReleased && isRewinding) {
+    if (!rewindKeyHeld && isRewinding) {
         isRewinding = false;
         rewindTime = 0.f;
         hasReleasedRewindKey = true;
