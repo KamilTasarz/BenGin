@@ -74,7 +74,10 @@ enum Sprite_names {
 	CORNERS,
 	CHEESE,
 	PLAY,
-	REWIND
+	REWIND,
+	HEAVY,
+	FEATHER,
+	GRAVITY
 };
 
 class ButtonObject : public GuiObject {

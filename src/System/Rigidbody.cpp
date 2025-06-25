@@ -154,7 +154,7 @@ void Rigidbody::onUpdate(float deltaTime)
 	}
 
 	if (useGravity && scaleUnderneath) {
-		velocityY += gravity * deltaTime * 0.5f;
+		velocityY += gravity * deltaTime * 0.8f;
 	}
 	else if (useGravity && !groundUnderneath) {
 		velocityY += gravity * deltaTime;

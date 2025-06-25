@@ -86,19 +86,15 @@ void Platform::onUpdate(float deltaTime)
 	bool isGravityFlipped = player->getComponent<PlayerController>()->isGravityFlipped;
 
 	if (!flipped && isGravityFlipped) {
-		//owner->transform.setLocalRotation(glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 0, 1)));
-		owner->AABB_logic->min_point_local.z += 0.9f;
-		owner->AABB_logic->max_point_local.z += 0.9f;
-		owner->AABB_logic->min_point_world.z += 0.9f;
-		owner->AABB_logic->max_point_world.z += 0.9f;
+		// Zwyk³a rotacja: X = 0, Y = 90, Z = -90
+		glm::vec3 eulerRotation = glm::radians(glm::vec3(0.0f, 90.0f, -90.0f));
+		owner->transform.setLocalRotation(glm::quat(eulerRotation));
 		flipped = true;
 	}
 	else if (flipped && !isGravityFlipped) {
-		//owner->transform.setLocalRotation(glm::quat(1, 0, 0, 0));
-		owner->AABB_logic->min_point_local.z -= 0.9f;
-		owner->AABB_logic->max_point_local.z -= 0.9f;
-		owner->AABB_logic->min_point_world.z -= 0.9f;
-		owner->AABB_logic->max_point_world.z -= 0.9f;
+		// Oryginalna rotacja: X = 0, Y = 90, Z = 90
+		glm::vec3 eulerRotation = glm::radians(glm::vec3(0.0f, 90.0f, 90.0f));
+		owner->transform.setLocalRotation(glm::quat(eulerRotation));
 		flipped = false;
 	}
 }

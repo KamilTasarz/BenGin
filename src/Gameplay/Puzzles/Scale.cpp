@@ -26,7 +26,7 @@ void Scale::onStart()
     std::cout << "start szalek -----------------------------------------------------------" << std::endl;
 
     rb = owner->getComponent<Rigidbody>();
-    rb->dragY = 1.2f;
+    rb->dragY = 1.f;
     startPos1 = owner->transform.getLocalPosition();
     startPos2 = secondScale->transform.getLocalPosition();
 

@@ -325,14 +325,47 @@ void PlayerController::onUpdate(float deltaTime)
 		if (virusType == "blue") {
 			virusTypeText->value = "Feather Feta";
 			virusEffectText->value = "decreased weight";
+
+			auto& spriteMap = GuiManager::Instance().getSprites();
+			auto it = spriteMap.find(16);
+
+			if (it != spriteMap.end()) {
+				std::shared_ptr<Sprite> sprite = it->second;
+				if (sprite) {
+					// u¿yj sprite
+					cheeseSprite->sprite = sprite;
+				}
+			}
 		}
 		else if (virusType == "green") {
 			virusTypeText->value = "Gravity Gouda";
 			virusEffectText->value = "inverted gravity";
+
+			auto& spriteMap = GuiManager::Instance().getSprites();
+			auto it = spriteMap.find(17);
+
+			if (it != spriteMap.end()) {
+				std::shared_ptr<Sprite> sprite = it->second;
+				if (sprite) {
+					// u¿yj sprite
+					cheeseSprite->sprite = sprite;
+				}
+			}
 		}
 		else if (virusType == "black") {
 			virusTypeText->value = "Heavy Havarti";
 			virusEffectText->value = "increased weight";
+
+			auto& spriteMap = GuiManager::Instance().getSprites();
+			auto it = spriteMap.find(15);
+
+			if (it != spriteMap.end()) {
+				std::shared_ptr<Sprite> sprite = it->second;
+				if (sprite) {
+					// u¿yj sprite
+					cheeseSprite->sprite = sprite;
+				}
+			}
 		}
 
 		virusEffectText->visible = true;
@@ -460,8 +493,8 @@ void PlayerController::VirusEffect()
 		owner->textures.push_back(37);
 
 		rb->mass = 25.f;
-		speed *= 0.7f;
-		jumpForce *= 0.8f;
+		speed *= 0.8f;
+		jumpForce *= 0.85f;
 	}
 	else {
 		//std::cout << "Unknown virus type!" << std::endl;
