@@ -391,6 +391,7 @@ public:
         AABB = nullptr;
         AABB_logic = nullptr;
         prepareBuffer();
+		std::cout << "InstanceManager constructor called for: " << name << std::endl;
     }
 
     ~InstanceManager() override;
@@ -439,7 +440,9 @@ public:
 
     Light(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
 
-	//virtual ~Light();
+    virtual ~Light() override {
+		std::cout << "Light destructor called for: " << name << std::endl;
+    };
 
     void setShining(bool flag) {
         is_shining = flag;
@@ -475,6 +478,8 @@ public:
 class PointLight : public Light {
 public:
 
+    glm::vec3 lastlightPos;
+
     float quadratic;
     float linear;
     float constant;
@@ -491,11 +496,16 @@ public:
     void render(unsigned int depthMapFBO, Shader& shader, int index);
 
     void updateMatrix();
+    void uploadMatrices(Shader& shader) const;
 
-    std::vector<glm::mat4>& getMatrix() {
-        updateMatrix();
+    const std::vector<glm::mat4>& getMatrix() const {
         return shadowTransforms;
     }
+
+    /*std::vector<glm::mat4>& getMatrix() {
+        updateMatrix();
+        return shadowTransforms;
+    }*/
 };
 
 
@@ -532,10 +542,7 @@ public:
 
     SceneGraph();
 
-    ~SceneGraph() {
-        delete root;
-
-    }
+    ~SceneGraph();
 
     void unmark();
     void addChild(Node* p);
@@ -597,15 +604,7 @@ public:
     PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name);
     PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name, glm::vec3 position);
 
-	~PrefabInstance() {
-
-        if (scene_graph && !scene_graph->is_editing) {
-			endComponents();
-        }
-
-		delete prefab_root;
-	}
-
+    ~PrefabInstance() override;
     void set_prefab_colliders(Node* node);
 
     void updateSelf();
@@ -676,10 +675,7 @@ class MirrorNode : public Node {
 public:
     RectOBB* mirrorCollider;
     MirrorNode(std::shared_ptr<Model> model, std::string nameOfNode);
-	~MirrorNode() override {
-		delete mirrorCollider;
-        
-	}
+    ~MirrorNode() override;
     glm::vec3 reflectDirection(Ray ray);
     void forceUpdateSelfAndChild() override;
     void drawSelfAndChild() override;

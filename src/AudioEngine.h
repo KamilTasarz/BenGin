@@ -90,6 +90,8 @@ public:
     static void Shutdown();
     static int ErrorCheck(FMOD_RESULT result);
 
+    void Reset();
+
     void LoadBank(const string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
     void LoadEvent(const string& strEventName);
     void LoadSound(const string& strSoundName, bool b3d = true, bool bLooping = false, bool bStream = false);

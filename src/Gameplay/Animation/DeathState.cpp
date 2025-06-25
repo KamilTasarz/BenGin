@@ -2,6 +2,7 @@
 #include "PlayerAnimationController.h"
 #include "../../System/Rigidbody.h"
 #include "../../Basic/Animator.h"
+#include "../../Basic/Model.h"
 #include "../GameManager.h"
 #include "../GameMath.h"
 #include "../../ResourceManager.h"
@@ -45,7 +46,6 @@ void DeathState::exit(Node* owner) {
     owner->pModel->meshes[0].textures[0] = (newTexture);
 
     if (animation->currentState) {
-		delete animation->currentState;
         animation->currentState = nullptr;
     }
     animation->allFinished = true;

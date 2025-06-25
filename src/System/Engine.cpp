@@ -11,6 +11,7 @@
 #include "../System/GuiManager.h"
 #include "../System/RenderSystem.h"
 #include "../System/SceneManager.h"
+#include "../Gameplay/GameManager.h"
 #include <cstdlib>
 #include <ctime>
 
@@ -62,6 +63,7 @@ void Engine::run()
 		game->init();
 		game->run();
 		game->shutdown();
+
 	} while (engine_work);
 }
 
@@ -73,4 +75,9 @@ void Engine::shutdown()
 
 	delete editor;
 	delete game;
+
+	prefabs.clear();
+	prefabs_puzzle.clear();
+
+	GameManager::instance().print();
 }

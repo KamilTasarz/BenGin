@@ -36,13 +36,27 @@ void GasWall::onUpdate(float deltaTime) {
 
     if (!inputDetected) {
         GLFWwindow* window = ServiceLocator::getWindow()->window;
+
         for (int key = GLFW_KEY_SPACE; key <= GLFW_KEY_LAST; ++key) {
             if (glfwGetKey(window, key) == GLFW_PRESS) {
                 inputDetected = true;
                 break;
             }
         }
-        return;
+
+        if (!inputDetected && glfwJoystickIsGamepad(GLFW_JOYSTICK_1)) {
+            GLFWgamepadstate state;
+            if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state)) {
+                for (int i = 0; i <= GLFW_GAMEPAD_BUTTON_LAST; ++i) {
+                    if (state.buttons[i] == GLFW_PRESS) {
+                        inputDetected = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!inputDetected) return;
     }
 
     spreadInterval = GameManager::instance().gasSpreadingSpeed;

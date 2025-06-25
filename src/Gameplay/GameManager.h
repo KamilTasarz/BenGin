@@ -30,6 +30,10 @@ public:
 	GameManager& operator=(GameManager&&) = delete;
 
 
+	int constructors = 0;
+	int constructorsScene = 0;
+	int destructors = 0;
+	int destructorsScene = 0;
 
 	float globalSmoothing = 10.f;
 	float gasSpreadingSpeed = 1.f;
@@ -81,6 +85,8 @@ public:
 	void CalculateGasSpreadingSpeed(float deltaTime);
 	void HandleLevelGeneration();
 	void onEnd();
+	void increment(int val);
 	void HandleRewindTimeline();
+	void print();
 };
 

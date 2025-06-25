@@ -1,3 +1,7 @@
+//#define _CRTDBG_MAP_ALLOC
+//#include <crtdbg.h>
+//#include <vld.h>
+
 #include "config.h"
 #include "src/System/Engine.h"
 

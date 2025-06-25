@@ -1,4 +1,33 @@
 #include "Animation.h"
+#include "Model.h"
+
+Animation::Animation(const char* animation_path, Model& model, int num) {
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(animation_path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	if (scene && scene->mRootNode) {
+
+		if (num < scene->mNumAnimations) {
+			aiAnimation* anim = scene->mAnimations[num];
+			duration = anim->mDuration;
+			speed = anim->mTicksPerSecond;
+			name = anim->mName.C_Str();
+			readHierarchy(root, scene->mRootNode);
+			ReadMissingBones(anim, model);
+			cout << "Wczytano animacje: " << animation_path << " " << num << endl;
+		}
+	}
+}
+
+Animation::Animation(aiAnimation* anim, Model& model, const aiScene* scene) {
+	if (anim) {
+		duration = anim->mDuration;
+		speed = anim->mTicksPerSecond;
+		name = anim->mName.C_Str();
+		readHierarchy(root, scene->mRootNode);
+		ReadMissingBones(anim, model);
+
+	}
+}
 
 void Animation::readHierarchy(Ass_impNodeData& destination, aiNode* source)
 {

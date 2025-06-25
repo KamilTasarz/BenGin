@@ -12,6 +12,7 @@
 
 #include "Mesh.h"
 #include "Shader.h"
+#include "Animation.h"
 
 #include <string>
 #include <fstream>
@@ -26,17 +27,7 @@ using namespace std;
 unsigned int textureFromFile(const char* path, const string& directory, bool gamma = false);
 unsigned int textureFromFile(const char* full_path, bool gamma = false);
 
-struct BoneInfo
-{
-    // id wykorzystywane w shaderze do okreslenia z macierzy kosci, ktora to jest macierz
-    int id;
 
-    // offset przenoszacy kosc z originu
-    glm::mat4 offset;
-
-};
-
-class Animation;
 
 class Model
 {
@@ -84,7 +75,7 @@ public:
     float tile_scale = 1.f;
 
     bool gammaCorrection, has_animations = false, move_origin;
-    std::vector<Animation*> animations;
+    std::vector<std::unique_ptr<Animation>> animations;
 
     std::map<string, BoneInfo> m_BoneInfoMap;  // info o kosciach modelu
     int m_BoneCounter = 0;
@@ -100,7 +91,7 @@ public:
 
     Model(std::vector<shared_ptr<Texture>>&& textures, int id, string mode = "cube", float scale_factor = 1.f);
 
-    ~Model();
+    ~Model() = default;
 
     Animation* getAnimationByName(std::string name);
 

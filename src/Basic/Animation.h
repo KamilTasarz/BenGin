@@ -5,14 +5,27 @@
 
 #include <assimp/Importer.hpp>
 
+#include <map>
+
 #include "Bone.h"
-#include "Model.h"
+
+class Model;
 
 struct Ass_impNodeData {
 	glm::mat4 transform;
 	std::string name;
 	int children_count;
 	std::vector<Ass_impNodeData> children;
+};
+
+struct BoneInfo
+{
+	// id wykorzystywane w shaderze do okreslenia z macierzy kosci, ktora to jest macierz
+	int id;
+
+	// offset przenoszacy kosc z originu
+	glm::mat4 offset;
+
 };
 
 class Animation {
@@ -26,33 +39,9 @@ public:
 
 	Animation() = default;
 
-	Animation(const char* animation_path, Model& model, int num = 0) {
-		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(animation_path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-		if (scene && scene->mRootNode) {
+	Animation(const char* animation_path, Model& model, int num = 0);
 
-			if (num < scene->mNumAnimations) {
-				aiAnimation* anim = scene->mAnimations[num];
-				duration = anim->mDuration;
-				speed = anim->mTicksPerSecond;
-				name = anim->mName.C_Str();
-				readHierarchy(root, scene->mRootNode);
-				ReadMissingBones(anim, model);
-				cout << "Wczytano animacje: " << animation_path << " " << num << endl;
-			}
-		}
-	}
-
-	Animation(aiAnimation* anim, Model& model, const aiScene* scene) {
-		if (anim) {
-			duration = anim->mDuration;
-			speed = anim->mTicksPerSecond;
-			name = anim->mName.C_Str();
-			readHierarchy(root, scene->mRootNode);
-			ReadMissingBones(anim, model);
-			
-		}
-	}
+	Animation(aiAnimation* anim, Model& model, const aiScene* scene);
 
 	Bone* FindBone(const std::string& name)
 	{
