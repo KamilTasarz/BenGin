@@ -679,7 +679,7 @@ void Game::run()
     while (!glfwWindowShouldClose(ServiceLocator::getWindow()->window) && play) {
 
         if (SceneManager::Instance().isSwitched()) {
-            
+            ServiceLocator::provide(std::make_unique<CAudioEngine>());
             shutdown();
             init();
             SceneManager::Instance().resetSwitched();
@@ -704,7 +704,7 @@ void Game::run()
 
             if (SceneManager::Instance().isLateNext()) {
                 SceneManager::Instance().next();
-				
+                ServiceLocator::provide(std::make_unique<CAudioEngine>());
 				if (SceneManager::Instance().currentSceneIndex == 1) {
 					MusicManager::instance().StartGameTransition();
 					//GameManager::instance().start = true;

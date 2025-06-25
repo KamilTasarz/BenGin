@@ -27,9 +27,15 @@ public:
 		_window = std::unique_ptr<Window>(window);
 	}
 
-	static inline void provide(CAudioEngine* audio_engine) {
+	/*static inline void provide(CAudioEngine* audio_engine) {
 		if (_audio_engine != nullptr) { return; }
 		_audio_engine = std::unique_ptr<CAudioEngine>(audio_engine);
+	}*/
+
+	static inline std::unique_ptr<CAudioEngine> _audio_engine = nullptr;
+
+	static void provide(std::unique_ptr<CAudioEngine> audio_engine) {
+		_audio_engine = std::move(audio_engine);
 	}
 
 	static inline void shutdownServices() {
@@ -38,11 +44,9 @@ public:
 		shutdownWindow();
 	}
 
-private:
-
 	static inline std::unique_ptr<InputManager> _input_manager = nullptr;
 	static inline std::unique_ptr<Window> _window = nullptr;
-	static inline std::unique_ptr<CAudioEngine> _audio_engine = nullptr;
+	//static inline std::unique_ptr<CAudioEngine> _audio_engine = nullptr;
 
 	static inline void shutdownInputManager() {
 		if (!_input_manager) { return; }
@@ -59,6 +63,7 @@ private:
 		_audio_engine.get()->Shutdown();
 		_audio_engine.reset();
 	}
+
 
 };
 

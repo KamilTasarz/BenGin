@@ -89,8 +89,8 @@ void Implementation::Update() {
         mChannels.erase(it);
     }
     // We call the update of the system
-    CAudioEngine::ErrorCheck(mpStudioSystem->update());
-    CAudioEngine::ErrorCheck(mpSystem->update());
+    if (mpStudioSystem) CAudioEngine::ErrorCheck(mpStudioSystem->update());
+    if (mpSystem) CAudioEngine::ErrorCheck(mpSystem->update());
 }
 
 Implementation* sgpImplementation = nullptr;
@@ -105,16 +105,6 @@ void CAudioEngine::Update()
 {
     // Calls update from the Implementation structure
     sgpImplementation->Update();
-
-    for (auto it = sgpImplementation->mChannels.begin(); it != sgpImplementation->mChannels.end(); ) {
-        bool isPlaying = false;
-        if (it->second && it->second->isPlaying(&isPlaying) == FMOD_OK && !isPlaying) {
-            it = sgpImplementation->mChannels.erase(it);
-        }
-        else {
-            ++it;
-        }
-    }
 
 }
 
@@ -379,9 +369,9 @@ bool CAudioEngine::IsEventPlaying(const string& strEventName) const
         return false;
 
     // This playback tells us if the event is playing or no
-    FMOD_STUDIO_PLAYBACK_STATE* state = NULL;
-    if (tFoundIt->second->getPlaybackState(state) == FMOD_STUDIO_PLAYBACK_PLAYING) {
-        return true;
+    FMOD_STUDIO_PLAYBACK_STATE state;
+    if (tFoundIt->second->getPlaybackState(&state) == FMOD_OK) {
+        return state == FMOD_STUDIO_PLAYBACK_PLAYING;
     }
     return false;
 }

@@ -1457,10 +1457,7 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
     //set_prefab_colliders(prefab_root);
 }
 
-Prefab::~Prefab() {
-    delete prefab_scene_graph;
-    prefab_scene_graph = nullptr;
-}
+
 
 PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scene_graph, std::string name, glm::vec3 position)
     : Node(prefab->prefab_scene_graph->root->name + name) {
@@ -1831,7 +1828,8 @@ Prefab::Prefab(std::string name, PrefabType prefab_type) {
 Prefab::~Prefab()
 {
 	cout << "Prefab destructor called for: " << prefab_scene_graph->root->name << endl;
-    delete prefab_scene_graph;
+    if (prefab_scene_graph)
+        delete prefab_scene_graph;
     prefab_scene_graph = nullptr;
 }
 

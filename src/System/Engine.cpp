@@ -22,8 +22,8 @@ void Engine::init()
 	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Beta Version 1.3.0");
 	ServiceLocator::provide(window);
 	
-	audio = new CAudioEngine();
-	ServiceLocator::provide(audio);
+	//audio = new CAudioEngine();
+	ServiceLocator::provide(std::make_unique<CAudioEngine>());
 
 	PhysicsSystem::instance();
 
