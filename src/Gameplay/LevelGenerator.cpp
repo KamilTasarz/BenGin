@@ -61,13 +61,23 @@ void LevelGenerator::GenerateLevel()
 	else if (goingRight) {
 		// change direction
 		if ((changeDirection < directionChangeChance && directionLength > minimalHorizontalLevelCount) || directionLength >= maximalHorizontalLevelCount) {
-			roomName = "room_right_up_";
+			bool chooseUp = !goingDown;
+
+			if (chooseUp) {
+				roomName = "room_right_up_";
+				goingUp = true;
+				goingDown = false;
+			}
+			else {
+				roomName = "room_right_down_";
+				goingUp = false;
+				goingDown = true;
+			}
+
 			levelIndex = 1;
 			directionLength = 0;
-
 			usedIndexes.clear();
 			goingRight = false;
-			goingUp = true;
 		}
 		// go right
 		else {
@@ -115,12 +125,35 @@ void LevelGenerator::GenerateLevel()
 			directionLength++;
 		}
 	}
+	else if (goingDown) {
+		if ((changeDirection < directionChangeChance && directionLength >= minimalVerticalLevelCount) || directionLength >= maximalVerticalLevelCount) {
+			roomName = "room_down_right_";
+			levelIndex = 1;
+			directionLength = 0;
+
+			usedIndexes.clear();
+			goingRight = true;
+			goingDown = false;
+		}
+		else {
+			roomName = "room_down_";
+			if (usedIndexes.size() >= levelsDownCount) {
+				usedIndexes.clear();
+			}
+
+			do {
+				levelIndex = GameMath::RandomInt(1, levelsDownCount);
+			} while (std::find(usedIndexes.begin(), usedIndexes.end(), levelIndex) != usedIndexes.end());
+
+			usedIndexes.push_back(levelIndex);
+			directionLength++;
+		}
+	}
 
 	roomNumber++;
 	std::string levelName = roomName + std::to_string(levelIndex);
 
 	glm::vec3 pos = owner->getTransform().getLocalPosition();
-
 	PrefabInstance* pref = new PrefabInstance(PrefabRegistry::FindRoomByName(levelName), owner->scene_graph, std::to_string(roomNumber + 20), pos);
 
 	owner->scene_graph->addChild(pref);

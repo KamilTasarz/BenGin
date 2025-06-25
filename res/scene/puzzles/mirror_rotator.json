@@ -1,0 +1,266 @@
+{
+    "AABB_logic_max": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+    },
+    "AABB_logic_min": {
+        "x": -1.0,
+        "y": -1.0,
+        "z": -1.0
+    },
+    "children": [
+        {
+            "AABB_logic_max": {
+                "x": 1.1052781343460083,
+                "y": 2.205277919769287,
+                "z": 1.1052781343460083
+            },
+            "AABB_logic_min": {
+                "x": -1.1052781343460083,
+                "y": -0.005278132855892181,
+                "z": -1.1052781343460083
+            },
+            "children": [
+                {
+                    "AABB_logic_max": {
+                        "x": 6.0,
+                        "y": 1.2500004768371582,
+                        "z": 1.25
+                    },
+                    "AABB_logic_min": {
+                        "x": 0.0,
+                        "y": -1.249999761581421,
+                        "z": -1.25
+                    },
+                    "id": 0,
+                    "is_logic_active": false,
+                    "is_physic_active": true,
+                    "is_visible": true,
+                    "layer": "Default",
+                    "model.id": 26,
+                    "name": "PIPE",
+                    "no_textures": false,
+                    "position": {
+                        "x": 6.728407697664807e-08,
+                        "y": 1.0518399477005005,
+                        "z": -1.1288388967514038
+                    },
+                    "rotation": {
+                        "w": 0.7071067690849304,
+                        "x": 0.0,
+                        "y": 0.7071067690849304,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 0.5,
+                        "y": 0.30000001192092896,
+                        "z": 0.800000011920929
+                    },
+                    "tag": "Default",
+                    "type": "Node"
+                }
+            ],
+            "components": [
+                {
+                    "name": "MirrorRotator",
+                    "variables": [
+                        {
+                            "field_type": "Node*",
+                            "name": "mirrorNode",
+                            "value": "mirror"
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "movingRange",
+                            "value": 3.0
+                        },
+                        {
+                            "field_type": "float",
+                            "name": "rotationAngle",
+                            "value": 90.0
+                        }
+                    ]
+                }
+            ],
+            "id": 0,
+            "is_logic_active": false,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 88,
+            "name": "rotator",
+            "no_textures": false,
+            "position": {
+                "x": 0.0,
+                "y": -3.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 1.0,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.4000000059604645,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "tag": "Default",
+            "type": "Node"
+        },
+        {
+            "AABB_logic_max": {
+                "x": 1.0100274085998535,
+                "y": 1.4343016147613525,
+                "z": 0.1688523292541504
+            },
+            "AABB_logic_min": {
+                "x": -1.0100274085998535,
+                "y": -1.4343016147613525,
+                "z": -0.1688523292541504
+            },
+            "children": [
+                {
+                    "AABB_logic_max": {
+                        "x": 0.5,
+                        "y": 0.0,
+                        "z": 0.5
+                    },
+                    "AABB_logic_min": {
+                        "x": -0.5,
+                        "y": 0.0,
+                        "z": -0.5
+                    },
+                    "AABB_max": {
+                        "x": 0.5,
+                        "y": 0.0,
+                        "z": 0.5
+                    },
+                    "AABB_min": {
+                        "x": -0.5,
+                        "y": 0.0,
+                        "z": -0.5
+                    },
+                    "id": 0,
+                    "is_logic_active": false,
+                    "is_physic_active": true,
+                    "is_visible": false,
+                    "layer": "Default",
+                    "model.id": 21,
+                    "name": "MIRORR",
+                    "no_textures": false,
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotation": {
+                        "w": 0.7071067690849304,
+                        "x": 0.7071067690849304,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 2.0,
+                        "y": 1.0,
+                        "z": 3.0
+                    },
+                    "tag": "Default",
+                    "type": "MirrorNode"
+                },
+                {
+                    "AABB_logic_max": {
+                        "x": 6.0,
+                        "y": 1.2500004768371582,
+                        "z": 1.25
+                    },
+                    "AABB_logic_min": {
+                        "x": 0.0,
+                        "y": -1.249999761581421,
+                        "z": -1.25
+                    },
+                    "id": 0,
+                    "is_logic_active": false,
+                    "is_physic_active": true,
+                    "is_visible": true,
+                    "layer": "Default",
+                    "model.id": 26,
+                    "name": "clone_PIPE",
+                    "no_textures": false,
+                    "position": {
+                        "x": -1.000000238418579,
+                        "y": 0.008284092880785465,
+                        "z": -0.026790495961904526
+                    },
+                    "rotation": {
+                        "w": 1.910685465164705e-15,
+                        "x": 4.371138828673793e-08,
+                        "y": 1.0,
+                        "z": 4.371138828673793e-08
+                    },
+                    "scale": {
+                        "x": 0.30000001192092896,
+                        "y": 0.07999999821186066,
+                        "z": 0.15000000596046448
+                    },
+                    "tag": "Default",
+                    "type": "Node"
+                }
+            ],
+            "id": 0,
+            "is_logic_active": false,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Default",
+            "model.id": 87,
+            "name": "mirror",
+            "no_textures": false,
+            "position": {
+                "x": -2.980232594040899e-08,
+                "y": 2.5,
+                "z": -0.5
+            },
+            "rotation": {
+                "w": 0.7071067690849304,
+                "x": 0.0,
+                "y": -0.7071067690849304,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.5,
+                "y": 1.0,
+                "z": 0.5
+            },
+            "tag": "Default",
+            "type": "Node"
+        }
+    ],
+    "id": 0,
+    "is_logic_active": false,
+    "is_physic_active": true,
+    "is_visible": true,
+    "layer": "Default",
+    "model.id": -1,
+    "name": "mirror_rotator",
+    "no_textures": true,
+    "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotation": {
+        "w": 1.0,
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+    },
+    "tag": "Default",
+    "type": "Node"
+}
