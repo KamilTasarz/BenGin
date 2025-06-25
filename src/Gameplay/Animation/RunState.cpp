@@ -19,7 +19,7 @@ void RunState::enter(Node* owner) {
     auto* audio = ServiceLocator::getAudioEngine();
     sfxId = audio->PlayMusic(audio->running, GameManager::instance().sfxVolume * 75.f);
 
-	owner->getChildByNamePart("run_particles")->getComponent<Particles>()->emit = true;
+	//owner->getChildByNamePart("run_particles")->getComponent<Particles>()->emit = false;
 }
 
 void RunState::update(Node* owner, float deltaTime) {
