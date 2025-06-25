@@ -60,30 +60,20 @@ void TimeRewindable::onUpdate(float deltaTime) {
         isRewinding = true;
         rewindTime += deltaTime;
         rewindSpeed = pow(2, static_cast<int>(rewindTime) + 1);
-
         owner->scene_graph->activateRewindShader();
 
         //MusicManager::instance().PlayRewindSound();
-
-        /*auto* audio = ServiceLocator::getAudioEngine();
-        if (sfxId == -1) {
-            sfxId = audio->PlayMusic(audio->rewind, GameManager::instance().sfxVolume * 80.f);
-        }*/
     }
+
 
     // Stop rewind if no history left
     if (isRewinding && GameManager::instance().historyEmpty) {
         isRewinding = false;
         rewindTime = 0.f;
-        hasReleasedRewindKey = false;  // czeka na ponowne puszczenie klawisza
-
+        hasReleasedRewindKey = false;
         owner->scene_graph->deactivateRewindShader();
 
         //MusicManager::instance().StopRewindSound();
-
-        /*auto* audio = ServiceLocator::getAudioEngine();
-        audio->pauseSound(sfxId);
-        sfxId = -1;*/
     }
 
     // Stop rewind if key released manually
@@ -91,14 +81,9 @@ void TimeRewindable::onUpdate(float deltaTime) {
         isRewinding = false;
         rewindTime = 0.f;
         hasReleasedRewindKey = true;
-
         owner->scene_graph->deactivateRewindShader();
 
         //MusicManager::instance().StopRewindSound();
-
-        /*auto* audio = ServiceLocator::getAudioEngine();
-        audio->pauseSound(sfxId);
-        sfxId = -1;*/
     }
 
     if (isRewinding) {

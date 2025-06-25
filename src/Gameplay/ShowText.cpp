@@ -58,7 +58,7 @@ void ShowText::onUpdate(float deltaTime)
 			}
 
 			auto* audio = ServiceLocator::getAudioEngine();
-			audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
+			//audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
 		}
 		else if (!textObject->value.empty()) {
 			for (int i = 0; i < spacesAdded + 1; i++)
@@ -73,7 +73,7 @@ void ShowText::onUpdate(float deltaTime)
 			}
 			
 			auto* audio = ServiceLocator::getAudioEngine();
-			audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
+			//audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
 		}
 		else {
 			isDeleting = false;
@@ -107,7 +107,7 @@ void ShowText::onUpdate(float deltaTime)
 
 			if (c != ' ') {
 				auto* audio = ServiceLocator::getAudioEngine();
-				audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
+				//audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
 			}
 		}
 		else {
@@ -128,7 +128,7 @@ void ShowText::onUpdate(float deltaTime)
 void ShowText::onCollisionLogic(Node* other)
 {
 	if (other->getTagName() == "Player") {
-		if (!isWriting && !entered) {
+		if (!isWriting && !entered && !startWithText) {
 			isWriting = true;
 			entered = true;
 			writingFirstDone = false;
@@ -140,6 +140,13 @@ void ShowText::onCollisionLogic(Node* other)
 			for (char c : text) {
 				textChars.push_back(c);
 			}
+		}
+		else if (startWithText && !entered) {
+			isWriting = false;
+			entered = true;
+
+			textObject->value = text;
+			textObjectSecond->value = textSecond;
 		}
 	}
 }

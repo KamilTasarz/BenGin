@@ -26,7 +26,7 @@ void Scale::onStart()
     std::cout << "start szalek -----------------------------------------------------------" << std::endl;
 
     rb = owner->getComponent<Rigidbody>();
-    rb->drag = 1.2f;
+    rb->dragY = 1.2f;
     startPos1 = owner->transform.getLocalPosition();
     startPos2 = secondScale->transform.getLocalPosition();
 
@@ -84,9 +84,6 @@ void Scale::onUpdate(float deltaTime)
 
         owner->transform.setLocalPosition(newPos1);
         secondScale->transform.setLocalPosition(newPos2);
-    }
-    else {
-        //rb->velocityY = 0.f;
     }
 
     float offset = startPos1.y - pos1.y;

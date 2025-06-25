@@ -7,6 +7,7 @@ class MusicManager
 {
 public:
 	FMOD::ChannelGroup* musicGroup = nullptr;
+	float resyncTimer = 0.1f;
 
 	int menuId = -1;
 	int baseId = -1;
@@ -17,6 +18,7 @@ public:
 	bool pauseActive = false;
 	bool transitionActive = false;
 	bool rewindActive = false;
+	bool gameMusicActive = false;
 
 	int currentStage = 1;
 	float menuVolume = 0.f;

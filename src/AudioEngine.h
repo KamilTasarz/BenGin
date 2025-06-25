@@ -23,6 +23,8 @@ struct Vector3 {
 
 struct Implementation {
 
+    FMOD::ChannelGroup* mpMusicChannelGroup;
+
     Implementation();
     ~Implementation();
 
@@ -77,10 +79,10 @@ public:
     std::string musicPlay = "res/audios/music/musicPlay.mp3";
     std::string musicPause = "res/audios/music/musicPause.mp3";
     std::string musicBase = "res/audios/music/musicBase.mp3";
-    std::string musicStage1 = "res/audios/music/musicStage1.mp3";
-    std::string musicStage2 = "res/audios/music/musicStage2.mp3";
-    std::string musicStage3 = "res/audios/music/musicStage3.mp3";
-    std::string musicStage4 = "res/audios/music/musicStage4.mp3";
+    std::string musicStage1 = "res/audios/music/musicStage1.wav";
+    std::string musicStage2 = "res/audios/music/musicStage2.wav";
+    std::string musicStage3 = "res/audios/music/musicStage3.wav";
+    std::string musicStage4 = "res/audios/music/musicStage4.wav";
     std::string musicRewind = "res/audios/music/musicRewind.mp3";
 
     static void Init();
@@ -122,10 +124,6 @@ public:
     void pauseSound(int nChannelId);
     void resumeSound(int nChannelId);
 
-    std::vector<int> PlayMusicTracks(const std::vector<std::string>& trackNames);
-
-    void StartMusicGroup();
-
     FMOD::System* GetLowLevelSystem();
 
     int generateChannelId();
@@ -133,7 +131,9 @@ public:
     FMOD::Sound* GetSoundByName(const std::string& name);
 
     void RegisterChannel(int channelId, FMOD::Channel* channel);
-
+    FMOD::Channel* GetChannel(int channelId);
+    std::vector<int> PlayMusicTracks(const std::vector<std::string>& trackNames);
+    void StartMusicGroup();
 };
 
 #endif // !AUDIO_ENGINE_H

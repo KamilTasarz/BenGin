@@ -136,6 +136,8 @@ void PlayerController::onStart()
 	rb = owner->getComponent<Rigidbody>();
 	rb->lockPositionZ = true;
 	rb->isPlayer = true;
+	rb->dragY = 1.f;
+
 	timerIndicator = owner->getChildByNamePart("timer");
 	scale_factor = owner->transform.getLocalScale().x;
 	emitter = dynamic_cast<InstanceManager*>(owner->scene_graph->root->getChildByTag("Emitter"));
@@ -156,6 +158,7 @@ void PlayerController::onStart()
 void PlayerController::onUpdate(float deltaTime)
 {
 	isGamepadConnected = glfwJoystickIsGamepad(GLFW_JOYSTICK_1);
+	GameManager::instance().isGamepadConnected = isGamepadConnected;
 
 	cout << "\nGamepad connected?: " << isGamepadConnected << endl;
 
@@ -387,7 +390,7 @@ void PlayerController::Die(bool freeze, bool electrified)
 
 bool PlayerController::HandleVirus(float deltaTime)
 {
-	timerIndicator->setActive(true);
+	timerIndicator->is_visible = true;
 	constexpr float smoothing = 10.f;
 
 	glm::vec3 currentScale = timerIndicator->transform.getLocalScale();
@@ -421,9 +424,10 @@ void PlayerController::ApplyVirusEffect()
 
 	rb->gravity = -32.f;
 	rb->mass = 1.f;
+	rb->dragY = 1.f;
 	speed = 9.f;
 	isGravityFlipped = false;
-	jumpForce = 19.f;
+	jumpForce = 23.f;
 	CameraFollow::instance->verticalOffset = 3.f;
 
 	VirusEffect();
@@ -438,7 +442,8 @@ void PlayerController::VirusEffect()
 		isGravityFlipped = false;
 		rb->gravity = -32.f;
 		rb->mass = 0.4f;
-		jumpForce *= 1.2f;
+		rb->dragY = 0.5f;
+		jumpForce *= 1.5f;
 	}
 	else if (virusType == "green") {
 
