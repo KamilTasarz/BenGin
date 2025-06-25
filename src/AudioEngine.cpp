@@ -10,7 +10,7 @@ Implementation::Implementation() {
     // Fmod Studio System handles all events and sounds
     CAudioEngine::ErrorCheck(FMOD::Studio::System::create(&mpStudioSystem));
     // Initializing, 32 = number of channels, and some flags
-    CAudioEngine::ErrorCheck(mpStudioSystem->initialize(32, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, NULL));
+    CAudioEngine::ErrorCheck(mpStudioSystem->initialize(64, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, NULL));
 
     mpSystem = NULL;
     // We create low level system which handles all the low level stuff
