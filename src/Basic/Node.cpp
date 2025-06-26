@@ -104,7 +104,6 @@ void SceneGraph::deleteChild(Node* p)
     auto it = std::find(siblings.begin(), siblings.end(), p);
     if (it != siblings.end()) {
         to_delete_vec.push_back(*it);
-        size--;
     }
 }
 

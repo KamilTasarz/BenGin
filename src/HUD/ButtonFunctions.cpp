@@ -140,6 +140,5 @@ void ReturnToMenuButton()
 
     }
 
-    MusicManager::instance().StopDeathMusic();
     GameManager::instance().end_screen = false; 
 }

@@ -271,30 +271,6 @@ void MusicManager::StopRewindSound() {
     audio->StopChannel(rewindId);
 }
 
-void MusicManager::PlayDeathMusic() {
-    auto* audio = ServiceLocator::getAudioEngine();
-
-    if (menuActive) {
-        audio->stopSound(menuId);
-        menuActive = false;
-    }
-
-    deathId = audio->PlayMusic(audio->musicDeath, GameManager::instance().musicVolume * volume);
-    deathActive = true;
-}
-
-void MusicManager::StopDeathMusic() {
-    auto* audio = ServiceLocator::getAudioEngine();
-
-    if (deathActive) {
-        audio->stopSound(deathId);
-        deathActive = false;
-    }
-
-    menuId = audio->PlayMusic(audio->musicMenu, GameManager::instance().musicVolume * volume);
-    menuActive = true;
-}
-
 void MusicManager::onEnd() {
     menuId = -1;
     baseId = -1;

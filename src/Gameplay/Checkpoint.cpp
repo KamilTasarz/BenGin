@@ -41,13 +41,6 @@ void Checkpoint::onUpdate(float deltaTime)
 	
 	if (fillingStarted) {
 		if (timer < 0.f) {
-			if (!sfxPlayed) {
-				sfxPlayed = true;
-
-				auto* audio = ServiceLocator::getAudioEngine();
-				audio->PlaySFX(audio->checkpoint, GameManager::instance().sfxVolume * 80.f);
-			}
-
 			glm::vec3 currentScale = filling->transform.getLocalScale();
 			glm::vec3 targetScale = glm::vec3(.75f, .6f, .75f);
 
@@ -100,9 +93,9 @@ void Checkpoint::onCollisionLogic(Node* other)
 		if (!arm->is_animating) {
 			arm->animator->playAnimation(arm->pModel->getAnimationByName("ArmatureAction.001"), false);
 			arm->is_animating = true;
-			arm->animator->current_animation->speed = 1600.f;
+			arm->animator->current_animation->speed = 1500.f;
 
-			timer = 0.4f;
+			timer = 0.5f;
 			fillingStarted = true;
 		}
 	}

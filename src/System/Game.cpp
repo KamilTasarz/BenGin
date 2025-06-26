@@ -44,7 +44,7 @@ void Game::input()
         play = false;
     }
 
-    /*if (glfwGetKey(window->window, GLFW_KEY_Z) == GLFW_PRESS) {
+    if (glfwGetKey(window->window, GLFW_KEY_Z) == GLFW_PRESS) {
         if (!isClicked) {
 
             SceneManager::Instance().next();
@@ -53,7 +53,7 @@ void Game::input()
     }
     else {
 		isClicked = false;
-    }*/
+    }
 
     if (glfwGetKey(window->window, GLFW_KEY_F11) == GLFW_PRESS) {
         window->toggleFullscreen();
