@@ -497,10 +497,6 @@ void AnimatedMenu::onUpdate(float deltaTime)
 		}
 	}
 	if (GameManager::instance().end_screen) {
-		if (GameManager::instance().playDeathMusic) {
-			GameManager::instance().playDeathMusic = false;
-			MusicManager::instance().PlayDeathMusic();
-		}
 
 		if (play)
 			play->visible = false;
