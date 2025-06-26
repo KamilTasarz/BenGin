@@ -14,6 +14,7 @@ public:
 
 	float timer;
 	bool fillingStarted = false;
+	bool sfxPlayed = false;
 
 	Checkpoint() = default;
 	~Checkpoint() = default;

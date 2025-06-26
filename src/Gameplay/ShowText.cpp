@@ -58,7 +58,7 @@ void ShowText::onUpdate(float deltaTime)
 			}
 
 			auto* audio = ServiceLocator::getAudioEngine();
-			//audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
+			audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 75.f);
 		}
 		else if (!textObject->value.empty()) {
 			for (int i = 0; i < spacesAdded + 1; i++)
@@ -73,7 +73,7 @@ void ShowText::onUpdate(float deltaTime)
 			}
 			
 			auto* audio = ServiceLocator::getAudioEngine();
-			//audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
+			audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 75.f);
 		}
 		else {
 			isDeleting = false;
@@ -107,7 +107,7 @@ void ShowText::onUpdate(float deltaTime)
 
 			if (c != ' ') {
 				auto* audio = ServiceLocator::getAudioEngine();
-				//audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 80.f);
+				audio->PlaySFX(audio->writing, GameManager::instance().sfxVolume * 75.f);
 			}
 		}
 		else {

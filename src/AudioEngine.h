@@ -73,6 +73,7 @@ public:
 	std::string propeller = "res/audios/sounds/tv_propeller.ogg";
     std::string running_step = "res/audios/sounds/running_step.ogg";
     std::string rewind = "res/audios/sounds/rewind.ogg";
+    std::string checkpoint = "res/audios/sounds/checkpoint.ogg";
 
     //music
     std::string musicMenu = "res/audios/music/musicMenu.mp3";

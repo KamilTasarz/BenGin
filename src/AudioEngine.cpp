@@ -574,6 +574,7 @@ void CAudioEngine::loadAllGameSounds() {
 	LoadSound(propeller, true, true, false);
 	LoadSound(running_step, false, false, false);
 	LoadSound(rewind, false, false, false);
+	LoadSound(checkpoint, false, false, false);
 
     // music
     LoadSound(musicMenu, false, true, false);
@@ -611,6 +612,7 @@ void CAudioEngine::unloadAllGameSounds() {
     UnloadSound(propeller);
     UnloadSound(running_step);
     UnloadSound(rewind);
+    UnloadSound(checkpoint);
 
     // music
     UnloadSound(musicMenu);
