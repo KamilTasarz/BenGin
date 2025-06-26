@@ -73,6 +73,7 @@ public:
 	std::string propeller = "res/audios/sounds/tv_propeller.ogg";
     std::string running_step = "res/audios/sounds/running_step.ogg";
     std::string rewind = "res/audios/sounds/rewind.ogg";
+    std::string checkpoint = "res/audios/sounds/checkpoint.ogg";
 
     //music
     std::string musicMenu = "res/audios/music/musicMenu.mp3";
@@ -84,6 +85,7 @@ public:
     std::string musicStage3 = "res/audios/music/musicStage3.wav";
     std::string musicStage4 = "res/audios/music/musicStage4.wav";
     std::string musicRewind = "res/audios/music/musicRewind.mp3";
+    std::string musicDeath = "res/audios/music/musicDeath.mp3";
 
     static void Init();
     static void Update();

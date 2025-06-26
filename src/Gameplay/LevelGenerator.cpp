@@ -3,6 +3,7 @@
 #include "RegisterScript.h"
 #include "GameMath.h"
 #include "GameManager.h"
+#include "../System/PhysicsSystem.h"
 
 REGISTER_SCRIPT(LevelGenerator);
 
@@ -132,7 +133,7 @@ void LevelGenerator::GenerateLevel()
 		}
 	}
 	else if (goingDown) {
-		if ((changeDirection < directionChangeChance && directionLength >= minimalVerticalLevelCount) || directionLength >= maximalVerticalLevelCount) {
+		if ((changeDirection < directionChangeChance && directionLength >= minimalVerticalLevelCount) || directionLength >= maximalVerticalLevelCount || directionLength >= levelsDownCount) {
 			roomName = "room_down_right_";
 			levelIndex = 1;
 			directionLength = 0;
@@ -170,12 +171,16 @@ void LevelGenerator::GenerateLevel()
 
 	currentRooms.push_back(pref);
 
-	if (currentRooms.size() > 5) {
+	if (currentRooms.size() > 10) {
 		Node* toRemove = currentRooms.front();
 		//Node* oldest = currentRooms.front();
 		//owner->scene_graph->deleteChild(oldest);
+		if (toRemove->in_frustrum) return;
+
+		PhysicsSystem::instance().rooms.erase(toRemove);
 
 		currentRooms.pop_front();
+		
 		owner->scene_graph->deleteChild(toRemove);
 
 	}

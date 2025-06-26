@@ -95,6 +95,8 @@ void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
         //SceneManager::Instance().next();
 		end = true;
         end_screen = true;
+
+        playDeathMusic = true;
     }
 
     if (!tutorialActive && !isRewinding) {

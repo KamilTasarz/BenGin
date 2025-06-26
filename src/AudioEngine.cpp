@@ -10,7 +10,7 @@ Implementation::Implementation() {
     // Fmod Studio System handles all events and sounds
     CAudioEngine::ErrorCheck(FMOD::Studio::System::create(&mpStudioSystem));
     // Initializing, 32 = number of channels, and some flags
-    CAudioEngine::ErrorCheck(mpStudioSystem->initialize(32, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, NULL));
+    CAudioEngine::ErrorCheck(mpStudioSystem->initialize(64, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, NULL));
 
     mpSystem = NULL;
     // We create low level system which handles all the low level stuff
@@ -574,6 +574,7 @@ void CAudioEngine::loadAllGameSounds() {
 	LoadSound(propeller, true, true, false);
 	LoadSound(running_step, false, false, false);
 	LoadSound(rewind, false, false, false);
+	LoadSound(checkpoint, false, false, false);
 
     // music
     LoadSound(musicMenu, false, true, false);
@@ -585,6 +586,7 @@ void CAudioEngine::loadAllGameSounds() {
     LoadSound(musicStage3, false, true, false);
     LoadSound(musicStage4, false, true, false);
     LoadSound(musicRewind, false, true, false);
+    LoadSound(musicDeath, false, true, false);
 }
 
 void CAudioEngine::unloadAllGameSounds() {
@@ -610,6 +612,7 @@ void CAudioEngine::unloadAllGameSounds() {
     UnloadSound(propeller);
     UnloadSound(running_step);
     UnloadSound(rewind);
+    UnloadSound(checkpoint);
 
     // music
     UnloadSound(musicMenu);
@@ -621,4 +624,5 @@ void CAudioEngine::unloadAllGameSounds() {
     UnloadSound(musicStage3);
     UnloadSound(musicStage4);
     UnloadSound(musicRewind);
+    UnloadSound(musicDeath);
 }

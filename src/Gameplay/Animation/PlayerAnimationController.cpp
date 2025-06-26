@@ -42,7 +42,7 @@ void PlayerAnimationController::onStart()
 		owner->is_animating = true;
 	}
 	
-	idle = owner->pModel->getAnimationByName("Idle");
+	idle = owner->pModel->getAnimationByName("Idle2");
 	turn = owner->pModel->getAnimationByName("Turn");
 	run = owner->pModel->getAnimationByName("Run");
 	sleep = owner->pModel->getAnimationByName("Sleep");

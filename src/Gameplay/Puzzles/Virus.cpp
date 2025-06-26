@@ -115,7 +115,7 @@ void Virus::VirusEffect(Node* target)
 	PlayerController* player = target->getComponent<PlayerController>();
 	//particleTimer = 0.5f;
 
-	if (particleEmitter) particleEmitter->SpawnBurst(15);
+	//if (particleEmitter) particleEmitter->SpawnBurst(15);
 
 	if (blue) {
 		player->virusType = "blue";
