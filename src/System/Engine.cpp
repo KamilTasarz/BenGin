@@ -36,11 +36,12 @@ void Engine::init()
 
 	PrefabRegistry::Init(&prefabs, &prefabs_puzzle);
 
+	GuiManager::Instance().init();
+
 	SceneManager::Instance().Initialize();
 
 	game = new Game(prefabs, prefabs_puzzle);
 
-	editor = new Editor(prefabs, prefabs_puzzle);
 
 	camera->setAABB();
 
@@ -51,10 +52,6 @@ void Engine::init()
 void Engine::run()
 {
 	do {
-		editor->play = false;
-		editor->init();
-		editor->run();
-		editor->shutdown();
 
 		game->play = true;
 		if (!engine_work) break;
@@ -73,7 +70,6 @@ void Engine::shutdown()
 
 	ServiceLocator::shutdownServices();
 
-	delete editor;
 	delete game;
 
 	prefabs.clear();

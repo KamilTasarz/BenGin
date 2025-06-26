@@ -3,7 +3,6 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "Editor.h"
 #include "Game.h"
 
 class Window;
@@ -15,7 +14,6 @@ private:
 	std::vector<std::shared_ptr<Prefab>> prefabs_puzzle;
 	
 public:
-	Editor* editor;
 	Game* game;
 	Window* window;
 	CAudioEngine* audio;
