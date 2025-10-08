@@ -282,6 +282,14 @@ void PlayerController::onUpdate(float deltaTime)
 			}
 		}
 
+		if (jump_released) {
+
+			if (isGravityFlipped && rb->velocityY < 0 || !isGravityFlipped && rb->velocityY > 0) {
+				rb->velocityY *= 0.95f;
+			}
+
+		}
+
 		was_jump_pressed = jumpPressed;
 	}
 
