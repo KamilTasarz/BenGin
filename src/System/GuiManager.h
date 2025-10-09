@@ -64,7 +64,8 @@ enum Text_names {
 	ARIAL_64,
 	VCR_64,
 	VCR_48,
-	VCR_32
+	VCR_32,
+	VCR_80
 };
 
 enum Sprite_names {

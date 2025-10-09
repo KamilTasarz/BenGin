@@ -16,13 +16,13 @@ public:
 	ButtonObject* back = nullptr;
 	ButtonObject* nick_button = nullptr;
 	ButtonObject* check_button = nullptr;
-	ButtonObject* returnToBenuButton = nullptr;
+	ButtonObject* returnToMenuButton = nullptr;
 	ButtonObject* rerun = nullptr;
 	SpriteObject* checkbox = nullptr;
 	SpriteObject* checkbox_marked = nullptr;
 	SpriteObject* background = nullptr;
 	SpriteObject* tv = nullptr;
-	TextObject* tutorial = nullptr;
+	ButtonObject* tutorial = nullptr;
 	TextObject* last_run = nullptr;
 	TextObject* nick = nullptr;
 	TextObject* nickname = nullptr;

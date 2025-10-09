@@ -1,7 +1,10 @@
 {
     "GUI": {
-        "free_id": null,
-        "max_id": 68,
+        "free_id": [
+            70,
+            68
+        ],
+        "max_id": 71,
         "objects": [
             {
                 "alignment": 1,
@@ -14,7 +17,7 @@
                 "order": 0,
                 "ptr_id": 4,
                 "type": "text",
-                "value": "TOP 10 PLAYERS:",
+                "value": "TOP 10 SCORES:",
                 "visible": true,
                 "x": 2680.0,
                 "y": 780.0
@@ -32,11 +35,11 @@
                 "type": "text",
                 "value": "Nick",
                 "visible": true,
-                "x": 2450.0,
+                "x": 2680.0,
                 "y": 700.0
             },
             {
-                "alignment": 2,
+                "alignment": 0,
                 "color": {
                     "x": 1.0,
                     "y": 1.0,
@@ -46,9 +49,9 @@
                 "order": 0,
                 "ptr_id": 6,
                 "type": "text",
-                "value": "Score",
+                "value": "",
                 "visible": true,
-                "x": 2930.0,
+                "x": 2680.0,
                 "y": 700.0
             },
             {
@@ -64,7 +67,7 @@
                 "type": "text",
                 "value": "1.",
                 "visible": true,
-                "x": 2450.0,
+                "x": 2680.0,
                 "y": 668.0
             },
             {
@@ -78,8 +81,8 @@
                 "order": 0,
                 "ptr_id": 6,
                 "type": "text",
-                "value": "Tutorial",
-                "visible": true,
+                "value": "TUTORIAL",
+                "visible": false,
                 "x": 760.0,
                 "y": 265.0
             },
@@ -90,7 +93,7 @@
                 "size": 0.800000011920929,
                 "type": "sprite",
                 "visible": true,
-                "x": 610.0,
+                "x": 590.0,
                 "y": 240.0
             },
             {
@@ -100,22 +103,22 @@
                 "size": 0.800000011920929,
                 "type": "sprite",
                 "visible": false,
-                "x": 610.0,
+                "x": 590.0,
                 "y": 240.0
             },
             {
                 "height": 64.0,
-                "hovered_ptr_id": 13,
+                "hovered_ptr_id": 8,
                 "id": 64,
                 "is_invincible": true,
                 "on_click": "CheckboxButton",
                 "order": 0,
-                "ptr_id": 13,
+                "ptr_id": 7,
                 "text_ptr_id": 6,
                 "text_value": "Tutorial",
                 "type": "button",
                 "visible": true,
-                "width": 282.0,
+                "width": 64.0,
                 "x": 610.0,
                 "y": 240.0
             },
@@ -168,6 +171,22 @@
                 "y": 280.0
             },
             {
+                "height": 64.0,
+                "hovered_ptr_id": 8,
+                "id": 69,
+                "is_invincible": false,
+                "on_click": "CheckboxButton",
+                "order": 0,
+                "ptr_id": 7,
+                "text_ptr_id": 6,
+                "text_value": "TUTORIAL",
+                "type": "button",
+                "visible": true,
+                "width": 200.0,
+                "x": 660.0,
+                "y": 240.0
+            },
+            {
                 "height": 100.0,
                 "hovered_ptr_id": 8,
                 "id": 30,
@@ -211,7 +230,7 @@
                 "ptr_id": 4,
                 "type": "text",
                 "value": "_____",
-                "visible": true,
+                "visible": false,
                 "x": 760.0,
                 "y": 780.0
             },
@@ -232,7 +251,7 @@
                 "y": 620.0
             },
             {
-                "alignment": 2,
+                "alignment": 1,
                 "color": {
                     "x": 0.7303921580314636,
                     "y": 0.7303921580314636,
@@ -240,12 +259,12 @@
                 },
                 "id": 29,
                 "order": 1,
-                "ptr_id": 4,
+                "ptr_id": 7,
                 "type": "text",
-                "value": "Nick:",
+                "value": "LABORATORUN",
                 "visible": true,
                 "x": 760.0,
-                "y": 780.0
+                "y": 761.0
             },
             {
                 "alignment": 0,
@@ -308,8 +327,8 @@
         ]
     },
     "camera": {
-        "Pitch": -8.899998664855957,
-        "Yaw": -58.506675720214844,
+        "Pitch": -3.200003147125244,
+        "Yaw": -72.50666809082031,
         "mode": 2,
         "position": {
             "x": 0.0,
@@ -329,54 +348,6 @@
             "z": -1.0
         },
         "children": [
-            {
-                "AABB_logic_max": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "AABB_logic_min": {
-                    "x": -1.0,
-                    "y": -1.0,
-                    "z": -1.0
-                },
-                "components": [
-                    {
-                        "name": "KeyboardWrite",
-                        "variables": null
-                    },
-                    {
-                        "name": "AnimatedMenu",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "keyboard_controller",
-                "no_textures": true,
-                "position": {
-                    "x": 3.3079636096954346,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
             {
                 "AABB_logic_max": {
                     "x": 0.5,
@@ -447,6 +418,44 @@
                 },
                 "tag": "Default",
                 "type": "DirectionalLight"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "AABB_logic_min": {
+                    "x": -1.0,
+                    "y": -1.0,
+                    "z": -1.0
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "camera_follow",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
             },
             {
                 "AABB_logic_max": {
@@ -529,16 +538,26 @@
                     "y": -1.0,
                     "z": -1.0
                 },
+                "components": [
+                    {
+                        "name": "KeyboardWrite",
+                        "variables": null
+                    },
+                    {
+                        "name": "AnimatedMenu",
+                        "variables": null
+                    }
+                ],
                 "id": 0,
                 "is_logic_active": false,
                 "is_physic_active": true,
                 "is_visible": true,
                 "layer": "Default",
                 "model.id": -1,
-                "name": "camera_follow",
+                "name": "keyboard_controller",
                 "no_textures": true,
                 "position": {
-                    "x": 0.0,
+                    "x": 3.3079636096954346,
                     "y": 0.0,
                     "z": 0.0
                 },

@@ -62,7 +62,7 @@ public:
 	float musicVolume = 1.f;
 	float sfxVolume = 1.f;
 
-	std::string player_name;
+	std::string player_name = "GUEST";
 	bool isGamepadConnected = false;
 
 	//glm::vec3 closestParticlePos = glm::vec3(0, 0, 0);

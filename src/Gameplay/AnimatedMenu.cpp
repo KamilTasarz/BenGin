@@ -32,17 +32,17 @@ void AnimatedMenu::onStart()
 		back_x = back->button->pos.x;
 	}
 	nick = GuiManager::Instance().findText(29);
-	nickname = GuiManager::Instance().findText(53);
+	//nickname = GuiManager::Instance().findText(53);
 	if (nick) {
 		nick_x = nick->pos.x;
 	}
 	if (nickname) {
 		nickname_x = nickname->pos.x;
 	}
-	nick_column = GuiManager::Instance().findText(58);
+	//nick_column = GuiManager::Instance().findText(58);
 	score_column = GuiManager::Instance().findText(59);
 	num_column = GuiManager::Instance().findText(60);
-	nick_button = GuiManager::Instance().findButton(54);
+	//nick_button = GuiManager::Instance().findButton(54);
 	if (nick_column) {
 		nick2_x = nick_column->pos.x;
 		int i = 0;
@@ -71,7 +71,7 @@ void AnimatedMenu::onStart()
 	}
 	checkbox_marked = GuiManager::Instance().findSprite(63);
 	checkbox = GuiManager::Instance().findSprite(62);
-	tutorial = GuiManager::Instance().findText(61);
+	tutorial = GuiManager::Instance().findButton(69);
 	check_button = GuiManager::Instance().findButton(64);
 	if (checkbox_marked) {
 		checkbox_marked->visible = GameManager::instance().tutorialActive;
@@ -81,14 +81,14 @@ void AnimatedMenu::onStart()
 		c2 = checkbox->pos.x;
 	}
 	if (tutorial) {
-		t = tutorial->pos.x;
+		t = tutorial->button->pos.x;
 	}
 	if (check_button) {
 		b = check_button->button->pos.x;
 	}
-	returnToBenuButton = GuiManager::Instance().findButton(65);
-	if (returnToBenuButton) {
-		returnToBenuButton->visible = false;
+	returnToMenuButton = GuiManager::Instance().findButton(65);
+	if (returnToMenuButton) {
+		returnToMenuButton->visible = false;
 
 	}
 	rerun = GuiManager::Instance().findButton(66);
@@ -126,55 +126,90 @@ void AnimatedMenu::onUpdate(float deltaTime)
 		bool ok_button = isPadButtonPressed(GLFW_GAMEPAD_BUTTON_A);
 
 		if (buttonId == 0) {
-			if (isMenu) {
-				if (play) {
-					play->button->is_hovered = true;
+			if (!GameManager::instance().end_screen) {
+				if (isMenu) {
+					if (play) {
+						play->button->is_hovered = true;
+						if (ok_button) {
+							if (!pressed_ok_button) {
+								play->button->on_click();
+								pressed_ok_button = true;
+							}
+						}
+						else {
+							pressed_ok_button = false;
+						}
+					}
+				}
+				else {
+
+
+					if (back) {
+						back->button->is_hovered = true;
+					}
 					if (ok_button) {
 						if (!pressed_ok_button) {
-							play->button->on_click();
+							back->button->on_click();
+							isMenu = true;
+							buttonId = 1;
 							pressed_ok_button = true;
 						}
 					}
 					else {
 						pressed_ok_button = false;
 					}
+
 				}
 			}
 			else {
-				if (back) {
-					back->button->is_hovered = true;
+				if (rerun) {
+					rerun->button->is_hovered = true;
 				}
 				if (ok_button) {
 					if (!pressed_ok_button) {
-						back->button->on_click();
-						isMenu = true;
-						buttonId = 1;
+						rerun->button->on_click();
 						pressed_ok_button = true;
 					}
 				}
 				else {
 					pressed_ok_button = false;
 				}
-				
+
 			}
 		}
 		else if (buttonId == 1) {
-			if (lead) {
-				lead->button->is_hovered = true;
-				
+			if (!GameManager::instance().end_screen) {
+				if (lead) {
+					lead->button->is_hovered = true;
+
+					if (ok_button) {
+						if (!pressed_ok_button) {
+							lead->button->on_click();
+							isMenu = false;
+							buttonId = 0;
+							pressed_ok_button = true;
+						}
+					}
+					else {
+						pressed_ok_button = false;
+					}
+
+
+				}
+			}
+			else {
+				if (returnToMenuButton) {
+					returnToMenuButton->button->is_hovered = true;
+				}
 				if (ok_button) {
 					if (!pressed_ok_button) {
-						lead->button->on_click();
-						isMenu = false;
-						buttonId = 0;
+						returnToMenuButton->button->on_click();
 						pressed_ok_button = true;
 					}
 				}
 				else {
 					pressed_ok_button = false;
 				}
-				
-				
 			}
 		}
 		else if (buttonId == 2) {
@@ -194,6 +229,9 @@ void AnimatedMenu::onUpdate(float deltaTime)
 		else if (buttonId == 3) {
 			if (check_button) {
 				check_button->button->is_hovered = true;
+				if (tutorial) {
+					tutorial->button->is_hovered = true;
+				}
 				if (ok_button) {
 					if (!pressed_ok_button) {
 						check_button->button->on_click();
@@ -231,24 +269,50 @@ void AnimatedMenu::onUpdate(float deltaTime)
 		bool down = isPadButtonPressed(GLFW_GAMEPAD_BUTTON_DPAD_DOWN) || axisY > dead_zone || axisY2 > dead_zone;
 		
 		if (up) {
-			if (!pressed) {
-				pressed = true;
-				if (buttonId > 0) {
-					buttonId--;
+			if (!GameManager::instance().end_screen) {
+				if (!pressed) {
+					pressed = true;
+					if (buttonId > 0) {
+						buttonId--;
+					}
+					else {
+						buttonId = 4;
+					}
 				}
-				else {
-					buttonId = 4;
+			}
+			else {
+				if (!pressed) {
+					pressed = true;
+					if (buttonId > 0) {
+						buttonId--;
+					}
+					else {
+						buttonId = 1;
+					}
 				}
 			}
 		}
 		else if (down) {
-			if (!pressed) {
-				pressed = true;
-				if (buttonId < 4) {
-					buttonId++;
+			if (!GameManager::instance().end_screen) {
+				if (!pressed) {
+					pressed = true;
+					if (buttonId < 4) {
+						buttonId++;
+					}
+					else {
+						buttonId = 0;
+					}
 				}
-				else {
-					buttonId = 0;
+			}
+			else {
+				if (!pressed) {
+					pressed = true;
+					if (buttonId < 1) {
+						buttonId++;
+					}
+					else {
+						buttonId = 0;
+					}
 				}
 			}
 		}
@@ -270,8 +334,8 @@ void AnimatedMenu::onUpdate(float deltaTime)
 		if (nick) {
 			nick->visible = true;
 		}
-		if (returnToBenuButton) {
-			returnToBenuButton->visible = false;
+		if (returnToMenuButton) {
+			returnToMenuButton->visible = false;
 
 		}
 		if (nickname) {
@@ -380,8 +444,9 @@ void AnimatedMenu::onUpdate(float deltaTime)
 			checkbox->pos.x = x;
 		}
 		if (tutorial) {
+			float w = tutorial->button->w, h = tutorial->button->h, y = tutorial->button->pos.y;
 			float x = t + dx;
-			tutorial->pos.x = x;
+			tutorial->button->setParams(x, y, w, h);
 		}
 		if (nick) {
 			float x = nick_x + dx;
@@ -541,8 +606,8 @@ void AnimatedMenu::onUpdate(float deltaTime)
 			top->pos.x = x;
 			top->visible = true;
 		}
-		if (returnToBenuButton) {
-			returnToBenuButton->visible = true;
+		if (returnToMenuButton) {
+			returnToMenuButton->visible = true;
 		}
 		if (check_button) {
 			check_button->visible = false;
