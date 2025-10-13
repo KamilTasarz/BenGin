@@ -29,7 +29,8 @@ public:
 	GameManager(GameManager&&) = delete;
 	GameManager& operator=(GameManager&&) = delete;
 
-
+	int frameCount = 0;
+	double startTime = 0.0, currentTime = 0.0, lastTime = 0.0, maxTime = 0.0, minTime = 1000.0, maxFrame = 0, minFrame = 0;
 	int constructors = 0;
 	int constructorsScene = 0;
 	int destructors = 0;

@@ -11,11 +11,19 @@
 #include "../config.h"
 #include <fstream>
 #include "MusicManager.h"
+#include <chrono>
 
 GameManager& GameManager::instance()
 {
     static GameManager instance;
     return instance;
+}
+
+double getTimeSeconds() {
+    using namespace std::chrono;
+    static auto start = high_resolution_clock::now();
+    auto now = high_resolution_clock::now();
+    return duration_cast<duration<double>>(now - start).count();
 }
 
 void GameManager::Init(SceneGraph* scene_graph)
@@ -60,11 +68,33 @@ void GameManager::Init(SceneGraph* scene_graph)
 			return a.score > b.score;
 			});
 	}
+
+    startTime = getTimeSeconds();
 }
 
 void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
 {
 	
+	frameCount++;
+
+	currentTime = getTimeSeconds();
+	
+    if (frameCount == 1) {
+        lastTime = currentTime;
+        startTime = lastTime;
+    }
+
+    double delta_time = (double)(currentTime - lastTime);
+
+    if (delta_time >= maxTime) {
+		maxFrame = frameCount;
+		maxTime = delta_time;
+    }
+    if (delta_time <= minTime && frameCount != 1) {
+		minFrame = frameCount;
+        minTime = delta_time;
+    }
+
 	if (!emitter) return;
 
     if (game_over && !added_stats) {
@@ -97,6 +127,13 @@ void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
         end_screen = true;
 
         playDeathMusic = true;
+
+		currentTime = getTimeSeconds();
+		double totalTime = currentTime;
+		double avg_fps = frameCount / totalTime;
+
+		std::cout << "Average FPS: " << avg_fps << std::endl;
+		
     }
 
     if (!tutorialActive && !isRewinding) {
