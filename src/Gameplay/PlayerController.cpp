@@ -268,8 +268,8 @@ void PlayerController::onUpdate(float deltaTime)
 			jump_released = true;
 		}
 
-		if (jumpPressed && !was_jump_pressed) {
-			if (jump_released && (rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
+		if (canJump && jumpPressed && !was_jump_pressed) {
+			if (/*jump_released &&*/ (rb->groundUnderneath || rb->scaleUnderneath) && canJump) {
 				if (isGravityFlipped)
 					rb->velocityY = -jumpForce;
 				else
@@ -285,9 +285,9 @@ void PlayerController::onUpdate(float deltaTime)
 		if (jump_released) {
 
 			if (isGravityFlipped && rb->velocityY < 0 || !isGravityFlipped && rb->velocityY > 0) {
-				rb->velocityY *= 0.95f;
+				rb->velocityY *= 0.5f;
+				jump_released = false;
 			}
-
 		}
 
 		was_jump_pressed = jumpPressed;
