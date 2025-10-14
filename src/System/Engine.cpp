@@ -19,7 +19,7 @@ void Engine::init()
 {
 	srand(static_cast<unsigned int>(time(nullptr)));
 
-	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "Ben-Gin Beta Version 1.3.0");
+	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "LABORATORUN");
 	ServiceLocator::provide(window);
 	
 	//audio = new CAudioEngine();
@@ -51,13 +51,13 @@ void Engine::init()
 void Engine::run()
 {
 	do {
-		editor->play = false;
-		editor->init();
-		editor->run();
-		editor->shutdown();
+		//editor->play = false;
+		//editor->init();
+		//editor->run();
+		//editor->shutdown();
 
 		game->play = true;
-		if (!engine_work) break;
+		//if (!engine_work) break;
 		SceneManager::Instance().goToScene(0);
 		SceneManager::Instance().resetSwitched();
 		game->init();

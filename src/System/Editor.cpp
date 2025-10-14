@@ -2158,7 +2158,7 @@ void Editor::input()
     if (glfwGetKey(window->window, GLFW_KEY_C) == GLFW_PRESS && camera->mode != FRONT_ORTO) {
         if (ServiceLocator::getWindow()->is_camera == ServiceLocator::getWindow()->is_camera_prev) {
             ServiceLocator::getWindow()->is_camera = !ServiceLocator::getWindow()->is_camera;
-            camera->changeMode(camera->mode == FREE ? FIXED : FREE);
+            camera->changeMode(camera->mode == FREE ? FIXED_CAM : FREE);
         }
     }
     else {

@@ -3,6 +3,10 @@
 #include "../config.h"
 
 #include "PostProcessData.h"
+#include <windows.h>
+#include <cstddef>
+#include <psapi.h>
+//#include <../dependencies/gpu_profiler/nvml.h>
 
 class Prefab;
 class SceneGraph;
@@ -80,6 +84,11 @@ public:
 	void renderQuadWithTexture(GLuint tex);
 	void renderQuadWithTextures(GLuint tex0, GLuint tex1);
 	Ray getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection);
+
+	double GetMemoryUsageMB();
+	double GetVirtMemoryUsageMB();
+	double GetPeakMemoryUsageMB();
+	double GetPrivMemoryUsageMB();
 
 	void init();
 	void run();

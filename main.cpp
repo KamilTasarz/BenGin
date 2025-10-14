@@ -5,6 +5,13 @@
 #include "config.h"
 #include "src/System/Engine.h"
 
+#define TRACY_ENABLE
+
+#include "../src/Profiler/tracy/public/tracy/Tracy.hpp"
+#include "../src/Profiler/tracy/public/tracy/TracyOpenGL.hpp"
+
+
+
 int main() {
 
 	Engine engine;

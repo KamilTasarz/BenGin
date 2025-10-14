@@ -22,6 +22,7 @@ public:
     std::vector<std::string> obstacleLayer;
     std::queue<glm::ivec2> spreadQueue;
     std::unordered_set<std::string> visited;
+    //std::deque<std::string> visitedQueue;
     std::unordered_set<std::string> blocked;
     std::unordered_set<std::string> freeButUnused;
 

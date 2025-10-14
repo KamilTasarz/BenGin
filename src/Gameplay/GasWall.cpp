@@ -129,6 +129,7 @@ void GasWall::spreadCloud() {
             if (isBlocked) continue;
 
             visited.insert(key);
+			//visitedQueue.push_back(key);
             spreadQueue.push(glm::ivec2(newPos));
 
             // Utwórz cz¹steczkê
@@ -148,6 +149,12 @@ void GasWall::spreadCloud() {
             //float randomValue = dist(gen);
             //
             //ParticleGasNode* gas = new ParticleGasNode(pos, randomValue);
+
+            /*if (!visitedQueue.empty() && visitedQueue.size() > 2) {
+                std::string oldest = visitedQueue.front();
+                visitedQueue.pop_front();
+                visited.erase(oldest);
+            }*/
 
             if (gasCreator) {
                /* std::shared_ptr<Layer> layer = TagLayerManager::Instance().getLayer("Gas");

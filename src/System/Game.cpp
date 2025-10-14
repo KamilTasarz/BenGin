@@ -17,6 +17,44 @@
 #include "../Gameplay/GameManager.h"
 #include "../Gameplay/MusicManager.h"
 
+#include "../Profiler/tracy/public/tracy/Tracy.hpp"
+#include "../Profiler/tracy/public/tracy/TracyOpenGL.hpp"
+
+
+
+
+
+double Game::GetMemoryUsageMB()
+{
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+    return static_cast<double>(pmc.WorkingSetSize) / (1024.0 * 1024.0);
+}
+
+double Game::GetVirtMemoryUsageMB()
+{
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+    return static_cast<double>(pmc.PagefileUsage) / (1024.0 * 1024.0);
+}
+
+double Game::GetPeakMemoryUsageMB()
+{
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+    return static_cast<double>(pmc.PeakWorkingSetSize) / (1024.0 * 1024.0);
+}
+
+double Game::GetPrivMemoryUsageMB()
+{
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+    return static_cast<double>(pmc.PrivateUsage) / (1024.0 * 1024.0);
+}
+
+
+
+
 Ray Game::getRayWorld(GLFWwindow* window, const glm::mat4& _view, const glm::mat4& _projection) {
 
     glm::vec4 rayClip = glm::vec4(normalizedMouse.x, normalizedMouse.y, 0.0f, 1.0f);
@@ -433,6 +471,9 @@ void Game::init()
 
     loadPostProcessData("res/scene/postprocess_data.json", postProcessData);
 
+    GuiManager::Instance().init();
+	SceneManager::Instance().reset();
+
     // SSAO
     ssao_kernel = updateSSAOKernel(postProcessData.ssao_kernel_samples);
     generateNoiseTexture();
@@ -678,6 +719,13 @@ void Game::run()
 		init();
     while (!glfwWindowShouldClose(ServiceLocator::getWindow()->window) && play) {
 
+        TracyPlot("RAM (MB)", GetMemoryUsageMB());
+        TracyPlot("RAM virt (MB)", GetVirtMemoryUsageMB());
+        TracyPlot("RAM peak (MB)", GetPeakMemoryUsageMB());
+        TracyPlot("RAM priv (MB)", GetPrivMemoryUsageMB());
+
+        ZoneScopedN("Frame");
+
         if (SceneManager::Instance().isSwitched()) {
             ServiceLocator::provide(std::make_unique<CAudioEngine>());
             shutdown();
@@ -713,8 +761,9 @@ void Game::run()
             }
         }
         if (!SceneManager::Instance().isSwitched()) {
+            TracyGpuZone("Draw");
             draw();
-
+            TracyGpuCollect;
 
             //float t = glfwGetTime();
 
@@ -722,7 +771,7 @@ void Game::run()
 
             //float t2 = glfwGetTime();
         }
-
+        FrameMark;
 	}
 
     if (glfwWindowShouldClose(ServiceLocator::getWindow()->window)) engine_work = false;

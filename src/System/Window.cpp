@@ -6,6 +6,8 @@
 #include "../Input/InputManager.h"
 #include "../Input/Input.h"
 
+#include "../Profiler/tracy/public/tracy/TracyOpenGL.hpp"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 	ServiceLocator::getWindow()->lastFrame = glfwGetTime();
@@ -88,6 +90,7 @@ void Window::initializeWindow() {
         // TODO: pomysl co z return -1 dla bezpieczenstwa
         // return -1;
     }
+    TracyGpuContext;
 
     glViewport(0, 0, width, height);
 
