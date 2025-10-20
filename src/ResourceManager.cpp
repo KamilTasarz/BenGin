@@ -2,13 +2,16 @@
 
 #include <set>
 
-
+#include "System/ServiceLocator.h"
 #include "HUD/Sprite.h"
 #include "Basic/Model.h"
 #include "Basic/Mesh.h"
 
 void ResourceManager::init(const char* path)
 {
+
+	drawStartWindow();
+
 	std::string pathStr(path);
 	if (fs::exists(pathStr + "config.json")) {
 		std::ifstream file(pathStr + "config.json");
@@ -213,6 +216,51 @@ std::shared_ptr<ViewLight> ResourceManager::getLight(unsigned int id)
 		std::cerr << "Light with ID " << id << " not found!" << std::endl;
 		return nullptr;
 	}
+}
+
+void ResourceManager::drawStartWindow()
+{
+	unsigned int start_texture = textureFromFile("res/sprites/MenuEasterEggTransparent.png", false);
+
+	const float vertices[] = {
+		-1.0f,  -1.0f,  0.0f, 1.0f,
+		-1.0f, 1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 1.0f,
+		1.0f,  -1.0f,  1.0f, 1.0f,
+		 -1.0f, 1.0f,  0.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 0.0f
+	};
+
+	unsigned int VAO, VBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	shader2D->use();
+	shader2D->setInt("texture1", 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, start_texture);
+
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glDisable(GL_BLEND);
+
+	ServiceLocator::getWindow()->updateWindow();
 }
 
 std::unordered_map<unsigned int, shared_ptr<ViewLight>> ResourceManager::getLights()

@@ -10,12 +10,12 @@ REGISTER_SCRIPT(Fan);
 void Fan::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "Fan::onAttach::" << owner->name << std::endl;
+	//std::cout << "Fan::onAttach::" << owner->name << std::endl;
 }
 
 void Fan::onDetach()
 {
-	std::cout << "Fan::onDetach::" << owner->name << std::endl;
+	//std::cout << "Fan::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 

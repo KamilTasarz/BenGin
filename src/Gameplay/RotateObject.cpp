@@ -7,12 +7,12 @@ REGISTER_SCRIPT(RotateObject);
 void RotateObject::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "RotateObject::onAttach::" << owner->name << std::endl;
+	//std::cout << "RotateObject::onAttach::" << owner->name << std::endl;
 }	
 
 void RotateObject::onDetach()
 {
-	std::cout << "RotateObject::onDetach::" << owner->name << std::endl;
+	//std::cout << "RotateObject::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 

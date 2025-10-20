@@ -10,12 +10,12 @@ void Electrified::onAttach(Node* owner)
 {
 	this->owner = owner;
 	this->owner->is_logic_active = true;
-	std::cout << "Electrified::onAttach::" << owner->name << std::endl;
+	//std::cout << "Electrified::onAttach::" << owner->name << std::endl;
 }
 
 void Electrified::onDetach()
 {
-	std::cout << "Electrified::onDetach::" << owner->name << std::endl;
+	//std::cout << "Electrified::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 

@@ -7,12 +7,12 @@ REGISTER_SCRIPT(CollisionTest);
 void CollisionTest::onAttach(Node* owner)
 {
 	this->owner = owner;
-	//std::cout << "CollisionTest::onAttach::" << owner->name << std::endl;
+	//std:://cout << "CollisionTest::onAttach::" << owner->name << std::endl;
 }
 
 void CollisionTest::onDetach()
 {
-	//std::cout << "CollisionTest::onDetach::" << owner->name << std::endl;
+	//std:://cout << "CollisionTest::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 

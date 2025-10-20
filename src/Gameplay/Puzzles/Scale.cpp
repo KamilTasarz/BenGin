@@ -10,20 +10,20 @@ REGISTER_SCRIPT(Scale);
 void Scale::onAttach(Node* owner)
 {
     this->owner = owner;
-    std::cout << "Scale::onAttach::" << owner->name << std::endl;
+    //std::cout << "Scale::onAttach::" << owner->name << std::endl;
     startPos1 = owner->transform.getLocalPosition();
     if (secondScale != nullptr) startPos2 = secondScale->transform.getLocalPosition();
 }
 
 void Scale::onDetach()
 {
-    std::cout << "Scale::onDetach::" << owner->name << std::endl;
+    //std::cout << "Scale::onDetach::" << owner->name << std::endl;
     owner = nullptr;
 }
 
 void Scale::onStart()
 {
-    std::cout << "start szalek -----------------------------------------------------------" << std::endl;
+    //std::cout << "start szalek -----------------------------------------------------------" << std::endl;
 
     rb = owner->getComponent<Rigidbody>();
     rb->dragY = 1.f;

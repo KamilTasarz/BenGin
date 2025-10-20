@@ -46,12 +46,12 @@ SceneGraph::SceneGraph()
     glGenFramebuffers(1, &depthMapFBO);
 
     GameManager::instance().constructorsScene++;
-	cout << "SceneGraph constructor called" << endl;
+	//cout << "SceneGraph constructor called" << endl;
 }
 
 SceneGraph::~SceneGraph()
 {
-	cout << "SceneGraph destructor called" << endl;
+	//cout << "SceneGraph destructor called" << endl;
     GameManager::instance().destructorsScene++;
     delete root;
     root = nullptr;
@@ -1172,7 +1172,7 @@ Node::Node(std::string nameOfNode, int _id) {
 	AABB_logic->is_logic = true;
 	AABB_logic->active = true;
 
-    cout << "Node constructor called for: " << name << endl;
+    //cout << "Node constructor called for: " << name << endl;
 
     layer = TagLayerManager::Instance().getLayer("Default");
     tag = TagLayerManager::Instance().getTag("Default");
@@ -1184,7 +1184,7 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
     id = _id;
     no_textures = false;
 
-	cout << "Node constructor called for: " << name << endl;
+	//cout << "Node constructor called for: " << name << endl;
 
     if (model && model->mode == "plane") {
         max_point = glm::vec3(0.5f, 0.0f, 0.5f);
@@ -1212,7 +1212,7 @@ Node::Node(std::shared_ptr<Model> model, std::string nameOfNode, int _id, glm::v
 
 Node::~Node()
 {
-	cout << "Node destructor called for: " << name << endl;
+	//cout << "Node destructor called for: " << name << endl;
     GameManager::instance().destructors++;
     if (scene_graph && !scene_graph->is_editing) {
         endComponents();
@@ -1256,7 +1256,7 @@ const Transform& Node::getTransform() {
 
 InstanceManager::~InstanceManager()
 {
-	cout << "InstanceManager destructor called for: " << name << endl;
+	//cout << "InstanceManager destructor called for: " << name << endl;
     for (Node* child : children) {
         delete child;
     }
@@ -1453,7 +1453,7 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
 
     if (!scene_graph->is_editing) prefab_root->createComponents();
 
-    cout << "PrefabInstance constructor called for: " << name << endl;
+    //cout << "PrefabInstance constructor called for: " << name << endl;
 
     //set_prefab_colliders(prefab_root);
 }
@@ -1481,13 +1481,13 @@ PrefabInstance::PrefabInstance(std::shared_ptr<Prefab> prefab, SceneGraph* _scen
 
     if (!scene_graph->is_editing)prefab_root->createComponents();
 
-	cout << "PrefabInstance constructor called for: " << name << endl;
+	//cout << "PrefabInstance constructor called for: " << name << endl;
 }
 
 PrefabInstance::~PrefabInstance()
 {
 
-    cout << "PrefabInstance destructor called for: " << name << endl;
+    //cout << "PrefabInstance destructor called for: " << name << endl;
 
     GameManager::instance().destructors++;
     if (scene_graph && !scene_graph->is_editing) {
@@ -1687,19 +1687,19 @@ Light::Light(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shin
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	cout << "Light constructor called for: " << nameOfNode << endl;
+	//cout << "Light constructor called for: " << nameOfNode << endl;
 }
 
 DirectionalLight::DirectionalLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
     : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), direction(direction) {
     updateMatrix();
     GameManager::instance().constructors++;
-	cout << "DirectionalLight constructor called for: " << nameOfNode << endl;
+	//cout << "DirectionalLight constructor called for: " << nameOfNode << endl;
 }
 
 DirectionalLight::~DirectionalLight()
 {
-	cout << "DirectionalLight destructor called for: " << name << endl;
+	//cout << "DirectionalLight destructor called for: " << name << endl;
     GameManager::instance().destructors++;
     scene_graph->directional_lights.remove(this);
 	scene_graph->directional_light_number--;
@@ -1739,7 +1739,7 @@ void DirectionalLight::updateSelfAndChild(bool controlDirty)
 PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, bool _is_alarm, float quadratic, float linear, float constant, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
     : Light(model, nameOfNode, _is_shining, ambient, diffuse, specular), quadratic(quadratic), linear(linear), constant(constant), is_alarm(_is_alarm) {
 
-	cout << "PointLight constructor called for: " << nameOfNode << endl;
+	//cout << "PointLight constructor called for: " << nameOfNode << endl;
 
     glGenTextures(1, &depthCubemap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
@@ -1761,7 +1761,7 @@ PointLight::PointLight(std::shared_ptr<Model> model, std::string nameOfNode, boo
 
 PointLight::~PointLight()
 {
-	cout << "PointLight destructor called for: " << name << endl;
+	//cout << "PointLight destructor called for: " << name << endl;
     GameManager::instance().destructors++;
     scene_graph->point_lights.remove(this);
 	scene_graph->point_light_number--;
@@ -1828,7 +1828,7 @@ Prefab::Prefab(std::string name, PrefabType prefab_type) {
 
 Prefab::~Prefab()
 {
-	cout << "Prefab destructor called for: " << prefab_scene_graph->root->name << endl;
+	//cout << "Prefab destructor called for: " << prefab_scene_graph->root->name << endl;
     if (prefab_scene_graph)
         delete prefab_scene_graph;
     prefab_scene_graph = nullptr;
@@ -2051,7 +2051,7 @@ MirrorNode::MirrorNode(std::shared_ptr<Model> model, std::string nameOfNode) : N
 
 MirrorNode::~MirrorNode()
 {
-	cout << "MirrorNode destructor called for " << name << endl;
+	//cout << "MirrorNode destructor called for " << name << endl;
 	GameManager::instance().destructors++;
 	if (mirrorCollider) {
 		PhysicsSystem::instance().colliders.erase(mirrorCollider);

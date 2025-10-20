@@ -10,7 +10,7 @@ REGISTER_SCRIPT(ShowText);
 void ShowText::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "ShowText::onAttach::" << owner->name << std::endl;
+	//std::cout << "ShowText::onAttach::" << owner->name << std::endl;
 }
 
 void ShowText::onDetach()
@@ -26,7 +26,7 @@ void ShowText::onStart()
 	textObjectSecond = GuiManager::Instance().findText(10);
 
 	if (!textObject) {
-		std::cout << "ShowText::onStart: TextObject not found!" << std::endl;
+		//std::cout << "ShowText::onStart: TextObject not found!" << std::endl;
 		return;
 	}
 

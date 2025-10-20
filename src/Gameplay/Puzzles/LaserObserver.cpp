@@ -10,7 +10,7 @@ REGISTER_SCRIPT(LaserObserver);
 void LaserObserver::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "PowerActivator::onAttach::" << owner->name << std::endl;
+	//std::cout << "PowerActivator::onAttach::" << owner->name << std::endl;
 	//object = nullptr;
 	//activate = false;
 	//isActivated = false;
@@ -18,13 +18,13 @@ void LaserObserver::onAttach(Node* owner)
 
 void LaserObserver::onDetach()
 {
-	std::cout << "PowerActivator::onDetach::" << owner->name << std::endl;
+	//std::cout << "PowerActivator::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 
 void LaserObserver::onStart()
 {
-	std::cout << "PowerActivator::onStart::" << owner->name << std::endl;
+	//std::cout << "PowerActivator::onStart::" << owner->name << std::endl;
 	//object = nullptr;
 	//activate = false;
 	isActivated = false;

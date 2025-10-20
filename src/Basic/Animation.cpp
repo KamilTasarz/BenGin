@@ -13,7 +13,7 @@ Animation::Animation(const char* animation_path, Model& model, int num) {
 			name = anim->mName.C_Str();
 			readHierarchy(root, scene->mRootNode);
 			ReadMissingBones(anim, model);
-			cout << "Wczytano animacje: " << animation_path << " " << num << endl;
+			//cout << "Wczytano animacje: " << animation_path << " " << num << endl;
 		}
 	}
 }

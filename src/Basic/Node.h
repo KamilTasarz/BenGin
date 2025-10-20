@@ -391,7 +391,7 @@ public:
         AABB = nullptr;
         AABB_logic = nullptr;
         prepareBuffer();
-		std::cout << "InstanceManager constructor called for: " << name << std::endl;
+		//std::cout << "InstanceManager constructor called for: " << name << std::endl;
     }
 
     ~InstanceManager() override;
@@ -441,7 +441,7 @@ public:
     Light(std::shared_ptr<Model> model, std::string nameOfNode, bool _is_shining, glm::vec3 ambient = glm::vec3(0.2f), glm::vec3 diffuse = glm::vec3(0.8f), glm::vec3 specular = glm::vec3(0.8f));
 
     virtual ~Light() override {
-		std::cout << "Light destructor called for: " << name << std::endl;
+		//std::cout << "Light destructor called for: " << name << std::endl;
     };
 
     void setShining(bool flag) {

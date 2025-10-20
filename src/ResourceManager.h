@@ -177,6 +177,7 @@ public:
 	//std::shared_ptr<Sprite> getSprite(const std::string& name);
     std::shared_ptr<ViewLight> getLight(unsigned int id);
 
+    void drawStartWindow();
 };
 
 #endif // !RESOURCE_MANAGER_H

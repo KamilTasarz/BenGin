@@ -8,19 +8,19 @@ REGISTER_SCRIPT(Door);
 void Door::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "Door::onAttach::" << owner->name << std::endl;
+	//std::cout << "Door::onAttach::" << owner->name << std::endl;
 	//owner->setActive(!isOpen);
 }
 
 void Door::onDetach()
 {
-	std::cout << "Door::onDetach::" << owner->name << std::endl;
+	//std::cout << "Door::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 
 void Door::onStart()
 {
-	std::cout << "Door::onStart::" << owner->name << std::endl;
+	//std::cout << "Door::onStart::" << owner->name << std::endl;
 	door1 = owner->getChildByNamePart("gate_up");
 	door2 = owner->getChildByNamePart("gate_down");
 

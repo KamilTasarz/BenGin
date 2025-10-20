@@ -16,12 +16,12 @@ REGISTER_SCRIPT(Virus);
 void Virus::onAttach(Node* owner)
 {
 	this->owner = owner;
-	std::cout << "Virus::onAttach::" << owner->name << std::endl;
+	//std::cout << "Virus::onAttach::" << owner->name << std::endl;
 }
 
 void Virus::onDetach()
 {
-	std::cout << "Virus::onDetach::" << owner->name << std::endl;
+	//std::cout << "Virus::onDetach::" << owner->name << std::endl;
 	owner = nullptr;
 }
 
