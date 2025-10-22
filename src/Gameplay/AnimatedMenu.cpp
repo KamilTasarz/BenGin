@@ -97,7 +97,7 @@ void AnimatedMenu::onStart()
 	}
 	last_run = GuiManager::Instance().findText(67);
 	if (last_run) {
-		last_run->value = GameManager::instance().last_run.name + ": " + std::to_string(GameManager::instance().last_run.score);
+		last_run->value = std::to_string(GameManager::instance().last_run.score);
 		last_run->visible = false;
 	}
 }
@@ -622,7 +622,7 @@ void AnimatedMenu::onUpdate(float deltaTime)
 			rerun->visible = true;
 		}
 		if (last_run) {
-			last_run->value = "Last run: " + std::to_string(GameManager::instance().place) + ". " + GameManager::instance().last_run.name + ": " + std::to_string(GameManager::instance().last_run.score);
+			last_run->value = "Last run: " + std::to_string(GameManager::instance().place) + ".: " + std::to_string(GameManager::instance().last_run.score);
 			last_run->visible = true;
 		}
 	}

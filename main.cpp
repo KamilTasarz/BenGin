@@ -12,7 +12,7 @@
 
 
 
-int main() {
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 	Engine engine;
 

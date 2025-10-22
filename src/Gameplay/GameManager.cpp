@@ -42,12 +42,12 @@ void GameManager::Init(SceneGraph* scene_graph)
     score = 0.f;
     deathCount = 0;
     added_stats = false;
+    //last_run.score = 0;
 
-
-    if (last_run.name.empty()) {
-        last_run.name = "NONE";
+    /*if (last_run.name.empty()) {
+        last_run.name = "";
         last_run.score = 0;
-    }
+    }*/
 
     start = true;
 
@@ -102,7 +102,7 @@ void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
 		Player_stats playerStat;
 		playerStat.name = player_name;
 		playerStat.score = (int) score;
-        last_run.name = player_name.empty() ? "GUEST" : player_name;
+        last_run.name = "";//player_name.empty() ? "" : player_name;
         last_run.score = (int)score;
 		playerStats.push_back(playerStat);
 		std::sort(playerStats.begin(), playerStats.end(), [](const Player_stats& a, const Player_stats& b) {
@@ -114,7 +114,7 @@ void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
 		for (const auto& stat : playerStats) {
             i++;
             stats.push_back({ {"name", stat.name.empty() ? "GUEST" : stat.name}, {"score", (int)stat.score}});
-            if (last_run.name == stat.name && last_run.score == stat.score) {
+            if (last_run.score == stat.score) {
                 place = i;
             }
             

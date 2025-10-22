@@ -22,6 +22,8 @@ void Engine::init()
 	window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, "LABORATORUN");
 	ServiceLocator::provide(window);
 	
+	window->toggleFullscreen();
+
 	//audio = new CAudioEngine();
 	ServiceLocator::provide(std::make_unique<CAudioEngine>());
 

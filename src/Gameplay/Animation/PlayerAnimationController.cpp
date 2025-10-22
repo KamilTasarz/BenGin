@@ -112,7 +112,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 
 	UpdateRotation(deltaTime);
-
+	/*
 	if ((glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_Z) == GLFW_PRESS)) {
 		owner->animator->blendAnimation(idle, 100.f, true, true);
 	}
@@ -136,7 +136,7 @@ void PlayerAnimationController::onUpdate(float deltaTime)
 	}
 	if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_H) == GLFW_PRESS) {
 		owner->animator->blendAnimation(push, 100.f, true, true);
-	}
+	}*/
 
 	previousPosition = owner->transform.getLocalPosition();
 }

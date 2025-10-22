@@ -241,7 +241,7 @@ void ResourceManager::drawStartWindow()
 	};
 
 	float start_x = 535.0f / 1920.0f * 2.0f - 1.0f;
-	float start_y = 1.f - 752.0f / 1080.0f * 2.0f;
+	float start_y = 1.f - 755.0f / 1080.0f * 2.0f;
 	float end_x = 984.0f / 1920.0f * 2.0f - 1.0f;
 	float end_y = 1.f - (729.0f / 1080.0f) * 2.0f;
 
