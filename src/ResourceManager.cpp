@@ -46,8 +46,13 @@ void ResourceManager::init(const char* path)
 		}
 
 		string modelsPath = "models/";
+
+		max_models = resourceData["models"].size();
+
 		if (resourceData.contains("models")) {
 			
+
+
 			for (json model : resourceData["models"]) {
 				std::string directory = model["directory"].get<string>();
 				knownModelDirs.insert(directory);
@@ -62,10 +67,14 @@ void ResourceManager::init(const char* path)
 				}
 				models[id] = modelPtr;
 				cout << "Model loaded: " << path + modelsPath + directory + name << endl;
+				loaded_models++;
 				if (highest_id < id) highest_id = id;
+				drawStartWindow();
 			}
 
 		}
+
+
 
 		if (resourceData.contains("builtin_models")) {
 
@@ -220,7 +229,7 @@ std::shared_ptr<ViewLight> ResourceManager::getLight(unsigned int id)
 
 void ResourceManager::drawStartWindow()
 {
-	unsigned int start_texture = textureFromFile("res/sprites/MenuEasterEggTransparent.png", false);
+	unsigned int start_texture = textureFromFile("res/sprites/MenuEasterEggTransparent_loading.png", false);
 
 	const float vertices[] = {
 		-1.0f,  -1.0f,  0.0f, 1.0f,
@@ -231,36 +240,78 @@ void ResourceManager::drawStartWindow()
 		 1.0f,  1.0f,  1.0f, 0.0f
 	};
 
-	unsigned int VAO, VBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	float start_x = 535.0f / 1920.0f * 2.0f - 1.0f;
+	float start_y = 1.f - 752.0f / 1080.0f * 2.0f;
+	float end_x = 984.0f / 1920.0f * 2.0f - 1.0f;
+	float end_y = 1.f - (729.0f / 1080.0f) * 2.0f;
+
+	float scale = loaded_models / (float)(max_models + 1);
+	float width_bar = (end_x - start_x) * scale;
+
+	const float vertices_rect[] = {
+		start_x, start_y,
+		start_x, end_y,
+		start_x + width_bar, start_y,
+		start_x + width_bar, start_y,
+		start_x, end_y,
+		start_x + width_bar, end_y
+	};
+
+	//unsigned int VAO, VBO;
+	if (start_screen_VAO == 0) {
+		glGenVertexArrays(1, &start_screen_VAO);
+		glGenBuffers(1, &start_screen_VBO);
+		glBindVertexArray(start_screen_VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, start_screen_VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	if (start_bar_VAO == 0) {
+		glGenVertexArrays(1, &start_bar_VAO);
+		glGenBuffers(1, &start_bar_VBO);
+		glBindVertexArray(start_bar_VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, start_bar_VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_rect), vertices_rect, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	else {
+		glBindVertexArray(start_bar_VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, start_bar_VBO);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices_rect), vertices_rect);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	shader2D->use();
 	shader2D->setInt("texture1", 0);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, start_texture);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VAO);
+	glBindVertexArray(start_bar_VAO);
+	shader2D->setInt("hasTex", 0);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(start_screen_VAO);
+	shader2D->setInt("hasTex", 1);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glDisable(GL_BLEND);
 
 	ServiceLocator::getWindow()->updateWindow();
+	
 }
 
 std::unordered_map<unsigned int, shared_ptr<ViewLight>> ResourceManager::getLights()

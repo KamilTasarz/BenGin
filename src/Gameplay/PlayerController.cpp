@@ -1,4 +1,4 @@
-#include "PlayerController.h"
+﻿#include "PlayerController.h"
 #include "../Basic/Node.h"
 #include "../Basic/Model.h"
 #include "RegisterScript.h"
@@ -222,7 +222,8 @@ void PlayerController::onUpdate(float deltaTime)
 		else if (pressedLeft) rb->side = glm::vec4(-1.f, 0.f, 0.f, 0.f);
 
 		// DebugMode
-		if (glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS && !debugTogglePressed) {
+		// jak chcesz zeby działało to odkomentuj false <3
+		if (false && glfwGetKey(ServiceLocator::getWindow()->window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS && !debugTogglePressed) {
 			debugMode = !debugMode;
 			debugTogglePressed = true;
 
@@ -340,7 +341,7 @@ void PlayerController::onUpdate(float deltaTime)
 			if (it != spriteMap.end()) {
 				std::shared_ptr<Sprite> sprite = it->second;
 				if (sprite) {
-					// u�yj sprite
+					// u¿yj sprite
 					cheeseSprite->sprite = sprite;
 				}
 			}
@@ -355,7 +356,7 @@ void PlayerController::onUpdate(float deltaTime)
 			if (it != spriteMap.end()) {
 				std::shared_ptr<Sprite> sprite = it->second;
 				if (sprite) {
-					// u�yj sprite
+					// u¿yj sprite
 					cheeseSprite->sprite = sprite;
 				}
 			}
@@ -370,7 +371,7 @@ void PlayerController::onUpdate(float deltaTime)
 			if (it != spriteMap.end()) {
 				std::shared_ptr<Sprite> sprite = it->second;
 				if (sprite) {
-					// u�yj sprite
+					// u¿yj sprite
 					cheeseSprite->sprite = sprite;
 				}
 			}

@@ -836,7 +836,7 @@ void loadComponents(json& j, Node* node, SceneGraph* scene) {
 							if (field->type == "float") {
 								float* f = reinterpret_cast<float*>(ptr);
 								*f = fieldJson["value"].get<float>();
-								std::cout << field->name << " " << *f << endl;
+								//std::cout << field->name << " " << *f << endl;
 							}
 							else if (field->type == "std::string") {
 								std::string* s = reinterpret_cast<std::string*>(ptr);
@@ -871,7 +871,7 @@ void loadComponents(json& j, Node* node, SceneGraph* scene) {
 						for (const auto& field : addedScript->getFields()) {
 							void* ptr = reinterpret_cast<char*>(addedScript) + field->offset;
 							if (field->type == "float") {
-								std::cout << field->name << ": " << *reinterpret_cast<float*>(ptr) << std::endl;
+								//std::cout << field->name << ": " << *reinterpret_cast<float*>(ptr) << std::endl;
 							}
 						}
 					}

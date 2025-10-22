@@ -164,7 +164,9 @@ public:
 		return instance;
 	}
 
-
+    int max_models = 0, loaded_models = 0;
+	unsigned int start_screen_VAO = 0, start_screen_VBO = 0;
+	unsigned int start_bar_VAO = 0, start_bar_VBO = 0;
 
 	//path wskazuje sciezke do folderu zawierajacego zasoby
 	void init(const char* path = "res/");
