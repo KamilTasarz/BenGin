@@ -53,13 +53,13 @@ void Engine::init()
 void Engine::run()
 {
 	do {
-		//editor->play = false;
-		//editor->init();
-		//editor->run();
-		//editor->shutdown();
+		editor->play = false;
+		editor->init();
+		editor->run();
+		editor->shutdown();
 
 		game->play = true;
-		//if (!engine_work) break;
+		if (!engine_work) break;
 		SceneManager::Instance().goToScene(0);
 		SceneManager::Instance().resetSwitched();
 		game->init();

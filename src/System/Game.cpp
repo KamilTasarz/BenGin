@@ -77,8 +77,8 @@ void Game::input()
     auto* window = ServiceLocator::getWindow();
 
     if (glfwGetKey(window->window, GLFW_KEY_TAB) == GLFW_PRESS) {
-        //engine_work = false;
-        //glfwSetWindowShouldClose(window->window, true);
+        engine_work = false;
+        glfwSetWindowShouldClose(window->window, true);
         play = false;
     }
 
