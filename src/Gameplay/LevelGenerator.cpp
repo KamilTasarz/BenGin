@@ -184,4 +184,7 @@ void LevelGenerator::GenerateLevel()
 		owner->scene_graph->deleteChild(toRemove);
 
 	}
+	if (playTutorial) {
+		GenerateLevel();
+	}
 }

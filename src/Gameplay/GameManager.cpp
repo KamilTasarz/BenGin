@@ -37,6 +37,8 @@ void GameManager::Init(SceneGraph* scene_graph)
     if (scene_graph->root->getChildByTag("UIManager")) {
         uiManager = scene_graph->root->getChildByTag("UIManager")->getComponent<UIManager>();
     }
+	wasTutorial = tutorialActive;
+
     game_over = false;
     runTime = 0.f;
     score = 0.f;
@@ -123,6 +125,7 @@ void GameManager::Update(float deltaTime, SceneGraph* scene_graph)
 		outFile << stats.dump(4);
 		outFile.close();
         //SceneManager::Instance().next();
+		tutorialActive = wasTutorial;
 		end = true;
         end_screen = true;
 

@@ -31,7 +31,7 @@ public:
 	TextObject* num_column = nullptr;
 	TextObject* top = nullptr;
 	std::string text;
-	bool isActive = false, endAnim = false, ending = false, starting = true, _tutorial = false, reverse = false;
+	bool isActive = false, endAnim = false, ending = false, starting = true, _tutorial = true, reverse = false;
 	bool right = true;
 	bool isGamepadConnected = false;
 	float timer = 0.f, buffer = 0.5f, dx = 0.f, max_dx = 1920.f, spd = 2.f;

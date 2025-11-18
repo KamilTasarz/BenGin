@@ -53,7 +53,8 @@ public:
 	float runTime = 0.f;
 	int deathCount = 0;
 	float score = 0.f;
-	bool tutorialActive = false;
+	bool tutorialActive = true;
+	bool wasTutorial = true;
 	bool game_over = false;
 	bool added_stats = false;
 
