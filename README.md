@@ -35,9 +35,9 @@ Aktualnie projekt jest uznany za ukończony.
 
 ## Autorzy
 
-**Kamil Tasarz**
-**Bartłomiej Ejzert**
-**Marcel Piotrowicz**
-**Marek Zarychta**
+* **Kamil Tasarz**
+* **Bartłomiej Ejzert**
+* **Marcel Piotrowicz**
+* **Marek Zarychta**
 ---
 *BenGin © 2025. Wszelkie prawa zastrzeżone.*
