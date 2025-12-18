@@ -67,10 +67,15 @@ void RenderSystem::render()
 		glm::vec4 color = glm::vec4(obj.color);
 		ResourceManager::Instance().shader->setVec4("color", color);
 
-		auto& f = obj.animator->final_bone_matrices;
+		/*auto& f = obj.animator->final_bone_matrices;
 		for (int i = 0; i < f.size(); ++i) {
 			ResourceManager::Instance().shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+		}*/
+
+		if (!obj.animator->final_bone_matrices.empty()) {
+			ResourceManager::Instance().shader->setMat4Array("finalBonesMatrices", obj.animator->final_bone_matrices);
 		}
+
 		if (obj.textures.empty()) {
 			obj.model->Draw(*ResourceManager::Instance().shader);
 		}
@@ -92,21 +97,24 @@ void RenderSystem::render()
 		}
 	}
 
-
-	
-	
 }
 
 void RenderSystem::renderShadows()
 {
+
 	ResourceManager::Instance().shader_shadow->use();
 	ResourceManager::Instance().shader_shadow->setInt("is_animating", 1);
 	for (const auto& obj : animatedObjects) {
 		ResourceManager::Instance().shader_shadow->setMat4("model", obj.modelMatrix);
-		auto& f = obj.animator->final_bone_matrices;
+		/*auto& f = obj.animator->final_bone_matrices;
 		for (int i = 0; i < f.size(); ++i) {
 			ResourceManager::Instance().shader_shadow->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
+		}*/
+		
+		if (!obj.animator->final_bone_matrices.empty()) {
+			ResourceManager::Instance().shader_shadow->setMat4Array("finalBonesMatrices", obj.animator->final_bone_matrices);
 		}
+
 		obj.model->Draw(*ResourceManager::Instance().shader_shadow);
 	}
 	ResourceManager::Instance().shader_shadow->setInt("is_animating", 0);

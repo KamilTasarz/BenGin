@@ -34,6 +34,9 @@ public:
     void setVec4(const std::string& name, float x, float y, float z, float w) const noexcept;
     void setMat4(const std::string& name, const glm::mat4& mat) const noexcept;
 
+    void setVec3Array(const std::string& name, const std::vector<glm::vec3>& values) const noexcept;
+    void setMat4Array(const std::string& name, const std::vector<glm::mat4>& values) const noexcept;
+
     [[nodiscard]] int getUniformLocation(const std::string& name);
 
 };

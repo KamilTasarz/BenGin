@@ -2,7 +2,8 @@
     "GUI": {
         "free_id": [
             70,
-            68
+            68,
+            28
         ],
         "max_id": 71,
         "objects": [
@@ -350,44 +351,6 @@
         "children": [
             {
                 "AABB_logic_max": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "AABB_logic_min": {
-                    "x": -1.0,
-                    "y": -1.0,
-                    "z": -1.0
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "camera_follow",
-                "no_textures": true,
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
                     "x": 0.5,
                     "y": 0.5,
                     "z": 0.5
@@ -459,6 +422,92 @@
             },
             {
                 "AABB_logic_max": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "AABB_logic_min": {
+                    "x": -1.0,
+                    "y": -1.0,
+                    "z": -1.0
+                },
+                "components": [
+                    {
+                        "name": "KeyboardWrite",
+                        "variables": null
+                    },
+                    {
+                        "name": "AnimatedMenu",
+                        "variables": null
+                    }
+                ],
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "keyboard_controller",
+                "no_textures": true,
+                "position": {
+                    "x": 3.3079636096954346,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "AABB_logic_min": {
+                    "x": -1.0,
+                    "y": -1.0,
+                    "z": -1.0
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": -1,
+                "name": "camera_follow",
+                "no_textures": true,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "Node"
+            },
+            {
+                "AABB_logic_max": {
                     "x": 0.5,
                     "y": 0.5,
                     "z": 0.5
@@ -526,54 +575,6 @@
                 },
                 "tag": "Default",
                 "type": "PointLight"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "AABB_logic_min": {
-                    "x": -1.0,
-                    "y": -1.0,
-                    "z": -1.0
-                },
-                "components": [
-                    {
-                        "name": "KeyboardWrite",
-                        "variables": null
-                    },
-                    {
-                        "name": "AnimatedMenu",
-                        "variables": null
-                    }
-                ],
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": -1,
-                "name": "keyboard_controller",
-                "no_textures": true,
-                "position": {
-                    "x": 3.3079636096954346,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "Node"
             }
         ],
         "id": 0,

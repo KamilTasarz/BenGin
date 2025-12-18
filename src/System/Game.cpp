@@ -77,8 +77,8 @@ void Game::input()
     auto* window = ServiceLocator::getWindow();
 
     if (glfwGetKey(window->window, GLFW_KEY_TAB) == GLFW_PRESS) {
-        engine_work = false;
-        glfwSetWindowShouldClose(window->window, true);
+        //engine_work = false;
+        //glfwSetWindowShouldClose(window->window, true);
         play = false;
     }
 
@@ -182,9 +182,7 @@ void Game::draw()
             ResourceManager::Instance().shader_PostProcess_ssao->setVec2("screenSize", glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT));
 
             ResourceManager::Instance().shader_PostProcess_ssao->setInt("kernelSize", postProcessData.ssao_kernel_samples);
-            for (unsigned int i = 0; i < postProcessData.ssao_kernel_samples; ++i) {
-                ResourceManager::Instance().shader_PostProcess_ssao->setVec3("samples[" + std::to_string(i) + "]", ssao_kernel[i]);
-            }
+            ResourceManager::Instance().shader_PostProcess_ssao->setVec3Array("samples", ssao_kernel);
 
             ResourceManager::Instance().shader_PostProcess_ssao->setFloat("radius", postProcessData.ssao_radius);
             ResourceManager::Instance().shader_PostProcess_ssao->setFloat("bias", postProcessData.ssao_bias);

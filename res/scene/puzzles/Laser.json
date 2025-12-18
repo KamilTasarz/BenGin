@@ -12,66 +12,6 @@
     "children": [
         {
             "AABB_logic_max": {
-                "x": 0.46400001645088196,
-                "y": 0.3121732771396637,
-                "z": 0.46400001645088196
-            },
-            "AABB_logic_min": {
-                "x": -0.46400001645088196,
-                "y": 0.0,
-                "z": -0.46400001645088196
-            },
-            "components": [
-                {
-                    "name": "LaserObserver",
-                    "variables": [
-                        {
-                            "field_type": "Node*",
-                            "name": "object",
-                            "value": "null"
-                        },
-                        {
-                            "field_type": "bool",
-                            "name": "activate",
-                            "value": false
-                        },
-                        {
-                            "field_type": "bool",
-                            "name": "isActivated",
-                            "value": false
-                        }
-                    ]
-                }
-            ],
-            "id": 0,
-            "is_logic_active": false,
-            "is_physic_active": true,
-            "is_visible": true,
-            "layer": "Observer",
-            "model.id": 39,
-            "name": "observer",
-            "no_textures": false,
-            "position": {
-                "x": 2.0,
-                "y": -1.1920930376163597e-07,
-                "z": 0.0
-            },
-            "rotation": {
-                "w": 0.7071067690849304,
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.7071067690849304
-            },
-            "scale": {
-                "x": 1.5,
-                "y": 1.5,
-                "z": 1.5
-            },
-            "tag": "Default",
-            "type": "Node"
-        },
-        {
-            "AABB_logic_max": {
                 "x": 0.37858325242996216,
                 "y": 0.4043586254119873,
                 "z": 0.47471871972084045
@@ -121,6 +61,66 @@
                 "x": 0.0,
                 "y": 0.0,
                 "z": -0.7072298526763916
+            },
+            "scale": {
+                "x": 1.5,
+                "y": 1.5,
+                "z": 1.5
+            },
+            "tag": "Default",
+            "type": "Node"
+        },
+        {
+            "AABB_logic_max": {
+                "x": 0.46400001645088196,
+                "y": 0.3121732771396637,
+                "z": 0.46400001645088196
+            },
+            "AABB_logic_min": {
+                "x": -0.46400001645088196,
+                "y": 0.0,
+                "z": -0.46400001645088196
+            },
+            "components": [
+                {
+                    "name": "LaserObserver",
+                    "variables": [
+                        {
+                            "field_type": "Node*",
+                            "name": "object",
+                            "value": "null"
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "activate",
+                            "value": false
+                        },
+                        {
+                            "field_type": "bool",
+                            "name": "isActivated",
+                            "value": false
+                        }
+                    ]
+                }
+            ],
+            "id": 0,
+            "is_logic_active": false,
+            "is_physic_active": true,
+            "is_visible": true,
+            "layer": "Observer",
+            "model.id": 39,
+            "name": "observer",
+            "no_textures": false,
+            "position": {
+                "x": 2.0,
+                "y": -1.1920930376163597e-07,
+                "z": 0.0
+            },
+            "rotation": {
+                "w": 0.7071067690849304,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.7071067690849304
             },
             "scale": {
                 "x": 1.5,

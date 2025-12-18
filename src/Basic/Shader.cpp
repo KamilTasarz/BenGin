@@ -214,6 +214,18 @@ void Shader::setMat4(const std::string& name, const glm::mat4& mat) const noexce
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
+void Shader::setVec3Array(const std::string& name, const std::vector<glm::vec3>& values) const noexcept {
+    GLint loc = glGetUniformLocation(ID, name.c_str());
+    glUniform3fv(loc, values.size(), &values[0].x);
+}
+
+void Shader::setMat4Array(const std::string& name, const std::vector<glm::mat4>& values) const noexcept {
+    GLint loc = glGetUniformLocation(ID, name.c_str());
+    if (loc != -1 && !values.empty()) {
+        glUniformMatrix4fv(loc, static_cast<GLsizei>(values.size()), GL_FALSE, &values[0][0][0]);
+    }
+}
+
 [[nodiscard]] int Shader::getUniformLocation(const std::string& name) {
     
     if (uniformLocationCache.contains(name))
