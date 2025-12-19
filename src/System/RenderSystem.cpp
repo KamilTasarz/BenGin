@@ -41,60 +41,70 @@ void RenderSystem::addTileObject(Node* obj)
 
 void RenderSystem::render()
 {
-	ResourceManager::Instance().shader_tile->use();
-	ResourceManager::Instance().shader_tile->setInt("is_light", 0);
-	ResourceManager::Instance().shader_tile->setInt("is_animating", 0);
+
+	// Reference the singleton
+	auto& r = ResourceManager::Instance();
+
+	Shader* tileShader = r.shader_tile;
+	Shader* animShader = r.shader;
+
+	tileShader->use();
+	tileShader->setInt("is_light", 0);
+	tileShader->setInt("is_animating", 0);
+
+	// Tiles
 	for (const auto& obj : tileObjects) {
+
 		glm::vec4 color = glm::vec4(obj.color);
-		ResourceManager::Instance().shader_tile->setVec4("color", color);
-		ResourceManager::Instance().shader_tile->setFloat("tile_scale", obj.tile_scale);
-		ResourceManager::Instance().shader_tile->setMat4("model", obj.modelMatrix);
+		tileShader->setVec4("color", color);
+		tileShader->setFloat("tile_scale", obj.tile_scale);
+		tileShader->setMat4("model", obj.modelMatrix);
+
 		if (obj.textures.empty()) {
-			obj.model->Draw(*ResourceManager::Instance().shader_tile);
+			obj.model->Draw(*tileShader);
+		} else {
+			obj.model->Draw(*tileShader, obj.textures);
 		}
-		else {
-			obj.model->Draw(*ResourceManager::Instance().shader_tile, obj.textures);
-		}
+
 	}
 
-	ResourceManager::Instance().shader->use();
-	ResourceManager::Instance().shader->setInt("is_light", 0);
+	animShader->use();
+	animShader->setInt("is_light", 0);
 	
-	ResourceManager::Instance().shader->setInt("is_animating", 1);
+	// Animated Objects
+	animShader->setInt("is_animating", 1);
 	for (const auto& obj : animatedObjects) {
 		
-		ResourceManager::Instance().shader->setMat4("model", obj.modelMatrix);
+		animShader->setMat4("model", obj.modelMatrix);
 		glm::vec4 color = glm::vec4(obj.color);
-		ResourceManager::Instance().shader->setVec4("color", color);
-
-		/*auto& f = obj.animator->final_bone_matrices;
-		for (int i = 0; i < f.size(); ++i) {
-			ResourceManager::Instance().shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
-		}*/
+		animShader->setVec4("color", color);
 
 		if (!obj.animator->final_bone_matrices.empty()) {
-			ResourceManager::Instance().shader->setMat4Array("finalBonesMatrices", obj.animator->final_bone_matrices);
+			animShader->setMat4Array("finalBonesMatrices", obj.animator->final_bone_matrices);
 		}
 
 		if (obj.textures.empty()) {
-			obj.model->Draw(*ResourceManager::Instance().shader);
-		}
-		else {
-			obj.model->Draw(*ResourceManager::Instance().shader, obj.textures);
+			obj.model->Draw(*animShader);
+		} else {
+			obj.model->Draw(*animShader, obj.textures);
 		}
 		
 	}
-	ResourceManager::Instance().shader->setInt("is_animating", 0);
+
+	// Static Objects
+	animShader->setInt("is_animating", 0);
 	for (const auto& obj : staticObjects) {
-		ResourceManager::Instance().shader->setMat4("model", obj.modelMatrix);
+
+		animShader->setMat4("model", obj.modelMatrix);
 		glm::vec4 color = glm::vec4(obj.color);
-		ResourceManager::Instance().shader->setVec4("color", color);
+		animShader->setVec4("color", color);
+
 		if (obj.textures.empty()) {
-			obj.model->Draw(*ResourceManager::Instance().shader);
+			obj.model->Draw(*animShader);
+		} else {
+			obj.model->Draw(*animShader, obj.textures);
 		}
-		else {
-			obj.model->Draw(*ResourceManager::Instance().shader, obj.textures);
-		}
+
 	}
 
 }
@@ -102,34 +112,38 @@ void RenderSystem::render()
 void RenderSystem::renderShadows()
 {
 
-	ResourceManager::Instance().shader_shadow->use();
-	ResourceManager::Instance().shader_shadow->setInt("is_animating", 1);
+	Shader* shadowShader = ResourceManager::Instance().shader_shadow;
+
+	shadowShader->use();
+	shadowShader->setInt("is_animating", 1);
+
 	for (const auto& obj : animatedObjects) {
-		ResourceManager::Instance().shader_shadow->setMat4("model", obj.modelMatrix);
-		/*auto& f = obj.animator->final_bone_matrices;
-		for (int i = 0; i < f.size(); ++i) {
-			ResourceManager::Instance().shader_shadow->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", f[i]);
-		}*/
+
+		shadowShader->setMat4("model", obj.modelMatrix);
 		
 		if (!obj.animator->final_bone_matrices.empty()) {
-			ResourceManager::Instance().shader_shadow->setMat4Array("finalBonesMatrices", obj.animator->final_bone_matrices);
+			shadowShader->setMat4Array("finalBonesMatrices", obj.animator->final_bone_matrices);
 		}
 
-		obj.model->Draw(*ResourceManager::Instance().shader_shadow);
+		obj.model->Draw(*shadowShader);
+
 	}
-	ResourceManager::Instance().shader_shadow->setInt("is_animating", 0);
+
+	shadowShader->setInt("is_animating", 0);
 	for (const auto& obj : staticObjects) {
-		ResourceManager::Instance().shader_shadow->setMat4("model", obj.modelMatrix);
-		obj.model->Draw(*ResourceManager::Instance().shader_shadow);
+		shadowShader->setMat4("model", obj.modelMatrix);
+		obj.model->Draw(*shadowShader);
 	}
 
 	for (const auto& obj : tileObjects) {
-		ResourceManager::Instance().shader_shadow->setMat4("model", obj.modelMatrix);
-		obj.model->Draw(*ResourceManager::Instance().shader_shadow);
+		shadowShader->setMat4("model", obj.modelMatrix);
+		obj.model->Draw(*shadowShader);
 	}
+
 }
 
-void RenderSystem::clear() {
+void RenderSystem::clear()
+{
 	animatedObjects.clear();
 	staticObjects.clear();
 	tileObjects.clear();
