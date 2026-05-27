@@ -306,6 +306,7 @@ void SceneGraph::draw(float width, float height, unsigned int framebuffer, bool 
         root->drawSelfAndChild();
      }
     else {
+        root->addRenderQueueAndChild();
         RenderSystem::Instance().render();
         if (emitter)
             emitter->drawSelfAndChild();
@@ -718,7 +719,12 @@ void Node::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std::unor
             /*if (dynamic_cast<PointLight*>(this)) {
                 scene_graph->active.insert(dynamic_cast<PointLight*>(this));
             }*/
-			addRenderQueue();
+
+
+
+			//addRenderQueue();
+
+
 
 			if (is_physic_active) colliders.insert(AABB);
 			else colliders.erase(AABB);
@@ -1514,9 +1520,9 @@ void PrefabInstance::set_prefab_colliders(Node* node)
 
 void PrefabInstance::updateSelf()
 {
-    if (prefab_root == nullptr)
+    if (prefab_root != nullptr)
         delete prefab_root;
-    if (AABB == nullptr)
+    if (AABB != nullptr)
         delete AABB;
 	AABB = new BoundingBox(transform.getModelMatrix(), this);
 	prefab_root = prefab->clone(this->name, scene_graph);
@@ -2139,7 +2145,10 @@ void MirrorNode::checkIfInFrustrum(std::unordered_set<Collider*>& colliders, std
     if (AABB) {
         in_frustrum = camera->isInFrustrum(AABB);
 
-        addRenderQueue();
+        
+        //addRenderQueue();
+        
+        
         //in_frustrum = true;
         if (in_frustrum) {
             if (mirrorCollider) {
