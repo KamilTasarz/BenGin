@@ -20,7 +20,10 @@ void PhysicsSystem::updateColliders(SceneGraph* scene_graph)
 void PhysicsSystem::updateCollisions()
 {
 
-	std::set<std::pair<BoundingBox*, BoundingBox*>> testedPairs;
+	//std::set<std::pair<BoundingBox*, BoundingBox*>> testedPairs;
+
+	static std::vector<std::pair<BoundingBox*, BoundingBox*>> testedPairs;
+	testedPairs.clear();
 
 	int counter = 0;
 
@@ -48,6 +51,10 @@ void PhysicsSystem::updateCollisions()
 				continue; 
 			}
 
+			/*if (collider2->node->has_RB && collider1 >= collider2) {
+				continue;
+			}*/
+
 			bool ignored = false;
 
 			if (collider2->ignored_layers.contains(collider1->node->layer.lock())) {
@@ -57,11 +64,21 @@ void PhysicsSystem::updateCollisions()
 			BoundingBox* first = (collider1 < collider2) ? collider1 : collider2;
 			BoundingBox* second = (collider1 < collider2) ? collider2 : collider1;
 
-			std::pair<BoundingBox*, BoundingBox*> pair = { first, second };
-			// pomiń, jeśli już było
-			if (testedPairs.find(pair) != testedPairs.end()) continue;
 
-			testedPairs.insert(pair);
+
+
+			//std::pair<BoundingBox*, BoundingBox*> pair = { first, second };
+			// pomiń, jeśli już było
+			//if (testedPairs.find(pair) != testedPairs.end()) continue;
+
+			//testedPairs.insert(pair);
+
+			std::pair<BoundingBox*, BoundingBox*> pair = { first, second };
+
+			if (std::find(testedPairs.begin(), testedPairs.end(), pair) != testedPairs.end()) continue;
+			testedPairs.push_back(pair);
+
+
 
 			counter++;
 

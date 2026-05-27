@@ -14,7 +14,7 @@ struct RenderObject {
 	std::shared_ptr<Model> model;
 	glm::mat4 modelMatrix;
 	Animator* animator;
-	std::vector<unsigned int> textures;
+	const std::vector<unsigned int>* textures = nullptr;
 	float tile_scale = 1.f;
 	glm::vec4 color = { 1.f, 1.f, 1.f, 1.f }; // Default color is white
 };

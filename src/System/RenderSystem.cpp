@@ -9,7 +9,7 @@ void RenderSystem::addAnimatedObject(Node* obj)
 {
 	RenderObject renderObj;
 	renderObj.model = obj->pModel;
-	if (!obj->textures.empty()) renderObj.textures = obj->textures; 
+	if (!obj->textures.empty()) renderObj.textures = &obj->textures;
 	renderObj.color = glm::vec4(obj->color);
 	renderObj.modelMatrix = obj->transform.getModelMatrix();
 	renderObj.animator = obj->animator;
@@ -21,7 +21,7 @@ void RenderSystem::addStaticObject(Node* obj)
 	RenderObject renderObj;
 	renderObj.color = glm::vec4(obj->color);
 	renderObj.model = obj->pModel;
-	if (!obj->textures.empty()) renderObj.textures = obj->textures;
+	if (!obj->textures.empty()) renderObj.textures = &obj->textures;
 	renderObj.modelMatrix = obj->transform.getModelMatrix();
 	renderObj.animator = nullptr; // Static objects typically don't have animators
 	staticObjects.push_back(renderObj);
@@ -32,7 +32,7 @@ void RenderSystem::addTileObject(Node* obj)
 	RenderObject renderObj;
 	renderObj.model = obj->pModel;
 	renderObj.color = glm::vec4(obj->color);
-	if (!obj->textures.empty()) renderObj.textures = obj->textures;
+	if (!obj->textures.empty()) renderObj.textures = &obj->textures;
 	renderObj.modelMatrix = obj->transform.getModelMatrix();
 	renderObj.animator = nullptr; // Tile objects typically don't have animators
 	renderObj.tile_scale = obj->pModel->tile_scale;
@@ -60,10 +60,11 @@ void RenderSystem::render()
 		tileShader->setFloat("tile_scale", obj.tile_scale);
 		tileShader->setMat4("model", obj.modelMatrix);
 
-		if (obj.textures.empty()) {
+		if (!obj.textures || obj.textures->empty()) {
 			obj.model->Draw(*tileShader);
-		} else {
-			obj.model->Draw(*tileShader, obj.textures);
+		}
+		else {
+			obj.model->Draw(*tileShader, *obj.textures);
 		}
 
 	}
@@ -82,13 +83,14 @@ void RenderSystem::render()
 		if (!obj.animator->final_bone_matrices.empty()) {
 			animShader->setMat4Array("finalBonesMatrices", obj.animator->final_bone_matrices);
 		}
-
-		if (obj.textures.empty()) {
-			obj.model->Draw(*animShader);
-		} else {
-			obj.model->Draw(*animShader, obj.textures);
-		}
 		
+		if (!obj.textures || obj.textures->empty()) {
+			obj.model->Draw(*animShader);
+		}
+		else {
+			obj.model->Draw(*animShader, *obj.textures);
+		}
+
 	}
 
 	// Static Objects
@@ -99,10 +101,11 @@ void RenderSystem::render()
 		glm::vec4 color = glm::vec4(obj.color);
 		animShader->setVec4("color", color);
 
-		if (obj.textures.empty()) {
+		if (!obj.textures || obj.textures->empty()) {
 			obj.model->Draw(*animShader);
-		} else {
-			obj.model->Draw(*animShader, obj.textures);
+		}
+		else {
+			obj.model->Draw(*animShader, *obj.textures);
 		}
 
 	}

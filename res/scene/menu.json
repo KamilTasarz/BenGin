@@ -328,13 +328,13 @@
         ]
     },
     "camera": {
-        "Pitch": -3.200003147125244,
-        "Yaw": -72.50666809082031,
+        "Pitch": -6.199942111968994,
+        "Yaw": -68.20687103271484,
         "mode": 2,
         "position": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 20.0
+            "x": -4.588986873626709,
+            "y": 3.0041749477386475,
+            "z": 19.608417510986328
         }
     },
     "scene": {
@@ -349,6 +349,76 @@
             "z": -1.0
         },
         "children": [
+            {
+                "AABB_logic_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_logic_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "AABB_max": {
+                    "x": 0.5,
+                    "y": 0.5,
+                    "z": 0.5
+                },
+                "AABB_min": {
+                    "x": -0.5,
+                    "y": -0.5,
+                    "z": -0.5
+                },
+                "id": 0,
+                "is_logic_active": false,
+                "is_physic_active": true,
+                "is_visible": true,
+                "layer": "Default",
+                "model.id": 6,
+                "name": "point_light",
+                "no_textures": true,
+                "point_light": {
+                    "ambient": {
+                        "x": 0.20000000298023224,
+                        "y": 0.20000000298023224,
+                        "z": 0.20000000298023224
+                    },
+                    "constant": 1.0,
+                    "diffuse": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    },
+                    "is_alarm": false,
+                    "is_shining": true,
+                    "linear": 0.09000000357627869,
+                    "quadratic": 0.03200000151991844,
+                    "specular": {
+                        "x": 0.800000011920929,
+                        "y": 0.800000011920929,
+                        "z": 0.800000011920929
+                    }
+                },
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 4.021246433258057
+                },
+                "rotation": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "tag": "Default",
+                "type": "PointLight"
+            },
             {
                 "AABB_logic_max": {
                     "x": 0.5,
@@ -505,76 +575,6 @@
                 },
                 "tag": "Default",
                 "type": "Node"
-            },
-            {
-                "AABB_logic_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_logic_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "AABB_max": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
-                },
-                "AABB_min": {
-                    "x": -0.5,
-                    "y": -0.5,
-                    "z": -0.5
-                },
-                "id": 0,
-                "is_logic_active": false,
-                "is_physic_active": true,
-                "is_visible": true,
-                "layer": "Default",
-                "model.id": 6,
-                "name": "point_light",
-                "no_textures": true,
-                "point_light": {
-                    "ambient": {
-                        "x": 0.20000000298023224,
-                        "y": 0.20000000298023224,
-                        "z": 0.20000000298023224
-                    },
-                    "constant": 1.0,
-                    "diffuse": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    },
-                    "is_alarm": false,
-                    "is_shining": true,
-                    "linear": 0.09000000357627869,
-                    "quadratic": 0.03200000151991844,
-                    "specular": {
-                        "x": 0.800000011920929,
-                        "y": 0.800000011920929,
-                        "z": 0.800000011920929
-                    }
-                },
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 4.021246433258057
-                },
-                "rotation": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "tag": "Default",
-                "type": "PointLight"
             }
         ],
         "id": 0,
