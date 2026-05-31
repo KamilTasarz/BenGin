@@ -129,6 +129,10 @@ void Particles::SpawnParticle(float deltaTime) {
 
 	p.prefab = particle;
    // p.instance = pref;
+    auto it = std::find(pref->prefab_root->children.begin(), pref->prefab_root->children.end(), particle);
+    if (it != pref->prefab_root->children.end()) {
+        pref->prefab_root->children.erase(it);
+    }
     pref->prefab_root = nullptr;
     delete pref;
     particles.push_back(p);

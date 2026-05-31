@@ -12,6 +12,7 @@ public:
     void unregisterRewindable(TimeRewindable* rewindable);
 
     void resetAllHistories();
+    void clearAll();
 
 private:
     std::vector<TimeRewindable*> rewindables;

@@ -61,6 +61,9 @@ void LevelGenerator::GenerateLevel()
 			directionLength = 0;
 			roomNumber = 0;
 			usedIndexes.clear();
+			/*for (Node* room : currentRooms) {
+				owner->scene_graph->deleteChild(room);
+			}*/
 			currentRooms.clear();
 		}
 	}
@@ -171,19 +174,42 @@ void LevelGenerator::GenerateLevel()
 
 	currentRooms.push_back(pref);
 
+	//if (currentRooms.size() > 10) {
+	//	Node* toRemove = currentRooms.front();
+	//	//Node* oldest = currentRooms.front();
+	//	//owner->scene_graph->deleteChild(oldest);
+	//	if (toRemove->in_frustrum) return;
+
+	//	PhysicsSystem::instance().rooms.erase(toRemove);
+
+	//	currentRooms.pop_front();
+	//	
+	//	owner->scene_graph->deleteChild(toRemove);
+
+	//}
+
 	if (currentRooms.size() > 10) {
-		Node* toRemove = currentRooms.front();
-		//Node* oldest = currentRooms.front();
-		//owner->scene_graph->deleteChild(oldest);
-		if (toRemove->in_frustrum) return;
+		// Szukamy pierwszego pokoju, którego nie widaæ
+		for (auto it = currentRooms.begin(); it != currentRooms.end(); ++it) {
+			Node* toRemove = *it;
+			if (!toRemove->in_frustrum) {
+				PhysicsSystem::instance().rooms.erase(toRemove);
+				owner->scene_graph->deleteChild(toRemove);
+				currentRooms.erase(it);
+				break;
+			}
+		}
 
-		PhysicsSystem::instance().rooms.erase(toRemove);
-
-		currentRooms.pop_front();
-		
-		owner->scene_graph->deleteChild(toRemove);
-
+		// ZABEZPIECZENIE (Fallback): Jeœli mimo to mamy np. 15 pokoi (kolejka roœnie), 
+		// usuwamy najstarszy bez pytania, by unikn¹æ wycieku na Expo!
+		if (currentRooms.size() > 15) {
+			Node* forceRemove = currentRooms.front();
+			PhysicsSystem::instance().rooms.erase(forceRemove);
+			owner->scene_graph->deleteChild(forceRemove);
+			currentRooms.pop_front();
+		}
 	}
+
 	if (playTutorial) {
 		GenerateLevel();
 	}

@@ -725,7 +725,7 @@ void Game::run()
         ZoneScopedN("Frame");
 
         if (SceneManager::Instance().isSwitched()) {
-            ServiceLocator::provide(std::make_unique<CAudioEngine>());
+            //ServiceLocator::provide(std::make_unique<CAudioEngine>());
             shutdown();
             init();
             SceneManager::Instance().resetSwitched();

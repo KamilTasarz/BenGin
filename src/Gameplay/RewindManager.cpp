@@ -20,3 +20,8 @@ void RewindManager::resetAllHistories() {
         if (rewindable) rewindable->resetHistory();
     }
 }
+
+void RewindManager::clearAll()
+{
+    rewindables.clear();
+}

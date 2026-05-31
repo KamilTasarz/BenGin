@@ -50,7 +50,7 @@ void GasParticle::onUpdate(float deltaTime)
 		owner->transform.setLocalScale(scale * scaleFactor);
 	}
 	else {
-		owner->scene_graph->deleteChild(owner);
+		//owner->scene_graph->deleteChild(owner);
 		//owner->setActive(false);
 	}
 }

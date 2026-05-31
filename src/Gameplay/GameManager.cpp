@@ -271,7 +271,8 @@ void GameManager::print() {
 
 void GameManager::onEnd()
 {
-	if (!currentPlayer) return;
+    RewindManager::Instance().clearAll();
+	//if (!currentPlayer) return;
     for (Node* player : players) {
         if (player && player->scene_graph) {
             player->scene_graph->deleteChild(player);

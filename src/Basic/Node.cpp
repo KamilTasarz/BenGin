@@ -1224,6 +1224,11 @@ Node::~Node()
         endComponents();
     }
 
+    for (auto& comp : components) {
+        comp->onDetach();
+    }
+    components.clear();
+
     if (AABB) {
 		
        
@@ -1262,6 +1267,10 @@ const Transform& Node::getTransform() {
 
 InstanceManager::~InstanceManager()
 {
+
+    glDeleteBuffers(1, &buffer_offset);
+    glDeleteBuffers(1, &buffer);
+
 	//cout << "InstanceManager destructor called for: " << name << endl;
     for (Node* child : children) {
         delete child;
@@ -1498,6 +1507,10 @@ PrefabInstance::~PrefabInstance()
     GameManager::instance().destructors++;
     if (scene_graph && !scene_graph->is_editing) {
         endComponents();
+    }
+    if (prefab) {
+        auto& vec = prefab->prefab_instances;
+        vec.erase(std::remove(vec.begin(), vec.end(), this), vec.end());
     }
     if (prefab_root)
         delete prefab_root;

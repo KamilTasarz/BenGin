@@ -61,6 +61,13 @@ public:
 			VAO = 0;
 			VBO = 0;
 		}
+
+		for (auto& other : current_collisons) {
+			if (other) {
+				other->current_collisons.erase(this);
+			}
+		}
+		current_collisons.clear();
 	}
 
 	bool isRayIntersects(glm::vec3 direction, glm::vec3 origin, float &t, glm::vec3& endPoint) override; // t - parameter

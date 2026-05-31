@@ -39,6 +39,8 @@ void LineManager::drawLines()
 	}
 
 	glBindVertexArray(0);
+
+	clearLines();
 }
 
 void LineManager::addVertices(std::vector<glm::vec3>& verts)
